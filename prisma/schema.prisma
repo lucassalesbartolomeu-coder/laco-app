@@ -15,12 +15,14 @@ model User {
   email     String   @unique
   password  String
   name      String?
+  role      String   @default("COUPLE") // COUPLE, PLANNER, ADMIN
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  accounts  Account[]
-  sessions  Session[]
-  weddings  Wedding[]
+  accounts       Account[]
+  sessions       Session[]
+  weddings       Wedding[]
+  weddingPlanner WeddingPlanner?
 }
 
 model Account {
@@ -86,6 +88,8 @@ model Wedding {
   gifts       Gift[]
   vendors     Vendor[]
   budgetItems BudgetItem[]
+  plannerAssignments WeddingPlannerAssignment[]
+  quotes      Quote[]
 
   @@index([userId])
 }
@@ -148,6 +152,7 @@ model Vendor {
   updatedAt DateTime @updatedAt
 
   wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  quotes  Quote[]
 
   @@index([weddingId])
 }
@@ -170,4 +175,91 @@ model BudgetItem {
   wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
 
   @@index([weddingId])
+}
+
+// ─── Planner Models ─────────────────────────────────────────
+
+model WeddingPlanner {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  slug           String?  @unique
+  companyName    String
+  cnpj           String?
+  region         String   // ex: "SP/RJ/MG"
+  specialties    String[] // ex: ["casamento clássico", "destination wedding"]
+  commissionRate Float?   // percentual padrão
+  bio            String?  @db.Text
+  instagram      String?
+  website        String?
+  phone          String
+  isVerified     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user          User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignments   WeddingPlannerAssignment[]
+  opportunities Opportunity[]
+}
+
+model WeddingPlannerAssignment {
+  id               String   @id @default(cuid())
+  plannerId        String
+  weddingId        String
+  role             String   // "principal", "assistente"
+  status           String   @default("ativo") // ativo, concluído, cancelado
+  commissionAmount Float?
+  commissionPaid   Boolean  @default(false)
+  assignedAt       DateTime @default(now())
+  notes            String?
+
+  planner WeddingPlanner @relation(fields: [plannerId], references: [id], onDelete: Cascade)
+  wedding Wedding        @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+
+  @@unique([plannerId, weddingId])
+  @@index([plannerId])
+  @@index([weddingId])
+}
+
+model Quote {
+  id           String    @id @default(cuid())
+  vendorId     String
+  weddingId    String
+  totalValue   Float
+  items        Json      // array de { description, quantity, unitPrice, total }
+  status       String    @default("pendente") // pendente, aprovado, recusado
+  paymentTerms String?
+  installments Int?
+  dueDate      DateTime?
+  notes        String?
+  rawOcrText   String?   @db.Text
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  vendor  Vendor  @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId])
+  @@index([weddingId])
+}
+
+model Opportunity {
+  id                 String    @id @default(cuid())
+  plannerId          String
+  coupleName         String
+  contactPhone       String?
+  contactEmail       String?
+  weddingDate        DateTime?
+  venue              String?
+  estimatedBudget    Float?
+  source             String    // indicação, instagram, site, whatsapp, evento, outro
+  stage              String    @default("lead") // lead, contato, proposta, negociação, fechado, perdido
+  notes              String?   @db.Text
+  lostReason         String?
+  commissionEstimate Float?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  planner WeddingPlanner @relation(fields: [plannerId], references: [id], onDelete: Cascade)
+
+  @@index([plannerId])
 }

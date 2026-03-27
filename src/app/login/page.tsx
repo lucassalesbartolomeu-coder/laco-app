@@ -4,8 +4,11 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+type UserType = "couple" | "planner";
+
 export default function LoginPage() {
   const router = useRouter();
+  const [userType, setUserType] = useState<UserType>("couple");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -44,7 +47,16 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/dashboard");
+      // Fetch session to check role
+      const sessionRes = await fetch("/api/auth/session");
+      const session = await sessionRes.json();
+      const role = session?.user?.role;
+
+      if (role === "PLANNER" || role === "ADMIN") {
+        router.push("/cerimonialista/dashboard");
+      } else {
+        router.push("/dashboard");
+      }
     } catch {
       setError("Erro inesperado. Tente novamente.");
       setLoading(false);
@@ -61,6 +73,32 @@ export default function LoginPage() {
           <p className="text-verde-noite/60 mt-2">
             Planeje seu casamento com elegancia
           </p>
+        </div>
+
+        {/* User type toggle */}
+        <div className="flex bg-white rounded-xl shadow-sm p-1 mb-6">
+          <button
+            type="button"
+            onClick={() => setUserType("couple")}
+            className={`flex-1 py-2.5 rounded-lg font-body text-sm font-medium transition-all ${
+              userType === "couple"
+                ? "bg-verde-noite text-white shadow-sm"
+                : "text-verde-noite/60 hover:text-verde-noite"
+            }`}
+          >
+            Sou Casal
+          </button>
+          <button
+            type="button"
+            onClick={() => setUserType("planner")}
+            className={`flex-1 py-2.5 rounded-lg font-body text-sm font-medium transition-all ${
+              userType === "planner"
+                ? "bg-verde-noite text-white shadow-sm"
+                : "text-verde-noite/60 hover:text-verde-noite"
+            }`}
+          >
+            Sou Cerimonialista
+          </button>
         </div>
 
         <div className="bg-white rounded-2xl shadow-md p-8">
@@ -117,7 +155,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-2">
             <button
               onClick={() => {
                 setIsRegister(!isRegister);
@@ -129,6 +167,18 @@ export default function LoginPage() {
                 ? "Ja tem conta? Entrar"
                 : "Nao tem conta? Criar uma"}
             </button>
+
+            {userType === "planner" && isRegister && (
+              <p className="text-verde-noite/50 text-xs">
+                Para registro profissional completo,{" "}
+                <a
+                  href="/registro/cerimonialista"
+                  className="text-teal hover:underline"
+                >
+                  clique aqui
+                </a>
+              </p>
+            )}
           </div>
         </div>
       </div>
