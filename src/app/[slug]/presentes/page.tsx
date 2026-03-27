@@ -127,8 +127,8 @@ export default function PresentesPage() {
   // ── Loading ──
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F7F7F7] flex items-center justify-center">
-        <div className="animate-pulse font-heading text-2xl text-[#1A3A33]/50">
+      <div className="min-h-screen bg-off-white flex items-center justify-center">
+        <div className="animate-pulse font-heading text-2xl text-verde-noite/50">
           Carregando...
         </div>
       </div>
@@ -138,16 +138,16 @@ export default function PresentesPage() {
   // ── 404 ──
   if (notFound || !wedding) {
     return (
-      <div className="min-h-screen bg-[#F7F7F7] flex flex-col items-center justify-center gap-4">
-        <h1 className="font-heading text-3xl text-[#1A3A33]">
+      <div className="min-h-screen bg-off-white flex flex-col items-center justify-center gap-4">
+        <h1 className="font-heading text-3xl text-verde-noite">
           Casamento nao encontrado
         </h1>
-        <p className="font-body text-[#1A3A33]/60">
+        <p className="font-body text-verde-noite/60">
           O link pode estar incorreto ou o casamento foi removido.
         </p>
         <button
           onClick={() => router.push("/")}
-          className="mt-4 font-body text-[#2C6B5E] underline hover:text-[#1A3A33] transition-colors"
+          className="mt-4 font-body text-teal underline hover:text-verde-noite transition-colors"
         >
           Voltar ao inicio
         </button>
@@ -158,9 +158,9 @@ export default function PresentesPage() {
   const partnerNames = `${wedding.partnerName1} & ${wedding.partnerName2}`;
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7]">
+    <div className="min-h-screen bg-off-white">
       {/* ── Header ── */}
-      <header className="bg-[#1A3A33] text-white py-12 px-4 text-center">
+      <header className="bg-verde-noite text-white py-12 px-4 text-center">
         <h1 className="font-heading text-4xl md:text-5xl mb-2">{partnerNames}</h1>
         <p className="font-body text-lg text-white/80">Lista de Presentes</p>
       </header>
@@ -170,7 +170,7 @@ export default function PresentesPage() {
         {/* Back link */}
         <Link
           href={`/${slug}`}
-          className="inline-flex items-center gap-1 font-body text-[#2C6B5E] hover:text-[#1A3A33] transition-colors mb-8"
+          className="inline-flex items-center gap-1 font-body text-teal hover:text-verde-noite transition-colors mb-8"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -187,7 +187,7 @@ export default function PresentesPage() {
 
         {gifts.length === 0 ? (
           <div className="text-center py-20">
-            <p className="font-body text-[#1A3A33]/50 text-lg">
+            <p className="font-body text-verde-noite/50 text-lg">
               Nenhum presente cadastrado ainda.
             </p>
           </div>
@@ -212,24 +212,24 @@ export default function PresentesPage() {
 
                   {/* Card body */}
                   <div className="p-5 flex flex-col flex-1">
-                    <h3 className="font-heading text-lg text-[#1A3A33] mb-1">
+                    <h3 className="font-heading text-lg text-verde-noite mb-1">
                       {gift.name}
                     </h3>
 
                     {gift.description && (
-                      <p className="font-body text-sm text-[#1A3A33]/60 mb-2 line-clamp-2">
+                      <p className="font-body text-sm text-verde-noite/60 mb-2 line-clamp-2">
                         {gift.description}
                       </p>
                     )}
 
                     {gift.price != null && (
-                      <p className="font-body text-[#2C6B5E] font-semibold text-lg mb-3">
+                      <p className="font-body text-teal font-semibold text-lg mb-3">
                         {formatPrice(gift.price)}
                       </p>
                     )}
 
                     {gift.store && (
-                      <p className="font-body text-xs text-[#1A3A33]/40 mb-3">
+                      <p className="font-body text-xs text-verde-noite/40 mb-3">
                         {gift.store}
                       </p>
                     )}
@@ -240,7 +240,7 @@ export default function PresentesPage() {
                     {/* Status / Actions */}
                     {isReserved ? (
                       <div className="bg-gray-100 rounded-lg py-2 px-3 text-center">
-                        <span className="font-body text-sm text-[#1A3A33]/60">
+                        <span className="font-body text-sm text-verde-noite/60">
                           Reservado por{" "}
                           <span className="font-semibold">{gift.reservedBy}</span>
                         </span>
@@ -252,14 +252,14 @@ export default function PresentesPage() {
                             href={gift.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block w-full text-center font-body text-sm font-medium py-2.5 px-4 rounded-lg bg-[#2C6B5E] text-white hover:bg-[#1A3A33] transition-colors"
+                            className="block w-full text-center font-body text-sm font-medium py-2.5 px-4 rounded-lg bg-teal text-white hover:bg-verde-noite transition-colors"
                           >
                             Quero presentear
                           </a>
                         )}
                         <button
                           onClick={() => openReserveModal(gift.id)}
-                          className="w-full font-body text-sm font-medium py-2.5 px-4 rounded-lg border-2 border-[#C4734F] text-[#C4734F] hover:bg-[#C4734F] hover:text-white transition-colors"
+                          className="w-full font-body text-sm font-medium py-2.5 px-4 rounded-lg border-2 border-copper text-copper hover:bg-copper hover:text-white transition-colors"
                         >
                           Ja comprei
                         </button>
@@ -283,14 +283,14 @@ export default function PresentesPage() {
             className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="font-heading text-xl text-[#1A3A33] mb-1">
+            <h2 className="font-heading text-xl text-verde-noite mb-1">
               Confirmar compra
             </h2>
-            <p className="font-body text-sm text-[#1A3A33]/60 mb-5">
+            <p className="font-body text-sm text-verde-noite/60 mb-5">
               Informe seu nome para que os noivos saibam quem presenteou.
             </p>
 
-            <label className="block font-body text-sm text-[#1A3A33] mb-1.5">
+            <label className="block font-body text-sm text-verde-noite mb-1.5">
               Seu nome
             </label>
             <input
@@ -298,7 +298,7 @@ export default function PresentesPage() {
               value={reservedBy}
               onChange={(e) => setReservedBy(e.target.value)}
               placeholder="Ex: Maria Silva"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 font-body text-sm text-[#1A3A33] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2C6B5E]/40 focus:border-[#2C6B5E] mb-1"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 font-body text-sm text-verde-noite placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal/40 focus:border-teal mb-1"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleReserve();
@@ -312,14 +312,14 @@ export default function PresentesPage() {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setModalOpen(false)}
-                className="flex-1 font-body text-sm font-medium py-2.5 px-4 rounded-lg border border-gray-300 text-[#1A3A33]/70 hover:bg-gray-50 transition-colors"
+                className="flex-1 font-body text-sm font-medium py-2.5 px-4 rounded-lg border border-gray-300 text-verde-noite/70 hover:bg-gray-50 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleReserve}
                 disabled={reserving}
-                className="flex-1 font-body text-sm font-medium py-2.5 px-4 rounded-lg bg-[#C4734F] text-white hover:bg-[#a85e3f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 font-body text-sm font-medium py-2.5 px-4 rounded-lg bg-copper text-white hover:bg-copper/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {reserving ? "Enviando..." : "Confirmar"}
               </button>

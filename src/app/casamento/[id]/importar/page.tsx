@@ -173,21 +173,21 @@ export default function ImportarContatosPage() {
   /* ---- Render ---- */
 
   return (
-    <main className="min-h-screen bg-[#F7F7F7] py-10 px-4 sm:px-8">
+    <main className="min-h-screen bg-off-white py-10 px-4 sm:px-8">
       <div className="mx-auto max-w-5xl space-y-8">
         {/* Header */}
         <div>
-          <h1 className="font-heading text-3xl font-bold text-[#1A3A33]">
+          <h1 className="font-heading text-3xl font-bold text-verde-noite">
             Importar Contatos
           </h1>
-          <p className="font-body mt-1 text-[#1A3A33]/70">
+          <p className="font-body mt-1 text-verde-noite/70">
             Adicione os convidados via arquivo CSV ou manualmente.
           </p>
         </div>
 
         {/* CSV Drop Zone */}
         <div className="bg-white rounded-2xl shadow-md p-6">
-          <h2 className="font-heading text-lg font-semibold text-[#1A3A33] mb-4">
+          <h2 className="font-heading text-lg font-semibold text-verde-noite mb-4">
             Importar CSV
           </h2>
 
@@ -198,13 +198,13 @@ export default function ImportarContatosPage() {
             onClick={() => fileInputRef.current?.click()}
             className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed cursor-pointer transition-colors py-12 px-6 ${
               dragOver
-                ? "border-[#2C6B5E] bg-[#2C6B5E]/5"
-                : "border-gray-300 hover:border-[#2C6B5E] hover:bg-[#2C6B5E]/5"
+                ? "border-teal bg-teal/5"
+                : "border-gray-300 hover:border-teal hover:bg-teal/5"
             }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-10 w-10 text-[#2C6B5E]"
+              className="h-10 w-10 text-teal"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -216,9 +216,9 @@ export default function ImportarContatosPage() {
                 d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
               />
             </svg>
-            <p className="font-body text-sm text-[#1A3A33]/70 text-center">
+            <p className="font-body text-sm text-verde-noite/70 text-center">
               Arraste um arquivo CSV aqui ou{" "}
-              <span className="text-[#2C6B5E] font-semibold underline">
+              <span className="text-teal font-semibold underline">
                 clique para selecionar
               </span>
             </p>
@@ -238,7 +238,7 @@ export default function ImportarContatosPage() {
 
         {/* Manual Add */}
         <div className="bg-white rounded-2xl shadow-md p-6">
-          <h2 className="font-heading text-lg font-semibold text-[#1A3A33] mb-4">
+          <h2 className="font-heading text-lg font-semibold text-verde-noite mb-4">
             Adicionar manualmente
           </h2>
 
@@ -249,7 +249,7 @@ export default function ImportarContatosPage() {
               value={manualName}
               onChange={(e) => setManualName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAddManual()}
-              className="font-body flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-[#1A3A33] placeholder:text-gray-400 focus:border-[#2C6B5E] focus:ring-1 focus:ring-[#2C6B5E] outline-none"
+              className="font-body flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-verde-noite placeholder:text-gray-400 focus:border-teal focus:ring-1 focus:ring-teal outline-none"
             />
             <input
               type="text"
@@ -257,11 +257,11 @@ export default function ImportarContatosPage() {
               value={manualPhone}
               onChange={(e) => setManualPhone(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAddManual()}
-              className="font-body flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-[#1A3A33] placeholder:text-gray-400 focus:border-[#2C6B5E] focus:ring-1 focus:ring-[#2C6B5E] outline-none"
+              className="font-body flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-verde-noite placeholder:text-gray-400 focus:border-teal focus:ring-1 focus:ring-teal outline-none"
             />
             <button
               onClick={handleAddManual}
-              className="font-body rounded-lg bg-[#2C6B5E] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#245a4f] transition-colors"
+              className="font-body rounded-lg bg-teal px-6 py-2.5 text-sm font-semibold text-white hover:bg-teal/80 transition-colors"
             >
               Adicionar
             </button>
@@ -271,12 +271,12 @@ export default function ImportarContatosPage() {
         {/* Contact List */}
         {contacts.length > 0 && (
           <div className="bg-white rounded-2xl shadow-md p-6 space-y-4">
-            <h2 className="font-heading text-lg font-semibold text-[#1A3A33]">
+            <h2 className="font-heading text-lg font-semibold text-verde-noite">
               Contatos ({totalContacts})
             </h2>
 
             {/* Summary bar */}
-            <div className="font-body rounded-lg bg-[#F7F7F7] px-4 py-3 text-sm text-[#1A3A33]/80">
+            <div className="font-body rounded-lg bg-off-white px-4 py-3 text-sm text-verde-noite/80">
               {totalContacts} contato{totalContacts !== 1 ? "s" : ""} &mdash;{" "}
               {withCity} com cidade identificada ({pct}%)
             </div>
@@ -285,7 +285,7 @@ export default function ImportarContatosPage() {
             <div className="hidden lg:block overflow-x-auto">
               <table className="w-full text-sm font-body">
                 <thead>
-                  <tr className="border-b border-gray-200 text-left text-xs font-semibold uppercase tracking-wide text-[#1A3A33]/50">
+                  <tr className="border-b border-gray-200 text-left text-xs font-semibold uppercase tracking-wide text-verde-noite/50">
                     <th className="pb-3 pr-3">Nome</th>
                     <th className="pb-3 pr-3">Telefone</th>
                     <th className="pb-3 pr-3">DDD</th>
@@ -301,13 +301,13 @@ export default function ImportarContatosPage() {
                       key={c.id}
                       className="border-b border-gray-100 last:border-0"
                     >
-                      <td className="py-3 pr-3 text-[#1A3A33]">{c.name}</td>
-                      <td className="py-3 pr-3 text-[#1A3A33]">
+                      <td className="py-3 pr-3 text-verde-noite">{c.name}</td>
+                      <td className="py-3 pr-3 text-verde-noite">
                         {formatPhone(c.ddd, c.phone)}
                       </td>
                       <td className="py-3 pr-3">
                         {c.ddd && (
-                          <span className="inline-block rounded-full bg-[#2C6B5E]/10 text-[#2C6B5E] text-xs font-semibold px-2.5 py-0.5">
+                          <span className="inline-block rounded-full bg-teal/10 text-teal text-xs font-semibold px-2.5 py-0.5">
                             {c.ddd}
                             {c.city ? ` - ${c.city}` : ""}
                           </span>
@@ -320,7 +320,7 @@ export default function ImportarContatosPage() {
                           onChange={(e) =>
                             updateContact(c.id, { city: e.target.value })
                           }
-                          className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-[#1A3A33] outline-none focus:border-[#2C6B5E]"
+                          className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-verde-noite outline-none focus:border-teal"
                         />
                       </td>
                       <td className="py-3 pr-3">
@@ -330,7 +330,7 @@ export default function ImportarContatosPage() {
                           onChange={(e) =>
                             updateContact(c.id, { state: e.target.value })
                           }
-                          className="w-24 rounded border border-gray-200 px-2 py-1 text-sm text-[#1A3A33] outline-none focus:border-[#2C6B5E]"
+                          className="w-24 rounded border border-gray-200 px-2 py-1 text-sm text-verde-noite outline-none focus:border-teal"
                         />
                       </td>
                       <td className="py-3 pr-3">
@@ -339,7 +339,7 @@ export default function ImportarContatosPage() {
                           onChange={(e) =>
                             updateContact(c.id, { category: e.target.value })
                           }
-                          className="rounded border border-gray-200 px-2 py-1 text-sm text-[#1A3A33] outline-none focus:border-[#2C6B5E] bg-white"
+                          className="rounded border border-gray-200 px-2 py-1 text-sm text-verde-noite outline-none focus:border-teal bg-white"
                         >
                           {CATEGORIES.map((cat) => (
                             <option key={cat} value={cat}>
@@ -381,14 +381,14 @@ export default function ImportarContatosPage() {
               {contacts.map((c) => (
                 <div
                   key={c.id}
-                  className="rounded-xl border border-gray-100 bg-[#F7F7F7] p-4 space-y-3"
+                  className="rounded-xl border border-gray-100 bg-off-white p-4 space-y-3"
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="font-heading font-semibold text-[#1A3A33]">
+                      <p className="font-heading font-semibold text-verde-noite">
                         {c.name}
                       </p>
-                      <p className="font-body text-sm text-[#1A3A33]/70">
+                      <p className="font-body text-sm text-verde-noite/70">
                         {formatPhone(c.ddd, c.phone)}
                       </p>
                     </div>
@@ -415,7 +415,7 @@ export default function ImportarContatosPage() {
                   </div>
 
                   {c.ddd && (
-                    <span className="inline-block rounded-full bg-[#2C6B5E]/10 text-[#2C6B5E] text-xs font-semibold px-2.5 py-0.5">
+                    <span className="inline-block rounded-full bg-teal/10 text-teal text-xs font-semibold px-2.5 py-0.5">
                       {c.ddd}
                       {c.city ? ` - ${c.city}` : ""}
                     </span>
@@ -432,7 +432,7 @@ export default function ImportarContatosPage() {
                         onChange={(e) =>
                           updateContact(c.id, { city: e.target.value })
                         }
-                        className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-[#1A3A33] outline-none focus:border-[#2C6B5E]"
+                        className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-verde-noite outline-none focus:border-teal"
                       />
                     </div>
                     <div>
@@ -445,7 +445,7 @@ export default function ImportarContatosPage() {
                         onChange={(e) =>
                           updateContact(c.id, { state: e.target.value })
                         }
-                        className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-[#1A3A33] outline-none focus:border-[#2C6B5E]"
+                        className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-verde-noite outline-none focus:border-teal"
                       />
                     </div>
                   </div>
@@ -459,7 +459,7 @@ export default function ImportarContatosPage() {
                       onChange={(e) =>
                         updateContact(c.id, { category: e.target.value })
                       }
-                      className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-[#1A3A33] outline-none focus:border-[#2C6B5E] bg-white"
+                      className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-verde-noite outline-none focus:border-teal bg-white"
                     >
                       {CATEGORIES.map((cat) => (
                         <option key={cat} value={cat}>
@@ -484,7 +484,7 @@ export default function ImportarContatosPage() {
               <button
                 onClick={handleImport}
                 disabled={loading || contacts.length === 0}
-                className="font-body rounded-lg bg-[#C4734F] px-8 py-3 text-sm font-semibold text-white hover:bg-[#b3644a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="font-body rounded-lg bg-copper px-8 py-3 text-sm font-semibold text-white hover:bg-copper/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">

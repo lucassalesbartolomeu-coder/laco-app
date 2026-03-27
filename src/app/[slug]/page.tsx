@@ -8,14 +8,14 @@ import Image from "next/image";
 /* ─── Types ─── */
 interface Wedding {
   id: string;
-  partner1Name: string;
-  partner2Name: string;
-  date: string;
+  partnerName1: string;
+  partnerName2: string;
+  weddingDate: string;
   storyText?: string;
+  venue?: string;
+  venueAddress?: string;
   ceremonyVenue?: string;
   ceremonyAddress?: string;
-  receptionVenue?: string;
-  receptionAddress?: string;
 }
 
 interface Gift {
@@ -24,7 +24,7 @@ interface Gift {
   price: number;
   imageUrl?: string;
   url?: string;
-  status: "AVAILABLE" | "RESERVED" | "PURCHASED";
+  status: "available" | "reserved" | "purchased";
 }
 
 /* ─── Helpers ─── */
@@ -61,14 +61,14 @@ function mapsUrl(address: string) {
 }
 
 function statusLabel(s: Gift["status"]) {
-  if (s === "AVAILABLE") return "Disponivel";
-  if (s === "RESERVED") return "Reservado";
+  if (s === "available") return "Disponivel";
+  if (s === "reserved") return "Reservado";
   return "Presenteado";
 }
 
 function statusColor(s: Gift["status"]) {
-  if (s === "AVAILABLE") return "bg-teal/20 text-teal";
-  if (s === "RESERVED") return "bg-copper/20 text-copper";
+  if (s === "available") return "bg-teal/20 text-teal";
+  if (s === "reserved") return "bg-copper/20 text-copper";
   return "bg-gray-200 text-gray-500";
 }
 
@@ -140,11 +140,11 @@ export default function WeddingPublicPage() {
 
   /* ── Countdown timer ── */
   useEffect(() => {
-    if (!wedding?.date) return;
-    setCountdown(timeUntil(wedding.date));
-    const id = setInterval(() => setCountdown(timeUntil(wedding.date)), 1000);
+    if (!wedding?.weddingDate) return;
+    setCountdown(timeUntil(wedding.weddingDate));
+    const id = setInterval(() => setCountdown(timeUntil(wedding.weddingDate)), 1000);
     return () => clearInterval(id);
-  }, [wedding?.date]);
+  }, [wedding?.weddingDate]);
 
   /* ── RSVP submit ── */
   async function handleRsvp(e: FormEvent) {
@@ -153,15 +153,15 @@ export default function WeddingPublicPage() {
     setRsvpSubmitting(true);
     setRsvpError("");
     try {
-      const res = await fetch(`/api/weddings/${wedding.id}/rsvp`, {
+      const res = await fetch(`/api/public/wedding/${slug}/rsvp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: rsvpName,
-          attending: rsvpAttending === "yes",
-          hasCompanion: rsvpCompanion,
+          status: rsvpAttending === "yes" ? "confirmado" : "recusado",
+          plusOne: rsvpCompanion,
           companionName: rsvpCompanion ? rsvpCompanionName : undefined,
-          dietaryRestrictions: rsvpDietary || undefined,
+          dietaryRestriction: rsvpDietary || undefined,
         }),
       });
       if (!res.ok) throw new Error("Erro ao enviar confirmacao");
@@ -176,7 +176,7 @@ export default function WeddingPublicPage() {
   /* ── Loading state ── */
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F5F3EF]">
+      <div className="min-h-screen flex items-center justify-center bg-cream">
         <div className="animate-pulse flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full border-4 border-teal border-t-transparent animate-spin" />
           <p className="font-body text-verde-noite/60">Carregando...</p>
@@ -188,7 +188,7 @@ export default function WeddingPublicPage() {
   /* ── 404 ── */
   if (notFound || !wedding) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F5F3EF] gap-6">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-cream gap-6">
         <h1 className="font-heading text-4xl text-verde-noite">Casamento nao encontrado</h1>
         <p className="font-body text-verde-noite/60">
           O link pode estar incorreto ou o casamento ainda nao foi publicado.
@@ -213,14 +213,14 @@ export default function WeddingPublicPage() {
         <div className="relative z-10 flex flex-col items-center gap-8 px-4 text-center">
           {/* names */}
           <h1 className="font-heading text-5xl md:text-7xl leading-tight">
-            {wedding.partner1Name}
+            {wedding.partnerName1}
             <span className="block text-copper text-3xl md:text-5xl my-2">&amp;</span>
-            {wedding.partner2Name}
+            {wedding.partnerName2}
           </h1>
 
           {/* date */}
           <p className="font-body text-lg md:text-xl tracking-widest uppercase text-white/80">
-            {formatDatePt(wedding.date)}
+            {formatDatePt(wedding.weddingDate)}
           </p>
 
           {/* countdown */}
@@ -268,7 +268,7 @@ export default function WeddingPublicPage() {
       </section>
 
       {/* ═══════ 2. NOSSA HISTORIA ═══════ */}
-      <section className="py-20 px-4 bg-[#F5F3EF]">
+      <section className="py-20 px-4 bg-cream">
         <FadeIn className="max-w-3xl mx-auto text-center">
           <h2 className="font-heading text-4xl mb-10">Nossa Historia</h2>
           {wedding.storyText ? (
@@ -302,7 +302,7 @@ export default function WeddingPublicPage() {
                   </p>
                 )}
                 <p className="font-body text-verde-noite/80 text-sm mb-5">
-                  {formatDateTime(wedding.date)}
+                  {formatDateTime(wedding.weddingDate)}
                 </p>
                 {wedding.ceremonyAddress && (
                   <button
@@ -315,22 +315,22 @@ export default function WeddingPublicPage() {
               </div>
             )}
 
-            {/* reception */}
-            {wedding.receptionVenue && (
+            {/* reception / venue */}
+            {wedding.venue && (
               <div className="border border-verde-noite/10 rounded-2xl p-8 text-center">
                 <h3 className="font-heading text-2xl mb-2">Festa</h3>
-                <p className="font-body font-semibold text-lg mb-1">{wedding.receptionVenue}</p>
-                {wedding.receptionAddress && (
+                <p className="font-body font-semibold text-lg mb-1">{wedding.venue}</p>
+                {wedding.venueAddress && (
                   <p className="font-body text-verde-noite/60 text-sm mb-3">
-                    {wedding.receptionAddress}
+                    {wedding.venueAddress}
                   </p>
                 )}
                 <p className="font-body text-verde-noite/80 text-sm mb-5">
-                  {formatDateTime(wedding.date)}
+                  {formatDateTime(wedding.weddingDate)}
                 </p>
-                {wedding.receptionAddress && (
+                {wedding.venueAddress && (
                   <button
-                    onClick={() => window.open(mapsUrl(wedding.receptionAddress!), "_blank")}
+                    onClick={() => window.open(mapsUrl(wedding.venueAddress!), "_blank")}
                     className="inline-block rounded-full border border-teal text-teal px-6 py-2 text-sm hover:bg-teal hover:text-white transition-colors"
                   >
                     Ver no mapa
@@ -340,7 +340,7 @@ export default function WeddingPublicPage() {
             )}
 
             {/* fallback when no venues */}
-            {!wedding.ceremonyVenue && !wedding.receptionVenue && (
+            {!wedding.ceremonyVenue && !wedding.venue && (
               <div className="md:col-span-2 text-center py-8">
                 <p className="font-body text-verde-noite/50 italic">
                   Informacoes do local em breve...
@@ -471,7 +471,7 @@ export default function WeddingPublicPage() {
 
       {/* ═══════ 5. PRESENTES ═══════ */}
       {topGifts.length > 0 && (
-        <section className="py-20 px-4 bg-[#F5F3EF]">
+        <section className="py-20 px-4 bg-cream">
           <FadeIn className="max-w-5xl mx-auto">
             <h2 className="font-heading text-4xl text-center mb-12">Lista de Presentes</h2>
 
@@ -502,7 +502,7 @@ export default function WeddingPublicPage() {
                   >
                     {statusLabel(gift.status)}
                   </span>
-                  {gift.status === "AVAILABLE" && gift.url && (
+                  {gift.status === "available" && gift.url && (
                     <a
                       href={gift.url}
                       target="_blank"

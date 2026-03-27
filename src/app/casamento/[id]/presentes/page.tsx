@@ -8,17 +8,17 @@ import { AnimatePresence, motion } from "framer-motion";
 
 /* ─── Types ─────────────────────────────────────────────────────────── */
 
-type GiftStatus = "disponivel" | "reservado" | "recebido";
+type GiftStatus = "available" | "reserved" | "received";
 
 interface Gift {
   id: string;
-  nome: string;
-  descricao?: string;
-  valor: number;
-  link?: string;
-  loja?: string;
+  name: string;
+  description?: string;
+  price: number;
+  url?: string;
+  store?: string;
   status: GiftStatus;
-  reservadoPor?: string;
+  reservedBy?: string;
 }
 
 /* ─── Helpers ──────────────────────────────────────────────────────── */
@@ -29,15 +29,15 @@ const formatCurrency = (value: number) =>
   );
 
 const STATUS_BADGE: Record<GiftStatus, string> = {
-  disponivel: "bg-green-100 text-green-700",
-  reservado: "bg-amber-100 text-amber-700",
-  recebido: "bg-gray-100 text-gray-500",
+  available: "bg-green-100 text-green-700",
+  reserved: "bg-amber-100 text-amber-700",
+  received: "bg-gray-100 text-gray-500",
 };
 
 const STATUS_LABEL: Record<GiftStatus, string> = {
-  disponivel: "Disponivel",
-  reservado: "Reservado",
-  recebido: "Recebido",
+  available: "Disponivel",
+  reserved: "Reservado",
+  received: "Recebido",
 };
 
 /* ─── SVG Icons ────────────────────────────────────────────────────── */
@@ -230,11 +230,11 @@ export default function PresentesPage() {
 
   function openEditModal(gift: Gift) {
     setEditingGift(gift);
-    setFormNome(gift.nome);
-    setFormDescricao(gift.descricao || "");
-    setFormValor(String(gift.valor));
-    setFormLink(gift.link || "");
-    setFormLoja(gift.loja || "");
+    setFormNome(gift.name);
+    setFormDescricao(gift.description || "");
+    setFormValor(String(gift.price));
+    setFormLink(gift.url || "");
+    setFormLoja(gift.store || "");
     setModalOpen(true);
   }
 
@@ -245,11 +245,11 @@ export default function PresentesPage() {
     setSubmitting(true);
 
     const body = {
-      nome: formNome.trim(),
-      descricao: formDescricao.trim() || undefined,
-      valor: parseFloat(formValor) || 0,
-      link: formLink.trim() || undefined,
-      loja: formLoja.trim() || undefined,
+      name: formNome.trim(),
+      description: formDescricao.trim() || undefined,
+      price: parseFloat(formValor) || 0,
+      url: formLink.trim() || undefined,
+      store: formLoja.trim() || undefined,
     };
 
     try {
@@ -320,13 +320,13 @@ export default function PresentesPage() {
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: "recebido" }),
+          body: JSON.stringify({ name: gift.name, status: "received" }),
         }
       );
       if (res.ok) {
         setGifts((prev) =>
           prev.map((g) =>
-            g.id === gift.id ? { ...g, status: "recebido" as GiftStatus } : g
+            g.id === gift.id ? { ...g, status: "received" as GiftStatus } : g
           )
         );
       }
@@ -406,32 +406,32 @@ export default function PresentesPage() {
                 <div className="p-5">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-heading text-lg text-verde-noite">
-                      {gift.nome}
+                      {gift.name}
                     </h3>
                     <span
                       className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-body font-medium shrink-0 ml-2 ${STATUS_BADGE[gift.status]}`}
                     >
                       {STATUS_LABEL[gift.status]}
-                      {gift.status === "reservado" && gift.reservadoPor && (
-                        <span className="ml-1">por {gift.reservadoPor}</span>
+                      {gift.status === "reserved" && gift.reservedBy && (
+                        <span className="ml-1">por {gift.reservedBy}</span>
                       )}
                     </span>
                   </div>
 
-                  {gift.descricao && (
+                  {gift.description && (
                     <p className="font-body text-sm text-gray-500 mb-2 line-clamp-2">
-                      {gift.descricao}
+                      {gift.description}
                     </p>
                   )}
 
-                  {gift.loja && (
+                  {gift.store && (
                     <p className="font-body text-xs text-gray-400 mb-1">
-                      {gift.loja}
+                      {gift.store}
                     </p>
                   )}
 
                   <p className="font-heading text-xl text-copper mb-4">
-                    {formatCurrency(gift.valor)}
+                    {formatCurrency(gift.price)}
                   </p>
 
                   {/* Action buttons */}
@@ -454,7 +454,7 @@ export default function PresentesPage() {
                       Excluir
                     </button>
 
-                    {gift.status === "reservado" && (
+                    {gift.status === "reserved" && (
                       <button
                         type="button"
                         onClick={() => markAsReceived(gift)}
@@ -663,7 +663,7 @@ export default function PresentesPage() {
                 <p className="font-body text-sm text-gray-500 mb-6">
                   Tem certeza que deseja excluir{" "}
                   <span className="font-medium text-verde-noite">
-                    {deleteTarget.nome}
+                    {deleteTarget.name}
                   </span>
                   ? Esta acao nao pode ser desfeita.
                 </p>

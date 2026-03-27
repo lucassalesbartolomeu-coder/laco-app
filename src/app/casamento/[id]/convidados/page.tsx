@@ -24,7 +24,7 @@ interface Guest {
   city?: string;
   state?: string;
   category: Category;
-  status: Status;
+  rsvpStatus: Status;
 }
 
 /* ─── Constants ─────────────────────────────────────────────────────── */
@@ -196,36 +196,36 @@ export default function ConvidadosPage() {
     const matchCategory =
       filterCategory === "todos" || g.category === filterCategory;
     const matchStatus =
-      filterStatus === "todos" || g.status === filterStatus;
+      filterStatus === "todos" || g.rsvpStatus === filterStatus;
     return matchSearch && matchCategory && matchStatus;
   });
 
   /* ── KPI values ────────────────────────────────────────────────── */
 
   const total = guests.length;
-  const confirmados = guests.filter((g) => g.status === "confirmado").length;
-  const pendentes = guests.filter((g) => g.status === "pendente").length;
-  const recusados = guests.filter((g) => g.status === "recusado").length;
+  const confirmados = guests.filter((g) => g.rsvpStatus === "confirmado").length;
+  const pendentes = guests.filter((g) => g.rsvpStatus === "pendente").length;
+  const recusados = guests.filter((g) => g.rsvpStatus === "recusado").length;
 
   const pctConfirmados = total > 0 ? Math.round((confirmados / total) * 100) : 0;
 
   /* ── Actions ───────────────────────────────────────────────────── */
 
   async function cycleStatus(guest: Guest) {
-    const newStatus = STATUS_CYCLE[guest.status];
+    const newStatus = STATUS_CYCLE[guest.rsvpStatus];
     try {
       const res = await fetch(
         `/api/weddings/${weddingId}/guests/${guest.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: newStatus }),
+          body: JSON.stringify({ name: guest.name, rsvpStatus: newStatus }),
         }
       );
       if (res.ok) {
         setGuests((prev) =>
           prev.map((g) =>
-            g.id === guest.id ? { ...g, status: newStatus } : g
+            g.id === guest.id ? { ...g, rsvpStatus: newStatus } : g
           )
         );
       }
@@ -260,7 +260,7 @@ export default function ConvidadosPage() {
           phone: formPhone.trim(),
           email: formEmail.trim(),
           category: formCategory,
-          status: formStatus,
+          rsvpStatus: formStatus,
         }),
       });
       if (res.ok) {
@@ -507,11 +507,11 @@ export default function ConvidadosPage() {
                             type="button"
                             onClick={() => cycleStatus(guest)}
                             className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-body font-medium cursor-pointer transition-colors ${
-                              STATUS_COLORS[guest.status]
+                              STATUS_COLORS[guest.rsvpStatus]
                             }`}
                           >
-                            {guest.status.charAt(0).toUpperCase() +
-                              guest.status.slice(1)}
+                            {guest.rsvpStatus.charAt(0).toUpperCase() +
+                              guest.rsvpStatus.slice(1)}
                           </button>
                         </td>
 
@@ -593,11 +593,11 @@ export default function ConvidadosPage() {
                         type="button"
                         onClick={() => cycleStatus(guest)}
                         className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-body font-medium cursor-pointer transition-colors ${
-                          STATUS_COLORS[guest.status]
+                          STATUS_COLORS[guest.rsvpStatus]
                         }`}
                       >
-                        {guest.status.charAt(0).toUpperCase() +
-                          guest.status.slice(1)}
+                        {guest.rsvpStatus.charAt(0).toUpperCase() +
+                          guest.rsvpStatus.slice(1)}
                       </button>
                     </div>
                   </div>
