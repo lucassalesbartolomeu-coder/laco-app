@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState, FormEvent } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 /* ─── Types ─── */
 interface Wedding {
@@ -481,10 +482,13 @@ export default function WeddingPublicPage() {
                   className="bg-white rounded-xl p-4 flex flex-col items-center text-center shadow-sm"
                 >
                   {gift.imageUrl && (
-                    <img
+                    <Image
                       src={gift.imageUrl}
                       alt={gift.name}
+                      width={200}
+                      height={128}
                       className="w-full h-32 object-contain rounded-lg mb-3"
+                      unoptimized
                     />
                   )}
                   <h3 className="font-body font-semibold text-sm leading-tight mb-1 line-clamp-2">

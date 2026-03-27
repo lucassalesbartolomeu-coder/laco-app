@@ -69,7 +69,7 @@ function parseCsvText(text: string): Contact[] {
 export default function ImportarContatosPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const { data: session } = useSession();
+  useSession(); // ensure authenticated
 
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [dragOver, setDragOver] = useState(false);
