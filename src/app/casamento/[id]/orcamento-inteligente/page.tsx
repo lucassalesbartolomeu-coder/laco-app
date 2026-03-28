@@ -15,6 +15,7 @@ import {
   type BudgetTier,
   type Region,
   type VendorCategory,
+  type VendorClassification,
 } from "@/lib/wedding-budget-data";
 
 // ─── Types ───────────────────────────────────────────────────
@@ -380,7 +381,10 @@ function ResultsStep({
   onSave: () => void;
   isSaving: boolean;
 }) {
-  const groups = getClassificationGroups();
+  const groups = Object.entries(getClassificationGroups()).map(([classification, cats]) => ({
+    classification: classification as VendorClassification,
+    categories: cats.map((c) => c.id),
+  }));
   const shareUrl = budget
     ? `R$${(budget.minTotal / 1000).toFixed(0)}k-${(budget.maxTotal / 1000).toFixed(0)}k`
     : "Orçamento";
