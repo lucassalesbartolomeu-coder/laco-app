@@ -696,7 +696,7 @@ function EmptyState({ id }: EmptyStateProps) {
 export default function SimuladorConvidadosPage() {
   const { id } = useParams<{ id: string }>();
   const { data: session, status } = useSession();
-  const { toast } = useToast();
+  const toast = useToast();
 
   const [wedding, setWedding] = useState<WeddingWithRelations | null>(null);
   const [loading, setLoading] = useState(true);
@@ -715,7 +715,7 @@ export default function SimuladorConvidadosPage() {
         const message =
           err instanceof Error ? err.message : "Erro desconhecido";
         setError(message);
-        toast({ title: "Erro", description: message, variant: "destructive" });
+        toast.error(message);
       } finally {
         setLoading(false);
       }
