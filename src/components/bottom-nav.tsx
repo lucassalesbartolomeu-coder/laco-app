@@ -10,41 +10,44 @@ interface BottomNavProps {
   weddingId?: string;
 }
 
-const HomeIcon = () => (
+/* ─── Icons ─────────────────────────────────────────────────────────── */
+
+const InicioIcon = () => (
   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
   </svg>
 );
 
-const SimuladorIcon = () => (
+const PlanejarIcon = () => (
   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
   </svg>
 );
 
-const GestaoIcon = () => (
+const MeuSiteIcon = () => (
   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
   </svg>
 );
 
-const IDVisualIcon = () => (
+const ExecucaoIcon = () => (
   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
   </svg>
 );
 
-const PerfilIcon = () => (
+const MaisIcon = () => (
   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
   </svg>
 );
+
+/* ─── Component ─────────────────────────────────────────────────────── */
 
 export default function BottomNav({ weddingId }: BottomNavProps) {
   const pathname = usePathname();
   const [resolvedId, setResolvedId] = useState(weddingId);
 
-  // Persist the weddingId whenever we have one; fall back to localStorage when we don't
   useEffect(() => {
     if (weddingId) {
       localStorage.setItem(LAST_WEDDING_KEY, weddingId);
@@ -62,38 +65,51 @@ export default function BottomNav({ weddingId }: BottomNavProps) {
 
   const tabs = [
     {
-      label: "Home",
+      label: "Inicio",
       href: "/dashboard",
-      icon: <HomeIcon />,
+      icon: <InicioIcon />,
       active: isHome,
       disabled: false,
     },
     {
-      label: "Convidados",
-      href: weddingBase ? `${weddingBase}/convidados` : null,
-      icon: <GestaoIcon />,
-      active: isActive("/convidados") || isActive("/confirmacoes") || isActive("/importar"),
+      label: "Planejar",
+      href: weddingBase ? `${weddingBase}/planejar` : null,
+      icon: <PlanejarIcon />,
+      active:
+        isActive("/planejar") ||
+        isActive("/orcamento-inteligente") ||
+        isActive("/simulador-convidados") ||
+        isActive("/simulador") ||
+        isActive("/fornecedores"),
       disabled: !weddingBase,
     },
     {
-      label: "Orçamento",
-      href: weddingBase ? `${weddingBase}/orcamento` : null,
-      icon: <SimuladorIcon />,
-      active: isActive("/orcamento") || isActive("/fornecedores") || isActive("/simulador"),
+      label: "Meu Site",
+      href: weddingBase ? `${weddingBase}/meu-site` : null,
+      icon: <MeuSiteIcon />,
+      active:
+        isActive("/meu-site") ||
+        isActive("/identity-kit"),
       disabled: !weddingBase,
     },
     {
-      label: "ID Visual",
-      href: weddingBase ? `${weddingBase}/identity-kit` : null,
-      icon: <IDVisualIcon />,
-      active: isActive("/identity-kit"),
+      label: "Execucao",
+      href: weddingBase ? `${weddingBase}/execucao` : null,
+      icon: <ExecucaoIcon />,
+      active:
+        isActive("/execucao") ||
+        isActive("/convidados") ||
+        isActive("/confirmacoes") ||
+        isActive("/importar") ||
+        isActive("/orcamento") ||
+        isActive("/presentes"),
       disabled: !weddingBase,
     },
     {
-      label: "Perfil",
-      href: "/perfil",
-      icon: <PerfilIcon />,
-      active: isActive("/perfil"),
+      label: "Mais",
+      href: weddingBase ? `${weddingBase}/mais` : "/perfil",
+      icon: <MaisIcon />,
+      active: isActive("/mais") || isActive("/perfil"),
       disabled: false,
     },
   ];

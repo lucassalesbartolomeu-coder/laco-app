@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -19,6 +19,7 @@ type Category =
   | "trabalho";
 
 type Status = "confirmado" | "pendente" | "recusado";
+type GuestListType = "A" | "B" | "C";
 
 interface Guest {
   id: string;
@@ -28,7 +29,9 @@ interface Guest {
   city?: string;
   state?: string;
   category: Category;
+  guestList: GuestListType;
   rsvpStatus: Status;
+  whatsappSentAt?: string;
 }
 
 /* ─── Constants ─────────────────────────────────────────────────────── */
@@ -59,6 +62,12 @@ const STATUS_CYCLE: Record<Status, Status> = {
   pendente: "confirmado",
   confirmado: "recusado",
   recusado: "pendente",
+};
+
+const LIST_META: Record<GuestListType, { label: string; emoji: string; color: string; desc: string }> = {
+  A: { label: "Lista Oficial", emoji: "👑", color: "bg-teal text-white", desc: "Convidados confirmados — a cerimonialista tem acesso" },
+  B: { label: "Lista Reserva", emoji: "🔄", color: "bg-amber-500 text-white", desc: "Próximos da fila se alguém desistir" },
+  C: { label: "Lista Talvez", emoji: "💭", color: "bg-gray-400 text-white", desc: "Pensando se convida ou não" },
 };
 
 const DDD_STATE: Record<string, string> = {
@@ -134,7 +143,25 @@ function TrashIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
-/* ─── Modal overlay variants ────────────────────────────────────────── */
+function ArrowIcon({ className = "w-4 h-4", direction = "right" }: { className?: string; direction?: "left" | "right" | "up" | "down" }) {
+  const rotation = { left: 180, right: 0, up: -90, down: 90 }[direction];
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: `rotate(${rotation}deg)` }}>
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </svg>
+  );
+}
+
+function WhatsAppIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  );
+}
+
+/* ─── Animation variants ─────────────────────────────────────────────── */
 
 const overlayVariants = {
   hidden: { opacity: 0 },
@@ -157,6 +184,9 @@ export default function ConvidadosPage() {
   const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Active list tab
+  const [activeList, setActiveList] = useState<GuestListType>("A");
+
   // Filters
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState("todos");
@@ -167,17 +197,25 @@ export default function ConvidadosPage() {
   const [pickingContacts, setPickingContacts] = useState(false);
   const [pickedContacts, setPickedContacts] = useState<{ name: string; phone: string; suggested?: string }[]>([]);
   const [pickedCategory, setPickedCategory] = useState<Category>("familia_noivo");
+  const [pickedList, setPickedList] = useState<GuestListType>("A");
   const [importingContacts, setImportingContacts] = useState(false);
   const [cleaningNames, setCleaningNames] = useState(false);
 
-  // Modal
+  // Modal (add guest)
   const [modalOpen, setModalOpen] = useState(false);
   const [formName, setFormName] = useState("");
   const [formPhone, setFormPhone] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [formCategory, setFormCategory] = useState<Category>("familia_noivo");
+  const [formList, setFormList] = useState<GuestListType>("A");
   const [formStatus, setFormStatus] = useState<Status>("pendente");
   const [submitting, setSubmitting] = useState(false);
+
+  // Move guest modal
+  const [moveTarget, setMoveTarget] = useState<Guest | null>(null);
+
+  // WhatsApp confirmation panel
+  const [showWhatsApp, setShowWhatsApp] = useState(false);
 
   /* ── Fetch guests ──────────────────────────────────────────────── */
 
@@ -186,7 +224,7 @@ export default function ConvidadosPage() {
       const res = await fetch(`/api/weddings/${weddingId}/guests`);
       if (res.ok) {
         const data = await res.json();
-        setGuests(data);
+        setGuests(data.map((g: Guest) => ({ ...g, guestList: g.guestList || "A" })));
       }
     } catch (err) {
       console.error("Erro ao carregar convidados", err);
@@ -205,29 +243,35 @@ export default function ConvidadosPage() {
     );
   }, []);
 
-  /* ── Filtered list ─────────────────────────────────────────────── */
+  /* ── Computed ─────────────────────────────────────────────────── */
 
-  const filtered = guests.filter((g) => {
+  const guestsByList = useMemo(() => ({
+    A: guests.filter(g => (g.guestList || "A") === "A"),
+    B: guests.filter(g => g.guestList === "B"),
+    C: guests.filter(g => g.guestList === "C"),
+  }), [guests]);
+
+  const currentListGuests = guestsByList[activeList];
+
+  const filtered = currentListGuests.filter((g) => {
     const matchSearch = g.name.toLowerCase().includes(search.toLowerCase());
-    const matchCategory =
-      filterCategory === "todos" || g.category === filterCategory;
-    const matchStatus =
-      filterStatus === "todos" || g.rsvpStatus === filterStatus;
+    const matchCategory = filterCategory === "todos" || g.category === filterCategory;
+    const matchStatus = filterStatus === "todos" || g.rsvpStatus === filterStatus;
     return matchSearch && matchCategory && matchStatus;
   });
 
-  /* ── KPI values ────────────────────────────────────────────────── */
-
-  const total = guests.length;
-  const confirmados = guests.filter((g) => g.rsvpStatus === "confirmado").length;
-  const pendentes = guests.filter((g) => g.rsvpStatus === "pendente").length;
-  const recusados = guests.filter((g) => g.rsvpStatus === "recusado").length;
-
+  // KPIs for active list
+  const total = currentListGuests.length;
+  const confirmados = currentListGuests.filter((g) => g.rsvpStatus === "confirmado").length;
+  const pendentes = currentListGuests.filter((g) => g.rsvpStatus === "pendente").length;
+  const recusados = currentListGuests.filter((g) => g.rsvpStatus === "recusado").length;
   const pctConfirmados = total > 0 ? Math.round((confirmados / total) * 100) : 0;
 
-  /* ── Actions ───────────────────────────────────────────────────── */
+  // Global stats
+  const totalAll = guests.length;
+  const totalA = guestsByList.A.length;
 
-  /* ── Contact Picker ────────────────────────────────────────────────── */
+  /* ── Actions ───────────────────────────────────────────────────── */
 
   async function handleContactPicker() {
     if (!contactPickerSupported) return;
@@ -245,6 +289,7 @@ export default function ConvidadosPage() {
 
       setPickedContacts(parsed);
       setPickedCategory("familia_noivo");
+      setPickedList(activeList);
 
       // Clean names via AI in background
       setCleaningNames(true);
@@ -264,7 +309,7 @@ export default function ConvidadosPage() {
           );
         }
       } catch {
-        // AI failed — silently ignore, user sees original names
+        // AI failed — silently ignore
       } finally {
         setCleaningNames(false);
       }
@@ -280,9 +325,10 @@ export default function ConvidadosPage() {
     setImportingContacts(true);
     try {
       const payload = pickedContacts.map((c) => ({
-        name: c.name,
+        name: c.suggested || c.name,
         phone: c.phone,
         category: pickedCategory,
+        guestList: pickedList,
         rsvpStatus: "pendente",
       }));
       const res = await fetch(`/api/weddings/${weddingId}/guests/bulk`, {
@@ -324,6 +370,29 @@ export default function ConvidadosPage() {
     }
   }
 
+  async function moveGuestToList(guest: Guest, targetList: GuestListType) {
+    try {
+      const res = await fetch(
+        `/api/weddings/${weddingId}/guests/${guest.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ guestList: targetList }),
+        }
+      );
+      if (res.ok) {
+        setGuests((prev) =>
+          prev.map((g) =>
+            g.id === guest.id ? { ...g, guestList: targetList } : g
+          )
+        );
+        setMoveTarget(null);
+      }
+    } catch (err) {
+      console.error("Erro ao mover convidado", err);
+    }
+  }
+
   async function deleteGuest(guestId: string) {
     try {
       const res = await fetch(
@@ -350,12 +419,13 @@ export default function ConvidadosPage() {
           phone: formPhone.trim(),
           email: formEmail.trim(),
           category: formCategory,
+          guestList: formList,
           rsvpStatus: formStatus,
         }),
       });
       if (res.ok) {
         const newGuest = await res.json();
-        setGuests((prev) => [...prev, newGuest]);
+        setGuests((prev) => [...prev, { ...newGuest, guestList: newGuest.guestList || formList }]);
         resetForm();
         setModalOpen(false);
       }
@@ -371,6 +441,7 @@ export default function ConvidadosPage() {
     setFormPhone("");
     setFormEmail("");
     setFormCategory("familia_noivo");
+    setFormList(activeList);
     setFormStatus("pendente");
   }
 
@@ -389,104 +460,197 @@ export default function ConvidadosPage() {
   /* ── Render ────────────────────────────────────────────────────── */
 
   return (
-    <div className="min-h-screen bg-off-white py-8 px-4">
+    <div className="min-h-screen bg-off-white py-6 px-4 pb-32">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex items-start justify-between mb-1">
+        <div className="flex items-start justify-between mb-6">
           <div>
             <h1 className="font-heading text-3xl sm:text-4xl text-verde-noite">
               Convidados
             </h1>
-            <p className="font-body text-gray-500 mt-1">
-              Gerencie sua lista de convidados
+            <p className="font-body text-sm text-gray-500 mt-1">
+              {totalAll} convidado{totalAll !== 1 ? "s" : ""} no total &middot; {totalA} na lista oficial
             </p>
           </div>
-          <button
-            onClick={contactPickerSupported ? handleContactPicker : undefined}
-            disabled={pickingContacts}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-body font-medium transition mt-1 flex-shrink-0 ${
-              contactPickerSupported
-                ? "bg-teal text-white hover:bg-teal/90 shadow-sm"
-                : "bg-gray-100 text-gray-400 cursor-default"
-            }`}
-            title={contactPickerSupported ? "Importar contatos da agenda" : "Disponível no Chrome para Android"}
-          >
-            {pickingContacts ? (
-              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-              </svg>
-            ) : (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            )}
-            Importar
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowWhatsApp(!showWhatsApp)}
+              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-body font-medium bg-green-600 text-white hover:bg-green-700 transition shadow-sm"
+              title="Confirmação via WhatsApp"
+            >
+              <WhatsAppIcon className="w-4 h-4" />
+              <span className="hidden sm:inline">Confirmar</span>
+            </button>
+            <button
+              onClick={contactPickerSupported ? handleContactPicker : undefined}
+              disabled={pickingContacts}
+              className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-body font-medium transition flex-shrink-0 ${
+                contactPickerSupported
+                  ? "bg-teal text-white hover:bg-teal/90 shadow-sm"
+                  : "bg-gray-100 text-gray-400 cursor-default"
+              }`}
+              title={contactPickerSupported ? "Importar contatos da agenda" : "Disponível no Chrome para Android"}
+            >
+              {pickingContacts ? (
+                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+              ) : (
+                <PeopleIcon className="w-4 h-4" />
+              )}
+              Importar
+            </button>
+          </div>
         </div>
-        <div className="mb-8" />
+
+        {/* ── WhatsApp Confirmation Panel ─────────────────────────── */}
+        <AnimatePresence>
+          {showWhatsApp && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden mb-6"
+            >
+              <div className="bg-gradient-to-r from-green-50 to-green-100/50 border border-green-200 rounded-2xl p-5">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center flex-shrink-0">
+                    <WhatsAppIcon className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-heading text-lg text-verde-noite mb-1">
+                      Confirmacao via WhatsApp
+                    </h3>
+                    <p className="font-body text-sm text-gray-600 mb-3">
+                      Envie mensagens de confirmacao para seus convidados da <strong>Lista Oficial</strong>.
+                      Nosso objetivo: <strong>100% dos convidados</strong> confirmarem se vao ou nao.
+                    </p>
+                    <div className="flex flex-wrap gap-3 mb-3">
+                      <div className="bg-white rounded-xl px-3 py-2 text-center">
+                        <p className="font-heading text-xl text-verde-noite">{totalA}</p>
+                        <p className="font-body text-[11px] text-gray-500">Convidados</p>
+                      </div>
+                      <div className="bg-white rounded-xl px-3 py-2 text-center">
+                        <p className="font-heading text-xl text-green-600">{guestsByList.A.filter(g => g.rsvpStatus === "confirmado").length}</p>
+                        <p className="font-body text-[11px] text-gray-500">Confirmados</p>
+                      </div>
+                      <div className="bg-white rounded-xl px-3 py-2 text-center">
+                        <p className="font-heading text-xl text-amber-600">{guestsByList.A.filter(g => g.rsvpStatus === "pendente").length}</p>
+                        <p className="font-body text-[11px] text-gray-500">Pendentes</p>
+                      </div>
+                      <div className="bg-white rounded-xl px-3 py-2 text-center">
+                        <p className="font-heading text-xl text-red-500">{guestsByList.A.filter(g => g.rsvpStatus === "recusado").length}</p>
+                        <p className="font-body text-[11px] text-gray-500">Recusados</p>
+                      </div>
+                    </div>
+                    <div className="bg-white/80 rounded-xl p-3 border border-green-100">
+                      <p className="font-body text-xs text-gray-600 mb-2">
+                        <strong>Como funciona:</strong> A cerimonialista pode usar este painel + a pagina publica
+                        do seu casamento para confirmar presenca. Cada convidado recebe uma mensagem personalizada via WhatsApp.
+                      </p>
+                      <p className="font-body text-xs text-gray-500 italic">
+                        Servico disponivel mais perto da data do casamento. Entre em contato com sua cerimonialista para ativar.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── List Tabs (A / B / C) ────────────────────────────────── */}
+        <div className="flex gap-2 mb-2">
+          {(["A", "B", "C"] as GuestListType[]).map((listType) => {
+            const meta = LIST_META[listType];
+            const count = guestsByList[listType].length;
+            const isActive = activeList === listType;
+            return (
+              <button
+                key={listType}
+                onClick={() => setActiveList(listType)}
+                className={`flex-1 sm:flex-initial relative px-4 py-3 rounded-xl font-body text-sm font-medium transition-all duration-200 ${
+                  isActive
+                    ? "bg-white shadow-md text-verde-noite ring-2 ring-teal/30"
+                    : "bg-white/50 text-gray-500 hover:bg-white hover:shadow-sm"
+                }`}
+              >
+                <div className="flex items-center justify-center sm:justify-start gap-2">
+                  <span className="text-base">{meta.emoji}</span>
+                  <span>{meta.label}</span>
+                  <span className={`inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-xs font-semibold ${
+                    isActive ? meta.color : "bg-gray-200 text-gray-600"
+                  }`}>
+                    {count}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* List description + insight */}
+        <div className="mb-6">
+          <p className="font-body text-xs text-gray-400 px-1">
+            {LIST_META[activeList].desc}
+          </p>
+          {activeList === "B" && (
+            <div className="mt-2 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2">
+              <p className="font-body text-xs text-amber-700">
+                <strong>Dica:</strong> Nossa matematica de presenca e bem realista — a Lista B acaba sendo mais
+                uma seguranca do que necessidade. Use para organizar, mas confie nos numeros da Lista Oficial.
+              </p>
+            </div>
+          )}
+          {activeList === "A" && totalA > 0 && (
+            <div className="mt-2 bg-teal/5 border border-teal/10 rounded-xl px-3 py-2">
+              <p className="font-body text-xs text-teal">
+                <strong>Lista Oficial</strong> — sua cerimonialista tem acesso a esta lista para coordenar
+                logistica, buffet e layout das mesas.
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* ── KPI Cards ──────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {/* Total */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
           <div className="bg-white rounded-2xl shadow-sm p-4">
             <div className="flex items-center gap-2 mb-2">
               <PeopleIcon className="w-5 h-5 text-teal" />
-              <span className="font-body text-sm text-gray-500">
-                Total
-              </span>
+              <span className="font-body text-sm text-gray-500">Total</span>
             </div>
             <p className="font-heading text-3xl text-verde-noite">{total}</p>
           </div>
-
-          {/* Confirmados */}
           <div className="bg-white rounded-2xl shadow-sm p-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500" />
-              <span className="font-body text-sm text-gray-500">
-                Confirmados
-              </span>
+              <span className="font-body text-sm text-gray-500">Confirmados</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <p className="font-heading text-3xl text-verde-noite">
-                {confirmados}
-              </p>
-              <span className="font-body text-sm text-green-600">
-                {pctConfirmados}%
-              </span>
+              <p className="font-heading text-3xl text-verde-noite">{confirmados}</p>
+              <span className="font-body text-sm text-green-600">{pctConfirmados}%</span>
             </div>
           </div>
-
-          {/* Pendentes */}
           <div className="bg-white rounded-2xl shadow-sm p-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-500" />
-              <span className="font-body text-sm text-gray-500">
-                Pendentes
-              </span>
+              <span className="font-body text-sm text-gray-500">Pendentes</span>
             </div>
-            <p className="font-heading text-3xl text-verde-noite">
-              {pendentes}
-            </p>
+            <p className="font-heading text-3xl text-verde-noite">{pendentes}</p>
           </div>
-
-          {/* Recusados */}
           <div className="bg-white rounded-2xl shadow-sm p-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="inline-block w-2.5 h-2.5 rounded-full bg-gray-400" />
-              <span className="font-body text-sm text-gray-500">
-                Recusados
-              </span>
+              <span className="font-body text-sm text-gray-500">Recusados</span>
             </div>
-            <p className="font-heading text-3xl text-verde-noite">
-              {recusados}
-            </p>
+            <p className="font-heading text-3xl text-verde-noite">{recusados}</p>
           </div>
         </div>
 
         {/* ── Filter Bar ─────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          {/* Search */}
           <div className="relative flex-1">
             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -497,22 +661,16 @@ export default function ConvidadosPage() {
               className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
             />
           </div>
-
-          {/* Category filter */}
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
             className="px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200 appearance-none"
           >
             <option value="todos">Todos</option>
-            <option value="familia_noivo">Familia Noivo</option>
-            <option value="familia_noiva">Familia Noiva</option>
-            <option value="amigos_noivo">Amigos Noivo</option>
-            <option value="amigos_noiva">Amigos Noiva</option>
-            <option value="trabalho">Trabalho</option>
+            {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+              <option key={key} value={key}>{label}</option>
+            ))}
           </select>
-
-          {/* Status filter */}
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
@@ -530,11 +688,16 @@ export default function ConvidadosPage() {
         {filtered.length === 0 && !loading ? (
           <div className="text-center py-16">
             <PeopleIcon className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <p className="font-body text-gray-400">
-              {guests.length === 0
-                ? "Nenhum convidado adicionado ainda"
+            <p className="font-body text-gray-400 mb-2">
+              {currentListGuests.length === 0
+                ? `Nenhum convidado na ${LIST_META[activeList].label}`
                 : "Nenhum resultado encontrado"}
             </p>
+            {currentListGuests.length === 0 && (
+              <p className="font-body text-sm text-gray-400">
+                Adicione convidados usando o botao <span className="text-copper font-semibold">+</span> ou importe da sua agenda
+              </p>
+            )}
           </div>
         ) : (
           <>
@@ -550,13 +713,16 @@ export default function ConvidadosPage() {
                       Telefone
                     </th>
                     <th className="text-left font-body text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-4">
-                      Localidade
+                      Local
                     </th>
                     <th className="text-left font-body text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-4">
                       Categoria
                     </th>
                     <th className="text-left font-body text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-4">
                       Status
+                    </th>
+                    <th className="text-left font-body text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-4">
+                      Mover
                     </th>
                     <th className="px-4 py-4" />
                   </tr>
@@ -575,7 +741,6 @@ export default function ConvidadosPage() {
                         key={guest.id}
                         className="border-b border-gray-50 last:border-b-0 hover:bg-gray-50/50 transition-colors"
                       >
-                        {/* Name + avatar */}
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-full bg-teal text-white flex items-center justify-center font-body text-sm font-semibold shrink-0">
@@ -586,13 +751,9 @@ export default function ConvidadosPage() {
                             </span>
                           </div>
                         </td>
-
-                        {/* Phone */}
                         <td className="px-4 py-4 font-body text-sm text-gray-600">
                           {guest.phone || "---"}
                         </td>
-
-                        {/* Location */}
                         <td className="px-4 py-4">
                           <div className="flex items-center gap-2">
                             {ddd && (
@@ -601,38 +762,40 @@ export default function ConvidadosPage() {
                               </span>
                             )}
                             <span className="font-body text-sm text-gray-600">
-                              {location ||
-                                (dddState ? dddState : "---")}
+                              {location || (dddState ? dddState : "---")}
                             </span>
                           </div>
                         </td>
-
-                        {/* Category */}
                         <td className="px-4 py-4">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-body font-medium ${
-                              CATEGORY_COLORS[guest.category]
-                            }`}
-                          >
-                            {CATEGORY_LABELS[guest.category]}
+                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-body font-medium ${CATEGORY_COLORS[guest.category] || "bg-gray-100 text-gray-600"}`}>
+                            {CATEGORY_LABELS[guest.category] || guest.category || "---"}
                           </span>
                         </td>
-
-                        {/* Status */}
                         <td className="px-4 py-4">
                           <button
                             type="button"
                             onClick={() => cycleStatus(guest)}
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-body font-medium cursor-pointer transition-colors ${
-                              STATUS_COLORS[guest.rsvpStatus]
-                            }`}
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-body font-medium cursor-pointer transition-colors ${STATUS_COLORS[guest.rsvpStatus]}`}
                           >
-                            {guest.rsvpStatus.charAt(0).toUpperCase() +
-                              guest.rsvpStatus.slice(1)}
+                            {guest.rsvpStatus.charAt(0).toUpperCase() + guest.rsvpStatus.slice(1)}
                           </button>
                         </td>
-
-                        {/* Delete */}
+                        <td className="px-4 py-4">
+                          <div className="flex items-center gap-1">
+                            {(["A", "B", "C"] as GuestListType[])
+                              .filter(l => l !== activeList)
+                              .map(targetList => (
+                                <button
+                                  key={targetList}
+                                  onClick={() => moveGuestToList(guest, targetList)}
+                                  className="px-2 py-1 rounded-lg text-[11px] font-body font-semibold hover:shadow-sm transition-all border border-gray-200 hover:border-gray-300 text-gray-600 hover:text-verde-noite"
+                                  title={`Mover para ${LIST_META[targetList].label}`}
+                                >
+                                  {targetList}
+                                </button>
+                              ))}
+                          </div>
+                        </td>
                         <td className="px-4 py-4">
                           <button
                             type="button"
@@ -660,30 +823,24 @@ export default function ConvidadosPage() {
                     : guest.city || guest.state || null;
 
                 return (
-                  <div
-                    key={guest.id}
-                    className="bg-white rounded-2xl shadow-sm p-4"
-                  >
+                  <div key={guest.id} className="bg-white rounded-2xl shadow-sm p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-teal text-white flex items-center justify-center font-body text-sm font-semibold shrink-0">
                           {getInitials(guest.name)}
                         </div>
                         <div>
-                          <p className="font-body text-verde-noite font-medium">
-                            {guest.name}
-                          </p>
-                          <p className="font-body text-xs text-gray-400">
-                            {guest.phone || "Sem telefone"}
-                          </p>
+                          <p className="font-body text-verde-noite font-medium">{guest.name}</p>
+                          <p className="font-body text-xs text-gray-400">{guest.phone || "Sem telefone"}</p>
                         </div>
                       </div>
                       <button
                         type="button"
-                        onClick={() => deleteGuest(guest.id)}
-                        className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                        onClick={() => setMoveTarget(guest)}
+                        className="p-2 rounded-lg text-gray-400 hover:text-teal hover:bg-teal/10 transition-colors"
+                        title="Mover para outra lista"
                       >
-                        <TrashIcon />
+                        <ArrowIcon className="w-4 h-4" direction="right" />
                       </button>
                     </div>
 
@@ -699,23 +856,25 @@ export default function ConvidadosPage() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-body font-medium ${
-                          CATEGORY_COLORS[guest.category]
-                        }`}
-                      >
-                        {CATEGORY_LABELS[guest.category]}
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-body font-medium ${CATEGORY_COLORS[guest.category] || "bg-gray-100 text-gray-600"}`}>
+                        {CATEGORY_LABELS[guest.category] || guest.category || "---"}
                       </span>
-                      <button
-                        type="button"
-                        onClick={() => cycleStatus(guest)}
-                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-body font-medium cursor-pointer transition-colors ${
-                          STATUS_COLORS[guest.rsvpStatus]
-                        }`}
-                      >
-                        {guest.rsvpStatus.charAt(0).toUpperCase() +
-                          guest.rsvpStatus.slice(1)}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => cycleStatus(guest)}
+                          className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-body font-medium cursor-pointer transition-colors ${STATUS_COLORS[guest.rsvpStatus]}`}
+                        >
+                          {guest.rsvpStatus.charAt(0).toUpperCase() + guest.rsvpStatus.slice(1)}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deleteGuest(guest.id)}
+                          className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                        >
+                          <TrashIcon className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -729,12 +888,78 @@ export default function ConvidadosPage() {
           type="button"
           onClick={() => {
             resetForm();
+            setFormList(activeList);
             setModalOpen(true);
           }}
           className="fixed bottom-24 right-6 w-14 h-14 bg-copper text-white rounded-full shadow-lg hover:bg-copper/90 transition-all duration-200 flex items-center justify-center z-40"
         >
           <PlusIcon />
         </button>
+
+        {/* ── Move Guest Modal (Mobile) ───────────────────────────── */}
+        <AnimatePresence>
+          {moveTarget && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-end justify-center px-4 pb-4"
+              variants={overlayVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              transition={{ duration: 0.2 }}
+            >
+              <motion.div
+                className="absolute inset-0 bg-black/40"
+                onClick={() => setMoveTarget(null)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              />
+              <motion.div
+                className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 z-10"
+                variants={modalVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={{ duration: 0.25, ease: "easeOut" }}
+              >
+                <h3 className="font-heading text-lg text-verde-noite mb-1">
+                  Mover {moveTarget.name}
+                </h3>
+                <p className="font-body text-sm text-gray-500 mb-4">
+                  Atualmente na {LIST_META[moveTarget.guestList || "A" as GuestListType].label}
+                </p>
+                <div className="space-y-2">
+                  {(["A", "B", "C"] as GuestListType[])
+                    .filter(l => l !== (moveTarget.guestList || "A"))
+                    .map(targetList => {
+                      const meta = LIST_META[targetList];
+                      return (
+                        <button
+                          key={targetList}
+                          onClick={() => moveGuestToList(moveTarget, targetList)}
+                          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 hover:border-teal hover:bg-teal/5 transition-all text-left"
+                        >
+                          <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${meta.color}`}>
+                            {meta.emoji}
+                          </span>
+                          <div>
+                            <p className="font-body text-sm font-medium text-verde-noite">{meta.label}</p>
+                            <p className="font-body text-xs text-gray-400">{meta.desc}</p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                </div>
+                <button
+                  onClick={() => setMoveTarget(null)}
+                  className="w-full mt-3 px-4 py-2.5 border border-gray-300 text-gray-600 rounded-xl font-body text-sm font-medium hover:bg-gray-50 transition"
+                >
+                  Cancelar
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* ── Import Contacts Modal ─────────────────────────────── */}
         <AnimatePresence>
@@ -766,18 +991,44 @@ export default function ConvidadosPage() {
                   {pickedContacts.length} contato{pickedContacts.length !== 1 ? "s" : ""} selecionado{pickedContacts.length !== 1 ? "s" : ""}
                 </h2>
                 <p className="font-body text-sm text-gray-500 mb-4">
-                  Escolha a categoria para todos eles:
+                  Escolha a categoria e para qual lista importar:
                 </p>
 
-                <select
-                  value={pickedCategory}
-                  onChange={(e) => setPickedCategory(e.target.value as Category)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none mb-4 appearance-none"
-                >
-                  {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
-                    <option key={key} value={key}>{label}</option>
-                  ))}
-                </select>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <label className="block font-body text-xs text-gray-500 mb-1">Categoria</label>
+                    <select
+                      value={pickedCategory}
+                      onChange={(e) => setPickedCategory(e.target.value as Category)}
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none appearance-none"
+                    >
+                      {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                        <option key={key} value={key}>{label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block font-body text-xs text-gray-500 mb-1">Importar para</label>
+                    <select
+                      value={pickedList}
+                      onChange={(e) => setPickedList(e.target.value as GuestListType)}
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none appearance-none"
+                    >
+                      <option value="A">{LIST_META.A.emoji} Lista Oficial</option>
+                      <option value="B">{LIST_META.B.emoji} Lista Reserva</option>
+                      <option value="C">{LIST_META.C.emoji} Lista Talvez</option>
+                    </select>
+                  </div>
+                </div>
+
+                {pickedList !== "A" && (
+                  <div className="bg-amber-50 border border-amber-100 rounded-xl px-3 py-2 mb-3">
+                    <p className="font-body text-xs text-amber-700">
+                      Convidados importados para a <strong>{LIST_META[pickedList].label}</strong> nao serao vistos pela cerimonialista.
+                      Voce pode move-los para a Lista Oficial depois.
+                    </p>
+                  </div>
+                )}
 
                 {cleaningNames && (
                   <div className="flex items-center gap-2 mb-3 text-xs font-body text-teal">
@@ -785,7 +1036,7 @@ export default function ConvidadosPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                     </svg>
-                    IA verificando os nomes…
+                    IA verificando os nomes...
                   </div>
                 )}
 
@@ -801,26 +1052,28 @@ export default function ConvidadosPage() {
                                 <span className="text-[10px] font-body bg-teal/10 text-teal px-2 py-0.5 rounded-full">sugerido pela IA</span>
                               </div>
                               <p className="font-body text-xs text-gray-400 line-through mt-0.5">{c.name}</p>
-                              <button
-                                onClick={() =>
-                                  setPickedContacts((prev) =>
-                                    prev.map((p, j) => j === i ? { ...p, name: p.suggested!, suggested: undefined } : p)
-                                  )
-                                }
-                                className="text-[11px] font-body text-teal underline mt-1"
-                              >
-                                Aceitar sugestão
-                              </button>
-                              <button
-                                onClick={() =>
-                                  setPickedContacts((prev) =>
-                                    prev.map((p, j) => j === i ? { ...p, suggested: undefined } : p)
-                                  )
-                                }
-                                className="text-[11px] font-body text-gray-400 underline mt-1 ml-3"
-                              >
-                                Manter original
-                              </button>
+                              <div className="flex gap-3 mt-1">
+                                <button
+                                  onClick={() =>
+                                    setPickedContacts((prev) =>
+                                      prev.map((p, j) => j === i ? { ...p, name: p.suggested!, suggested: undefined } : p)
+                                    )
+                                  }
+                                  className="text-[11px] font-body text-teal underline"
+                                >
+                                  Aceitar sugestao
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    setPickedContacts((prev) =>
+                                      prev.map((p, j) => j === i ? { ...p, suggested: undefined } : p)
+                                    )
+                                  }
+                                  className="text-[11px] font-body text-gray-400 underline"
+                                >
+                                  Manter original
+                                </button>
+                              </div>
                             </>
                           ) : (
                             <p className="font-body text-sm font-medium text-verde-noite">{c.name}</p>
@@ -850,7 +1103,7 @@ export default function ConvidadosPage() {
                     disabled={importingContacts}
                     className="flex-1 px-4 py-3 bg-teal text-white rounded-xl font-body font-medium hover:bg-teal/90 transition disabled:opacity-40"
                   >
-                    {importingContacts ? "Adicionando…" : "Adicionar todos"}
+                    {importingContacts ? "Adicionando..." : `Adicionar na Lista ${pickedList}`}
                   </button>
                 </div>
               </motion.div>
@@ -869,7 +1122,6 @@ export default function ConvidadosPage() {
               exit="hidden"
               transition={{ duration: 0.2 }}
             >
-              {/* Backdrop */}
               <motion.div
                 className="absolute inset-0 bg-black/40"
                 onClick={() => setModalOpen(false)}
@@ -877,10 +1129,8 @@ export default function ConvidadosPage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               />
-
-              {/* Modal panel */}
               <motion.div
-                className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8 z-10"
+                className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8 z-10 max-h-[85vh] overflow-y-auto"
                 variants={modalVariants}
                 initial="hidden"
                 animate="visible"
@@ -892,14 +1142,8 @@ export default function ConvidadosPage() {
                 </h2>
 
                 <div className="space-y-4">
-                  {/* Name */}
                   <div>
-                    <label
-                      htmlFor="guest-name"
-                      className="block font-body text-sm text-gray-500 mb-1"
-                    >
-                      Nome
-                    </label>
+                    <label htmlFor="guest-name" className="block font-body text-sm text-gray-500 mb-1">Nome</label>
                     <input
                       id="guest-name"
                       type="text"
@@ -908,15 +1152,8 @@ export default function ConvidadosPage() {
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
                     />
                   </div>
-
-                  {/* Phone */}
                   <div>
-                    <label
-                      htmlFor="guest-phone"
-                      className="block font-body text-sm text-gray-500 mb-1"
-                    >
-                      Telefone
-                    </label>
+                    <label htmlFor="guest-phone" className="block font-body text-sm text-gray-500 mb-1">Telefone</label>
                     <input
                       id="guest-phone"
                       type="tel"
@@ -926,15 +1163,8 @@ export default function ConvidadosPage() {
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
                     />
                   </div>
-
-                  {/* Email */}
                   <div>
-                    <label
-                      htmlFor="guest-email"
-                      className="block font-body text-sm text-gray-500 mb-1"
-                    >
-                      Email
-                    </label>
+                    <label htmlFor="guest-email" className="block font-body text-sm text-gray-500 mb-1">Email</label>
                     <input
                       id="guest-email"
                       type="email"
@@ -944,44 +1174,41 @@ export default function ConvidadosPage() {
                     />
                   </div>
 
-                  {/* Category */}
-                  <div>
-                    <label
-                      htmlFor="guest-category"
-                      className="block font-body text-sm text-gray-500 mb-1"
-                    >
-                      Categoria
-                    </label>
-                    <select
-                      id="guest-category"
-                      value={formCategory}
-                      onChange={(e) =>
-                        setFormCategory(e.target.value as Category)
-                      }
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200 appearance-none"
-                    >
-                      {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
-                        <option key={key} value={key}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label htmlFor="guest-category" className="block font-body text-sm text-gray-500 mb-1">Categoria</label>
+                      <select
+                        id="guest-category"
+                        value={formCategory}
+                        onChange={(e) => setFormCategory(e.target.value as Category)}
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none appearance-none"
+                      >
+                        {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                          <option key={key} value={key}>{label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="guest-list" className="block font-body text-sm text-gray-500 mb-1">Lista</label>
+                      <select
+                        id="guest-list"
+                        value={formList}
+                        onChange={(e) => setFormList(e.target.value as GuestListType)}
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none appearance-none"
+                      >
+                        <option value="A">{LIST_META.A.emoji} Oficial</option>
+                        <option value="B">{LIST_META.B.emoji} Reserva</option>
+                        <option value="C">{LIST_META.C.emoji} Talvez</option>
+                      </select>
+                    </div>
                   </div>
 
-                  {/* Status */}
                   <div>
-                    <label
-                      htmlFor="guest-status"
-                      className="block font-body text-sm text-gray-500 mb-1"
-                    >
-                      Status
-                    </label>
+                    <label htmlFor="guest-status" className="block font-body text-sm text-gray-500 mb-1">Status</label>
                     <select
                       id="guest-status"
                       value={formStatus}
-                      onChange={(e) =>
-                        setFormStatus(e.target.value as Status)
-                      }
+                      onChange={(e) => setFormStatus(e.target.value as Status)}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200 appearance-none"
                     >
                       <option value="pendente">Pendente</option>
@@ -991,7 +1218,6 @@ export default function ConvidadosPage() {
                   </div>
                 </div>
 
-                {/* Buttons */}
                 <div className="flex gap-3 mt-8">
                   <button
                     type="button"

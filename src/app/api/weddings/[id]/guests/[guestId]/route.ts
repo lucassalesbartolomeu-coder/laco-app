@@ -68,6 +68,7 @@ export async function PUT(request: Request, { params }: Params) {
         ddd: body.ddd,
         category: body.category,
         rsvpStatus: body.rsvpStatus || body.status,
+        guestList: body.guestList,
         plusOne: body.plusOne,
         dietaryRestriction: body.dietaryRestriction,
         accommodation: body.accommodation,
@@ -106,6 +107,19 @@ export async function PATCH(request: Request, { params }: Params) {
     if (body.whatsappSentAt !== undefined) {
       data.whatsappSentAt = body.whatsappSentAt ? new Date(body.whatsappSentAt) : null;
     }
+    if (body.rsvpStatus !== undefined) {
+      data.rsvpStatus = body.rsvpStatus;
+    }
+    if (body.guestList !== undefined) {
+      data.guestList = body.guestList;
+    }
+    if (body.confirmed !== undefined) {
+      data.confirmed = body.confirmed;
+    }
+
+    if (Object.keys(data).length === 0) {
+      return validationError("Nenhum campo válido para atualizar");
+    }
 
     const guest = await prisma.guest.update({
       where: { id: guestId },
@@ -137,7 +151,7 @@ export async function DELETE(_request: Request, { params }: Params) {
 
     await prisma.guest.delete({ where: { id: guestId } });
 
-    return NextResponse.json({ message: "Convidado deletado" });
+    return NextResponse.json({ deleted: true });
   } catch (error) {
     console.error("DELETE /api/weddings/[id]/guests/[guestId] error:", error);
     return errorResponse();

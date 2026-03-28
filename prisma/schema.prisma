@@ -152,6 +152,7 @@ model Guest {
   state              String?
   ddd                String?
   category           String?
+  guestList          String    @default("A") // A = oficial (cerimonialista vê), B = reserva, C = talvez
   rsvpStatus         String    @default("pendente")
   confirmed          Boolean   @default(false)
   message            String?

@@ -6,103 +6,30 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { track } from "@/lib/analytics";
-import { Celebration } from "@/components/illustrations";
 
-interface OnboardingStep {
-  title: string;
-  subtitle: string;
-  icon: string;
-  description: string;
-  action: string;
-  href?: string;
-  tip?: string;
+// ──────────────────────────────────────────────────────────────────────────────
+// COUPLE ONBOARDING: 6 STEPS WITH WOW EXPERIENCE
+// ──────────────────────────────────────────────────────────────────────────────
+
+type OnboardingStep =
+  | "welcome"
+  | "about"
+  | "details"
+  | "budget"
+  | "guests"
+  | "celebrate";
+
+interface CoupleFormData {
+  partnerName1: string;
+  partnerName2: string;
+  weddingDate?: string;
+  city?: string;
+  state?: string;
+  style?: string;
+  estimatedGuests?: number;
+  estimatedBudget?: number;
+  hasPlannerEmail?: string;
 }
-
-// ─── Couple steps ─────────────────────────────────────────────────────────────
-const COUPLE_STEPS: OnboardingStep[] = [
-  {
-    title: "Tudo em um lugar para o dia mais especial",
-    subtitle: "Mais de 2.400 casais já usam o Laço — gratuito pra começar.",
-    icon: "💍",
-    description:
-      "Site personalizado, lista de convidados com RSVP online, presente virtual, simulador de presença e orçamento inteligente. Do planejamento até o grande dia.",
-    action: "Configurar meu casamento",
-  },
-  {
-    title: "Quando é o grande dia?",
-    subtitle: "Só leva 1 minuto — você edita tudo depois.",
-    icon: "📅",
-    description: "Com a data definida, o Laço mostra a contagem regressiva e avisa quando é hora de agir em cada etapa.",
-    action: "Criar meu casamento",
-    href: "/casamento/novo",
-  },
-  {
-    title: "Sua cerimonialista já usa o Laço?",
-    subtitle: "Conecte agora e ela vê tudo em tempo real.",
-    icon: "🤝",
-    description:
-      "Informe o e-mail da cerimonialista e ela ganha acesso imediato ao seu casamento no painel dela — orçamentos, convidados e cronograma sincronizados.",
-    action: "Continuar",
-    tip: "Ainda escolhendo? Você conecta depois. A maioria dos casais faz isso na semana do primeiro encontro com a cerimonialista.",
-  },
-  {
-    title: "Quem vai celebrar com vocês?",
-    subtitle: "Importe a lista em segundos — confirme presença pelo WhatsApp.",
-    icon: "👥",
-    description:
-      "Cole uma lista, importe CSV ou adicione um a um. Cada convidado ganha um link de RSVP e você vê as confirmações em tempo real.",
-    action: "Importar convidados",
-    href: "/casamento/novo",
-    tip: "💡 Use o simulador de presença para descobrir o número real esperado — a média é 78% de comparecimento.",
-  },
-  {
-    title: "Seu site de casamento está no ar! 🎉",
-    subtitle: "Pronto para compartilhar com quem você ama.",
-    icon: "🌐",
-    description:
-      "O Laço criou sua página personalizada com URL única. Compartilhe no grupo da família, no WhatsApp e no Instagram para colher as confirmações.",
-    action: "Ver meu site agora",
-  },
-];
-
-// ─── Planner steps ─────────────────────────────────────────────────────────────
-const PLANNER_STEPS: OnboardingStep[] = [
-  {
-    title: "Menos planilha. Mais casamento.",
-    subtitle: "Cerimonialistas que usam o Laço economizam 4h por evento.",
-    icon: "📋",
-    description:
-      "Pipeline de vendas, OCR de orçamentos com IA, controle de comissões, agenda e portal do cliente — tudo integrado. Vamos configurar seu perfil em 2 minutos.",
-    action: "Configurar meu perfil",
-  },
-  {
-    title: "Seus clientes vão te encontrar aqui",
-    subtitle: "Perfil público + portfólio para novos noivos.",
-    icon: "🏢",
-    description:
-      "Noivos que usam o Laço podem buscar e contratar cerimonialistas direto pelo app. Preencha seus dados para aparecer para os casais certos.",
-    action: "Criar meu perfil agora",
-    href: "/cerimonialista/portfolio",
-  },
-  {
-    title: "Adeus digitação de orçamento",
-    subtitle: "Foto → itens organizados em 15 segundos.",
-    icon: "🤖",
-    description:
-      "Tire uma foto ou envie o PDF de qualquer orçamento. A IA do Laço lê, categoriza e organiza tudo automaticamente. Nada de redigitar.",
-    action: "Testar o OCR agora",
-    href: "/cerimonialista/importar-orcamento",
-  },
-  {
-    title: "Pronto para o próximo casamento! 🎊",
-    subtitle: "Seu escritório digital está configurado.",
-    icon: "✅",
-    description:
-      "Pipeline para fechar novos clientes, agenda com todos os eventos, financeiro com controle de comissões — tudo que você precisa para crescer sem virar escravo de planilha.",
-    action: "Abrir meu painel",
-    href: "/cerimonialista/dashboard",
-  },
-];
 
 const slideVariants = {
   enter: (dir: number) => ({ x: dir > 0 ? 60 : -60, opacity: 0 }),
@@ -110,27 +37,148 @@ const slideVariants = {
   exit: (dir: number) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
 };
 
-// Index of the planner step in COUPLE_STEPS
-const PLANNER_STEP_INDEX = 2;
+const WEDDING_STYLES = [
+  { id: "rustico", label: "Rústico", emoji: "🌿" },
+  { id: "classico", label: "Clássico", emoji: "✨" },
+  { id: "moderno", label: "Moderno", emoji: "🖤" },
+  { id: "praiano", label: "Praiano", emoji: "🌊" },
+  { id: "minimalista", label: "Minimalista", emoji: "⚪" },
+  { id: "boho", label: "Boho", emoji: "🌻" },
+];
+
+const BRAZILIAN_STATES = [
+  "SP", "RJ", "MG", "BA", "SC", "PR", "RS", "GO", "DF", "ES",
+  "PE", "CE", "PA", "MT", "MS", "PB", "AL", "RN", "SE", "PI",
+  "MA", "AM", "RO", "AC", "AP", "RR", "TO"
+];
+
+// Confetti CSS animation
+const confettiStyle = `
+  @keyframes confetti-fall {
+    to {
+      transform: translateY(100vh) rotateZ(360deg);
+      opacity: 0;
+    }
+  }
+  .confetti {
+    animation: confetti-fall 2.5s ease-in forwards;
+    position: fixed;
+    pointer-events: none;
+  }
+`;
+
+function Confetti() {
+  const [pieces, setPieces] = useState<Array<{ id: number; left: number; delay: number; color: string }>>([]);
+
+  useEffect(() => {
+    const confettiPieces = Array.from({ length: 50 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      delay: Math.random() * 0.3,
+      color: ["#1A3A33", "#2C6B5E", "#C4734F", "#FFF8F0"][Math.floor(Math.random() * 4)],
+    }));
+    setPieces(confettiPieces);
+  }, []);
+
+  return (
+    <>
+      <style>{confettiStyle}</style>
+      {pieces.map((piece) => (
+        <div
+          key={piece.id}
+          className="confetti w-2 h-2 rounded-full"
+          style={{
+            left: `${piece.left}%`,
+            top: "-10px",
+            backgroundColor: piece.color,
+            animation: `confetti-fall 2.5s ease-in forwards`,
+            animationDelay: `${piece.delay}s`,
+          }}
+        />
+      ))}
+    </>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// PLANNER ONBOARDING (unchanged from original)
+// ──────────────────────────────────────────────────────────────────────────────
+
+const PLANNER_STEPS = [
+  {
+    title: "Menos planilha. Mais casamento.",
+    subtitle: "Cerimonialistas que usam o Laço economizam 4h por evento.",
+    icon: "📋",
+    description: "Pipeline de vendas, OCR de orçamentos com IA, controle de comissões, agenda e portal do cliente — tudo integrado.",
+    action: "Configurar meu perfil",
+  },
+  {
+    title: "Seus clientes vão te encontrar aqui",
+    subtitle: "Perfil público + portfólio para novos noivos.",
+    icon: "🏢",
+    description: "Noivos que usam o Laço podem buscar e contratar cerimonialistas direto pelo app.",
+    action: "Criar meu perfil agora",
+    href: "/cerimonialista/portfolio",
+  },
+  {
+    title: "Adeus digitação de orçamento",
+    subtitle: "Foto → itens organizados em 15 segundos.",
+    icon: "🤖",
+    description: "Tire uma foto ou envie o PDF. A IA do Laço lê, categoriza e organiza tudo automaticamente.",
+    action: "Testar o OCR agora",
+    href: "/cerimonialista/importar-orcamento",
+  },
+  {
+    title: "Pronto para o próximo casamento! 🎊",
+    subtitle: "Seu escritório digital está configurado.",
+    icon: "✅",
+    description: "Pipeline para fechar novos clientes, agenda com todos os eventos, financeiro com controle de comissões.",
+    action: "Abrir meu painel",
+    href: "/cerimonialista/dashboard",
+  },
+];
+
+// ──────────────────────────────────────────────────────────────────────────────
+// MAIN COMPONENT
+// ──────────────────────────────────────────────────────────────────────────────
 
 export default function OnboardingPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [direction, setDirection] = useState(1);
-  const [saving, setSaving] = useState(false);
 
-  // Planner linking state
+  // Couple flow
+  const [coupleStep, setCoupleStep] = useState<OnboardingStep>("welcome");
+  const [formData, setFormData] = useState<CoupleFormData>({
+    partnerName1: "",
+    partnerName2: "",
+  });
+  const [weddingId, setWeddingId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [direction, setDirection] = useState(1);
+
+  // Planner flow
+  const [plannerStep, setPlannerStep] = useState(0);
+  const [plannerSaving, setPlannerSaving] = useState(false);
+
+  // Planner linking (couple only)
   const [plannerEmail, setPlannerEmail] = useState("");
-  const [plannerLinking, setPlannerLinking] = useState(false);
-  const [plannerResult, setPlannerResult] = useState<{
-    linked: boolean; reason?: string; planner?: { companyName: string };
+  const [_plannerLinking, setPlannerLinking] = useState(false);
+  const [_plannerResult, setPlannerResult] = useState<{
+    linked: boolean;
+    reason?: string;
+    planner?: { companyName: string };
   } | null>(null);
 
   const role = (session?.user as { role?: string })?.role ?? "COUPLE";
-  const steps = role === "PLANNER" ? PLANNER_STEPS : COUPLE_STEPS;
+  const isCouple = role === "COUPLE";
+  const steps = isCouple
+    ? ["welcome", "about", "details", "budget", "guests", "celebrate"]
+    : PLANNER_STEPS;
   const totalSteps = steps.length;
-  const step = steps[currentStep];
+
+  // ──────────────────────────────────────────────────────────────────────────────
+  // LOAD SAVED PROGRESS
+  // ──────────────────────────────────────────────────────────────────────────────
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
@@ -138,29 +186,81 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (status !== "authenticated") return;
-    // Load saved progress
+
     fetch("/api/user/onboarding")
       .then((r) => r.json())
       .then((data) => {
         if (data.onboardingStep === -1) {
           // Already completed
-          router.push(role === "PLANNER" ? "/cerimonialista/dashboard" : "/dashboard");
-        } else if (data.onboardingStep > 0) {
-          setCurrentStep(Math.min(data.onboardingStep, totalSteps - 1));
+          router.push(isCouple ? "/dashboard" : "/cerimonialista/dashboard");
+        } else if (data.onboardingStep > 0 && isCouple) {
+          const stepIndex = Math.min(data.onboardingStep, steps.length - 1);
+          setCoupleStep(steps[stepIndex] as OnboardingStep);
         }
       })
       .catch(console.error);
-  }, [status, role, router, totalSteps]);
+  }, [status, isCouple, router]);
 
-  async function saveStep(step: number) {
+  // ──────────────────────────────────────────────────────────────────────────────
+  // SAVE PROGRESS
+  // ──────────────────────────────────────────────────────────────────────────────
+
+  async function saveStep(stepIndex: number) {
     await fetch("/api/user/onboarding", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ step }),
+      body: JSON.stringify({ step: stepIndex }),
     });
   }
 
-  async function linkPlanner() {
+  // ──────────────────────────────────────────────────────────────────────────────
+  // CREATE WEDDING (called after step 2: details)
+  // ──────────────────────────────────────────────────────────────────────────────
+
+  async function createWedding() {
+    if (!formData.partnerName1.trim() || !formData.partnerName2.trim()) {
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const res = await fetch("/api/weddings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          partnerName1: formData.partnerName1.trim(),
+          partnerName2: formData.partnerName2.trim(),
+          weddingDate: formData.weddingDate,
+          city: formData.city,
+          state: formData.state,
+          style: formData.style,
+          estimatedGuests: formData.estimatedGuests,
+          estimatedBudget: formData.estimatedBudget,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.id) {
+        setWeddingId(data.id);
+        track("wedding_created", {
+          partners: `${formData.partnerName1} & ${formData.partnerName2}`,
+          style: formData.style,
+          guests: formData.estimatedGuests,
+        });
+        return data.id;
+      }
+    } catch (error) {
+      console.error("Failed to create wedding:", error);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────────
+  // PLANNER LINKING
+  // ──────────────────────────────────────────────────────────────────────────────
+
+  async function _linkPlanner() {
     if (!plannerEmail.trim()) return;
     setPlannerLinking(true);
     try {
@@ -179,41 +279,88 @@ export default function OnboardingPage() {
     }
   }
 
-  async function handleNext() {
-    if (currentStep < totalSteps - 1) {
+  // ──────────────────────────────────────────────────────────────────────────────
+  // COUPLE STEP NAVIGATION
+  // ──────────────────────────────────────────────────────────────────────────────
+
+  function getStepIndex(step: OnboardingStep): number {
+    return (steps as string[]).indexOf(step);
+  }
+
+  async function handleCoupleNext() {
+    const currentIndex = getStepIndex(coupleStep);
+    if (currentIndex < totalSteps - 1) {
       setSaving(true);
-      await saveStep(currentStep + 1);
+
+      // Create wedding after step 2 (details)
+      if (coupleStep === "details" && !weddingId) {
+        const newId = await createWedding();
+        if (!newId) {
+          setSaving(false);
+          return;
+        }
+        setWeddingId(newId);
+      }
+
+      await saveStep(currentIndex + 1);
       setSaving(false);
       setDirection(1);
-      setCurrentStep((s) => s + 1);
-      // Reset planner state when leaving planner step
-      if (role === "COUPLE" && currentStep === PLANNER_STEP_INDEX) {
-        setPlannerEmail("");
-        setPlannerResult(null);
-      }
+      setCoupleStep((steps as OnboardingStep[])[currentIndex + 1]);
     }
   }
 
-  async function handleBack() {
-    if (currentStep > 0) {
+  async function handleCoupleBack() {
+    const currentIndex = getStepIndex(coupleStep);
+    if (currentIndex > 0) {
       setDirection(-1);
-      setCurrentStep((s) => s - 1);
+      setCoupleStep((steps as OnboardingStep[])[currentIndex - 1]);
     }
   }
 
-  async function handleComplete() {
-    setSaving(true);
-    await saveStep(-1); // -1 = concluído
-    setSaving(false);
-    router.push(role === "PLANNER" ? "/cerimonialista/dashboard" : "/dashboard");
-  }
-
-  async function handleSkip() {
+  async function handleCoupleComplete() {
     setSaving(true);
     await saveStep(-1);
     setSaving(false);
-    router.push(role === "PLANNER" ? "/cerimonialista/dashboard" : "/dashboard");
+    router.push("/dashboard");
   }
+
+  async function handleCoupleSkip() {
+    setSaving(true);
+    await saveStep(-1);
+    setSaving(false);
+    router.push("/dashboard");
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────────
+  // PLANNER STEP NAVIGATION
+  // ──────────────────────────────────────────────────────────────────────────────
+
+  function handlePlannerNext() {
+    if (plannerStep < totalSteps - 1) {
+      setPlannerSaving(true);
+      saveStep(plannerStep + 1).then(() => {
+        setPlannerSaving(false);
+        setPlannerStep((s) => s + 1);
+      });
+    }
+  }
+
+  function handlePlannerBack() {
+    if (plannerStep > 0) {
+      setPlannerStep((s) => s - 1);
+    }
+  }
+
+  async function handlePlannerComplete() {
+    setPlannerSaving(true);
+    await saveStep(-1);
+    setPlannerSaving(false);
+    router.push("/cerimonialista/dashboard");
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────────
+  // LOADING
+  // ──────────────────────────────────────────────────────────────────────────────
 
   if (status === "loading") {
     return (
@@ -223,14 +370,417 @@ export default function OnboardingPage() {
     );
   }
 
-  const isLast = currentStep === totalSteps - 1;
+  // ──────────────────────────────────────────────────────────────────────────────
+  // RENDER COUPLE FLOW
+  // ──────────────────────────────────────────────────────────────────────────────
+
+  if (isCouple) {
+    const currentIndex = getStepIndex(coupleStep);
+    const isLast = currentIndex === totalSteps - 1;
+    const dateNotDecided = !formData.weddingDate;
+
+    return (
+      <div className="min-h-screen bg-cream flex flex-col items-center justify-center p-6">
+        {/* Skip button */}
+        <div className="w-full max-w-lg mb-4 flex justify-end">
+          <button
+            onClick={handleCoupleSkip}
+            className="font-body text-sm text-verde-noite/40 hover:text-verde-noite transition"
+          >
+            Pular →
+          </button>
+        </div>
+
+        <div className="w-full max-w-lg">
+          {/* Progress bar */}
+          <div className="flex gap-1.5 mb-8">
+            {Array.from({ length: totalSteps }).map((_, i) => (
+              <div
+                key={i}
+                className="flex-1 h-1 rounded-full transition-all duration-300"
+                style={{
+                  backgroundColor: i <= currentIndex ? "#2C6B5E" : "#E5E7EB",
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Card Container */}
+          <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={coupleStep}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="p-8"
+              >
+                {/* STEP 0: WELCOME */}
+                {coupleStep === "welcome" && (
+                  <div className="space-y-6">
+                    <div className="text-center space-y-2">
+                      <div className="text-6xl mb-4">💍</div>
+                      <h1 className="font-heading text-3xl text-verde-noite">Bem-vindos ao Laço</h1>
+                      <p className="font-body text-verde-noite/60">Vamos preparar tudo para o casamento de vocês</p>
+                    </div>
+
+                    <div className="space-y-3 mt-8">
+                      <button
+                        onClick={handleCoupleNext}
+                        className="w-full py-3 rounded-xl bg-teal text-white font-body font-medium hover:bg-teal/90 transition"
+                      >
+                        Vou planejar por conta própria
+                      </button>
+                      <button
+                        onClick={() => {
+                          setPlannerEmail("");
+                          setPlannerResult(null);
+                          handleCoupleNext();
+                        }}
+                        className="w-full py-3 rounded-xl border border-teal text-teal font-body font-medium hover:bg-teal/5 transition"
+                      >
+                        Já tenho cerimonialista
+                      </button>
+                    </div>
+
+                    <p className="font-body text-xs text-verde-noite/50 text-center">
+                      +2.400 casais planejando seu casamento no Laço
+                    </p>
+                  </div>
+                )}
+
+                {/* STEP 1: ABOUT YOU (Sobre vocês) */}
+                {coupleStep === "about" && (
+                  <div className="space-y-6">
+                    <div className="text-center space-y-2">
+                      <h1 className="font-heading text-2xl text-verde-noite">Sobre vocês</h1>
+                      <p className="font-body text-verde-noite/60 text-sm">Os nomes de vocês aparecem em tudo no Laço</p>
+                    </div>
+
+                    {/* Live preview */}
+                    {(formData.partnerName1 || formData.partnerName2) && (
+                      <div className="text-center p-4 bg-cream rounded-xl border border-teal/20">
+                        <p className="font-heading text-xl text-teal">
+                          {formData.partnerName1 || "Nome"} & {formData.partnerName2 || "Nome"}
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="space-y-3">
+                      <input
+                        type="text"
+                        value={formData.partnerName1}
+                        onChange={(e) => setFormData({ ...formData, partnerName1: e.target.value })}
+                        placeholder="Nome do(a) noivo(a) 1"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-teal transition"
+                      />
+                      <input
+                        type="text"
+                        value={formData.partnerName2}
+                        onChange={(e) => setFormData({ ...formData, partnerName2: e.target.value })}
+                        placeholder="Nome do(a) noivo(a) 2"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-teal transition"
+                      />
+                    </div>
+
+                    {/* Date picker */}
+                    <div className="space-y-2">
+                      <label className="font-body text-sm text-verde-noite">Data do casamento</label>
+                      <input
+                        type="date"
+                        value={formData.weddingDate || ""}
+                        onChange={(e) => setFormData({ ...formData, weddingDate: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-teal transition"
+                      />
+                      {dateNotDecided && (
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox" className="rounded" onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData({ ...formData, weddingDate: undefined });
+                            }
+                          }} />
+                          <span className="font-body text-xs text-verde-noite/60">Ainda não decidimos</span>
+                        </label>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 2: DETAILS (O grande dia) */}
+                {coupleStep === "details" && (
+                  <div className="space-y-6">
+                    <div className="text-center space-y-2">
+                      <h1 className="font-heading text-2xl text-verde-noite">O grande dia</h1>
+                      <p className="font-body text-verde-noite/60 text-sm">Essas informações ajudam a encontrar fornecedores</p>
+                    </div>
+
+                    {/* Guest count slider */}
+                    <div className="space-y-3">
+                      <label className="font-body text-sm text-verde-noite font-medium">
+                        Número de convidados: {formData.estimatedGuests || 100}
+                      </label>
+                      <input
+                        type="range"
+                        min="50"
+                        max="500"
+                        value={formData.estimatedGuests || 100}
+                        onChange={(e) => setFormData({ ...formData, estimatedGuests: parseInt(e.target.value) })}
+                        className="w-full h-2 bg-cream rounded-lg appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, #2C6B5E 0%, #2C6B5E ${((formData.estimatedGuests || 100 - 50) / 450) * 100}%, #E5E7EB ${((formData.estimatedGuests || 100 - 50) / 450) * 100}%, #E5E7EB 100%)`,
+                        }}
+                      />
+                      <p className="font-body text-xs text-verde-noite/50">De 50 a 500 convidados</p>
+                    </div>
+
+                    {/* Wedding style */}
+                    <div className="space-y-3">
+                      <label className="font-body text-sm text-verde-noite font-medium">Estilo do casamento</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {WEDDING_STYLES.map((style) => (
+                          <button
+                            key={style.id}
+                            onClick={() => setFormData({ ...formData, style: style.id })}
+                            className={`p-3 rounded-xl border-2 transition font-body text-xs text-center ${
+                              formData.style === style.id
+                                ? "border-teal bg-teal/10"
+                                : "border-gray-200 hover:border-teal/50"
+                            }`}
+                          >
+                            <div className="text-2xl mb-1">{style.emoji}</div>
+                            <div className="font-medium text-verde-noite">{style.label}</div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Location */}
+                    <div className="grid grid-cols-3 gap-2">
+                      <input
+                        type="text"
+                        value={formData.city || ""}
+                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                        placeholder="Cidade"
+                        className="col-span-2 px-4 py-2.5 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-teal"
+                      />
+                      <select
+                        value={formData.state || ""}
+                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                        className="px-4 py-2.5 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-teal"
+                      >
+                        <option value="">UF</option>
+                        {BRAZILIAN_STATES.map((state) => (
+                          <option key={state} value={state}>
+                            {state}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Destination wedding */}
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="rounded border-gray-300"
+                        onChange={(_e) => setFormData({ ...formData, })}
+                      />
+                      <span className="font-body text-sm text-verde-noite">Destination wedding?</span>
+                    </label>
+                  </div>
+                )}
+
+                {/* STEP 3: BUDGET */}
+                {coupleStep === "budget" && (
+                  <div className="space-y-6">
+                    <div className="text-center space-y-2">
+                      <h1 className="font-heading text-2xl text-verde-noite">Orçamento</h1>
+                      <p className="font-body text-verde-noite/60 text-sm">A primeira decisão que importa</p>
+                    </div>
+
+                    <p className="font-body text-sm text-verde-noite/70 leading-relaxed">
+                      Saber o orçamento estimado ajuda a filtrar fornecedores e evitar surpresas.
+                    </p>
+
+                    <div className="space-y-3">
+                      <button
+                        onClick={() => {
+                          if (weddingId) {
+                            router.push(`/casamento/${weddingId}/orcamento-inteligente`);
+                          }
+                        }}
+                        className="w-full p-4 rounded-xl border-2 border-teal hover:bg-teal/5 transition text-left"
+                      >
+                        <div className="font-body font-medium text-teal text-sm">🎯 Simulador Inteligente</div>
+                        <p className="font-body text-xs text-verde-noite/60 mt-1">Deixe a IA calcular seu orçamento</p>
+                      </button>
+
+                      <div className="relative">
+                        <span className="absolute left-4 top-3 font-body text-sm text-verde-noite/60">R$</span>
+                        <input
+                          type="number"
+                          value={formData.estimatedBudget || ""}
+                          onChange={(e) => setFormData({ ...formData, estimatedBudget: parseInt(e.target.value) || undefined })}
+                          placeholder="Tenho um valor em mente"
+                          className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-teal transition"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-copper/10 border border-copper/20 rounded-xl">
+                      <p className="font-body text-xs text-copper leading-relaxed">
+                        💡 Casamentos no Brasil custam em média R$ 60.000 — mas cada casal é único.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 4: GUESTS */}
+                {coupleStep === "guests" && (
+                  <div className="space-y-6">
+                    <div className="text-center space-y-2">
+                      <h1 className="font-heading text-2xl text-verde-noite">Seus convidados</h1>
+                      <p className="font-body text-verde-noite/60 text-sm">O coração do casamento</p>
+                    </div>
+
+                    {/* DDD explanation with visual */}
+                    <div className="p-4 bg-teal/5 border border-teal/20 rounded-xl space-y-2">
+                      <p className="font-body text-sm text-verde-noite font-medium">Como o Laço ajuda com presença</p>
+                      <p className="font-body text-xs text-verde-noite/70">
+                        O Laço lê o DDD de cada convidado para entender de onde vêm e estimar realistically a presença.
+                      </p>
+                    </div>
+
+                    <div className="space-y-3">
+                      <button
+                        onClick={() => {
+                          if (weddingId) {
+                            router.push(`/casamento/${weddingId}/importar`);
+                          }
+                        }}
+                        className="w-full p-4 rounded-xl bg-teal text-white hover:bg-teal/90 transition text-left"
+                      >
+                        <div className="font-body font-medium text-sm">📱 Importar da agenda</div>
+                        <p className="font-body text-xs text-white/80 mt-1">Sincronize seus contatos</p>
+                      </button>
+
+                      <button
+                        onClick={handleCoupleNext}
+                        className="w-full p-4 rounded-xl border-2 border-gray-200 hover:bg-gray-50 transition text-left"
+                      >
+                        <div className="font-body font-medium text-verde-noite text-sm">✍️ Vou adicionar depois</div>
+                        <p className="font-body text-xs text-verde-noite/60 mt-1">Continue para a celebração</p>
+                      </button>
+                    </div>
+
+                    {formData.estimatedGuests && (
+                      <p className="font-body text-xs text-verde-noite/60 text-center">
+                        Com {formData.estimatedGuests} convidados, estimamos ~78% de presença
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* STEP 5: CELEBRATE */}
+                {coupleStep === "celebrate" && (
+                  <div className="space-y-6">
+                    <Confetti />
+
+                    <div className="text-center space-y-2">
+                      <div className="text-6xl mb-4">🎉</div>
+                      <h1 className="font-heading text-3xl text-verde-noite">Pronto!</h1>
+                      <p className="font-body text-verde-noite/60">
+                        O casamento de <span className="font-medium text-verde-noite">{formData.partnerName1} & {formData.partnerName2}</span> está criado
+                      </p>
+                    </div>
+
+                    {/* Three CTAs */}
+                    <div className="space-y-3">
+                      {weddingId && (
+                        <>
+                          <Link
+                            href={`/casamento/${weddingId}/orcamento-inteligente`}
+                            className="block p-4 rounded-xl bg-copper/10 border border-copper/20 hover:bg-copper/20 transition text-left"
+                          >
+                            <div className="font-body font-medium text-copper text-sm">💰 Orçamento Inteligente</div>
+                            <p className="font-body text-xs text-verde-noite/60 mt-1">Calcule com precisão</p>
+                          </Link>
+
+                          <Link
+                            href={`/casamento/${weddingId}/convidados`}
+                            className="block p-4 rounded-xl bg-teal/10 border border-teal/20 hover:bg-teal/20 transition text-left"
+                          >
+                            <div className="font-body font-medium text-teal text-sm">👥 Lista de Convidados</div>
+                            <p className="font-body text-xs text-verde-noite/60 mt-1">Comece a montar</p>
+                          </Link>
+
+                          <Link
+                            href={`/casamento/${weddingId}/identity-kit`}
+                            className="block p-4 rounded-xl bg-verde-noite/10 border border-verde-noite/20 hover:bg-verde-noite/20 transition text-left"
+                          >
+                            <div className="font-body font-medium text-verde-noite text-sm">✨ Identidade Visual</div>
+                            <p className="font-body text-xs text-verde-noite/60 mt-1">Gerada com IA</p>
+                          </Link>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Action buttons */}
+            <div className="px-8 pb-8 flex items-center gap-3">
+              {currentIndex > 0 && coupleStep !== "celebrate" && (
+                <button
+                  onClick={handleCoupleBack}
+                  className="px-4 py-2.5 rounded-xl border border-gray-200 font-body text-sm text-verde-noite/60 hover:bg-gray-50 transition"
+                >
+                  ← Voltar
+                </button>
+              )}
+
+              {isLast ? (
+                <button
+                  onClick={handleCoupleComplete}
+                  disabled={saving}
+                  className="flex-1 py-3 rounded-xl bg-copper text-white font-body font-medium hover:bg-copper/90 transition disabled:opacity-50"
+                >
+                  {saving ? "Salvando…" : "Ir para o Dashboard →"}
+                </button>
+              ) : (
+                <button
+                  onClick={handleCoupleNext}
+                  disabled={saving || (coupleStep === "about" && (!formData.partnerName1 || !formData.partnerName2))}
+                  className="flex-1 py-3 rounded-xl bg-teal text-white font-body font-medium hover:bg-teal/90 transition disabled:opacity-50"
+                >
+                  {saving ? "Salvando…" : "Próximo →"}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────────
+  // RENDER PLANNER FLOW
+  // ──────────────────────────────────────────────────────────────────────────────
+
+  const isLastPlanner = plannerStep === totalSteps - 1;
+  const plannerStepData = PLANNER_STEPS[plannerStep];
 
   return (
     <div className="min-h-screen bg-cream flex flex-col items-center justify-center p-6">
-      {/* Skip */}
+      {/* Skip button */}
       <div className="w-full max-w-lg mb-4 flex justify-end">
         <button
-          onClick={handleSkip}
+          onClick={() => {
+            saveStep(-1).then(() => router.push("/cerimonialista/dashboard"));
+          }}
           className="font-body text-sm text-verde-noite/40 hover:text-verde-noite transition"
         >
           Pular introdução →
@@ -240,12 +790,12 @@ export default function OnboardingPage() {
       <div className="w-full max-w-lg">
         {/* Progress bar */}
         <div className="flex gap-1.5 mb-8">
-          {steps.map((_, i) => (
+          {PLANNER_STEPS.map((_, i) => (
             <div
               key={i}
               className="flex-1 h-1 rounded-full transition-all duration-300"
               style={{
-                backgroundColor: i <= currentStep ? "#2C6B5E" : "#E5E7EB",
+                backgroundColor: i <= plannerStep ? "#2C6B5E" : "#E5E7EB",
               }}
             />
           ))}
@@ -253,202 +803,83 @@ export default function OnboardingPage() {
 
         {/* Card */}
         <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={currentStep}
-              custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="p-8"
-            >
-              {/* Icon */}
-              {isLast ? (
-                <Celebration className="mb-4 -mx-2" />
-              ) : (
-                <div className="w-16 h-16 bg-cream rounded-2xl flex items-center justify-center text-4xl mb-6">
-                  {step.icon}
+          <div className="p-8">
+            {/* Icon */}
+            <div className="w-16 h-16 bg-cream rounded-2xl flex items-center justify-center text-4xl mb-6">
+              {plannerStepData.icon}
+            </div>
+
+            {/* Step badge */}
+            <span className="inline-block px-2.5 py-1 bg-teal/10 text-teal font-body text-xs rounded-full mb-3">
+              Passo {plannerStep + 1} de {totalSteps}
+            </span>
+
+            <h1 className="font-heading text-2xl text-verde-noite mb-2">{plannerStepData.title}</h1>
+            <p className="font-body text-verde-noite/60 text-sm mb-4">{plannerStepData.subtitle}</p>
+            <p className="font-body text-verde-noite/80 leading-relaxed">{plannerStepData.description}</p>
+
+            {/* Social proof */}
+            {plannerStep === 0 && (
+              <div className="mt-6 space-y-4">
+                <div className="flex items-center gap-3 p-3 bg-copper/5 rounded-xl border border-copper/10">
+                  <span className="text-xl flex-shrink-0">⭐</span>
+                  <p className="font-body text-xs text-verde-noite/70">
+                    <span className="font-semibold text-verde-noite">Cerimonialistas em SP, RJ e MG</span> já usam o Laço
+                  </p>
                 </div>
-              )}
-
-              {/* Step badge */}
-              <span className="inline-block px-2.5 py-1 bg-teal/10 text-teal font-body text-xs rounded-full mb-3">
-                Passo {currentStep + 1} de {totalSteps}
-              </span>
-
-              <h1 className="font-heading text-2xl text-verde-noite mb-2">{step.title}</h1>
-              <p className="font-body text-verde-noite/60 text-sm mb-4">{step.subtitle}</p>
-              <p className="font-body text-verde-noite/80 leading-relaxed">{step.description}</p>
-
-              {/* Tip callout */}
-              {"tip" in step && step.tip && (
-                <div className="mt-4 p-3 bg-copper/10 border border-copper/20 rounded-xl">
-                  <p className="font-body text-sm text-copper">{step.tip as string}</p>
-                </div>
-              )}
-
-              {/* Social proof + features */}
-              {currentStep === 0 && role === "COUPLE" && (
-                <div className="mt-6 space-y-4">
-                  {/* Social proof */}
-                  <div className="flex items-center gap-3 p-3 bg-teal/5 rounded-xl border border-teal/10">
-                    <div className="flex -space-x-2 flex-shrink-0">
-                      {["A", "B", "C"].map((l) => (
-                        <div key={l} className="w-7 h-7 rounded-full bg-teal/20 border-2 border-white flex items-center justify-center">
-                          <span className="font-body text-[9px] font-semibold text-teal">{l}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <p className="font-body text-xs text-verde-noite/70">
-                      <span className="font-semibold text-verde-noite">+2.400 casais</span> planejando seu casamento aqui
-                    </p>
-                  </div>
-                  {/* Features */}
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { icon: "📋", label: "Lista de convidados", tag: "RSVP online" },
-                      { icon: "🎁", label: "Lista de presentes", tag: "sem taxa" },
-                      { icon: "📊", label: "Simulador de presença", tag: "novo" },
-                      { icon: "🌐", label: "Site do casamento", tag: "grátis" },
-                    ].map((feature) => (
-                      <div key={feature.label} className="flex items-start gap-2 p-2.5 bg-cream rounded-xl">
-                        <span className="text-base mt-0.5">{feature.icon}</span>
-                        <div>
-                          <p className="font-body text-xs font-medium text-verde-noite leading-tight">{feature.label}</p>
-                          <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-teal/10 text-teal font-body text-[9px] font-semibold rounded-full uppercase tracking-wide">{feature.tag}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Planner linking UI */}
-              {role === "COUPLE" && currentStep === PLANNER_STEP_INDEX && (
-                <div className="mt-5 space-y-3">
-                  {plannerResult?.linked ? (
-                    <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-2xl">
-                      <div className="w-8 h-8 rounded-full bg-green-400 flex items-center justify-center flex-shrink-0">
-                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { icon: "🗂️", label: "Pipeline de vendas", tag: "CRM" },
+                    { icon: "🤖", label: "OCR de orçamentos", tag: "IA" },
+                    { icon: "💰", label: "Controle financeiro", tag: "comissões" },
+                    { icon: "📅", label: "Agenda integrada", tag: "Google Cal" },
+                  ].map((feature) => (
+                    <div key={feature.label} className="flex items-start gap-2 p-2.5 bg-cream rounded-xl">
+                      <span className="text-base mt-0.5">{feature.icon}</span>
                       <div>
-                        <p className="font-body text-sm font-semibold text-green-800">
-                          {plannerResult.planner?.companyName} conectada!
-                        </p>
-                        <p className="font-body text-xs text-green-600">Ela já tem acesso ao seu casamento.</p>
+                        <p className="font-body text-xs font-medium text-verde-noite leading-tight">{feature.label}</p>
+                        <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-copper/10 text-copper font-body text-[9px] font-semibold rounded-full uppercase tracking-wide">
+                          {feature.tag}
+                        </span>
                       </div>
                     </div>
-                  ) : plannerResult?.reason === "not_found" ? (
-                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
-                      <p className="font-body text-sm font-semibold text-amber-800">Cerimonialista ainda não tem conta no Laço</p>
-                      <p className="font-body text-xs text-amber-700">
-                        Você pode compartilhar o link abaixo com ela para que ela se cadastre. A conexão será feita automaticamente depois.
-                      </p>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(`${window.location.origin}/registro/cerimonialista`);
-                        }}
-                        className="flex items-center gap-1.5 text-xs font-body text-amber-700 hover:text-amber-900 transition"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        Copiar link de cadastro
-                      </button>
-                    </div>
-                  ) : plannerResult?.reason === "no_wedding" ? (
-                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl">
-                      <p className="font-body text-sm text-blue-700">
-                        Crie seu casamento primeiro (passo anterior) para poder conectar a cerimonialista.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="flex gap-2">
-                      <input
-                        type="email"
-                        value={plannerEmail}
-                        onChange={e => setPlannerEmail(e.target.value)}
-                        onKeyDown={e => e.key === "Enter" && linkPlanner()}
-                        placeholder="email da cerimonialista"
-                        className="flex-1 px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal"
-                      />
-                      <button
-                        onClick={linkPlanner}
-                        disabled={plannerLinking || !plannerEmail.trim()}
-                        className="px-4 py-2.5 bg-teal text-white font-body text-sm rounded-xl hover:bg-teal/90 disabled:opacity-50 transition flex-shrink-0"
-                      >
-                        {plannerLinking ? "..." : "Conectar"}
-                      </button>
-                    </div>
-                  )}
+                  ))}
                 </div>
-              )}
-
-              {currentStep === 0 && role === "PLANNER" && (
-                <div className="mt-6 space-y-4">
-                  {/* Social proof */}
-                  <div className="flex items-center gap-3 p-3 bg-copper/5 rounded-xl border border-copper/10">
-                    <span className="text-xl flex-shrink-0">⭐</span>
-                    <p className="font-body text-xs text-verde-noite/70">
-                      <span className="font-semibold text-verde-noite">Cerimonialistas em SP, RJ e MG</span> já usam o Laço para fechar mais casamentos
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { icon: "🗂️", label: "Pipeline de vendas", tag: "CRM" },
-                      { icon: "🤖", label: "OCR de orçamentos", tag: "IA" },
-                      { icon: "💰", label: "Controle financeiro", tag: "comissões" },
-                      { icon: "📅", label: "Agenda integrada", tag: "Google Cal" },
-                    ].map((feature) => (
-                      <div key={feature.label} className="flex items-start gap-2 p-2.5 bg-cream rounded-xl">
-                        <span className="text-base mt-0.5">{feature.icon}</span>
-                        <div>
-                          <p className="font-body text-xs font-medium text-verde-noite leading-tight">{feature.label}</p>
-                          <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-copper/10 text-copper font-body text-[9px] font-semibold rounded-full uppercase tracking-wide">{feature.tag}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
+              </div>
+            )}
+          </div>
 
           {/* Actions */}
           <div className="px-8 pb-8 flex items-center gap-3">
-            {currentStep > 0 && (
+            {plannerStep > 0 && (
               <button
-                onClick={handleBack}
+                onClick={handlePlannerBack}
                 className="px-4 py-2.5 rounded-xl border border-gray-200 font-body text-sm text-verde-noite/60 hover:bg-gray-50 transition"
               >
                 ← Voltar
               </button>
             )}
 
-            {isLast ? (
+            {isLastPlanner ? (
               <button
-                onClick={handleComplete}
-                disabled={saving}
+                onClick={handlePlannerComplete}
+                disabled={plannerSaving}
                 className="flex-1 py-3 rounded-xl bg-copper text-white font-body font-medium hover:bg-copper/90 transition disabled:opacity-50"
               >
-                {saving ? "Salvando…" : `Ir para o ${role === "PLANNER" ? "Dashboard" : "Painel"} →`}
+                {plannerSaving ? "Salvando…" : "Abrir meu painel →"}
               </button>
-            ) : "href" in step && step.href ? (
+            ) : "href" in plannerStepData && plannerStepData.href ? (
               <div className="flex-1 flex gap-2">
                 <Link
-                  href={step.href as string}
+                  href={plannerStepData.href}
                   className="flex-1 py-3 rounded-xl bg-teal text-white font-body text-sm text-center hover:bg-teal/90 transition"
-                  onClick={() => saveStep(currentStep + 1)}
+                  onClick={() => saveStep(plannerStep + 1)}
                 >
-                  {step.action}
+                  {plannerStepData.action}
                 </Link>
                 <button
-                  onClick={handleNext}
-                  disabled={saving}
+                  onClick={handlePlannerNext}
+                  disabled={plannerSaving}
                   className="px-4 py-3 rounded-xl border border-gray-200 font-body text-sm text-verde-noite/60 hover:bg-gray-50 transition"
                 >
                   Próximo →
@@ -456,32 +887,15 @@ export default function OnboardingPage() {
               </div>
             ) : (
               <button
-                onClick={handleNext}
-                disabled={saving}
+                onClick={handlePlannerNext}
+                disabled={plannerSaving}
                 className="flex-1 py-3 rounded-xl bg-teal text-white font-body font-medium hover:bg-teal/90 transition disabled:opacity-50"
               >
-                {saving ? "Salvando…" : `${step.action} →`}
+                {plannerSaving ? "Salvando…" : "Próximo →"}
               </button>
             )}
           </div>
         </div>
-
-        {/* Step dots */}
-        <div className="flex justify-center gap-2 mt-6">
-          {steps.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => { setDirection(i > currentStep ? 1 : -1); setCurrentStep(i); }}
-              className={`w-2 h-2 rounded-full transition-all ${
-                i === currentStep ? "w-6 bg-teal" : "bg-gray-300"
-              }`}
-            />
-          ))}
-        </div>
-
-        <p className="text-center font-body text-xs text-verde-noite/30 mt-4">
-          Você pode completar a configuração depois no painel
-        </p>
       </div>
     </div>
   );

@@ -26,10 +26,12 @@ export async function GET(request: NextRequest, { params }: Params) {
     const searchParams = request.nextUrl.searchParams;
     const category = searchParams.get("category");
     const status = searchParams.get("status");
+    const guestList = searchParams.get("guestList");
 
     const where: Record<string, unknown> = { weddingId: id };
     if (category) where.category = category;
     if (status) where.rsvpStatus = status;
+    if (guestList) where.guestList = guestList;
 
     const guests = await prisma.guest.findMany({
       where,
@@ -70,6 +72,7 @@ export async function POST(request: Request, { params }: Params) {
         state: body.state,
         ddd: body.ddd,
         category: body.category,
+        guestList: body.guestList || "A",
         rsvpStatus: body.rsvpStatus || body.status || "pendente",
         plusOne: body.plusOne ?? false,
         dietaryRestriction: body.dietaryRestriction,

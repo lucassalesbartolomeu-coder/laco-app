@@ -45,6 +45,7 @@ export async function POST(request: Request, { params }: Params) {
         state?: string;
         ddd?: string;
         category?: string;
+        guestList?: string;
         rsvpStatus?: string;
       }) => ({
         weddingId: id,
@@ -55,6 +56,7 @@ export async function POST(request: Request, { params }: Params) {
         state: g.state ?? null,
         ddd: g.ddd ?? null,
         category: g.category ?? null,
+        guestList: g.guestList ?? body.guestList ?? "A",
         rsvpStatus: g.rsvpStatus ?? "pendente",
       }),
     );
