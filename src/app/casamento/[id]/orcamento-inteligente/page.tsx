@@ -704,7 +704,7 @@ export default function OrcamentoInteligentePage() {
       }));
     } else {
       // Calculate budget on final step
-      const budget = calculateBudget(state.selections, state.region, state.guests);
+      const budget = calculateBudget(state.selections, state.region, Number(state.guests));
       setState((prev) => ({
         ...prev,
         budget,
