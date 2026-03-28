@@ -398,7 +398,11 @@ export default function DashboardPage() {
         ) : (
           <>
             {/* ── Hero countdown ── */}
-            <div className="bg-gradient-to-br from-teal to-teal/80 rounded-3xl p-6 shadow-sm overflow-hidden relative">
+            <div className="bg-gradient-to-br from-verde-noite via-teal to-verde-noite/90 rounded-3xl p-6 shadow-lg overflow-hidden relative">
+              {/* dot pattern overlay */}
+              <div className="absolute inset-0 opacity-20" style={{backgroundImage:"radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px)", backgroundSize:"20px 20px"}} />
+              {/* copper accent blur */}
+              <div className="absolute top-4 right-10 w-24 h-24 bg-copper/30 rounded-full blur-2xl" />
               {/* decorative circle */}
               <div className="absolute -top-8 -right-8 w-40 h-40 bg-white/5 rounded-full" />
               <div className="absolute -bottom-12 -left-6 w-32 h-32 bg-white/5 rounded-full" />

@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const CATEGORIES = [
   "Local / Espaço", "Buffet", "Bebidas", "Decoração", "Floricultura",
@@ -53,6 +54,7 @@ const STATUS_CONFIG: Record<string, { label: string; dot: string }> = {
 
 export default function OrcamentoPage() {
   const { id } = useParams<{ id: string }>();
+  const toast = useToast();
   const [items, setItems] = useState<BudgetItem[]>([]);
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -111,14 +113,24 @@ export default function OrcamentoPage() {
         dueDate: form.dueDate || null,
       }),
     });
-    if (res.ok) { await load(); setShowForm(false); }
+    if (res.ok) {
+      await load();
+      setShowForm(false);
+      toast.success(editing ? "Item atualizado com sucesso!" : "Item adicionado ao orçamento!");
+    } else {
+      toast.error("Erro ao salvar item. Tente novamente.");
+    }
     setSaving(false);
   }
 
   async function remove(itemId: string) {
-    if (!confirm("Remover este item?")) return;
-    await fetch(`/api/weddings/${id}/budget/${itemId}`, { method: "DELETE" });
-    await load();
+    const res = await fetch(`/api/weddings/${id}/budget/${itemId}`, { method: "DELETE" });
+    if (res.ok) {
+      await load();
+      toast.success("Item removido do orçamento.");
+    } else {
+      toast.error("Erro ao remover item.");
+    }
   }
 
   async function togglePaid(item: BudgetItem) {

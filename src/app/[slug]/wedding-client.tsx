@@ -5,6 +5,8 @@ import { useEffect, useState, FormEvent } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { getTemplate } from "@/lib/identity-kit-templates";
+import { track } from "@/lib/analytics";
+import PhotoGallery from "@/components/photo-gallery";
 
 /* ─── Types ─── */
 interface WeddingTheme {
@@ -267,6 +269,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
         }),
       });
       if (!res.ok) throw new Error("Erro ao enviar confirmacao");
+      track("rsvp_submitted", { attending: rsvpAttending, plusOne: rsvpCompanion });
       setRsvpSuccess(true);
     } catch (err: unknown) {
       setRsvpError(err instanceof Error ? err.message : "Erro ao enviar confirmacao");
@@ -312,31 +315,97 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
 
       {/* ═══════ 1. HERO ═══════ */}
       <section className="wt-hero relative min-h-screen flex flex-col items-center justify-center bg-verde-noite text-white overflow-hidden">
-        {/* Cover image */}
-        {wedding.coverImage && (
+        {/* Cover image with parallax feel */}
+        {wedding.coverImage ? (
           <div className="absolute inset-0">
             <Image src={wedding.coverImage} alt={`${wedding.partnerName1} & ${wedding.partnerName2}`}
-              fill className="object-cover opacity-30" unoptimized />
+              fill className="object-cover opacity-40 scale-105" unoptimized />
+            {/* dark gradient overlay at bottom for readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
+          </div>
+        ) : (
+          /* Abstract botanical pattern for no-cover state */
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full opacity-[0.07]" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='white' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='25' fill='none' stroke='white' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='10' fill='none' stroke='white' stroke-width='0.5'/%3E%3C/svg%3E")`,
+              backgroundSize: "80px 80px",
+            }} />
+            <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-teal/15 rounded-full blur-3xl" />
+            <div className="absolute bottom-1/3 left-1/4 w-[400px] h-[400px] bg-copper/10 rounded-full blur-3xl" />
           </div>
         )}
-        {/* radial gradient overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.05)_0%,transparent_70%)] pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col items-center gap-8 px-4 text-center">
+        {/* Fine grain overlay */}
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E")`,
+        }} />
+
+        <div className="relative z-10 flex flex-col items-center gap-6 px-5 text-center max-w-3xl mx-auto">
+          {/* pre-title */}
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="font-body text-xs uppercase tracking-[0.3em] text-white/50"
+          >
+            Você está convidado
+          </motion.p>
+
           {/* names */}
-          <h1 className="font-heading text-5xl md:text-7xl leading-tight">
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.75, delay: 0.1, ease: "easeOut" }}
+            className="font-heading text-6xl md:text-8xl leading-[1.0]"
+          >
             {wedding.partnerName1}
-            <span className="wt-hero-border block text-copper text-3xl md:text-5xl my-2">&amp;</span>
+          </motion.h1>
+
+          {/* ampersand with decorative lines */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="flex items-center gap-4 w-full justify-center"
+          >
+            <div className="flex-1 max-w-[100px] h-px bg-gradient-to-r from-transparent to-white/30" />
+            <span className="font-heading text-4xl md:text-5xl text-copper/90">&amp;</span>
+            <div className="flex-1 max-w-[100px] h-px bg-gradient-to-l from-transparent to-white/30" />
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.75, delay: 0.4, ease: "easeOut" }}
+            className="font-heading text-6xl md:text-8xl leading-[1.0]"
+          >
             {wedding.partnerName2}
-          </h1>
+          </motion.h1>
 
-          {/* date */}
-          <p className="font-body text-lg md:text-xl tracking-widest uppercase text-white/80">
-            {formatDatePt(wedding.weddingDate)}
-          </p>
+          {/* date + venue */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.6 }}
+            className="flex flex-col items-center gap-1 mt-2"
+          >
+            <p className="font-body text-base md:text-lg tracking-widest uppercase text-white/80">
+              {formatDatePt(wedding.weddingDate)}
+            </p>
+            {wedding.venue && (
+              <p className="font-body text-sm text-white/50 tracking-wide">
+                {wedding.venue}{wedding.city ? ` · ${wedding.city}` : ""}
+              </p>
+            )}
+          </motion.div>
 
-          {/* countdown */}
-          <div className="flex gap-4 mt-4">
+          {/* countdown — glassmorphism cards */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="flex gap-3 mt-6"
+          >
             {(
               [
                 ["days", "Dias"],
@@ -347,28 +416,54 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
             ).map(([key, label]) => (
               <div
                 key={key}
-                className="bg-white/10 rounded-xl p-4 min-w-[72px] flex flex-col items-center"
+                className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl px-4 py-4 min-w-[70px] flex flex-col items-center shadow-lg"
               >
-                <span className="font-heading text-3xl md:text-4xl font-bold">
-                  {countdown[key]}
+                <span className="font-heading text-3xl md:text-4xl font-bold leading-none tabular-nums">
+                  {String(countdown[key]).padStart(2, "0")}
                 </span>
-                <span className="text-xs uppercase tracking-wider text-white/70 mt-1">
+                <span className="font-body text-[10px] uppercase tracking-widest text-white/60 mt-2">
                   {label}
                 </span>
               </div>
             ))}
-          </div>
+          </motion.div>
+
+          {/* CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.0 }}
+            className="flex flex-col sm:flex-row gap-3 mt-2"
+          >
+            <a
+              href="#confirmacao"
+              className="inline-flex items-center justify-center gap-2 bg-copper text-white font-body font-semibold text-sm px-7 py-3.5 rounded-full hover:bg-copper/90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-copper/30"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              Confirmar presença
+            </a>
+            {gifts.length > 0 && (
+              <a
+                href="#presentes"
+                className="inline-flex items-center justify-center gap-2 backdrop-blur-md bg-white/10 border border-white/20 text-white font-body text-sm px-7 py-3.5 rounded-full hover:bg-white/20 transition-all"
+              >
+                🎁 Ver lista de presentes
+              </a>
+            )}
+          </motion.div>
         </div>
 
         {/* scroll arrow */}
         <motion.div
           animate={{ y: [0, 12, 0] }}
           transition={{ repeat: Infinity, duration: 1.8 }}
-          className="absolute bottom-10 z-10"
+          className="absolute bottom-8 z-10"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-8 h-8 text-white/50"
+            className="w-6 h-6 text-white/30"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -380,47 +475,68 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
       </section>
 
       {/* ═══════ 2. NOSSA HISTORIA ═══════ */}
-      <section className="wt-bg py-20 px-4 bg-cream">
-        <FadeIn className="max-w-3xl mx-auto text-center">
-          <h2 className="font-heading text-4xl mb-10">Nossa Historia</h2>
+      <section className="wt-bg py-20 px-5 bg-cream">
+        <FadeIn className="max-w-2xl mx-auto text-center">
+          {/* decorative separator */}
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="w-16 h-px bg-gradient-to-r from-transparent to-verde-noite/20" />
+            <svg className="w-5 h-5 text-copper/60" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z" />
+            </svg>
+            <div className="w-16 h-px bg-gradient-to-l from-transparent to-verde-noite/20" />
+          </div>
+
+          <h2 className="font-heading text-4xl md:text-5xl text-verde-noite mb-8">Nossa História</h2>
           {wedding.storyText ? (
-            <div className="space-y-4 text-left font-body text-verde-noite/80 leading-relaxed">
+            <div className="space-y-5 text-left font-body text-verde-noite/75 leading-[1.8] text-[15px]">
               {wedding.storyText.split("\n").filter(Boolean).map((p, i) => (
-                <p key={i}>{p}</p>
+                <p key={i} className={i === 0 ? "first-letter:text-5xl first-letter:font-heading first-letter:text-copper first-letter:float-left first-letter:mr-2 first-letter:leading-[0.85]" : ""}>{p}</p>
               ))}
             </div>
           ) : (
-            <p className="font-body text-verde-noite/50 italic">
-              Em breve compartilharemos nossa historia...
+            <p className="font-body text-verde-noite/40 italic text-center">
+              Em breve compartilharemos nossa história...
             </p>
           )}
         </FadeIn>
       </section>
 
       {/* ═══════ 3. CERIMONIA & FESTA ═══════ */}
-      <section className="py-20 px-4 bg-white">
+      <section className="py-20 px-5 bg-white">
         <FadeIn className="max-w-4xl mx-auto">
-          <h2 className="font-heading text-4xl text-center mb-12">Cerimonia &amp; Festa</h2>
+          <div className="text-center mb-12">
+            <p className="font-body text-xs uppercase tracking-widest text-copper/70 mb-3">Detalhes do evento</p>
+            <h2 className="font-heading text-4xl md:text-5xl text-verde-noite">Cerimônia &amp; Festa</h2>
+          </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* ceremony */}
             {wedding.ceremonyVenue && (
-              <div className="border border-verde-noite/10 rounded-2xl p-8 text-center">
-                <h3 className="font-heading text-2xl mb-2">Cerimonia</h3>
-                <p className="font-body font-semibold text-lg mb-1">{wedding.ceremonyVenue}</p>
+              <div className="bg-cream border border-verde-noite/10 rounded-3xl p-8 text-center">
+                <div className="w-10 h-10 bg-copper/10 text-copper rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <p className="font-body text-xs uppercase tracking-widest text-copper/70 mb-2">Cerimônia</p>
+                <h3 className="font-heading text-2xl text-verde-noite mb-1">{wedding.ceremonyVenue}</h3>
                 {wedding.ceremonyAddress && (
-                  <p className="font-body text-verde-noite/60 text-sm mb-3">
+                  <p className="font-body text-verde-noite/55 text-sm mb-3">
                     {wedding.ceremonyAddress}
                   </p>
                 )}
-                <p className="font-body text-verde-noite/80 text-sm mb-5">
+                <p className="font-body text-verde-noite/75 text-sm mb-5 font-medium">
                   {formatDateTime(wedding.weddingDate)}
                 </p>
                 {wedding.ceremonyAddress && (
                   <button
                     onClick={() => window.open(mapsUrl(wedding.ceremonyAddress!), "_blank")}
-                    className="wt-primary wt-primary-border inline-block rounded-full border border-teal text-teal px-6 py-2 text-sm hover:bg-teal hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1.5 border border-teal/30 text-teal px-5 py-2 rounded-full text-sm hover:bg-teal hover:text-white transition-all"
                   >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
                     Ver no mapa
                   </button>
                 )}
@@ -429,25 +545,37 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
 
             {/* reception / venue */}
             {wedding.venue && (
-              <div className="border border-verde-noite/10 rounded-2xl p-8 text-center">
-                <h3 className="font-heading text-2xl mb-2">Festa</h3>
-                <p className="font-body font-semibold text-lg mb-1">{wedding.venue}</p>
-                {wedding.venueAddress && (
-                  <p className="font-body text-verde-noite/60 text-sm mb-3">
-                    {wedding.venueAddress}
+              <div className="group relative overflow-hidden bg-gradient-to-br from-verde-noite to-teal rounded-3xl p-8 text-center text-white">
+                <div className="absolute inset-0 opacity-10 bg-[length:30px_30px]" style={{backgroundImage:"url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='1.5' fill='%23FFFFFF'/%3E%3C/svg%3E\")"}} />
+                <div className="relative z-10">
+                  <div className="w-10 h-10 bg-white/15 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                    </svg>
+                  </div>
+                  <p className="font-body text-xs uppercase tracking-widest text-white/60 mb-2">Festa</p>
+                  <h3 className="font-heading text-2xl mb-1 text-white">{wedding.venue}</h3>
+                  {wedding.venueAddress && (
+                    <p className="font-body text-white/65 text-sm mb-3">
+                      {wedding.venueAddress}
+                    </p>
+                  )}
+                  <p className="font-body text-white/80 text-sm mb-5 font-medium">
+                    {formatDateTime(wedding.weddingDate)}
                   </p>
-                )}
-                <p className="font-body text-verde-noite/80 text-sm mb-5">
-                  {formatDateTime(wedding.weddingDate)}
-                </p>
-                {wedding.venueAddress && (
-                  <button
-                    onClick={() => window.open(mapsUrl(wedding.venueAddress!), "_blank")}
-                    className="wt-primary wt-primary-border inline-block rounded-full border border-teal text-teal px-6 py-2 text-sm hover:bg-teal hover:text-white transition-colors"
-                  >
-                    Ver no mapa
-                  </button>
-                )}
+                  {wedding.venueAddress && (
+                    <button
+                      onClick={() => window.open(mapsUrl(wedding.venueAddress!), "_blank")}
+                      className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur border border-white/25 text-white px-5 py-2 rounded-full text-sm hover:bg-white/25 transition"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Ver no mapa
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
@@ -455,7 +583,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
             {!wedding.ceremonyVenue && !wedding.venue && (
               <div className="md:col-span-2 text-center py-8">
                 <p className="font-body text-verde-noite/50 italic">
-                  Informacoes do local em breve...
+                  Informações do local em breve...
                 </p>
               </div>
             )}
@@ -464,9 +592,12 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
       </section>
 
       {/* ═══════ 4. RSVP ═══════ */}
-      <section className="py-20 px-4 bg-off-white">
-        <FadeIn className="max-w-xl mx-auto">
-          <h2 className="font-heading text-4xl text-center mb-10">Confirme sua Presenca</h2>
+      <section id="confirmacao" className="py-20 px-5 bg-cream">
+        <FadeIn className="max-w-lg mx-auto">
+          <div className="text-center mb-10">
+            <p className="font-body text-xs uppercase tracking-widest text-copper/70 mb-3">Sua presença é a nossa alegria</p>
+            <h2 className="font-heading text-4xl md:text-5xl text-verde-noite">Confirme sua Presença</h2>
+          </div>
 
           {rsvpSuccess ? (
             <div className="text-center bg-teal/10 rounded-2xl p-10">
@@ -594,7 +725,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
 
       {/* ═══════ 5. PRESENTES ═══════ */}
       {topGifts.length > 0 && (
-        <section className="wt-bg py-20 px-4 bg-cream">
+        <section id="presentes" className="wt-bg py-20 px-5 bg-cream">
           <FadeIn className="max-w-5xl mx-auto">
             <h2 className="font-heading text-4xl text-center mb-12">Lista de Presentes</h2>
 
@@ -652,40 +783,47 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
       )}
 
       {/* ═══════ 6. GALERIA ═══════ */}
-      {wedding.photos && wedding.photos.length > 0 && (
-        <section className="py-20 px-4 bg-white">
-          <FadeIn className="max-w-5xl mx-auto">
-            <h2 className="font-heading text-4xl text-center mb-12">Galeria</h2>
-            <div className="columns-2 md:columns-3 gap-3 space-y-3">
-              {wedding.photos.map((photo) => (
-                <div key={photo.id} className="break-inside-avoid rounded-xl overflow-hidden relative group">
-                  <Image
-                    src={photo.url}
-                    alt={photo.caption ?? "Foto do casamento"}
-                    width={600}
-                    height={400}
-                    className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    unoptimized
-                  />
-                  {photo.caption && (
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <p className="font-body text-xs text-white">{photo.caption}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </FadeIn>
-        </section>
-      )}
+      <section className="py-20 px-4 bg-white">
+        <FadeIn className="max-w-5xl mx-auto">
+          <h2 className="font-heading text-4xl text-center mb-12">Galeria</h2>
+          <PhotoGallery photos={wedding.photos ?? []} />
+        </FadeIn>
+      </section>
 
-      {/* ═══════ 7. FOOTER ═══════ */}
-      <footer className="wt-hero bg-verde-noite text-white py-8">
-        <div className="text-center space-y-2">
-          <p className="font-body text-sm text-white/70">Feito com amor pelo Laco</p>
-          <a href="/" className="font-body text-xs text-white/40 hover:text-white/70 transition-colors">
-            laco.app
-          </a>
+      {/* ═══════ 7. FOOTER / VIRAL WATERMARK ═══════ */}
+      <footer className="bg-verde-noite py-12 px-5">
+        <div className="max-w-xl mx-auto text-center space-y-6">
+          {/* message */}
+          {wedding.message && (
+            <div className="bg-white/5 border border-white/10 rounded-2xl px-6 py-5 mb-6">
+              <p className="font-heading text-xl text-white/90 italic leading-relaxed">
+                &ldquo;{wedding.message}&rdquo;
+              </p>
+              <p className="font-body text-xs text-white/40 mt-3">
+                — {wedding.partnerName1} &amp; {wedding.partnerName2}
+              </p>
+            </div>
+          )}
+
+          {/* Viral CTA — powered by Laço */}
+          <div className="flex flex-col items-center gap-3">
+            <p className="font-body text-xs text-white/35 uppercase tracking-widest">
+              Site criado com
+            </p>
+            <a
+              href="/registro"
+              className="group inline-flex items-center gap-2.5 bg-white/8 hover:bg-white/15 border border-white/15 rounded-2xl px-6 py-3.5 transition-all"
+            >
+              <span className="font-logo text-2xl text-white tracking-tight">Laço</span>
+              <div className="h-4 w-px bg-white/20" />
+              <span className="font-body text-xs text-white/60 group-hover:text-white/80 transition-colors">
+                Crie o seu casamento grátis →
+              </span>
+            </a>
+            <p className="font-body text-[10px] text-white/25">
+              laco.app · Organize seu casamento com inteligência
+            </p>
+          </div>
         </div>
       </footer>
     </main>

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 /* ─── Types ─────────────────────────────────────────────────────────── */
 
@@ -166,6 +167,7 @@ export default function PresentesPage() {
   const router = useRouter();
   const weddingId = params.id as string;
   const { data: session, status: authStatus } = useSession();
+  const toast = useToast();
 
   const [gifts, setGifts] = useState<Gift[]>([]);
   const [loading, setLoading] = useState(true);
@@ -200,6 +202,7 @@ export default function PresentesPage() {
         setGifts(data);
       }
     } catch (err) {
+      toast.error("Erro ao carregar presentes. Tente novamente.");
       console.error("Erro ao carregar presentes", err);
     } finally {
       setLoading(false);
@@ -269,6 +272,9 @@ export default function PresentesPage() {
           );
           resetForm();
           setModalOpen(false);
+          toast.success("Presente atualizado com sucesso!");
+        } else {
+          toast.error("Erro ao atualizar presente.");
         }
       } else {
         const res = await fetch(`/api/weddings/${weddingId}/gifts`, {
@@ -281,9 +287,13 @@ export default function PresentesPage() {
           setGifts((prev) => [...prev, newGift]);
           resetForm();
           setModalOpen(false);
+          toast.success("Presente adicionado à lista! 🎁");
+        } else {
+          toast.error("Erro ao adicionar presente.");
         }
       }
     } catch (err) {
+      toast.error("Erro inesperado. Tente novamente.");
       console.error("Erro ao salvar presente", err);
     } finally {
       setSubmitting(false);
@@ -303,8 +313,12 @@ export default function PresentesPage() {
       if (res.ok) {
         setGifts((prev) => prev.filter((g) => g.id !== deleteTarget.id));
         setDeleteTarget(null);
+        toast.success("Presente removido da lista.");
+      } else {
+        toast.error("Erro ao remover presente.");
       }
     } catch (err) {
+      toast.error("Erro inesperado ao excluir presente.");
       console.error("Erro ao excluir presente", err);
     } finally {
       setDeleting(false);
@@ -329,8 +343,12 @@ export default function PresentesPage() {
             g.id === gift.id ? { ...g, status: "received" as GiftStatus } : g
           )
         );
+        toast.success(`"${gift.name}" marcado como recebido! 🎁`);
+      } else {
+        toast.error("Erro ao atualizar presente.");
       }
     } catch (err) {
+      toast.error("Erro inesperado. Tente novamente.");
       console.error("Erro ao marcar como recebido", err);
     }
   }

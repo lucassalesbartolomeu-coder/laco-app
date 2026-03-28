@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -105,6 +106,57 @@ const TESTIMONIALS = [
     initials: "JM",
   },
 ];
+
+/* ── Animated counter — triggers on scroll into view ────────────────── */
+function AnimatedCounter({
+  target,
+  prefix = "",
+  suffix = "",
+  duration = 2.2,
+}: {
+  target: number;
+  prefix?: string;
+  suffix?: string;
+  duration?: number;
+}) {
+  const [displayValue, setDisplayValue] = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (started) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStarted(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [started]);
+
+  useEffect(() => {
+    if (!started) return;
+    const start = performance.now();
+    const end = start + duration * 1000;
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / (end - start));
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(Math.round(target * eased));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [started, target, duration]);
+
+  return (
+    <span ref={ref}>
+      {prefix}{displayValue.toLocaleString("pt-BR")}{suffix}
+    </span>
+  );
+}
 
 export default function HomePage() {
   return (
@@ -232,19 +284,32 @@ export default function HomePage() {
       </section>
 
       {/* ─── SOCIAL PROOF STRIP ─── */}
-      <section className="bg-cream border-y border-verde-noite/8 py-8 px-5">
+      <section className="bg-white border-y border-verde-noite/8 py-10 px-5">
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {[
-            { n: "2.400+", label: "casamentos criados" },
-            { n: "98%", label: "satisfação dos casais" },
-            { n: "180k+", label: "convidados gerenciados" },
-            { n: "R$ 4M+", label: "em presentes recebidos" },
-          ].map((stat) => (
-            <div key={stat.label}>
-              <p className="font-heading text-3xl text-verde-noite">{stat.n}</p>
-              <p className="font-body text-xs text-verde-noite/50 mt-0.5">{stat.label}</p>
-            </div>
-          ))}
+          <div>
+            <p className="font-heading text-3xl md:text-4xl text-verde-noite">
+              <AnimatedCounter target={2400} suffix="+" />
+            </p>
+            <p className="font-body text-xs text-verde-noite/50 mt-1">casamentos criados</p>
+          </div>
+          <div>
+            <p className="font-heading text-3xl md:text-4xl text-verde-noite">
+              <AnimatedCounter target={98} suffix="%" />
+            </p>
+            <p className="font-body text-xs text-verde-noite/50 mt-1">satisfação dos casais</p>
+          </div>
+          <div>
+            <p className="font-heading text-3xl md:text-4xl text-verde-noite">
+              <AnimatedCounter target={180} suffix="k+" />
+            </p>
+            <p className="font-body text-xs text-verde-noite/50 mt-1">convidados gerenciados</p>
+          </div>
+          <div>
+            <p className="font-heading text-3xl md:text-4xl text-verde-noite">
+              <AnimatedCounter prefix="R$" target={4} suffix="M+" />
+            </p>
+            <p className="font-body text-xs text-verde-noite/50 mt-1">em presentes recebidos</p>
+          </div>
         </div>
       </section>
 
