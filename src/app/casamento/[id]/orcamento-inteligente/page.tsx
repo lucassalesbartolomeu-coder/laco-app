@@ -769,28 +769,16 @@ export default function OrcamentoInteligentePage() {
       });
 
       if (res.ok) {
-        toast({
-          title: "Orçamento salvo!",
-          description: "Seu orçamento foi salvo com sucesso. Você pode acessá-lo a qualquer momento.",
-        });
-        // Navigate to budget page after 1 second
+        toast.success("Orçamento salvo com sucesso!");
         setTimeout(() => {
           router.push(`/casamento/${weddingId}/orcamento`);
         }, 1000);
       } else {
-        toast({
-          title: "Erro ao salvar",
-          description: "Tente novamente",
-          variant: "destructive",
-        });
+        toast.error("Erro ao salvar. Tente novamente.");
       }
     } catch (error) {
       console.error("Error saving budget:", error);
-      toast({
-        title: "Erro",
-        description: "Algo deu errado. Tente novamente.",
-        variant: "destructive",
-      });
+      toast.error("Algo deu errado. Tente novamente.");
     } finally {
       setSaving(false);
     }
