@@ -442,8 +442,9 @@ model IdentityKit {
   mood          String   // formal | descontraído | íntimo | grande festa | luxo | DIY
   tone          String   // poético | divertido | tradicional | contemporâneo
   referenceUrls String[]
-  aiResponse    Json?    // full AI-generated identity (palette, typography, invite, menu, decoration, siteTheme)
-  appliedAt     DateTime? // when the couple clicked "Aplicar ao meu site"
+  aiResponse      Json?     // full AI-generated identity (palette, typography, invite, menu, decoration, siteTheme)
+  generatedImages String[]  // DALL-E generated image URLs (4 invites + 1 logo)
+  appliedAt       DateTime? // when the couple clicked "Aplicar ao meu site"
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
