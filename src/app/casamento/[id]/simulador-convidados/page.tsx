@@ -788,7 +788,7 @@ export default function SimuladorConvidadosPage() {
         {/* Conditional: Guests or Empty State */}
         {hasGuests && guestPhones.length > 0 ? (
           <>
-            <GuestOriginMap guests={guestPhones} weddingState={wedding.state} />
+            <GuestOriginMap guests={guestPhones} weddingState={wedding.state ?? ""} />
             <AttendancePrediction
               guests={guestPhones}
               weddingState={wedding.state}
