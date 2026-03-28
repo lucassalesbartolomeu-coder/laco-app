@@ -11,7 +11,6 @@ import {
   animate,
 } from "framer-motion";
 import type { Guest, GuestCategory, WeddingWithRelations } from "@/types";
-import AttendanceChart, { type ChartCategory } from "@/components/attendance-chart";
 
 // ─── Attendance Rates by Category ──────────────────────────
 
@@ -107,35 +106,6 @@ function simulateAttendance(guests: Guest[]): SimulationResult {
     overallRate,
     categories,
   };
-}
-
-// ─── Chart Group Aggregation ───────────────────────────────
-
-function buildChartCategories(categories: CategoryBreakdown[]): ChartCategory[] {
-  const groups: Record<string, { label: string; invited: number; expected: number }> = {
-    familia: { label: "Família próxima", invited: 0, expected: 0 },
-    amigos: { label: "Amigos", invited: 0, expected: 0 },
-    trabalho: { label: "Colegas de trabalho", invited: 0, expected: 0 },
-    outros: { label: "Outros", invited: 0, expected: 0 },
-  };
-
-  for (const cat of categories) {
-    if (cat.category === "família_noivo" || cat.category === "família_noiva") {
-      groups.familia.invited += cat.invited;
-      groups.familia.expected += cat.expected;
-    } else if (cat.category === "amigos_noivo" || cat.category === "amigos_noiva") {
-      groups.amigos.invited += cat.invited;
-      groups.amigos.expected += cat.expected;
-    } else if (cat.category === "trabalho") {
-      groups.trabalho.invited += cat.invited;
-      groups.trabalho.expected += cat.expected;
-    } else {
-      groups.outros.invited += cat.invited;
-      groups.outros.expected += cat.expected;
-    }
-  }
-
-  return Object.values(groups).filter((g) => g.invited > 0);
 }
 
 interface CostEstimate {
