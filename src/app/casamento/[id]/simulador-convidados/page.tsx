@@ -791,7 +791,7 @@ export default function SimuladorConvidadosPage() {
             <GuestOriginMap guests={guestPhones} weddingState={wedding.state ?? ""} />
             <AttendancePrediction
               guests={guestPhones}
-              weddingState={wedding.state}
+              weddingState={wedding.state ?? ""}
             />
 
             {/* Info Card */}
