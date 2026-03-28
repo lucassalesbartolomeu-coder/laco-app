@@ -83,6 +83,42 @@ export async function PUT(request: Request, { params }: Params) {
   }
 }
 
+// PATCH /api/weddings/[id]/guests/[guestId] — partial update (e.g. stamp whatsappSentAt)
+export async function PATCH(request: Request, { params }: Params) {
+  try {
+    const user = await getAuthenticatedUser();
+    if (!user) return unauthorizedResponse();
+
+    const { id, guestId } = await params;
+    const { error } = await verifyWeddingOwnership(id, user.id);
+    if (error === "not_found") return notFoundResponse("Casamento");
+    if (error === "forbidden") return forbiddenResponse();
+
+    const existing = await prisma.guest.findFirst({
+      where: { id: guestId, weddingId: id },
+    });
+    if (!existing) return notFoundResponse("Convidado");
+
+    const body = await request.json();
+
+    // Only allow patching safe fields
+    const data: Record<string, unknown> = {};
+    if (body.whatsappSentAt !== undefined) {
+      data.whatsappSentAt = body.whatsappSentAt ? new Date(body.whatsappSentAt) : null;
+    }
+
+    const guest = await prisma.guest.update({
+      where: { id: guestId },
+      data,
+    });
+
+    return NextResponse.json(guest);
+  } catch (error) {
+    console.error("PATCH /api/weddings/[id]/guests/[guestId] error:", error);
+    return errorResponse();
+  }
+}
+
 // DELETE /api/weddings/[id]/guests/[guestId]
 export async function DELETE(_request: Request, { params }: Params) {
   try {

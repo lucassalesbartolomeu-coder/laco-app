@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Illustration404 } from "@/components/illustrations";
 
 export const metadata: Metadata = {
   title: "Página não encontrada",
@@ -15,6 +16,7 @@ export default function NotFound() {
 
       {/* Content */}
       <div className="text-center max-w-xs">
+        <Illustration404 className="mx-auto mb-4" />
         <p className="font-heading text-6xl font-bold text-verde-noite/10 mb-2">
           404
         </p>
@@ -34,12 +36,4 @@ export default function NotFound() {
           </Link>
           <Link
             href="/login"
-            className="w-full text-verde-noite/70 font-body text-sm py-3 rounded-xl border border-verde-noite/20 text-center block"
-          >
-            Fazer login
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
+            className="w-full text-verde-noite/70 font-body text-sm py-3 rounde

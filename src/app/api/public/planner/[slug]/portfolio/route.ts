@@ -10,11 +10,14 @@ export async function GET(
   const planner = await prisma.weddingPlanner.findUnique({
     where: { slug },
     select: {
+      id: true,
       companyName: true,
       bio: true,
       instagram: true,
       region: true,
       specialties: true,
+      isVerified: true,
+      createdAt: true,
       assignments: {
         where: { status: "concluído" },
         select: {
@@ -38,14 +41,8 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  const yearsExperience = new Date().getFullYear() - new Date(planner.createdAt).getFullYear();
+
   return NextResponse.json({
     planner: {
-      companyName: planner.companyName,
-      bio: planner.bio,
-      instagram: planner.instagram,
-      region: planner.region,
-      specialties: planner.specialties,
-    },
-    weddings: planner.assignments.map((a) => a.wedding),
-  });
-}
+      companyName: planner.companyN

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /cerimonialista/
+
+Sitemap: https://laco.app/sitemap.xml

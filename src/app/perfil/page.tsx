@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/bottom-nav";
+import ReferralSection from "@/components/referral-section";
 
 interface ProfileData {
   name: string | null;
@@ -19,7 +20,6 @@ export default function PerfilPage() {
   const router = useRouter();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
@@ -32,17 +32,6 @@ export default function PerfilPage() {
       .then((d) => { setProfile(d); setLoading(false); })
       .catch(() => setLoading(false));
   }, [status]);
-
-  const referralLink = profile?.referralCode
-    ? `${typeof window !== "undefined" ? window.location.origin : ""}/registro?ref=${profile.referralCode}`
-    : null;
-
-  function copyReferral() {
-    if (!referralLink) return;
-    navigator.clipboard.writeText(referralLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
 
   async function handleSignOut() {
     await signOut({ callbackUrl: "/login" });
@@ -149,29 +138,7 @@ export default function PerfilPage() {
         </div>
 
         {/* Referral */}
-        {profile?.referralCode && (
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
-            <p className="font-body text-xs font-semibold text-verde-noite/35 uppercase tracking-widest mb-4">
-              Indique &amp; Ganhe
-            </p>
-            <p className="font-body text-sm text-verde-noite/60 mb-3">
-              Compartilhe seu link e ganhe benefícios quando amigos se cadastrarem.
-            </p>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-body text-sm text-verde-noite/60 font-mono truncate">
-                {referralLink}
-              </div>
-              <button
-                onClick={copyReferral}
-                className={`px-4 py-2.5 rounded-xl text-sm font-body font-medium transition flex-shrink-0 ${
-                  copied ? "bg-green-100 text-green-700" : "bg-teal text-white hover:bg-teal/90"
-                }`}
-              >
-                {copied ? "Copiado!" : "Copiar"}
-              </button>
-            </div>
-          </div>
-        )}
+        <ReferralSection isPlanner={isPlanner} />
 
         {/* Account */}
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden divide-y divide-gray-50">

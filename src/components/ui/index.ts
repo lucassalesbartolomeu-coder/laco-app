@@ -20,4 +20,4 @@ export {
   FinanceSkeleton,
   Spinner,
 } from "./skeleton";
-export { ErrorState } from "./error-state";
+export { ErrorState } 

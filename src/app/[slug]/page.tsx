@@ -17,6 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       city: true,
       coverImage: true,
       storyText: true,
+      style: true,
     },
   });
 
@@ -38,27 +39,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? `Confirme sua presença no casamento de ${couple} — ${date}${wedding.venue ? ` em ${wedding.venue}` : ""}`
     : `Confirme sua presença no casamento de ${couple}`;
 
+  const baseUrl = process.env.NEXTAUTH_URL ?? "https://laco.app";
+
+  // Build OG image URL: prefer real cover image, fallback to generated OG
+  const ogImageUrl = wedding.coverImage
+    ? wedding.coverImage
+    : (() => {
+        const ogParams = new URLSearchParams({
+          names: couple,
+          ...(date ? { date } : {}),
+          ...(wedding.style ? { style: wedding.style } : {}),
+        });
+        return `${baseUrl}/api/og?${ogParams.toString()}`;
+      })();
+
   return {
     title,
     description,
     openGraph: {
       title: couple,
       description,
-      type: "website",
-      url: `https://laco.app/${params.slug}`,
-      images: wedding.coverImage
-        ? [{ url: wedding.coverImage, width: 1200, height: 630, alt: couple }]
-        : [{ url: "https://laco.app/og-default.jpg", width: 1200, height: 630, alt: "Laço" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: couple,
-      description,
-      images: wedding.coverImage ? [wedding.coverImage] : [],
-    },
-  };
-}
-
-export default function WeddingPage({ params }: Props) {
-  return <WeddingClientPage initialSlug={params.slug} />;
-}
+      type:

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useToast } from "@/hooks/use-toast";
 
 interface KPIs {
   activeWeddings: number;
@@ -50,6 +51,7 @@ function formatDate(iso: string) {
 
 export default function CerimonialDashboard() {
   const { data: session, status: authStatus } = useSession();
+  const toast = useToast();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -308,7 +310,7 @@ export default function CerimonialDashboard() {
                 onClick={() => {
                   const url = `${window.location.origin}/registro?ref=${referral.referralCode}`;
                   navigator.clipboard.writeText(url);
-                  alert("Link copiado!");
+                  toast.success("Link copiado!");
                 }}
                 className="px-4 py-2 bg-copper text-white rounded-lg font-body text-sm font-medium hover:bg-copper/90 transition"
               >
@@ -346,17 +348,3 @@ export default function CerimonialDashboard() {
               >
                 Cancelar
               </button>
-              <button
-                onClick={handleLinkWedding}
-                disabled={linking}
-                className="flex-1 py-2.5 bg-copper text-white rounded-xl font-body text-sm font-medium hover:bg-copper/90 transition disabled:opacity-50"
-              >
-                {linking ? "Vinculando..." : "Vincular"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}

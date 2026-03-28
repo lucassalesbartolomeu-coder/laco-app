@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { track } from "@/lib/analytics";
+import { Celebration } from "@/components/illustrations";
 
 interface OnboardingStep {
   title: string;
@@ -168,6 +170,7 @@ export default function OnboardingPage() {
         body: JSON.stringify({ plannerEmail }),
       });
       const data = await res.json();
+      if (data.linked) track("planner_linked", { plannerCompany: data.planner?.companyName });
       setPlannerResult(data);
     } catch {
       setPlannerResult({ linked: false, reason: "error" });
@@ -262,9 +265,13 @@ export default function OnboardingPage() {
               className="p-8"
             >
               {/* Icon */}
-              <div className="w-16 h-16 bg-cream rounded-2xl flex items-center justify-center text-4xl mb-6">
-                {step.icon}
-              </div>
+              {isLast ? (
+                <Celebration className="mb-4 -mx-2" />
+              ) : (
+                <div className="w-16 h-16 bg-cream rounded-2xl flex items-center justify-center text-4xl mb-6">
+                  {step.icon}
+                </div>
+              )}
 
               {/* Step badge */}
               <span className="inline-block px-2.5 py-1 bg-teal/10 text-teal font-body text-xs rounded-full mb-3">
@@ -452,30 +459,4 @@ export default function OnboardingPage() {
                 onClick={handleNext}
                 disabled={saving}
                 className="flex-1 py-3 rounded-xl bg-teal text-white font-body font-medium hover:bg-teal/90 transition disabled:opacity-50"
-              >
-                {saving ? "Salvando…" : `${step.action} →`}
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Step dots */}
-        <div className="flex justify-center gap-2 mt-6">
-          {steps.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => { setDirection(i > currentStep ? 1 : -1); setCurrentStep(i); }}
-              className={`w-2 h-2 rounded-full transition-all ${
-                i === currentStep ? "w-6 bg-teal" : "bg-gray-300"
-              }`}
-            />
-          ))}
-        </div>
-
-        <p className="text-center font-body text-xs text-verde-noite/30 mt-4">
-          Você pode completar a configuração depois no painel
-        </p>
-      </div>
-    </div>
-  );
-}
+      

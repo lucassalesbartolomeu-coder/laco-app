@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useToast } from "@/hooks/use-toast";
 
 interface ContractWedding {
   id: string;
@@ -118,6 +119,7 @@ function StatusBadge({ contract }: { contract: Contract }) {
 
 export default function ContratosPage() {
   const { status: authStatus } = useSession();
+  const toast = useToast();
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [weddings, setWeddings] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -279,7 +281,7 @@ export default function ContratosPage() {
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(getCoupleLink(c.id));
-                        alert("Link copiado!");
+                        toast.success("Link copiado!");
                       }}
                       className="px-3 py-1.5 border border-teal text-teal rounded-lg font-body text-xs font-medium hover:bg-teal/5 transition"
                     >
@@ -439,20 +441,4 @@ export default function ContratosPage() {
                   onClick={() => setSignModalContract(null)}
                   className="flex-1 py-2.5 border border-gray-300 text-verde-noite/70 rounded-xl font-body text-sm hover:bg-gray-50 transition"
                 >
-                  Cancelar
-                </button>
-                <button
-                  onClick={submitSign}
-                  disabled={signing || !signerName.trim()}
-                  className="flex-1 py-2.5 bg-teal text-white rounded-xl font-body text-sm font-medium hover:bg-teal/90 transition disabled:opacity-50"
-                >
-                  {signing ? "Assinando..." : "Confirmar Assinatura"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+               

@@ -71,6 +71,50 @@
   }
 }
 
+/* ─── Print / PDF export ──────────────────────────────────
+   Usage: window.print() — shows only #attendance-chart, hides nav.
+   Colors are forced so teal/copper bars render in print.
+*/
+@media print {
+  /* Hide everything by default */
+  body > *,
+  #__next > *,
+  nav,
+  header,
+  footer,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Show only the chart section */
+  #attendance-chart {
+    display: block !important;
+  }
+
+  /* Reset page chrome */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #1a3a33 !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Force color printing so bar fills appear */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Remove shadows and rounded corners for clean PDF */
+  #attendance-chart {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 2rem !important;
+    width: 100% !important;
+  }
+}
+
 /* Scrollbar — subtle, brand-aligned */
 ::-webkit-scrollbar {
   width: 6px;
