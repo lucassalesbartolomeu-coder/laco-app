@@ -75,7 +75,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-cream flex flex-col">
       {/* Minimal nav */}
       <nav className="px-6 py-5">
-        <Link href="/" className="font-heading text-2xl font-semibold text-verde-noite tracking-wide">
+        <Link href="/" className="font-logo text-2xl font-semibold text-verde-noite tracking-wide">
           Laço
         </Link>
       </nav>

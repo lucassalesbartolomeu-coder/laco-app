@@ -1,6 +1,6 @@
 /**
  * Middleware de autenticação do Laço.
- * Adaptado do Colo — mesma lógica JWT, rotas Laço.
+ * CORRIGIDO: rotas reais são /dashboard/*, /casamento/*, /cerimonialista/*, /perfil/*
  *
  * IMPORTANTE: Cookie prefix usa NODE_ENV (igual ao auth.ts).
  * Ambos devem usar a mesma lógica para evitar mismatch.
@@ -9,17 +9,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-// Rotas que requerem autenticação
+// Rotas que requerem autenticação (rotas reais do app)
 const PROTECTED_PATHS = [
-  "/app",
-  "/app/dashboard",
-  "/app/presentes",
-  "/app/convidados",
-  "/app/fornecedores",
-  "/app/orcamento",
-  "/app/configuracoes",
-  "/app/saques",
-  "/app/album",
+  "/dashboard",
+  "/casamento",
+  "/cerimonialista",
+  "/perfil",
+  "/onboarding",
 ];
 
 // Rotas de auth — redireciona para dashboard se já logado
@@ -27,6 +23,7 @@ const AUTH_PATHS = ["/login", "/cadastro", "/esqueci-senha"];
 
 // Rotas de API protegidas (requerem autenticação)
 const PROTECTED_API_PATHS = [
+  "/api/weddings",
   "/api/wedding",
   "/api/gifts",
   "/api/guests",
@@ -35,22 +32,28 @@ const PROTECTED_API_PATHS = [
   "/api/withdrawals",
   "/api/upload",
   "/api/user",
+  "/api/profile",
+  "/api/planner",
+  "/api/ocr",
+  "/api/ai",
 ];
 
-// Rotas de API públicas (não requerem autenticação)
-// /api/payments/orders e /api/payments/webhook são públicas (convidados)
-// /api/auth é gerenciado pelo NextAuth
-
 function isProtectedPath(pathname: string): boolean {
-  return PROTECTED_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
+  return PROTECTED_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(p + "/")
+  );
 }
 
 function isAuthPath(pathname: string): boolean {
-  return AUTH_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
+  return AUTH_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(p + "/")
+  );
 }
 
 function isProtectedApiPath(pathname: string): boolean {
-  return PROTECTED_API_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
+  return PROTECTED_API_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(p + "/")
+  );
 }
 
 export async function middleware(req: NextRequest) {
@@ -88,7 +91,11 @@ export async function middleware(req: NextRequest) {
   // ─── Rotas de auth — redireciona se já logado ────────────
   if (isAuthPath(pathname)) {
     if (isLoggedIn) {
-      return NextResponse.redirect(new URL("/app/dashboard", req.url));
+      // Redireciona para dashboard correto baseado no role
+      const role = (token as { role?: string })?.role;
+      const dest =
+        role === "PLANNER" ? "/cerimonialista/dashboard" : "/dashboard";
+      return NextResponse.redirect(new URL(dest, req.url));
     }
     return NextResponse.next();
   }
@@ -111,11 +118,17 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization)
      * - favicon.ico
-     * - public folder files
-     * - /lista/* (site público do casal — sem auth)
+     * - public folder files (svg, png, jpg, etc)
+     * - /[slug]/* (site público do casal — sem auth)
      * - /api/auth/* (NextAuth)
      * - /api/payments/* (webhooks e pedidos — sem auth)
+     * - /api/public/* (APIs públicas)
+     * - /api/health (health check)
+     * - /api/webhooks/* (webhooks externos)
+     * - /blog/* (conteúdo público)
+     * - /casamento-em-* (landing pages públicas)
+     * - /contratos/* (visualização pública de contratos)
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)|lista/|api/auth/|api/payments/).*)",
+    "/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)|api/auth/|api/payments/|api/public/|api/health|api/webhooks/|blog/|casamento-em-|contratos/).*)",
   ],
 };

@@ -53,7 +53,7 @@ export default function BlogPage() {
               >
                 {/* Cover placeholder */}
                 <div className="h-40 bg-gradient-to-br from-teal/20 to-verde-noite/20 flex items-center justify-center">
-                  <span className="font-heading text-4xl text-verde-noite/20">Laço</span>
+                  <span className="font-logo text-4xl text-verde-noite/20">Laço</span>
                 </div>
 
                 <div className="p-5">

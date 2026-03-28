@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+
+const LAST_WEDDING_KEY = "laco_last_wedding_id";
 
 interface BottomNavProps {
   weddingId?: string;
@@ -39,11 +42,23 @@ const PerfilIcon = () => (
 
 export default function BottomNav({ weddingId }: BottomNavProps) {
   const pathname = usePathname();
+  const [resolvedId, setResolvedId] = useState(weddingId);
+
+  // Persist the weddingId whenever we have one; fall back to localStorage when we don't
+  useEffect(() => {
+    if (weddingId) {
+      localStorage.setItem(LAST_WEDDING_KEY, weddingId);
+      setResolvedId(weddingId);
+    } else {
+      const saved = localStorage.getItem(LAST_WEDDING_KEY);
+      if (saved) setResolvedId(saved);
+    }
+  }, [weddingId]);
 
   const isActive = (pattern: string) => pathname.includes(pattern);
   const isHome = pathname === "/dashboard";
 
-  const weddingBase = weddingId ? `/casamento/${weddingId}` : null;
+  const weddingBase = resolvedId ? `/casamento/${resolvedId}` : null;
 
   const tabs = [
     {
@@ -54,17 +69,17 @@ export default function BottomNav({ weddingId }: BottomNavProps) {
       disabled: false,
     },
     {
-      label: "Simulador",
-      href: weddingBase ? `${weddingBase}/simulador` : null,
-      icon: <SimuladorIcon />,
-      active: isActive("/simulador"),
+      label: "Convidados",
+      href: weddingBase ? `${weddingBase}/convidados` : null,
+      icon: <GestaoIcon />,
+      active: isActive("/convidados") || isActive("/confirmacoes") || isActive("/importar"),
       disabled: !weddingBase,
     },
     {
-      label: "Gestão",
-      href: weddingBase ? `${weddingBase}/convidados` : null,
-      icon: <GestaoIcon />,
-      active: isActive("/convidados") || isActive("/presentes"),
+      label: "Orçamento",
+      href: weddingBase ? `${weddingBase}/orcamento` : null,
+      icon: <SimuladorIcon />,
+      active: isActive("/orcamento") || isActive("/fornecedores") || isActive("/simulador"),
       disabled: !weddingBase,
     },
     {

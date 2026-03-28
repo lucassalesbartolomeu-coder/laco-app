@@ -5,6 +5,10 @@ import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
 
+declare global {
+  interface Window { ContactsManager: unknown; }
+}
+
 /* ─── Types ─────────────────────────────────────────────────────────── */
 
 type Category =
@@ -158,6 +162,14 @@ export default function ConvidadosPage() {
   const [filterCategory, setFilterCategory] = useState("todos");
   const [filterStatus, setFilterStatus] = useState("todos");
 
+  // Contact Picker
+  const [contactPickerSupported, setContactPickerSupported] = useState(false);
+  const [pickingContacts, setPickingContacts] = useState(false);
+  const [pickedContacts, setPickedContacts] = useState<{ name: string; phone: string; suggested?: string }[]>([]);
+  const [pickedCategory, setPickedCategory] = useState<Category>("familia_noivo");
+  const [importingContacts, setImportingContacts] = useState(false);
+  const [cleaningNames, setCleaningNames] = useState(false);
+
   // Modal
   const [modalOpen, setModalOpen] = useState(false);
   const [formName, setFormName] = useState("");
@@ -184,10 +196,14 @@ export default function ConvidadosPage() {
   }, [weddingId]);
 
   useEffect(() => {
-    if (authStatus === "authenticated") {
-      fetchGuests();
-    }
+    if (authStatus === "authenticated") fetchGuests();
   }, [authStatus, fetchGuests]);
+
+  useEffect(() => {
+    setContactPickerSupported(
+      typeof navigator !== "undefined" && "contacts" in navigator && "ContactsManager" in window
+    );
+  }, []);
 
   /* ── Filtered list ─────────────────────────────────────────────── */
 
@@ -210,6 +226,80 @@ export default function ConvidadosPage() {
   const pctConfirmados = total > 0 ? Math.round((confirmados / total) * 100) : 0;
 
   /* ── Actions ───────────────────────────────────────────────────── */
+
+  /* ── Contact Picker ────────────────────────────────────────────────── */
+
+  async function handleContactPicker() {
+    if (!contactPickerSupported) return;
+    setPickingContacts(true);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const raw = await (navigator as any).contacts.select(["name", "tel"], { multiple: true });
+      const parsed: { name: string; phone: string; suggested?: string }[] = [];
+      for (const entry of raw) {
+        const name = (entry.name?.[0] ?? "").trim();
+        const phone = (entry.tel?.[0] ?? "").trim();
+        if (name) parsed.push({ name, phone });
+      }
+      if (parsed.length === 0) return;
+
+      setPickedContacts(parsed);
+      setPickedCategory("familia_noivo");
+
+      // Clean names via AI in background
+      setCleaningNames(true);
+      try {
+        const res = await fetch("/api/ai/clean-names", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contacts: parsed }),
+        });
+        if (res.ok) {
+          const { cleaned } = await res.json() as { cleaned: string[] };
+          setPickedContacts((prev) =>
+            prev.map((c, i) => ({
+              ...c,
+              suggested: cleaned[i] && cleaned[i] !== c.name ? cleaned[i] : undefined,
+            }))
+          );
+        }
+      } catch {
+        // AI failed — silently ignore, user sees original names
+      } finally {
+        setCleaningNames(false);
+      }
+    } catch {
+      // cancelled or permission denied
+    } finally {
+      setPickingContacts(false);
+    }
+  }
+
+  async function confirmImportContacts() {
+    if (pickedContacts.length === 0) return;
+    setImportingContacts(true);
+    try {
+      const payload = pickedContacts.map((c) => ({
+        name: c.name,
+        phone: c.phone,
+        category: pickedCategory,
+        rsvpStatus: "pendente",
+      }));
+      const res = await fetch(`/api/weddings/${weddingId}/guests/bulk`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ guests: payload }),
+      });
+      if (res.ok) {
+        await fetchGuests();
+        setPickedContacts([]);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setImportingContacts(false);
+    }
+  }
 
   async function cycleStatus(guest: Guest) {
     const newStatus = STATUS_CYCLE[guest.rsvpStatus];
@@ -302,12 +392,39 @@ export default function ConvidadosPage() {
     <div className="min-h-screen bg-off-white py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <h1 className="font-heading text-3xl sm:text-4xl text-verde-noite mb-1">
-          Convidados
-        </h1>
-        <p className="font-body text-gray-500 mb-8">
-          Gerencie sua lista de convidados
-        </p>
+        <div className="flex items-start justify-between mb-1">
+          <div>
+            <h1 className="font-heading text-3xl sm:text-4xl text-verde-noite">
+              Convidados
+            </h1>
+            <p className="font-body text-gray-500 mt-1">
+              Gerencie sua lista de convidados
+            </p>
+          </div>
+          <button
+            onClick={contactPickerSupported ? handleContactPicker : undefined}
+            disabled={pickingContacts}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-body font-medium transition mt-1 flex-shrink-0 ${
+              contactPickerSupported
+                ? "bg-teal text-white hover:bg-teal/90 shadow-sm"
+                : "bg-gray-100 text-gray-400 cursor-default"
+            }`}
+            title={contactPickerSupported ? "Importar contatos da agenda" : "Disponível no Chrome para Android"}
+          >
+            {pickingContacts ? (
+              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            )}
+            Importar
+          </button>
+        </div>
+        <div className="mb-8" />
 
         {/* ── KPI Cards ──────────────────────────────────────────── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -614,10 +731,132 @@ export default function ConvidadosPage() {
             resetForm();
             setModalOpen(true);
           }}
-          className="fixed bottom-8 right-8 w-14 h-14 bg-copper text-white rounded-full shadow-lg hover:bg-copper/90 transition-all duration-200 flex items-center justify-center z-40"
+          className="fixed bottom-24 right-6 w-14 h-14 bg-copper text-white rounded-full shadow-lg hover:bg-copper/90 transition-all duration-200 flex items-center justify-center z-40"
         >
           <PlusIcon />
         </button>
+
+        {/* ── Import Contacts Modal ─────────────────────────────── */}
+        <AnimatePresence>
+          {pickedContacts.length > 0 && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-4 pb-4 sm:pb-0"
+              variants={overlayVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              transition={{ duration: 0.2 }}
+            >
+              <motion.div
+                className="absolute inset-0 bg-black/40"
+                onClick={() => setPickedContacts([])}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              />
+              <motion.div
+                className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 z-10 max-h-[80vh] flex flex-col"
+                variants={modalVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={{ duration: 0.25, ease: "easeOut" }}
+              >
+                <h2 className="font-heading text-xl text-verde-noite mb-1">
+                  {pickedContacts.length} contato{pickedContacts.length !== 1 ? "s" : ""} selecionado{pickedContacts.length !== 1 ? "s" : ""}
+                </h2>
+                <p className="font-body text-sm text-gray-500 mb-4">
+                  Escolha a categoria para todos eles:
+                </p>
+
+                <select
+                  value={pickedCategory}
+                  onChange={(e) => setPickedCategory(e.target.value as Category)}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none mb-4 appearance-none"
+                >
+                  {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                    <option key={key} value={key}>{label}</option>
+                  ))}
+                </select>
+
+                {cleaningNames && (
+                  <div className="flex items-center gap-2 mb-3 text-xs font-body text-teal">
+                    <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                    </svg>
+                    IA verificando os nomes…
+                  </div>
+                )}
+
+                <div className="overflow-y-auto flex-1 space-y-2 mb-5">
+                  {pickedContacts.map((c, i) => (
+                    <div key={i} className="bg-gray-50 rounded-xl px-4 py-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          {c.suggested ? (
+                            <>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <p className="font-body text-sm font-semibold text-verde-noite">{c.suggested}</p>
+                                <span className="text-[10px] font-body bg-teal/10 text-teal px-2 py-0.5 rounded-full">sugerido pela IA</span>
+                              </div>
+                              <p className="font-body text-xs text-gray-400 line-through mt-0.5">{c.name}</p>
+                              <button
+                                onClick={() =>
+                                  setPickedContacts((prev) =>
+                                    prev.map((p, j) => j === i ? { ...p, name: p.suggested!, suggested: undefined } : p)
+                                  )
+                                }
+                                className="text-[11px] font-body text-teal underline mt-1"
+                              >
+                                Aceitar sugestão
+                              </button>
+                              <button
+                                onClick={() =>
+                                  setPickedContacts((prev) =>
+                                    prev.map((p, j) => j === i ? { ...p, suggested: undefined } : p)
+                                  )
+                                }
+                                className="text-[11px] font-body text-gray-400 underline mt-1 ml-3"
+                              >
+                                Manter original
+                              </button>
+                            </>
+                          ) : (
+                            <p className="font-body text-sm font-medium text-verde-noite">{c.name}</p>
+                          )}
+                          {c.phone && <p className="font-body text-xs text-gray-400 mt-0.5">{c.phone}</p>}
+                        </div>
+                        <button
+                          onClick={() => setPickedContacts((prev) => prev.filter((_, j) => j !== i))}
+                          className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition flex-shrink-0"
+                        >
+                          <TrashIcon className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setPickedContacts([])}
+                    className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-600 rounded-xl font-body font-medium hover:bg-gray-50 transition"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={confirmImportContacts}
+                    disabled={importingContacts}
+                    className="flex-1 px-4 py-3 bg-teal text-white rounded-xl font-body font-medium hover:bg-teal/90 transition disabled:opacity-40"
+                  >
+                    {importingContacts ? "Adicionando…" : "Adicionar todos"}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* ── Add Guest Modal ────────────────────────────────────── */}
         <AnimatePresence>

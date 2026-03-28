@@ -25,6 +25,13 @@ interface WeddingTheme {
   };
 }
 
+interface WeddingPhoto {
+  id: string;
+  url: string;
+  caption?: string | null;
+  sortOrder: number;
+}
+
 interface Wedding {
   id: string;
   partnerName1: string;
@@ -35,8 +42,13 @@ interface Wedding {
   venueAddress?: string;
   ceremonyVenue?: string;
   ceremonyAddress?: string;
+  city?: string;
+  state?: string;
   style?: string;
+  coverImage?: string | null;
+  message?: string | null;
   theme?: WeddingTheme;
+  photos?: WeddingPhoto[];
 }
 
 /* ─── Theme helpers ─── */
@@ -300,6 +312,13 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
 
       {/* ═══════ 1. HERO ═══════ */}
       <section className="wt-hero relative min-h-screen flex flex-col items-center justify-center bg-verde-noite text-white overflow-hidden">
+        {/* Cover image */}
+        {wedding.coverImage && (
+          <div className="absolute inset-0">
+            <Image src={wedding.coverImage} alt={`${wedding.partnerName1} & ${wedding.partnerName2}`}
+              fill className="object-cover opacity-30" unoptimized />
+          </div>
+        )}
         {/* radial gradient overlay */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.05)_0%,transparent_70%)] pointer-events-none" />
 
@@ -632,7 +651,35 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
         </section>
       )}
 
-      {/* ═══════ 6. FOOTER ═══════ */}
+      {/* ═══════ 6. GALERIA ═══════ */}
+      {wedding.photos && wedding.photos.length > 0 && (
+        <section className="py-20 px-4 bg-white">
+          <FadeIn className="max-w-5xl mx-auto">
+            <h2 className="font-heading text-4xl text-center mb-12">Galeria</h2>
+            <div className="columns-2 md:columns-3 gap-3 space-y-3">
+              {wedding.photos.map((photo) => (
+                <div key={photo.id} className="break-inside-avoid rounded-xl overflow-hidden relative group">
+                  <Image
+                    src={photo.url}
+                    alt={photo.caption ?? "Foto do casamento"}
+                    width={600}
+                    height={400}
+                    className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    unoptimized
+                  />
+                  {photo.caption && (
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <p className="font-body text-xs text-white">{photo.caption}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </section>
+      )}
+
+      {/* ═══════ 7. FOOTER ═══════ */}
       <footer className="wt-hero bg-verde-noite text-white py-8">
         <div className="text-center space-y-2">
           <p className="font-body text-sm text-white/70">Feito com amor pelo Laco</p>

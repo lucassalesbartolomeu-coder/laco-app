@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, type DragEvent, type ChangeEvent } from "react";
+import { useState, useCallback, useRef, useEffect, type DragEvent, type ChangeEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { parsePhone, formatPhone } from "@/lib/parse-phone";
@@ -77,8 +77,39 @@ export default function ImportarContatosPage() {
   const [manualPhone, setManualPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [contactPickerSupported, setContactPickerSupported] = useState(false);
+  const [pickingContacts, setPickingContacts] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setContactPickerSupported(
+      typeof navigator !== "undefined" && "contacts" in navigator && "ContactsManager" in window
+    );
+  }, []);
+
+  /* ---- Contact Picker API ---- */
+
+  async function handleContactPicker() {
+    if (!contactPickerSupported) return;
+    setPickingContacts(true);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const raw = await (navigator as any).contacts.select(["name", "tel"], { multiple: true });
+      const parsed: Contact[] = [];
+      for (const entry of raw) {
+        const name = (entry.name?.[0] ?? "").trim();
+        const tel = (entry.tel?.[0] ?? "").trim();
+        if (!name || !tel) continue;
+        parsed.push(buildContact(name, tel));
+      }
+      if (parsed.length > 0) setContacts((prev) => [...prev, ...parsed]);
+    } catch {
+      // user cancelled or permission denied — silently ignore
+    } finally {
+      setPickingContacts(false);
+    }
+  }
 
   /* ---- Drag & drop ---- */
 
@@ -183,6 +214,59 @@ export default function ImportarContatosPage() {
           <p className="font-body mt-1 text-verde-noite/70">
             Adicione os convidados via arquivo CSV ou manualmente.
           </p>
+        </div>
+
+        {/* Contact Picker API */}
+        <div className="bg-white rounded-2xl shadow-md p-6">
+          <h2 className="font-heading text-lg font-semibold text-verde-noite mb-1">
+            Importar do celular
+          </h2>
+          <p className="font-body text-sm text-verde-noite/60 mb-4">
+            Selecione contatos diretamente da agenda do seu dispositivo.
+          </p>
+          {contactPickerSupported ? (
+            <button
+              onClick={handleContactPicker}
+              disabled={pickingContacts}
+              className="flex items-center gap-3 w-full rounded-xl border-2 border-teal/30 bg-teal/5 hover:bg-teal/10 px-5 py-4 transition-colors disabled:opacity-50"
+            >
+              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-teal/15 text-teal">
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </span>
+              <div className="text-left">
+                <p className="font-body text-sm font-semibold text-verde-noite">
+                  {pickingContacts ? "Abrindo agenda…" : "Selecionar da agenda"}
+                </p>
+                <p className="font-body text-xs text-verde-noite/50">
+                  Escolha um ou vários contatos de uma vez
+                </p>
+              </div>
+              {pickingContacts && (
+                <svg className="ml-auto h-4 w-4 animate-spin text-teal" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              )}
+            </button>
+          ) : (
+            <div className="flex items-center gap-3 w-full rounded-xl border-2 border-gray-200 bg-gray-50 px-5 py-4">
+              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </span>
+              <div className="text-left">
+                <p className="font-body text-sm font-semibold text-verde-noite/50">
+                  Selecionar da agenda
+                </p>
+                <p className="font-body text-xs text-verde-noite/40">
+                  Disponível no Chrome para Android
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* CSV Drop Zone */}

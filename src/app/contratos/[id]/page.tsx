@@ -14,15 +14,8 @@ interface ContractData {
   plannerSignedAt: string | null;
   coupleSignedAt: string | null;
   createdAt: string;
-  wedding: {
-    partnerName1: string;
-    partnerName2: string;
-    weddingDate: string | null;
-  };
-  planner: {
-    companyName: string;
-    phone: string;
-  };
+  wedding: { partnerName1: string; partnerName2: string; weddingDate: string | null };
+  planner: { companyName: string; phone: string };
 }
 
 function formatDate(iso: string | null) {
@@ -39,7 +32,6 @@ export default function PublicContractPage() {
   const [contract, setContract] = useState<ContractData | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-
   const [name, setName] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [signing, setSigning] = useState(false);
@@ -47,17 +39,8 @@ export default function PublicContractPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch(`/api/public/contracts/${id}/sign`)
-      .then(async (res) => {
-        if (res.status === 404) { setNotFound(true); return; }
-        // GET not defined — fetch contract via a different approach
-        // Use the sign endpoint just to get the contract data
-      })
-      .catch(() => setNotFound(true));
-
-    // Actually fetch contract data
     fetch(`/api/public/contracts/${id}`)
-      .then(async (res) => {
+      .then(async res => {
         if (!res.ok) { setNotFound(true); setLoading(false); return; }
         setContract(await res.json());
         setLoading(false);
@@ -77,168 +60,177 @@ export default function PublicContractPage() {
       });
       if (res.ok) {
         setSigned(true);
+        setContract(c => c ? { ...c, signedByCouple: true, coupleName: name, coupleSignedAt: new Date().toISOString() } : c);
       } else {
         const d = await res.json();
         setError(d.error ?? "Erro ao assinar");
       }
     } catch {
-      setError("Erro de conexão");
+      setError("Erro de conexão. Tente novamente.");
     } finally {
       setSigning(false);
     }
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-cream">
-        <div className="w-8 h-8 border-4 border-teal border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-cream">
+      <div className="w-8 h-8 border-4 border-teal border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
 
-  if (notFound || !contract) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-cream gap-4">
-        <h1 className="font-heading text-3xl text-verde-noite">Contrato não encontrado</h1>
-        <p className="font-body text-verde-noite/60">O link pode estar incorreto ou expirado.</p>
+  if (notFound || !contract) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-cream gap-4 px-4 text-center">
+      <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mx-auto">
+        <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
       </div>
-    );
-  }
+      <h1 className="font-heading text-2xl text-verde-noite">Contrato não encontrado</h1>
+      <p className="font-body text-verde-noite/60 max-w-sm">O link pode estar incorreto ou o contrato não está disponível para assinatura.</p>
+      <a href="/" className="font-body text-sm text-copper hover:underline">Voltar ao início</a>
+    </div>
+  );
 
   const couple = `${contract.wedding.partnerName1} & ${contract.wedding.partnerName2}`;
+  const alreadySigned = contract.signedByCouple;
 
   return (
-    <div className="min-h-screen bg-cream py-12 px-4">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <a href="/" className="font-heading text-3xl text-verde-noite">Laço</a>
-          <p className="font-body text-sm text-verde-noite/50 mt-1">Contrato de Prestação de Serviços</p>
+    <div className="min-h-screen bg-cream">
+      {/* Nav */}
+      <nav className="bg-white border-b border-gray-100">
+        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+          <a href="/" className="font-logo text-2xl font-semibold text-verde-noite tracking-wide">Laço</a>
+          <span className="font-body text-xs text-verde-noite/40">Contrato de Prestação de Serviços</span>
         </div>
+      </nav>
 
-        <div className="bg-white rounded-2xl shadow-sm p-8 mb-6">
-          {/* Parties */}
-          <div className="border-b border-gray-100 pb-6 mb-6">
-            <h1 className="font-heading text-2xl text-verde-noite mb-4">Contrato — {couple}</h1>
-            <div className="grid sm:grid-cols-2 gap-4 text-sm font-body">
-              <div>
-                <p className="text-verde-noite/50 mb-0.5">Contratado</p>
-                <p className="font-medium text-verde-noite">{contract.planner?.companyName}</p>
-              </div>
-              <div>
-                <p className="text-verde-noite/50 mb-0.5">Data do Casamento</p>
-                <p className="font-medium text-verde-noite">{formatDate(contract.wedding.weddingDate)}</p>
-              </div>
-              {contract.value != null && (
-                <div>
-                  <p className="text-verde-noite/50 mb-0.5">Valor</p>
-                  <p className="font-medium text-verde-noite">{formatCurrency(contract.value)}</p>
-                </div>
-              )}
-            </div>
-          </div>
+      <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
 
-          {/* Terms */}
-          <h2 className="font-heading text-lg text-verde-noite mb-3">Termos e Condições</h2>
-          <div className="bg-gray-50 rounded-xl p-5 mb-6 max-h-96 overflow-y-auto">
-            <pre className="font-body text-sm text-verde-noite/80 whitespace-pre-wrap leading-relaxed">
-              {contract.terms}
-            </pre>
-          </div>
-
-          {/* Signatures status */}
-          <div className="grid sm:grid-cols-2 gap-4 mb-6">
-            <div className="border border-gray-100 rounded-xl p-4">
-              <p className="font-body text-xs text-verde-noite/40 uppercase tracking-wider mb-2">Cerimonialista</p>
-              {contract.signedByPlanner ? (
-                <div>
-                  <p className="font-body text-sm font-medium text-verde-noite">{contract.plannerName}</p>
-                  <p className="font-body text-xs text-green-600 mt-1">
-                    Assinado em {formatDate(contract.plannerSignedAt)}
-                  </p>
-                </div>
-              ) : (
-                <p className="font-body text-sm text-verde-noite/40 italic">Pendente</p>
-              )}
-            </div>
-            <div className="border border-gray-100 rounded-xl p-4">
-              <p className="font-body text-xs text-verde-noite/40 uppercase tracking-wider mb-2">Casal</p>
-              {contract.signedByCouple ? (
-                <div>
-                  <p className="font-body text-sm font-medium text-verde-noite">{contract.coupleName}</p>
-                  <p className="font-body text-xs text-green-600 mt-1">
-                    Assinado em {formatDate(contract.coupleSignedAt)}
-                  </p>
-                </div>
-              ) : (
-                <p className="font-body text-sm text-verde-noite/40 italic">Pendente</p>
-              )}
-            </div>
-          </div>
-
-          {/* Sign form or success */}
-          {contract.signedByCouple ? (
-            <div className="text-center bg-green-50 rounded-xl p-6">
-              <svg className="w-10 h-10 text-green-500 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              <p className="font-heading text-xl text-verde-noite">Contrato assinado!</p>
-              <p className="font-body text-sm text-verde-noite/60 mt-1">
-                Assinado por {contract.coupleName} em {formatDate(contract.coupleSignedAt)}
-              </p>
-            </div>
-          ) : signed ? (
-            <div className="text-center bg-green-50 rounded-xl p-6">
-              <svg className="w-10 h-10 text-green-500 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              <p className="font-heading text-xl text-verde-noite">Assinado com sucesso!</p>
-              <p className="font-body text-sm text-verde-noite/60 mt-1">
-                Sua assinatura foi registrada. O cerimonialista receberá uma confirmação.
-              </p>
-            </div>
-          ) : (
+        {/* Header card */}
+        <div className="bg-verde-noite rounded-3xl p-6 text-white">
+          <p className="font-body text-sm text-white/60 mb-1">Contrato para</p>
+          <h1 className="font-heading text-2xl font-semibold mb-3">{couple}</h1>
+          <div className="flex flex-wrap gap-4 text-sm">
             <div>
-              <h3 className="font-heading text-lg text-verde-noite mb-4">Assinar Contrato</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block font-body text-sm mb-1 text-verde-noite/70">Seu nome completo *</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Nome como aparecerá na assinatura"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none"
-                  />
-                </div>
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={agreed}
-                    onChange={(e) => setAgreed(e.target.checked)}
-                    className="mt-1 accent-teal w-4 h-4 shrink-0"
-                  />
-                  <span className="font-body text-sm text-verde-noite/70 leading-relaxed">
-                    Li e concordo com todos os termos e condições deste contrato. Entendo que esta assinatura digital tem validade jurídica.
-                  </span>
-                </label>
-
-                {error && <p className="font-body text-sm text-red-600">{error}</p>}
-
-                <button
-                  onClick={handleSign}
-                  disabled={signing || !name.trim() || !agreed}
-                  className="w-full py-3 bg-copper text-white rounded-xl font-body font-semibold hover:bg-copper/90 transition disabled:opacity-50"
-                >
-                  {signing ? "Assinando..." : "Assinar Contrato"}
-                </button>
-              </div>
+              <p className="text-white/50 text-xs">Cerimonialista</p>
+              <p className="font-body font-medium">{contract.planner.companyName}</p>
             </div>
-          )}
+            {contract.wedding.weddingDate && (
+              <div>
+                <p className="text-white/50 text-xs">Data do casamento</p>
+                <p className="font-body font-medium">{formatDate(contract.wedding.weddingDate)}</p>
+              </div>
+            )}
+            {contract.value && (
+              <div>
+                <p className="text-white/50 text-xs">Valor</p>
+                <p className="font-body font-medium font-bold text-copper">{formatCurrency(contract.value)}</p>
+              </div>
+            )}
+          </div>
         </div>
 
-        <p className="text-center font-body text-xs text-verde-noite/30">
-          Plataforma Laço · laco.app
+        {/* Signature status */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-4">
+          <p className="font-body text-xs font-semibold text-verde-noite/40 uppercase tracking-wider mb-3">Assinaturas</p>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-2">
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center ${contract.signedByPlanner ? "bg-green-400" : "bg-gray-200"}`}>
+                {contract.signedByPlanner && (
+                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+              <div>
+                <p className="font-body text-sm font-medium text-verde-noite">{contract.plannerName ?? contract.planner.companyName}</p>
+                <p className="font-body text-xs text-verde-noite/40">
+                  {contract.signedByPlanner ? `Assinado em ${formatDate(contract.plannerSignedAt)}` : "Aguardando"}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center ${contract.signedByCouple ? "bg-green-400" : "bg-gray-200"}`}>
+                {contract.signedByCouple && (
+                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+              <div>
+                <p className="font-body text-sm font-medium text-verde-noite">{contract.coupleName ?? couple}</p>
+                <p className="font-body text-xs text-verde-noite/40">
+                  {contract.signedByCouple ? `Assinado em ${formatDate(contract.coupleSignedAt)}` : "Aguardando"}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Terms */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+          <p className="font-body text-xs font-semibold text-verde-noite/40 uppercase tracking-wider mb-4">Termos do Contrato</p>
+          <div className="font-body text-sm text-verde-noite/80 leading-relaxed whitespace-pre-wrap max-h-96 overflow-y-auto pr-2">
+            {contract.terms}
+          </div>
+        </div>
+
+        {/* Sign section */}
+        {alreadySigned || signed ? (
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
+            <div className="w-12 h-12 bg-green-400 rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="font-heading text-xl text-verde-noite mb-1">Contrato assinado!</h2>
+            <p className="font-body text-sm text-verde-noite/60">
+              Assinado por <strong>{contract.coupleName || name}</strong> em {formatDate(contract.coupleSignedAt ?? new Date().toISOString())}
+            </p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
+            <h2 className="font-heading text-lg font-semibold text-verde-noite">Assinar contrato</h2>
+            <p className="font-body text-sm text-verde-noite/60">
+              Ao assinar, você confirma que leu e concorda com todos os termos acima.
+            </p>
+
+            <div>
+              <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Seu nome completo *</label>
+              <input
+                value={name}
+                onChange={e => setName(e.target.value)}
+                placeholder="Nome conforme documento"
+                className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal"
+              />
+            </div>
+
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={e => setAgreed(e.target.checked)}
+                className="accent-teal mt-0.5 w-4 h-4 flex-shrink-0"
+              />
+              <span className="font-body text-sm text-verde-noite/70">
+                Li e concordo com todos os termos e condições deste contrato.
+              </span>
+            </label>
+
+            {error && <p className="font-body text-sm text-red-500">{error}</p>}
+
+            <button
+              onClick={handleSign}
+              disabled={signing || !name.trim() || !agreed}
+              className="w-full py-3 bg-verde-noite text-white font-body font-semibold rounded-xl hover:bg-verde-noite/90 disabled:opacity-40 transition"
+            >
+              {signing ? "Assinando..." : "Assinar contrato"}
+            </button>
+          </div>
+        )}
+
+        <p className="text-center font-body text-xs text-verde-noite/30 pb-4">
+          Contrato gerado em {formatDate(contract.createdAt)} · Laço
         </p>
       </div>
     </div>

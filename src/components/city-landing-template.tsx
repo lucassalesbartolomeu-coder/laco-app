@@ -31,7 +31,7 @@ export default function CityLandingTemplate({
       {/* Header */}
       <header className="bg-verde-noite text-white">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="font-heading text-2xl text-white">Laço</Link>
+          <Link href="/" className="font-logo text-2xl text-white">Laço</Link>
           <Link
             href="/registro"
             className="px-4 py-2 bg-copper text-white rounded-lg text-sm font-medium hover:bg-copper/90 transition"

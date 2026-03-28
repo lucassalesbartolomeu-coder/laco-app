@@ -22,38 +22,44 @@ export async function GET(_request: Request, { params }: Params) {
     if (error === "not_found") return notFoundResponse("Casamento");
     if (error === "forbidden") return forbiddenResponse();
 
-    const items = await prisma.budgetItem.findMany({
-      where: { weddingId: id },
-    });
+    // Run totals aggregation and category groupBy in parallel — single round-trip each
+    const [totals, byCategory] = await Promise.all([
+      prisma.budgetItem.aggregate({
+        where: { weddingId: id },
+        _sum: {
+          estimatedCost: true,
+          actualCost: true,
+          paidAmount: true,
+        },
+      }),
+      prisma.budgetItem.groupBy({
+        by: ["category"],
+        where: { weddingId: id },
+        _sum: {
+          estimatedCost: true,
+          actualCost: true,
+          paidAmount: true,
+        },
+      }),
+    ]);
 
-    const totalEstimated = items.reduce((sum, item) => sum + item.estimatedCost, 0);
-    const totalActual = items.reduce((sum, item) => sum + (item.actualCost || 0), 0);
-    const totalPaid = items.reduce((sum, item) => sum + item.paidAmount, 0);
+    const totalEstimated = totals._sum.estimatedCost ?? 0;
+    const totalActual = totals._sum.actualCost ?? 0;
+    const totalPaid = totals._sum.paidAmount ?? 0;
     const totalPending = totalActual - totalPaid;
-
-    const categoryMap = new Map<string, { estimated: number; actual: number; paid: number }>();
-    for (const item of items) {
-      const existing = categoryMap.get(item.category) || { estimated: 0, actual: 0, paid: 0 };
-      existing.estimated += item.estimatedCost;
-      existing.actual += item.actualCost || 0;
-      existing.paid += item.paidAmount;
-      categoryMap.set(item.category, existing);
-    }
-
-    const byCategory = Array.from(categoryMap.entries()).map(([category, totals]) => ({
-      category,
-      totalEstimated: totals.estimated,
-      totalActual: totals.actual,
-      totalPaid: totals.paid,
-      totalPending: totals.actual - totals.paid,
-    }));
 
     return NextResponse.json({
       totalEstimated,
       totalActual,
       totalPaid,
       totalPending,
-      byCategory,
+      byCategory: byCategory.map((c) => ({
+        category: c.category,
+        totalEstimated: c._sum.estimatedCost ?? 0,
+        totalActual: c._sum.actualCost ?? 0,
+        totalPaid: c._sum.paidAmount ?? 0,
+        totalPending: (c._sum.actualCost ?? 0) - (c._sum.paidAmount ?? 0),
+      })),
     });
   } catch (error) {
     console.error("GET /api/weddings/[id]/budget/summary error:", error);

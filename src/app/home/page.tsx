@@ -112,7 +112,7 @@ export default function HomePage() {
       {/* ─── NAV ─── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-verde-noite/95 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
-          <span className="font-heading text-2xl text-white tracking-tight">Laço</span>
+          <span className="font-logo text-2xl text-white tracking-tight">Laço</span>
           <div className="flex items-center gap-3">
             <Link
               href="/login"
@@ -522,7 +522,7 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
             <div>
-              <span className="font-heading text-2xl text-white">Laço</span>
+              <span className="font-logo text-2xl text-white">Laço</span>
               <p className="font-body text-xs text-white/30 mt-1">
                 Planejamento de casamentos — Brasil
               </p>

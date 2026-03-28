@@ -451,8 +451,17 @@ export default function IdentityKitPage() {
               </Link>
               <h1 className="font-heading text-xl text-verde-noite">Identity Kit</h1>
             </div>
-            <span className="text-xs font-body text-verde-noite/40">
-              {generationCount}/{FREE_LIMIT} gerações usadas
+            <span className={`text-xs font-body px-2 py-0.5 rounded-full ${
+              generationCount >= FREE_LIMIT
+                ? "bg-red-50 text-red-500 font-semibold"
+                : generationCount === FREE_LIMIT - 1
+                ? "bg-amber-50 text-amber-600 font-semibold"
+                : "text-verde-noite/40"
+            }`}>
+              {generationCount >= FREE_LIMIT
+                ? "Limite atingido"
+                : `${FREE_LIMIT - generationCount} ${FREE_LIMIT - generationCount === 1 ? "geração restante" : "gerações restantes"}`
+              }
             </span>
           </div>
         </header>
@@ -1128,9 +1137,34 @@ export default function IdentityKitPage() {
         </div>
 
         {step === TOTAL_STEPS && generationCount >= FREE_LIMIT && (
-          <p className="text-center font-body text-xs text-red-500 mt-3">
-            Limite de {FREE_LIMIT} gerações atingido no plano gratuito.
-          </p>
+          <div className="mt-4 mx-auto max-w-sm">
+            <div className="bg-gradient-to-br from-verde-noite to-teal rounded-2xl p-5 text-center text-white shadow-lg">
+              <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <span className="text-xl">✨</span>
+              </div>
+              <p className="font-heading text-base font-semibold mb-1">Você usou suas 3 gerações gratuitas</p>
+              <p className="font-body text-xs text-white/70 mb-4 leading-relaxed">
+                Noivos no plano Pro geram identidades ilimitadas, exportam em alta resolução e salvam múltiplas versões.
+              </p>
+              <div className="space-y-2 text-left mb-4">
+                {["Gerações ilimitadas de Identity Kit", "Export em PNG e PDF alta resolução", "Salvar até 10 versões favoritas", "Suporte prioritário"].map((f) => (
+                  <div key={f} className="flex items-center gap-2">
+                    <svg className="w-3.5 h-3.5 text-teal flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="font-body text-xs text-white/90">{f}</span>
+                  </div>
+                ))}
+              </div>
+              <button
+                className="w-full py-2.5 bg-white text-verde-noite font-heading font-semibold text-sm rounded-xl hover:bg-white/90 transition"
+                onClick={() => window.location.href = "/planos"}
+              >
+                Desbloquear Pro →
+              </button>
+              <p className="font-body text-[10px] text-white/40 mt-2">Cancele quando quiser. Sem fidelidade.</p>
+            </div>
+          </div>
         )}
       </main>
     </div>

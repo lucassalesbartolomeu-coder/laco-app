@@ -1,23 +1,28 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getAuthenticatedUser } from "@/lib/api-helpers";
+import { getAuthenticatedUser, unauthorizedResponse, notFoundResponse, errorResponse } from "@/lib/api-helpers";
 
 export async function GET() {
-  const user = await getAuthenticatedUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const user = await getAuthenticatedUser();
+    if (!user) return unauthorizedResponse();
 
-  const profile = await prisma.user.findUnique({
-    where: { id: user.id },
-    select: {
-      name: true,
-      email: true,
-      role: true,
-      createdAt: true,
-      referralCode: true,
-    },
-  });
+    const profile = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        referralCode: true,
+      },
+    });
 
-  if (!profile) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (!profile) return notFoundResponse("Usuário");
 
-  return NextResponse.json(profile);
+    return NextResponse.json(profile);
+  } catch (error) {
+    console.error("GET /api/profile error:", error);
+    return errorResponse();
+  }
 }

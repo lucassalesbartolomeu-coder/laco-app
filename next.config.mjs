@@ -6,6 +6,20 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@react-pdf/renderer"],
   },
+  images: {
+    formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "**.supabase.in",
+      },
+    ],
+  },
+  compress: true,
 };
 
 export default withSentryConfig(nextConfig, {

@@ -19,76 +19,85 @@ interface OnboardingStep {
 // ─── Couple steps ─────────────────────────────────────────────────────────────
 const COUPLE_STEPS: OnboardingStep[] = [
   {
-    title: "Bem-vindos ao Laço!",
-    subtitle: "Vamos configurar o seu casamento em poucos minutos.",
+    title: "Tudo em um lugar para o dia mais especial",
+    subtitle: "Mais de 2.400 casais já usam o Laço — gratuito pra começar.",
     icon: "💍",
     description:
-      "O Laço cuida de tudo: site do casamento, lista de convidados, presentes, orçamentos e muito mais.",
-    action: "Começar",
+      "Site personalizado, lista de convidados com RSVP online, presente virtual, simulador de presença e orçamento inteligente. Do planejamento até o grande dia.",
+    action: "Configurar meu casamento",
   },
   {
-    title: "Crie seu casamento",
-    subtitle: "Adicione os dados básicos do grande dia.",
+    title: "Quando é o grande dia?",
+    subtitle: "Só leva 1 minuto — você edita tudo depois.",
     icon: "📅",
-    description: "Você pode editar essas informações a qualquer momento no seu painel.",
-    action: "Ir para Novo Casamento",
+    description: "Com a data definida, o Laço mostra a contagem regressiva e avisa quando é hora de agir em cada etapa.",
+    action: "Criar meu casamento",
     href: "/casamento/novo",
   },
   {
-    title: "Adicione seus convidados",
-    subtitle: "Importe sua lista de convidados facilmente.",
+    title: "Sua cerimonialista já usa o Laço?",
+    subtitle: "Conecte agora e ela vê tudo em tempo real.",
+    icon: "🤝",
+    description:
+      "Informe o e-mail da cerimonialista e ela ganha acesso imediato ao seu casamento no painel dela — orçamentos, convidados e cronograma sincronizados.",
+    action: "Continuar",
+    tip: "Ainda escolhendo? Você conecta depois. A maioria dos casais faz isso na semana do primeiro encontro com a cerimonialista.",
+  },
+  {
+    title: "Quem vai celebrar com vocês?",
+    subtitle: "Importe a lista em segundos — confirme presença pelo WhatsApp.",
     icon: "👥",
     description:
-      "Importe por CSV, adicione manualmente ou integre com sua agenda. Depois envie convites e acompanhe as confirmações.",
-    action: "Ver como importar",
+      "Cole uma lista, importe CSV ou adicione um a um. Cada convidado ganha um link de RSVP e você vê as confirmações em tempo real.",
+    action: "Importar convidados",
     href: "/casamento/novo",
-    tip: "Dica: use o simulador de presença para estimar quantos convidados vão comparecer!",
+    tip: "💡 Use o simulador de presença para descobrir o número real esperado — a média é 78% de comparecimento.",
   },
   {
-    title: "Seu site está pronto!",
-    subtitle: "Compartilhe com seus convidados.",
+    title: "Seu site de casamento está no ar! 🎉",
+    subtitle: "Pronto para compartilhar com quem você ama.",
     icon: "🌐",
     description:
-      "O Laço gerou automaticamente uma página personalizada para o seu casamento. Compartilhe o link com seus convidados para que possam confirmar presença e enviar presentes.",
-    action: "Ver meu site",
+      "O Laço criou sua página personalizada com URL única. Compartilhe no grupo da família, no WhatsApp e no Instagram para colher as confirmações.",
+    action: "Ver meu site agora",
   },
 ];
 
 // ─── Planner steps ─────────────────────────────────────────────────────────────
 const PLANNER_STEPS: OnboardingStep[] = [
   {
-    title: "Bem-vindo ao Laço Cerimonialista!",
-    subtitle: "Sua central de gestão de casamentos.",
+    title: "Menos planilha. Mais casamento.",
+    subtitle: "Cerimonialistas que usam o Laço economizam 4h por evento.",
     icon: "📋",
     description:
-      "Gerencie múltiplos casamentos, fornecedores, orçamentos e clientes em um único lugar. Vamos configurar seu perfil.",
-    action: "Começar",
+      "Pipeline de vendas, OCR de orçamentos com IA, controle de comissões, agenda e portal do cliente — tudo integrado. Vamos configurar seu perfil em 2 minutos.",
+    action: "Configurar meu perfil",
   },
   {
-    title: "Configure seu escritório",
-    subtitle: "Dados do seu negócio.",
+    title: "Seus clientes vão te encontrar aqui",
+    subtitle: "Perfil público + portfólio para novos noivos.",
     icon: "🏢",
     description:
-      "Preencha os dados da sua empresa para que os noivos possam encontrar você e para personalizar seus relatórios.",
-    action: "Configurar perfil",
+      "Noivos que usam o Laço podem buscar e contratar cerimonialistas direto pelo app. Preencha seus dados para aparecer para os casais certos.",
+    action: "Criar meu perfil agora",
     href: "/cerimonialista/portfolio",
   },
   {
-    title: "Importe seu primeiro orçamento",
-    subtitle: "Veja a mágica do OCR em ação.",
+    title: "Adeus digitação de orçamento",
+    subtitle: "Foto → itens organizados em 15 segundos.",
     icon: "🤖",
     description:
-      "Tire uma foto ou envie o PDF de um orçamento de fornecedor. A AI do Laço extrai todos os itens automaticamente — sem digitação.",
-    action: "Importar orçamento",
+      "Tire uma foto ou envie o PDF de qualquer orçamento. A IA do Laço lê, categoriza e organiza tudo automaticamente. Nada de redigitar.",
+    action: "Testar o OCR agora",
     href: "/cerimonialista/importar-orcamento",
   },
   {
-    title: "Seu pipeline está pronto!",
-    subtitle: "Gerencie todos os seus casamentos.",
+    title: "Pronto para o próximo casamento! 🎊",
+    subtitle: "Seu escritório digital está configurado.",
     icon: "✅",
     description:
-      "Use o pipeline para acompanhar o funil de vendas, a agenda para visualizar todos os eventos e o financeiro para controlar comissões.",
-    action: "Ir para o dashboard",
+      "Pipeline para fechar novos clientes, agenda com todos os eventos, financeiro com controle de comissões — tudo que você precisa para crescer sem virar escravo de planilha.",
+    action: "Abrir meu painel",
     href: "/cerimonialista/dashboard",
   },
 ];
@@ -99,12 +108,22 @@ const slideVariants = {
   exit: (dir: number) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
 };
 
+// Index of the planner step in COUPLE_STEPS
+const PLANNER_STEP_INDEX = 2;
+
 export default function OnboardingPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [saving, setSaving] = useState(false);
+
+  // Planner linking state
+  const [plannerEmail, setPlannerEmail] = useState("");
+  const [plannerLinking, setPlannerLinking] = useState(false);
+  const [plannerResult, setPlannerResult] = useState<{
+    linked: boolean; reason?: string; planner?: { companyName: string };
+  } | null>(null);
 
   const role = (session?.user as { role?: string })?.role ?? "COUPLE";
   const steps = role === "PLANNER" ? PLANNER_STEPS : COUPLE_STEPS;
@@ -139,6 +158,24 @@ export default function OnboardingPage() {
     });
   }
 
+  async function linkPlanner() {
+    if (!plannerEmail.trim()) return;
+    setPlannerLinking(true);
+    try {
+      const res = await fetch("/api/user/link-planner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plannerEmail }),
+      });
+      const data = await res.json();
+      setPlannerResult(data);
+    } catch {
+      setPlannerResult({ linked: false, reason: "error" });
+    } finally {
+      setPlannerLinking(false);
+    }
+  }
+
   async function handleNext() {
     if (currentStep < totalSteps - 1) {
       setSaving(true);
@@ -146,6 +183,11 @@ export default function OnboardingPage() {
       setSaving(false);
       setDirection(1);
       setCurrentStep((s) => s + 1);
+      // Reset planner state when leaving planner step
+      if (role === "COUPLE" && currentStep === PLANNER_STEP_INDEX) {
+        setPlannerEmail("");
+        setPlannerResult(null);
+      }
     }
   }
 
@@ -240,36 +282,130 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              {/* Spotlight links */}
+              {/* Social proof + features */}
               {currentStep === 0 && role === "COUPLE" && (
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                  {[
-                    { icon: "📋", label: "Lista de convidados" },
-                    { icon: "🎁", label: "Lista de presentes" },
-                    { icon: "📊", label: "Simulador de presença" },
-                    { icon: "🌐", label: "Site do casamento" },
-                  ].map((feature) => (
-                    <div key={feature.label} className="flex items-center gap-2 p-2 bg-cream rounded-lg">
-                      <span className="text-lg">{feature.icon}</span>
-                      <span className="font-body text-xs text-verde-noite/70">{feature.label}</span>
+                <div className="mt-6 space-y-4">
+                  {/* Social proof */}
+                  <div className="flex items-center gap-3 p-3 bg-teal/5 rounded-xl border border-teal/10">
+                    <div className="flex -space-x-2 flex-shrink-0">
+                      {["A", "B", "C"].map((l) => (
+                        <div key={l} className="w-7 h-7 rounded-full bg-teal/20 border-2 border-white flex items-center justify-center">
+                          <span className="font-body text-[9px] font-semibold text-teal">{l}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                    <p className="font-body text-xs text-verde-noite/70">
+                      <span className="font-semibold text-verde-noite">+2.400 casais</span> planejando seu casamento aqui
+                    </p>
+                  </div>
+                  {/* Features */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { icon: "📋", label: "Lista de convidados", tag: "RSVP online" },
+                      { icon: "🎁", label: "Lista de presentes", tag: "sem taxa" },
+                      { icon: "📊", label: "Simulador de presença", tag: "novo" },
+                      { icon: "🌐", label: "Site do casamento", tag: "grátis" },
+                    ].map((feature) => (
+                      <div key={feature.label} className="flex items-start gap-2 p-2.5 bg-cream rounded-xl">
+                        <span className="text-base mt-0.5">{feature.icon}</span>
+                        <div>
+                          <p className="font-body text-xs font-medium text-verde-noite leading-tight">{feature.label}</p>
+                          <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-teal/10 text-teal font-body text-[9px] font-semibold rounded-full uppercase tracking-wide">{feature.tag}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Planner linking UI */}
+              {role === "COUPLE" && currentStep === PLANNER_STEP_INDEX && (
+                <div className="mt-5 space-y-3">
+                  {plannerResult?.linked ? (
+                    <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-2xl">
+                      <div className="w-8 h-8 rounded-full bg-green-400 flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="font-body text-sm font-semibold text-green-800">
+                          {plannerResult.planner?.companyName} conectada!
+                        </p>
+                        <p className="font-body text-xs text-green-600">Ela já tem acesso ao seu casamento.</p>
+                      </div>
+                    </div>
+                  ) : plannerResult?.reason === "not_found" ? (
+                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
+                      <p className="font-body text-sm font-semibold text-amber-800">Cerimonialista ainda não tem conta no Laço</p>
+                      <p className="font-body text-xs text-amber-700">
+                        Você pode compartilhar o link abaixo com ela para que ela se cadastre. A conexão será feita automaticamente depois.
+                      </p>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(`${window.location.origin}/registro/cerimonialista`);
+                        }}
+                        className="flex items-center gap-1.5 text-xs font-body text-amber-700 hover:text-amber-900 transition"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        Copiar link de cadastro
+                      </button>
+                    </div>
+                  ) : plannerResult?.reason === "no_wedding" ? (
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl">
+                      <p className="font-body text-sm text-blue-700">
+                        Crie seu casamento primeiro (passo anterior) para poder conectar a cerimonialista.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <input
+                        type="email"
+                        value={plannerEmail}
+                        onChange={e => setPlannerEmail(e.target.value)}
+                        onKeyDown={e => e.key === "Enter" && linkPlanner()}
+                        placeholder="email da cerimonialista"
+                        className="flex-1 px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal"
+                      />
+                      <button
+                        onClick={linkPlanner}
+                        disabled={plannerLinking || !plannerEmail.trim()}
+                        className="px-4 py-2.5 bg-teal text-white font-body text-sm rounded-xl hover:bg-teal/90 disabled:opacity-50 transition flex-shrink-0"
+                      >
+                        {plannerLinking ? "..." : "Conectar"}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
               {currentStep === 0 && role === "PLANNER" && (
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                  {[
-                    { icon: "🗂️", label: "Pipeline de vendas" },
-                    { icon: "🤖", label: "OCR de orçamentos" },
-                    { icon: "💰", label: "Controle financeiro" },
-                    { icon: "📅", label: "Agenda integrada" },
-                  ].map((feature) => (
-                    <div key={feature.label} className="flex items-center gap-2 p-2 bg-cream rounded-lg">
-                      <span className="text-lg">{feature.icon}</span>
-                      <span className="font-body text-xs text-verde-noite/70">{feature.label}</span>
-                    </div>
-                  ))}
+                <div className="mt-6 space-y-4">
+                  {/* Social proof */}
+                  <div className="flex items-center gap-3 p-3 bg-copper/5 rounded-xl border border-copper/10">
+                    <span className="text-xl flex-shrink-0">⭐</span>
+                    <p className="font-body text-xs text-verde-noite/70">
+                      <span className="font-semibold text-verde-noite">Cerimonialistas em SP, RJ e MG</span> já usam o Laço para fechar mais casamentos
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { icon: "🗂️", label: "Pipeline de vendas", tag: "CRM" },
+                      { icon: "🤖", label: "OCR de orçamentos", tag: "IA" },
+                      { icon: "💰", label: "Controle financeiro", tag: "comissões" },
+                      { icon: "📅", label: "Agenda integrada", tag: "Google Cal" },
+                    ].map((feature) => (
+                      <div key={feature.label} className="flex items-start gap-2 p-2.5 bg-cream rounded-xl">
+                        <span className="text-base mt-0.5">{feature.icon}</span>
+                        <div>
+                          <p className="font-body text-xs font-medium text-verde-noite leading-tight">{feature.label}</p>
+                          <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-copper/10 text-copper font-body text-[9px] font-semibold rounded-full uppercase tracking-wide">{feature.tag}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </motion.div>

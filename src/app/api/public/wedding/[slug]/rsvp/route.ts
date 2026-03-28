@@ -4,62 +4,67 @@ import { prisma } from "@/lib/prisma";
 type Params = { params: Promise<{ slug: string }> };
 
 export async function POST(req: NextRequest, { params }: Params) {
-  const { slug } = await params;
-  const body = await req.json();
+  try {
+    const { slug } = await params;
+    const body = await req.json();
 
-  if (!body.name || !body.status) {
-    return NextResponse.json(
-      { error: "name e status sao obrigatorios" },
-      { status: 400 }
-    );
-  }
+    if (!body.name || !body.status) {
+      return NextResponse.json(
+        { error: "name e status são obrigatórios" },
+        { status: 400 }
+      );
+    }
 
-  const wedding = await prisma.wedding.findUnique({
-    where: { slug },
-    select: { id: true },
-  });
+    const wedding = await prisma.wedding.findUnique({
+      where: { slug },
+      select: { id: true },
+    });
 
-  if (!wedding) {
-    return NextResponse.json({ error: "Casamento nao encontrado" }, { status: 404 });
-  }
+    if (!wedding) {
+      return NextResponse.json({ error: "Casamento não encontrado" }, { status: 404 });
+    }
 
-  // Find guest by name (case-insensitive partial match)
-  const guest = await prisma.guest.findFirst({
-    where: {
-      weddingId: wedding.id,
-      name: { contains: body.name, mode: "insensitive" },
-    },
-  });
-
-  if (guest) {
-    // Update existing guest
-    const updated = await prisma.guest.update({
-      where: { id: guest.id },
-      data: {
-        rsvpStatus: body.status,
-        plusOne: body.plusOne ?? guest.plusOne,
-        dietaryRestriction: body.dietaryRestriction ?? guest.dietaryRestriction,
-        notes: body.companionName
-          ? `Acompanhante: ${body.companionName}`
-          : guest.notes,
+    // Find guest by name (case-insensitive partial match)
+    const guest = await prisma.guest.findFirst({
+      where: {
+        weddingId: wedding.id,
+        name: { contains: body.name, mode: "insensitive" },
       },
     });
-    return NextResponse.json({ found: true, guest: updated });
+
+    if (guest) {
+      // Update existing guest
+      const updated = await prisma.guest.update({
+        where: { id: guest.id },
+        data: {
+          rsvpStatus: body.status,
+          plusOne: body.plusOne ?? guest.plusOne,
+          dietaryRestriction: body.dietaryRestriction ?? guest.dietaryRestriction,
+          notes: body.companionName
+            ? `Acompanhante: ${body.companionName}`
+            : guest.notes,
+        },
+      });
+      return NextResponse.json({ found: true, guest: updated });
+    }
+
+    // Create new guest if not found
+    const newGuest = await prisma.guest.create({
+      data: {
+        weddingId: wedding.id,
+        name: body.name,
+        rsvpStatus: body.status,
+        plusOne: body.plusOne ?? false,
+        dietaryRestriction: body.dietaryRestriction,
+        notes: body.companionName
+          ? `Acompanhante: ${body.companionName}`
+          : undefined,
+      },
+    });
+
+    return NextResponse.json({ found: false, guest: newGuest }, { status: 201 });
+  } catch (error) {
+    console.error("POST /api/public/wedding/[slug]/rsvp error:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
-
-  // Create new guest if not found
-  const newGuest = await prisma.guest.create({
-    data: {
-      weddingId: wedding.id,
-      name: body.name,
-      rsvpStatus: body.status,
-      plusOne: body.plusOne ?? false,
-      dietaryRestriction: body.dietaryRestriction,
-      notes: body.companionName
-        ? `Acompanhante: ${body.companionName}`
-        : undefined,
-    },
-  });
-
-  return NextResponse.json({ found: false, guest: newGuest }, { status: 201 });
 }
