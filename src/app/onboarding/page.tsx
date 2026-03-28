@@ -405,8 +405,6 @@ export default function OnboardingPage() {
                       </button>
                       <button
                         onClick={() => {
-                          setPlannerEmail("");
-                          setPlannerResult(null);
                           handleCoupleNext();
                         }}
                         className="w-full py-3 rounded-xl border border-teal text-teal font-body font-medium hover:bg-teal/5 transition"
