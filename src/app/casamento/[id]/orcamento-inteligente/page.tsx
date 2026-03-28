@@ -749,9 +749,9 @@ export default function OrcamentoInteligentePage() {
 
         const tierData = cat.tiers[tier];
         let estimatedCost = (tierData.min + tierData.max) / 2;
-        estimatedCost = estimatedCost * cat.regionalMultiplier[state.region];
+        estimatedCost = estimatedCost * (state.region ? cat.regionalMultiplier[state.region as Region] : 1);
         if (tierData.perPerson) {
-          estimatedCost = estimatedCost * state.guests;
+          estimatedCost = estimatedCost * Number(state.guests);
         }
 
         return {
