@@ -435,4 +435,20 @@ export default function NovoCasamentoPage() {
               }
               className="px-6 py-3 bg-copper text-white rounded-xl font-body font-medium hover:bg-copper/90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-         
+              Próximo
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={!isStep3Valid || submitting}
+              className="px-6 py-3 bg-copper text-white rounded-xl font-body font-medium hover:bg-copper/90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {submitting ? "Criando..." : "Criar meu casamento"}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -41,7 +41,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const baseUrl = process.env.NEXTAUTH_URL ?? "https://laco.app";
 
-  // Build OG image URL: prefer real cover image, fallback to generated OG
   const ogImageUrl = wedding.coverImage
     ? wedding.coverImage
     : (() => {
@@ -59,4 +58,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: couple,
       description,
-      type:
+      type: "website",
+      url: `${baseUrl}/${params.slug}`,
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: couple }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: couple,
+      description,
+      images: [ogImageUrl],
+    },
+  };
+}
+
+export default function WeddingPage({ params }: Props) {
+  return <WeddingClientPage initialSlug={params.slug} />;
+}

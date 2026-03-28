@@ -383,21 +383,7 @@ export default function SimuladorPage() {
           </div>
         </motion.div>
 
-        {/* ─── 3. Attendance Chart ─────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.25 }}
-        >
-          <AttendanceChart
-            categories={buildChartCategories(simulation.categories)}
-            totalInvited={simulation.totalInvited}
-            expectedTotal={simulation.expectedTotal}
-            confidenceLow={simulation.confidenceLow}
-          />
-        </motion.div>
-
-        {/* ─── 4. Cost Estimation Card ─────────────────── */}
+        {/* ─── 3. Cost Estimation Card ─────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -424,4 +410,68 @@ export default function SimuladorPage() {
               target={cost.expectedCost}
               duration={1.5}
               formatFn={formatBRL}
-              className="font-heading text-4xl sm:text-5xl
+              className="font-heading text-4xl sm:text-5xl text-copper"
+            />
+            <p className="font-body text-sm text-gray-400 mt-2">
+              custo esperado ({formatBRL(cost.costPerGuest)} por convidado)
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {COST_BREAKDOWN.map((item, i) => {
+              const pctDisplay = Math.round(item.pct * 100);
+              return (
+                <div key={item.label}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-body text-sm text-verde-noite">
+                      {item.label}
+                    </span>
+                    <span className="font-body text-sm text-gray-500">
+                      {formatBRL(Math.round(cost.expectedCost * item.pct))} (
+                      {pctDisplay}%)
+                    </span>
+                  </div>
+                  <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full rounded-full bg-copper"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${pctDisplay}%` }}
+                      transition={{
+                        duration: 1,
+                        delay: 0.5 + i * 0.08,
+                        ease: "easeOut",
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* ─── 4. Bottom Link ──────────────────────────── */}
+        <div className="text-center pb-6">
+          <Link
+            href={`/casamento/${id}/convidados`}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-teal text-white rounded-xl font-body font-medium hover:bg-teal/90 transition-all duration-200"
+          >
+            Ver lista de convidados
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}

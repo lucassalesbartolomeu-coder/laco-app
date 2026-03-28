@@ -45,4 +45,15 @@ export async function GET(
 
   return NextResponse.json({
     planner: {
-      companyName: planner.companyN
+      id: planner.id,
+      companyName: planner.companyName,
+      bio: planner.bio,
+      instagram: planner.instagram,
+      region: planner.region,
+      specialties: planner.specialties,
+      isVerified: planner.isVerified,
+      yearsExperience,
+    },
+    weddings: planner.assignments.map((a) => a.wedding),
+  });
+}
