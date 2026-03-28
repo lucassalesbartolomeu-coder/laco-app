@@ -69,10 +69,10 @@ export default function BottomNav({ weddingId }: BottomNavProps) {
     },
     {
       label: "ID Visual",
-      href: weddingBase ? `${weddingBase}/identidade` : null,
+      href: weddingBase ? `${weddingBase}/identity-kit` : null,
       icon: <IDVisualIcon />,
-      active: isActive("/identidade"),
-      disabled: true, // Sprint 7 — não implementado ainda
+      active: isActive("/identity-kit"),
+      disabled: !weddingBase,
     },
     {
       label: "Perfil",

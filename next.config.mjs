@@ -1,7 +1,12 @@
 import { withSentryConfig } from "@sentry/nextjs";
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
+  experimental: {
+    serverComponentsExternalPackages: ["@react-pdf/renderer"],
+  },
+};
 
 export default withSentryConfig(nextConfig, {
   org: process.env.SENTRY_ORG,

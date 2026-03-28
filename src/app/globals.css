@@ -5,18 +5,88 @@
 @tailwind utilities;
 
 :root {
-  --background: #F7F7F7;
+  --background: #F5F3EF;
   --foreground: #1A3A33;
+  --teal: #2C6B5E;
+  --copper: #C4734F;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: "Inter", sans-serif;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: "Inter", sans-serif;
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: #2C6B5E22;
+    color: #1A3A33;
+  }
+
+  /* Focus ring — accessible but brand-aligned */
+  :focus-visible {
+    outline: 2px solid #2C6B5E;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Remove default focus for mouse users */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Subtle grain texture overlay for sections */
+  .grain {
+    position: relative;
+  }
+
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Smooth card hover */
+  .card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* Scrollbar — subtle, brand-aligned */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2C6B5E33;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2C6B5E66;
 }

@@ -23,6 +23,7 @@ export async function GET(_req: Request, { params }: Params) {
       style: true,
       storyText: true,
       estimatedGuests: true,
+      theme: true,
     },
   });
 

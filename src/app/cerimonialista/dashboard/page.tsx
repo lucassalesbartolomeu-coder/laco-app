@@ -29,6 +29,11 @@ interface WeddingAssignment {
   };
 }
 
+interface ReferralData {
+  referralCode: string;
+  referralCount: number;
+}
+
 interface DashboardData {
   planner: { id: string; companyName: string };
   kpis: KPIs;
@@ -49,6 +54,7 @@ export default function CerimonialDashboard() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("todos");
+  const [referral, setReferral] = useState<ReferralData | null>(null);
 
   // Link wedding modal
   const [linkModalOpen, setLinkModalOpen] = useState(false);
@@ -58,9 +64,14 @@ export default function CerimonialDashboard() {
 
   useEffect(() => {
     if (authStatus !== "authenticated") return;
-    fetch("/api/planner/dashboard")
-      .then((r) => r.json())
-      .then(setData)
+    Promise.all([
+      fetch("/api/planner/dashboard").then((r) => r.json()),
+      fetch("/api/user/referral").then((r) => r.json()),
+    ])
+      .then(([dashData, refData]) => {
+        setData(dashData);
+        setReferral(refData);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [authStatus]);
@@ -165,6 +176,26 @@ export default function CerimonialDashboard() {
         </div>
       </div>
 
+      {/* Pending commission alert */}
+      {kpis.pendingCommissions > 0 && (
+        <div className="mb-6 flex items-center justify-between bg-copper/10 border border-copper/20 rounded-2xl px-5 py-4">
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5 text-copper shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            </svg>
+            <p className="font-body text-sm text-copper font-medium">
+              Você tem {formatCurrency(kpis.pendingCommissions)} em comissões pendentes
+            </p>
+          </div>
+          <Link
+            href="/cerimonialista/comissoes"
+            className="font-body text-xs text-copper border border-copper/40 rounded-lg px-3 py-1.5 hover:bg-copper/5 transition shrink-0"
+          >
+            Ver comissões
+          </Link>
+        </div>
+      )}
+
       {/* Weddings Section */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <h2 className="font-heading text-2xl text-verde-noite">Meus Casamentos</h2>
@@ -251,6 +282,40 @@ export default function CerimonialDashboard() {
               </div>
             </Link>
           ))}
+        </div>
+      )}
+
+      {/* Referral Banner */}
+      {referral && (
+        <div className="mt-10 bg-verde-noite rounded-2xl p-6 text-white">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="font-heading text-xl mb-1">Indique e Ganhe</h3>
+              <p className="font-body text-sm text-white/60">
+                Compartilhe seu codigo e ganhe beneficios quando novos casais se cadastrarem.
+                {referral.referralCount > 0 && (
+                  <span className="ml-1 text-copper font-medium">
+                    {referral.referralCount} indicacao{referral.referralCount !== 1 ? "s" : ""} feita{referral.referralCount !== 1 ? "s" : ""}!
+                  </span>
+                )}
+              </p>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <code className="bg-white/10 px-3 py-1.5 rounded-lg font-body text-sm tracking-widest font-bold">
+                {referral.referralCode}
+              </code>
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}/registro?ref=${referral.referralCode}`;
+                  navigator.clipboard.writeText(url);
+                  alert("Link copiado!");
+                }}
+                className="px-4 py-2 bg-copper text-white rounded-lg font-body text-sm font-medium hover:bg-copper/90 transition"
+              >
+                Copiar link
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

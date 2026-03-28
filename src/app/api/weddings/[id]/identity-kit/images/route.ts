@@ -13,8 +13,6 @@ import {
   validationError,
 } from "@/lib/api-helpers";
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 type Params = { params: Promise<{ id: string }> };
 
 function buildInvitePrompts(
@@ -96,6 +94,8 @@ export async function POST(request: Request, { params }: Params) {
       where: { id: kitId, weddingId: id },
     });
     if (!kit) return notFoundResponse("Identity Kit");
+
+    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const ai = kit.aiResponse as Record<string, unknown> | null;
     if (!ai) return validationError("Este kit ainda não tem resposta AI gerada");

@@ -152,16 +152,17 @@ model Guest {
   state              String?
   ddd                String?
   category           String?
-  rsvpStatus         String   @default("pendente")
-  confirmed          Boolean  @default(false)
+  rsvpStatus         String    @default("pendente")
+  confirmed          Boolean   @default(false)
   message            String?
-  plusOne            Boolean  @default(false)
+  plusOne            Boolean   @default(false)
   dietaryRestriction String?
-  accommodation      Boolean  @default(false)
-  needsTransport     Boolean  @default(false)
+  accommodation      Boolean   @default(false)
+  needsTransport     Boolean   @default(false)
   notes              String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  whatsappSentAt     DateTime? // when the WhatsApp invite was last sent
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
 
