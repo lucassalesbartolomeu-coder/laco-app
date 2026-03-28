@@ -160,7 +160,6 @@ export default function OnboardingPage() {
   const [plannerStep, setPlannerStep] = useState(0);
   const [plannerSaving, setPlannerSaving] = useState(false);
 
-  const [plannerEmail, setPlannerEmail] = useState("");
 
   const role = (session?.user as { role?: string })?.role ?? "COUPLE";
   const isCouple = role === "COUPLE";
