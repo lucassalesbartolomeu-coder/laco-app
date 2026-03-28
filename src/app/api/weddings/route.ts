@@ -14,7 +14,12 @@ export async function GET() {
     if (!user) return unauthorizedResponse();
 
     const weddings = await prisma.wedding.findMany({
-      where: { userId: user.id },
+      where: {
+        OR: [
+          { userId: user.id },
+          { partnerUserId: user.id },
+        ],
+      },
       orderBy: { createdAt: "desc" },
     });
 

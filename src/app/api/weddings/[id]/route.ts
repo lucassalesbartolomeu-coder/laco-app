@@ -12,16 +12,25 @@ import {
 
 type Params = { params: Promise<{ id: string }> };
 
-// GET /api/weddings/[id] — Retorna um casamento
+// GET /api/weddings/[id] — Retorna um casamento com relações
 export async function GET(_request: Request, { params }: Params) {
   try {
     const user = await getAuthenticatedUser();
     if (!user) return unauthorizedResponse();
 
     const { id } = await params;
-    const { error, wedding } = await verifyWeddingOwnership(id, user.id);
+    const { error } = await verifyWeddingOwnership(id, user.id);
     if (error === "not_found") return notFoundResponse("Casamento");
     if (error === "forbidden") return forbiddenResponse();
+
+    const wedding = await prisma.wedding.findUnique({
+      where: { id },
+      include: {
+        guests: { orderBy: { name: "asc" } },
+        vendors: { orderBy: { name: "asc" } },
+        budgetItems: { orderBy: { category: "asc" } },
+      },
+    });
 
     return NextResponse.json(wedding);
   } catch (error) {
@@ -69,16 +78,17 @@ export async function PUT(request: Request, { params }: Params) {
   }
 }
 
-// DELETE /api/weddings/[id] — Deleta um casamento
+// DELETE /api/weddings/[id] — Deleta um casamento (somente owner)
 export async function DELETE(_request: Request, { params }: Params) {
   try {
     const user = await getAuthenticatedUser();
     if (!user) return unauthorizedResponse();
 
     const { id } = await params;
-    const { error } = await verifyWeddingOwnership(id, user.id);
+    const { error, role } = await verifyWeddingOwnership(id, user.id);
     if (error === "not_found") return notFoundResponse("Casamento");
     if (error === "forbidden") return forbiddenResponse();
+    if (role !== "owner") return forbiddenResponse();
 
     await prisma.wedding.delete({ where: { id } });
 

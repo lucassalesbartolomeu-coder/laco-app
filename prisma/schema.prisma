@@ -1,5 +1,11 @@
+// Prisma schema do Laço — v2.0
+// Adicionado: Payment, Withdrawal, Photo, AuditLog, RateLimit
+// Atualizado: User (hashedPassword, image), Wedding (bank, totalRaised, cover, etc.)
+// Atualizado: Gift (amount int, isGifted, giftedBy, payments), Guest (confirmed, message)
+
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -11,17 +17,30 @@ datasource db {
 // ─── Auth Models ───────────────────────────────────────────
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String?
-  role      String   @default("COUPLE") // COUPLE, PLANNER, ADMIN
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String   @id @default(cuid())
+  email          String   @unique
+  password       String?  // legado — manter para compat
+  hashedPassword String?  // novo campo bcrypt
+  name           String?
+  image          String?
+  role            String   @default("COUPLE") // COUPLE, PLANNER, ADMIN
+  onboardingStep  Int      @default(0)         // 0=não iniciado, -1=concluído
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Google Calendar integration
+  googleAccessToken  String?  @db.Text
+  googleRefreshToken String?  @db.Text
+  googleCalendarId   String?
+
+  // Referral
+  referralCode String? @unique
+  referredBy   String?
 
   accounts       Account[]
   sessions       Session[]
   weddings       Wedding[]
+  withdrawals    Withdrawal[]
   weddingPlanner WeddingPlanner?
 }
 
@@ -80,16 +99,45 @@ model Wedding {
   storyText       String?   @db.Text
   estimatedGuests Int?
   estimatedBudget Float?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  coverImage      String?
+  message         String?
+  theme           Json?
 
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  guests      Guest[]
-  gifts       Gift[]
-  vendors     Vendor[]
-  budgetItems BudgetItem[]
+  // Host info para pagamentos
+  hostFullName    String?
+  hostPhone       String?
+  email           String?
+
+  // Dados bancários (para saques)
+  bankCode        String?
+  bankAgency      String?
+  bankAccount     String?
+  bankAccountType String?
+  bankCpf         String?   // encrypted AES-256-GCM
+
+  // Financeiro
+  totalRaised     Int       @default(0) // em centavos
+  isPremium       Boolean   @default(false)
+
+  // Parceiro (acesso compartilhado)
+  partnerUserId      String?  // userId do parceiro vinculado
+  partnerInviteToken String?  @unique // token para convite de parceiro
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user               User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guests             Guest[]
+  gifts              Gift[]
+  vendors            Vendor[]
+  budgetItems        BudgetItem[]
   plannerAssignments WeddingPlannerAssignment[]
-  quotes      Quote[]
+  quotes             Quote[]
+  photos             Photo[]
+  payments           Payment[]
+  withdrawals        Withdrawal[]
+  contracts          Contract[]
+  identityKits       IdentityKit[]
 
   @@index([userId])
 }
@@ -103,9 +151,11 @@ model Guest {
   city               String?
   state              String?
   ddd                String?
-  category           String?  // família_noivo, família_noiva, amigos_noivo, amigos_noiva, trabalho, lista_b
-  rsvpStatus         String   @default("pendente") // pendente, confirmado, recusado
-  plusOne             Boolean  @default(false)
+  category           String?
+  rsvpStatus         String   @default("pendente")
+  confirmed          Boolean  @default(false)
+  message            String?
+  plusOne            Boolean  @default(false)
   dietaryRestriction String?
   accommodation      Boolean  @default(false)
   needsTransport     Boolean  @default(false)
@@ -119,20 +169,28 @@ model Guest {
 }
 
 model Gift {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   weddingId   String
   name        String
   description String?
-  price       Float?
+  amount      Int?      // valor em centavos
+  price       Float?    // legado
+  image       String?
   url         String?
   store       String?
-  status      String   @default("available")
+  category    String?
+  status      String    @default("available")
+  sortOrder   Int       @default(0)
   reservedBy  String?
   reservedAt  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isGifted    Boolean   @default(false)
+  giftedBy    String?
+  giftedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  wedding  Wedding   @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  payments Payment[]
 
   @@index([weddingId])
 }
@@ -141,12 +199,12 @@ model Vendor {
   id        String   @id @default(cuid())
   weddingId String
   name      String
-  category  String   // buffet, foto, som, decoração, convite, doces, bolo, DJ, carro, maquiagem, video, celebrante, outros
+  category  String
   phone     String?
   email     String?
   website   String?
   budget    Float?
-  status    String   @default("cotado") // cotado, contratado, descartado
+  status    String   @default("cotado")
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -167,7 +225,8 @@ model BudgetItem {
   paidAmount    Float     @default(0)
   paidBy        String?
   dueDate       DateTime?
-  status        String    @default("pendente") // pendente, pago, parcial
+  isPaid        Boolean   @default(false)
+  status        String    @default("pendente")
   notes         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -175,6 +234,87 @@ model BudgetItem {
   wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
 
   @@index([weddingId])
+}
+
+// ─── Payment Models ────────────────────────────────────────
+
+model Payment {
+  id            String    @id @default(cuid())
+  weddingId     String
+  giftId        String
+  guestName     String
+  guestEmail    String?
+  guestPhone    String?
+  guestCpf      String?   // encrypted AES-256-GCM
+  message       String?
+  amount        Int       // em centavos
+  serviceFee    Int       @default(0)
+  netAmount     Int
+  paymentMethod String    @default("pix")
+  status        String    @default("pending")
+  externalId    String?
+  paidAt        DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  gift    Gift    @relation(fields: [giftId], references: [id], onDelete: Cascade)
+
+  @@index([weddingId])
+  @@index([giftId])
+  @@index([externalId])
+  @@index([status])
+}
+
+model Withdrawal {
+  id        String    @id @default(cuid())
+  userId    String
+  weddingId String
+  amount    Int
+  status    String    @default("pending")
+  notes     String?
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([weddingId])
+}
+
+model Photo {
+  id        String   @id @default(cuid())
+  weddingId String
+  url       String
+  caption   String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+
+  @@index([weddingId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  details   Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model RateLimit {
+  key       String   @id
+  count     Int      @default(1)
+  expiresAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 // ─── Planner Models ─────────────────────────────────────────
@@ -185,9 +325,9 @@ model WeddingPlanner {
   slug           String?  @unique
   companyName    String
   cnpj           String?
-  region         String   // ex: "SP/RJ/MG"
-  specialties    String[] // ex: ["casamento clássico", "destination wedding"]
-  commissionRate Float?   // percentual padrão
+  region         String
+  specialties    String[]
+  commissionRate Float?
   bio            String?  @db.Text
   instagram      String?
   website        String?
@@ -196,24 +336,28 @@ model WeddingPlanner {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  user          User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
   assignments   WeddingPlannerAssignment[]
   opportunities Opportunity[]
+  contracts     Contract[]
+  teamMembers   PlannerTeamMember[]
 }
 
 model WeddingPlannerAssignment {
-  id               String   @id @default(cuid())
-  plannerId        String
-  weddingId        String
-  role             String   // "principal", "assistente"
-  status           String   @default("ativo") // ativo, concluído, cancelado
-  commissionAmount Float?
-  commissionPaid   Boolean  @default(false)
-  assignedAt       DateTime @default(now())
-  notes            String?
+  id                   String   @id @default(cuid())
+  plannerId            String
+  weddingId            String
+  role                 String
+  status               String   @default("ativo")
+  commissionAmount     Float?
+  commissionPaid       Boolean  @default(false)
+  assignedAt           DateTime @default(now())
+  notes                String?
+  assignedTeamMemberId String?
 
-  planner WeddingPlanner @relation(fields: [plannerId], references: [id], onDelete: Cascade)
-  wedding Wedding        @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  planner    WeddingPlanner     @relation(fields: [plannerId], references: [id], onDelete: Cascade)
+  wedding    Wedding            @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  teamMember PlannerTeamMember? @relation(fields: [assignedTeamMemberId], references: [id], onDelete: SetNull)
 
   @@unique([plannerId, weddingId])
   @@index([plannerId])
@@ -225,8 +369,8 @@ model Quote {
   vendorId     String
   weddingId    String
   totalValue   Float
-  items        Json      // array de { description, quantity, unitPrice, total }
-  status       String    @default("pendente") // pendente, aprovado, recusado
+  items        Json
+  status       String    @default("pendente")
   paymentTerms String?
   installments Int?
   dueDate      DateTime?
@@ -251,8 +395,8 @@ model Opportunity {
   weddingDate        DateTime?
   venue              String?
   estimatedBudget    Float?
-  source             String    // indicação, instagram, site, whatsapp, evento, outro
-  stage              String    @default("lead") // lead, contato, proposta, negociação, fechado, perdido
+  source             String
+  stage              String    @default("lead")
   notes              String?   @db.Text
   lostReason         String?
   commissionEstimate Float?
@@ -260,6 +404,66 @@ model Opportunity {
   updatedAt          DateTime  @updatedAt
 
   planner WeddingPlanner @relation(fields: [plannerId], references: [id], onDelete: Cascade)
+
+  @@index([plannerId])
+}
+
+// ─── Sprint 9 — Contratos + Equipe ─────────────────────────
+
+model Contract {
+  id              String    @id @default(cuid())
+  plannerId       String
+  weddingId       String
+  terms           String    @db.Text
+  value           Float?
+  signedByPlanner Boolean   @default(false)
+  signedByCouple  Boolean   @default(false)
+  plannerSignedAt DateTime?
+  coupleSignedAt  DateTime?
+  plannerName     String?
+  coupleName      String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  planner WeddingPlanner @relation(fields: [plannerId], references: [id], onDelete: Cascade)
+  wedding Wedding        @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+
+  @@index([plannerId])
+  @@index([weddingId])
+}
+
+// ─── Sprint 7 — Identity Kit ────────────────────────────────
+
+model IdentityKit {
+  id            String   @id @default(cuid())
+  weddingId     String
+  style         String   // clássico | rústico | moderno | romântico | minimalista | boho
+  paletteChoice String   // "ai" | "marfim-dourado" | "verde-cobre" | etc.
+  mood          String   // formal | descontraído | íntimo | grande festa | luxo | DIY
+  tone          String   // poético | divertido | tradicional | contemporâneo
+  referenceUrls String[]
+  aiResponse    Json?    // full AI-generated identity (palette, typography, invite, menu, decoration, siteTheme)
+  appliedAt     DateTime? // when the couple clicked "Aplicar ao meu site"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+
+  @@index([weddingId])
+}
+
+model PlannerTeamMember {
+  id        String   @id @default(cuid())
+  plannerId String
+  name      String
+  email     String?
+  role      String   @default("assistente")
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  planner     WeddingPlanner             @relation(fields: [plannerId], references: [id], onDelete: Cascade)
+  assignments WeddingPlannerAssignment[]
 
   @@index([plannerId])
 }
