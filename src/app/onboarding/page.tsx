@@ -459,4 +459,30 @@ export default function OnboardingPage() {
                 onClick={handleNext}
                 disabled={saving}
                 className="flex-1 py-3 rounded-xl bg-teal text-white font-body font-medium hover:bg-teal/90 transition disabled:opacity-50"
-      
+              >
+                {saving ? "Salvando…" : `${step.action} →`}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Step dots */}
+        <div className="flex justify-center gap-2 mt-6">
+          {steps.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => { setDirection(i > currentStep ? 1 : -1); setCurrentStep(i); }}
+              className={`w-2 h-2 rounded-full transition-all ${
+                i === currentStep ? "w-6 bg-teal" : "bg-gray-300"
+              }`}
+            />
+          ))}
+        </div>
+
+        <p className="text-center font-body text-xs text-verde-noite/30 mt-4">
+          Você pode completar a configuração depois no painel
+        </p>
+      </div>
+    </div>
+  );
+}

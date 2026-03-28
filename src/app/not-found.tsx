@@ -36,4 +36,12 @@ export default function NotFound() {
           </Link>
           <Link
             href="/login"
-            className="w-full text-verde-noite/70 font-body text-sm py-3 rounde
+            className="w-full text-verde-noite/70 font-body text-sm py-3 rounded-xl border border-verde-noite/20 text-center block"
+          >
+            Fazer login
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}

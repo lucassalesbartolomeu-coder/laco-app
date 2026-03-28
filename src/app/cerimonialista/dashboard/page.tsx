@@ -348,3 +348,17 @@ export default function CerimonialDashboard() {
               >
                 Cancelar
               </button>
+              <button
+                onClick={handleLinkWedding}
+                disabled={linking}
+                className="flex-1 py-2.5 bg-copper text-white rounded-xl font-body text-sm font-medium hover:bg-copper/90 transition disabled:opacity-50"
+              >
+                {linking ? "Vinculando..." : "Vincular"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
