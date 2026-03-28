@@ -173,22 +173,6 @@ function QuizStep({
   const [expandedTips, setExpandedTips] = useState(false);
   const cat = category;
 
-  // Calculate price range for selected tier
-  const _getTierPrice = (tier: BudgetTier) => {
-    const tierData = cat.tiers[tier];
-    let base = (tierData.min + tierData.max) / 2;
-
-    // Apply regional multiplier
-    base = base * cat.regionalMultiplier[region];
-
-    // If per-person, multiply by guests
-    if (tierData.perPerson) {
-      base = base * guests;
-    }
-
-    return base;
-  };
-
   const getRange = (tier: BudgetTier) => {
     const tierData = cat.tiers[tier];
     let min = tierData.min;

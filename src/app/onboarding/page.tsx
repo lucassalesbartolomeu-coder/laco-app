@@ -160,14 +160,7 @@ export default function OnboardingPage() {
   const [plannerStep, setPlannerStep] = useState(0);
   const [plannerSaving, setPlannerSaving] = useState(false);
 
-  // Planner linking (couple only)
   const [plannerEmail, setPlannerEmail] = useState("");
-  const [_plannerLinking, setPlannerLinking] = useState(false);
-  const [_plannerResult, setPlannerResult] = useState<{
-    linked: boolean;
-    reason?: string;
-    planner?: { companyName: string };
-  } | null>(null);
 
   const role = (session?.user as { role?: string })?.role ?? "COUPLE";
   const isCouple = role === "COUPLE";
@@ -253,29 +246,6 @@ export default function OnboardingPage() {
       console.error("Failed to create wedding:", error);
     } finally {
       setSaving(false);
-    }
-  }
-
-  // ──────────────────────────────────────────────────────────────────────────────
-  // PLANNER LINKING
-  // ──────────────────────────────────────────────────────────────────────────────
-
-  async function _linkPlanner() {
-    if (!plannerEmail.trim()) return;
-    setPlannerLinking(true);
-    try {
-      const res = await fetch("/api/user/link-planner", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plannerEmail }),
-      });
-      const data = await res.json();
-      if (data.linked) track("planner_linked", { plannerCompany: data.planner?.companyName });
-      setPlannerResult(data);
-    } catch {
-      setPlannerResult({ linked: false, reason: "error" });
-    } finally {
-      setPlannerLinking(false);
     }
   }
 
@@ -585,7 +555,7 @@ export default function OnboardingPage() {
                       <input
                         type="checkbox"
                         className="rounded border-gray-300"
-                        onChange={(_e) => setFormData({ ...formData, })}
+                        onChange={() => setFormData({ ...formData, })}
                       />
                       <span className="font-body text-sm text-verde-noite">Destination wedding?</span>
                     </label>

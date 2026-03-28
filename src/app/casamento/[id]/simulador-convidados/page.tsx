@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import {
@@ -313,7 +313,7 @@ interface GuestOriginMapProps {
   weddingState: string;
 }
 
-function GuestOriginMap({ guests, weddingState: _weddingState }: GuestOriginMapProps) {
+function GuestOriginMap({ guests }: GuestOriginMapProps) {
   const [stateStats, setStateStats] = useState<RegionalAttendance[]>([]);
 
   useEffect(() => {
@@ -695,7 +695,6 @@ function EmptyState({ id }: EmptyStateProps) {
 
 export default function SimuladorConvidadosPage() {
   const { id } = useParams<{ id: string }>();
-  const _router = useRouter();
   const { data: session, status } = useSession();
   const { toast } = useToast();
 
