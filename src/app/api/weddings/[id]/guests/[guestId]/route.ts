@@ -70,7 +70,12 @@ export async function PUT(request: Request, { params }: Params) {
         rsvpStatus: body.rsvpStatus || body.status,
         guestList: body.guestList,
         plusOne: body.plusOne,
+        plusOneName: body.plusOneName,
         dietaryRestriction: body.dietaryRestriction,
+        dietaryNote: body.dietaryNote,
+        children: body.children,
+        tableGroup: body.tableGroup,
+        isVip: body.isVip,
         accommodation: body.accommodation,
         needsTransport: body.needsTransport,
         notes: body.notes,
@@ -102,20 +107,26 @@ export async function PATCH(request: Request, { params }: Params) {
 
     const body = await request.json();
 
-    // Only allow patching safe fields
+    // Allow patching all guest fields (partial update)
     const data: Record<string, unknown> = {};
     if (body.whatsappSentAt !== undefined) {
       data.whatsappSentAt = body.whatsappSentAt ? new Date(body.whatsappSentAt) : null;
     }
-    if (body.rsvpStatus !== undefined) {
-      data.rsvpStatus = body.rsvpStatus;
-    }
-    if (body.guestList !== undefined) {
-      data.guestList = body.guestList;
-    }
-    if (body.confirmed !== undefined) {
-      data.confirmed = body.confirmed;
-    }
+    if (body.rsvpStatus !== undefined) data.rsvpStatus = body.rsvpStatus;
+    if (body.guestList !== undefined) data.guestList = body.guestList;
+    if (body.confirmed !== undefined) data.confirmed = body.confirmed;
+    if (body.name !== undefined) data.name = body.name;
+    if (body.email !== undefined) data.email = body.email;
+    if (body.phone !== undefined) data.phone = body.phone;
+    if (body.category !== undefined) data.category = body.category;
+    if (body.dietaryRestriction !== undefined) data.dietaryRestriction = body.dietaryRestriction;
+    if (body.dietaryNote !== undefined) data.dietaryNote = body.dietaryNote;
+    if (body.plusOne !== undefined) data.plusOne = body.plusOne;
+    if (body.plusOneName !== undefined) data.plusOneName = body.plusOneName;
+    if (body.children !== undefined) data.children = body.children;
+    if (body.tableGroup !== undefined) data.tableGroup = body.tableGroup;
+    if (body.isVip !== undefined) data.isVip = body.isVip;
+    if (body.notes !== undefined) data.notes = body.notes;
 
     if (Object.keys(data).length === 0) {
       return validationError("Nenhum campo válido para atualizar");

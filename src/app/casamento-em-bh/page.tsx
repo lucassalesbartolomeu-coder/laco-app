@@ -4,11 +4,29 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Casamento em Belo Horizonte | Laço — Plataforma de Casamentos",
   description:
-    "Planeje seu casamento em Belo Horizonte com o Laço. Site personalizado, RSVP digital, lista de presentes e muito mais.",
+    "Planeje seu casamento em Belo Horizonte com o Laço. Site personalizado, RSVP digital, lista de presentes com Pix e muito mais.",
   alternates: {
     canonical: "/casamento-em-bh",
   },
   openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    siteName: "Laço",
+    url: "https://laco.app/casamento-em-bh",
+    title: "Casamento em Belo Horizonte — Laço",
+    description:
+      "A plataforma completa para planejar seu casamento em Belo Horizonte. Site personalizado, RSVP digital e lista de presentes com Pix. Gratuito para começar.",
+    images: [
+      {
+        url: "https://laco.app/api/og?names=Casamento+em+Belo+Horizonte&style=classico",
+        width: 1200,
+        height: 630,
+        alt: "Casamento em Belo Horizonte — Laço",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
     title: "Casamento em Belo Horizonte — Laço",
     description:
       "A plataforma completa para planejar seu casamento em BH. Gratuito para começar.",
@@ -20,7 +38,7 @@ const jsonLd = {
   "@type": "LocalBusiness",
   name: "Laço — Plataforma de Casamentos em Belo Horizonte",
   description:
-    "Planeje seu casamento em Belo Horizonte com o Laço. Site personalizado, RSVP digital, lista de presentes e muito mais.",
+    "Planeje seu casamento em Belo Horizonte com o Laço. Site personalizado, RSVP digital, lista de presentes com Pix e muito mais.",
   url: "https://laco.app/casamento-em-bh",
   areaServed: {
     "@type": "City",

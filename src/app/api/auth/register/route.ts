@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
-    const { email, password, name, role, plannerData } = await request.json();
+    const { email, password, name, role, plannerData, referredBy } = await request.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -25,7 +25,14 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
-      data: { email, password: hashedPassword, name, role: validRole },
+      data: {
+        email,
+        password: hashedPassword,
+        name,
+        role: validRole,
+        // Salva código de referral se válido
+        ...(typeof referredBy === "string" && referredBy ? { referredBy } : {}),
+      },
     });
 
     // If planner, create WeddingPlanner profile

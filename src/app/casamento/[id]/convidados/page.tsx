@@ -31,7 +31,13 @@ interface Guest {
   category: Category;
   guestList: GuestListType;
   rsvpStatus: Status;
-  whatsappSentAt?: string;
+  whatsappSentAt?: string | null;
+}
+
+interface WeddingInfo {
+  date?: string | null;
+  venue?: string | null;
+  slug?: string | null;
 }
 
 /* ─── Constants ─────────────────────────────────────────────────────── */
@@ -183,6 +189,7 @@ export default function ConvidadosPage() {
 
   const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [weddingInfo, setWeddingInfo] = useState<WeddingInfo>({});
 
   // Active list tab
   const [activeList, setActiveList] = useState<GuestListType>("A");
@@ -221,10 +228,21 @@ export default function ConvidadosPage() {
 
   const fetchGuests = useCallback(async () => {
     try {
-      const res = await fetch(`/api/weddings/${weddingId}/guests`);
-      if (res.ok) {
-        const data = await res.json();
+      const [guestsRes, weddingRes] = await Promise.all([
+        fetch(`/api/weddings/${weddingId}/guests`),
+        fetch(`/api/weddings/${weddingId}`),
+      ]);
+      if (guestsRes.ok) {
+        const data = await guestsRes.json();
         setGuests(data.map((g: Guest) => ({ ...g, guestList: g.guestList || "A" })));
+      }
+      if (weddingRes.ok) {
+        const w = await weddingRes.json();
+        setWeddingInfo({
+          date: w.weddingDate ?? null,
+          venue: w.venue ?? w.ceremonyVenue ?? null,
+          slug: w.slug ?? null,
+        });
       }
     } catch (err) {
       console.error("Erro ao carregar convidados", err);
@@ -504,62 +522,30 @@ export default function ConvidadosPage() {
           </div>
         </div>
 
-        {/* ── WhatsApp Confirmation Panel ─────────────────────────── */}
-        <AnimatePresence>
-          {showWhatsApp && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden mb-6"
-            >
-              <div className="bg-gradient-to-r from-green-50 to-green-100/50 border border-green-200 rounded-2xl p-5">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center flex-shrink-0">
-                    <WhatsAppIcon className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-heading text-lg text-verde-noite mb-1">
-                      Confirmacao via WhatsApp
-                    </h3>
-                    <p className="font-body text-sm text-gray-600 mb-3">
-                      Envie mensagens de confirmacao para seus convidados da <strong>Lista Oficial</strong>.
-                      Nosso objetivo: <strong>100% dos convidados</strong> confirmarem se vao ou nao.
-                    </p>
-                    <div className="flex flex-wrap gap-3 mb-3">
-                      <div className="bg-white rounded-xl px-3 py-2 text-center">
-                        <p className="font-heading text-xl text-verde-noite">{totalA}</p>
-                        <p className="font-body text-[11px] text-gray-500">Convidados</p>
-                      </div>
-                      <div className="bg-white rounded-xl px-3 py-2 text-center">
-                        <p className="font-heading text-xl text-green-600">{guestsByList.A.filter(g => g.rsvpStatus === "confirmado").length}</p>
-                        <p className="font-body text-[11px] text-gray-500">Confirmados</p>
-                      </div>
-                      <div className="bg-white rounded-xl px-3 py-2 text-center">
-                        <p className="font-heading text-xl text-amber-600">{guestsByList.A.filter(g => g.rsvpStatus === "pendente").length}</p>
-                        <p className="font-body text-[11px] text-gray-500">Pendentes</p>
-                      </div>
-                      <div className="bg-white rounded-xl px-3 py-2 text-center">
-                        <p className="font-heading text-xl text-red-500">{guestsByList.A.filter(g => g.rsvpStatus === "recusado").length}</p>
-                        <p className="font-body text-[11px] text-gray-500">Recusados</p>
-                      </div>
-                    </div>
-                    <div className="bg-white/80 rounded-xl p-3 border border-green-100">
-                      <p className="font-body text-xs text-gray-600 mb-2">
-                        <strong>Como funciona:</strong> A cerimonialista pode usar este painel + a pagina publica
-                        do seu casamento para confirmar presenca. Cada convidado recebe uma mensagem personalizada via WhatsApp.
-                      </p>
-                      <p className="font-body text-xs text-gray-500 italic">
-                        Servico disponivel mais perto da data do casamento. Entre em contato com sua cerimonialista para ativar.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* ── WhatsApp Blast Modal ─────────────────────────────────── */}
+        {showWhatsApp && (
+          <WhatsAppBlast
+            weddingId={weddingId}
+            guests={guests.map((g) => ({
+              id: g.id,
+              name: g.name,
+              phone: g.phone || null,
+              rsvpStatus: g.rsvpStatus,
+              guestList: g.guestList,
+              whatsappSentAt: g.whatsappSentAt ?? null,
+            }))}
+            weddingInfo={weddingInfo}
+            onClose={() => setShowWhatsApp(false)}
+            onSent={(sentIds) => {
+              const now = new Date().toISOString();
+              setGuests((prev) =>
+                prev.map((g) =>
+                  sentIds.includes(g.id) ? { ...g, whatsappSentAt: now } : g
+                )
+              );
+            }}
+          />
+        )}
 
         {/* ── List Tabs (A / B / C) ────────────────────────────────── */}
         <div className="flex gap-2 mb-2">
@@ -735,6 +721,10 @@ export default function ConvidadosPage() {
                       guest.city && guest.state
                         ? `${guest.city}, ${guest.state}`
                         : guest.city || guest.state || null;
+                    const wasSent = !!guest.whatsappSentAt;
+                    const sentDate = guest.whatsappSentAt
+                      ? new Date(guest.whatsappSentAt).toLocaleDateString("pt-BR")
+                      : null;
 
                     return (
                       <tr
@@ -746,9 +736,20 @@ export default function ConvidadosPage() {
                             <div className="w-9 h-9 rounded-full bg-teal text-white flex items-center justify-center font-body text-sm font-semibold shrink-0">
                               {getInitials(guest.name)}
                             </div>
-                            <span className="font-body text-verde-noite font-medium">
-                              {guest.name}
-                            </span>
+                            <div>
+                              <span className="font-body text-verde-noite font-medium block">
+                                {guest.name}
+                              </span>
+                              {wasSent && (
+                                <span
+                                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-body font-semibold bg-green-100 text-green-700 mt-0.5"
+                                  title={`WhatsApp enviado em ${sentDate}`}
+                                >
+                                  <WhatsAppIcon className="w-2.5 h-2.5" />
+                                  Enviado{sentDate ? ` ${sentDate}` : ""}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </td>
                         <td className="px-4 py-4 font-body text-sm text-gray-600">
@@ -821,6 +822,10 @@ export default function ConvidadosPage() {
                   guest.city && guest.state
                     ? `${guest.city}, ${guest.state}`
                     : guest.city || guest.state || null;
+                const wasSentMobile = !!guest.whatsappSentAt;
+                const sentDateMobile = guest.whatsappSentAt
+                  ? new Date(guest.whatsappSentAt).toLocaleDateString("pt-BR")
+                  : null;
 
                 return (
                   <div key={guest.id} className="bg-white rounded-2xl shadow-sm p-4">
@@ -830,7 +835,18 @@ export default function ConvidadosPage() {
                           {getInitials(guest.name)}
                         </div>
                         <div>
-                          <p className="font-body text-verde-noite font-medium">{guest.name}</p>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="font-body text-verde-noite font-medium">{guest.name}</p>
+                            {wasSentMobile && (
+                              <span
+                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-body font-semibold bg-green-100 text-green-700"
+                                title={`WhatsApp enviado em ${sentDateMobile}`}
+                              >
+                                <WhatsAppIcon className="w-2.5 h-2.5" />
+                                {sentDateMobile}
+                              </span>
+                            )}
+                          </div>
                           <p className="font-body text-xs text-gray-400">{guest.phone || "Sem telefone"}</p>
                         </div>
                       </div>

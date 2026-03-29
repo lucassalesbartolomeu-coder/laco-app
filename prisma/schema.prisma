@@ -131,6 +131,7 @@ model Wedding {
   gifts              Gift[]
   vendors            Vendor[]
   budgetItems        BudgetItem[]
+  budgetExpenses     BudgetExpense[]
   plannerAssignments WeddingPlannerAssignment[]
   quotes             Quote[]
   photos             Photo[]
@@ -266,6 +267,24 @@ model Payment {
   @@index([giftId])
   @@index([externalId])
   @@index([status])
+}
+
+// Registro de gastos reais do orçamento (planejado vs. realizado)
+model BudgetExpense {
+  id          String   @id @default(cuid())
+  weddingId   String
+  description String
+  amount      Float
+  date        DateTime @default(now())
+  method      String   @default("pix") // pix | cartao | transferencia | dinheiro
+  status      String   @default("pago") // pago | pendente | parcela
+  category    String?
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+
+  @@index([weddingId])
 }
 
 model Withdrawal {

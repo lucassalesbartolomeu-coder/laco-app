@@ -7,6 +7,7 @@ import Image from "next/image";
 import { getTemplate } from "@/lib/identity-kit-templates";
 import { track } from "@/lib/analytics";
 import PhotoGallery from "@/components/photo-gallery";
+import ShareWhatsApp from "@/components/share-whatsapp";
 
 /* ─── Types ─── */
 interface WeddingTheme {
@@ -473,6 +474,14 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
           </svg>
         </motion.div>
       </section>
+
+      {/* ═══════ Compartilhar ═══════ */}
+      <div className="wt-bg flex justify-center py-6 px-5 bg-cream">
+        <ShareWhatsApp
+          message={`Veja o nosso site de casamento: laco.app/${slug}`}
+          label="Compartilhar site"
+        />
+      </div>
 
       {/* ═══════ 2. NOSSA HISTORIA ═══════ */}
       <section className="wt-bg py-20 px-5 bg-cream">

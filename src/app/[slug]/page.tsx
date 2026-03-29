@@ -47,6 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         const ogParams = new URLSearchParams({
           names: couple,
           ...(date ? { date } : {}),
+          ...(wedding.venue ? { venue: wedding.venue } : {}),
           ...(wedding.style ? { style: wedding.style } : {}),
         });
         return `${baseUrl}/api/og?${ogParams.toString()}`;

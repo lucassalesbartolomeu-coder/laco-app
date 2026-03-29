@@ -11,11 +11,12 @@ import {
   useTransform,
   animate,
 } from "framer-motion";
-import { MapPin, Phone, TrendingUp, AlertCircle, ArrowRight } from "lucide-react";
+import { MapPin, Phone, TrendingUp, AlertCircle, ArrowRight, Printer } from "lucide-react";
 import BottomNav from "@/components/bottom-nav";
 import { useToast } from "@/hooks/use-toast";
 import { dddMap, type DDDInfo } from "@/lib/ddd-map";
 import type { Guest, WeddingWithRelations } from "@/types";
+import { simulateAttendance } from "@/lib/attendance-simulator";
 
 // ─── Types ──────────────────────────────────────────────────────
 
@@ -610,6 +611,301 @@ function AttendancePrediction({
   );
 }
 
+// ─── Category helpers ─────────────────────────────────────────
+
+const CATEGORY_LABELS: Record<string, string> = {
+  família_noivo: "Família do noivo",
+  família_noiva: "Família da noiva",
+  familia_noivo: "Família do noivo",
+  familia_noiva: "Família da noiva",
+  amigos_noivo: "Amigos do noivo",
+  amigos_noiva: "Amigos da noiva",
+  trabalho: "Trabalho",
+  lista_b: "Lista B",
+  sem_categoria: "Sem categoria",
+};
+
+function categoryLabel(cat: string): string {
+  return CATEGORY_LABELS[cat] ?? cat;
+}
+
+function normaliseCat(cat: string | null | undefined): string | undefined {
+  if (!cat) return undefined;
+  return cat
+    .replace("família_noivo", "familia_noivo")
+    .replace("família_noiva", "familia_noiva");
+}
+
+// ─── Guest Attendance Chart ───────────────────────────────────
+
+interface GuestAttendanceChartProps {
+  guests: Guest[];
+  weddingState: string;
+}
+
+function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProps) {
+  const [result, setResult] = useState<ReturnType<typeof simulateAttendance> | null>(null);
+
+  useEffect(() => {
+    if (guests.length === 0) return;
+
+    const guestInputs = guests.map((g) => {
+      let state = g.state ?? undefined;
+      if (!state && g.phone) {
+        const ddd = extractDDDFromPhone(g.phone);
+        if (ddd && dddMap[ddd]) state = dddMap[ddd].state;
+      }
+      return { city: g.city ?? undefined, state, category: normaliseCat(g.category) };
+    });
+
+    setResult(
+      simulateAttendance(guestInputs, {
+        city: "",
+        state: weddingState,
+        weddingDate: new Date().toISOString(),
+      }),
+    );
+  }, [guests, weddingState]);
+
+  if (!result) return null;
+
+  // ── SVG layout ─────────────────────────────────────────────
+  const VIEW_W = 480;
+  const BAR_H = 14;
+  const BAR_GAP = 5;
+  const GROUP_GAP = 16;
+  const LABEL_W = 132;
+  const CHART_W = VIEW_W - LABEL_W - 44; // 44 px reserved for value labels
+
+  const categories = Object.entries(result.byCategory).sort(
+    (a, b) => b[1].invited - a[1].invited,
+  );
+
+  const maxInvited = Math.max(...categories.map(([, s]) => s.invited), 1);
+  const GROUP_H = BAR_H * 3 + BAR_GAP * 2 + GROUP_GAP;
+  const VIEW_H = Math.max(80, categories.length * GROUP_H + 20);
+
+  const percentage = Math.round(result.attendanceRate * 100);
+  const confidencePctMin = result.totalInvited > 0
+    ? Math.round((result.confidenceRange.min / result.totalInvited) * 100)
+    : 0;
+  const confidencePctMax = result.totalInvited > 0
+    ? Math.round((result.confidenceRange.max / result.totalInvited) * 100)
+    : 0;
+
+  const hasLowCategory = categories.some(
+    ([, s]) => s.invited > 0 && s.expected / s.invited < 0.7,
+  );
+
+  return (
+    <>
+      {/* Print styles — escondem UI e mostram o gráfico */}
+      <style>{`
+        @media print {
+          .no-print { display: none !important; }
+          header, nav, footer { display: none !important; }
+          body, .min-h-screen { background: white !important; }
+          #attendance-chart { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
+        }
+      `}</style>
+
+      <motion.div
+        id="attendance-chart"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.75 }}
+        className="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-teal/10"
+      >
+        {/* Cabeçalho */}
+        <div className="flex items-start justify-between mb-5 gap-4">
+          <div>
+            <h2 className="font-heading text-2xl text-verde-noite mb-1 flex items-center gap-2">
+              <TrendingUp className="w-6 h-6 no-print" />
+              Visualização por Categoria
+            </h2>
+            <p className="font-body text-sm text-gray-600">
+              Comparativo: total, estimativa e mínimo esperado
+            </p>
+          </div>
+          <button
+            onClick={() => window.print()}
+            className="no-print flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-verde-noite text-verde-noite font-body text-sm font-medium hover:bg-verde-noite/5 transition-all duration-200"
+            title="Exportar como PDF via impressão"
+          >
+            <Printer className="w-4 h-4" />
+            Exportar PDF
+          </button>
+        </div>
+
+        {/* Legenda */}
+        <div className="flex flex-wrap gap-4 mb-5 no-print">
+          <div className="flex items-center gap-1.5">
+            <svg width="16" height="10" aria-hidden="true">
+              <rect width="16" height="10" rx="3" fill="#e5e7eb" />
+            </svg>
+            <span className="font-body text-xs text-gray-500">Total convidados</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <svg width="16" height="10" aria-hidden="true">
+              <rect width="16" height="10" rx="3" fill="#2C6B5E" />
+            </svg>
+            <span className="font-body text-xs text-gray-500">Estimativa de presença</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <svg width="16" height="10" aria-hidden="true">
+              <rect width="16" height="10" rx="3" fill="#C4734F" />
+            </svg>
+            <span className="font-body text-xs text-gray-500">Mínimo esperado</span>
+          </div>
+        </div>
+
+        {/* SVG puro — gráfico de barras horizontais */}
+        {categories.length > 0 ? (
+          <svg
+            viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+            width="100%"
+            aria-label="Gráfico de barras de presença por categoria"
+            role="img"
+          >
+            {categories.map(([cat, stats], idx) => {
+              const y = idx * GROUP_H + 10;
+              const lowAttendance =
+                stats.invited > 0 && stats.expected / stats.invited < 0.7;
+
+              const totalW = Math.max(2, Math.round((stats.invited / maxInvited) * CHART_W));
+              const expectedW = Math.max(2, Math.round((stats.expected / maxInvited) * CHART_W));
+              const minExpected = Math.round(stats.expected * 0.9);
+              const minW = Math.max(2, Math.round((minExpected / maxInvited) * CHART_W));
+              const barX = LABEL_W;
+
+              return (
+                <g key={cat}>
+                  {/* Label da categoria */}
+                  <text
+                    x={LABEL_W - 8}
+                    y={y + BAR_H + BAR_GAP + BAR_H / 2}
+                    textAnchor="end"
+                    dominantBaseline="middle"
+                    fontSize="11"
+                    fontFamily="inherit"
+                    fill="#1A3A33"
+                  >
+                    {categoryLabel(cat).length > 18
+                      ? categoryLabel(cat).slice(0, 16) + "…"
+                      : categoryLabel(cat)}
+                  </text>
+
+                  {/* Ícone de atenção */}
+                  {lowAttendance && (
+                    <text
+                      x={LABEL_W - 8}
+                      y={y}
+                      fontSize="10"
+                      textAnchor="end"
+                      dominantBaseline="hanging"
+                    >
+                      ⚠️
+                    </text>
+                  )}
+
+                  {/* Barra 1 — Total (cinza claro) */}
+                  <rect
+                    x={barX}
+                    y={y}
+                    width={totalW}
+                    height={BAR_H}
+                    rx="3"
+                    fill="#e5e7eb"
+                    stroke={lowAttendance ? "#C4734F" : "none"}
+                    strokeWidth={lowAttendance ? "1.5" : "0"}
+                  />
+                  <text
+                    x={barX + totalW + 5}
+                    y={y + BAR_H / 2}
+                    dominantBaseline="middle"
+                    fontSize="10"
+                    fill="#6b7280"
+                    fontFamily="inherit"
+                  >
+                    {stats.invited}
+                  </text>
+
+                  {/* Barra 2 — Estimativa (teal) */}
+                  <rect
+                    x={barX}
+                    y={y + BAR_H + BAR_GAP}
+                    width={expectedW}
+                    height={BAR_H}
+                    rx="3"
+                    fill="#2C6B5E"
+                  />
+                  <text
+                    x={barX + expectedW + 5}
+                    y={y + BAR_H + BAR_GAP + BAR_H / 2}
+                    dominantBaseline="middle"
+                    fontSize="10"
+                    fill="#2C6B5E"
+                    fontFamily="inherit"
+                    fontWeight="600"
+                  >
+                    {stats.expected}
+                  </text>
+
+                  {/* Barra 3 — Mínimo (copper) */}
+                  <rect
+                    x={barX}
+                    y={y + (BAR_H + BAR_GAP) * 2}
+                    width={minW}
+                    height={BAR_H}
+                    rx="3"
+                    fill="#C4734F"
+                  />
+                  <text
+                    x={barX + minW + 5}
+                    y={y + (BAR_H + BAR_GAP) * 2 + BAR_H / 2}
+                    dominantBaseline="middle"
+                    fontSize="10"
+                    fill="#C4734F"
+                    fontFamily="inherit"
+                  >
+                    {minExpected}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        ) : (
+          <p className="font-body text-sm text-gray-500 text-center py-8">
+            Nenhuma categoria encontrada.
+          </p>
+        )}
+
+        {/* Resumo numérico */}
+        <div className="mt-5 pt-5 border-t border-gray-100 space-y-1.5">
+          <p className="font-body text-base text-verde-noite">
+            <strong>Estimativa:</strong>{" "}
+            {result.confidenceRange.min}–{result.confidenceRange.max} de{" "}
+            {result.totalInvited} convidados
+          </p>
+          <p className="font-body text-sm text-gray-600">
+            <strong>Taxa de presença:</strong>{" "}
+            {percentage}% ({result.totalExpected} pessoas esperadas)
+          </p>
+          <p className="font-body text-sm text-gray-600">
+            <strong>Intervalo de confiança:</strong>{" "}
+            {confidencePctMin}%–{confidencePctMax}%
+          </p>
+          {hasLowCategory && (
+            <p className="font-body text-sm text-copper flex items-center gap-1 pt-1">
+              ⚠️ Categorias marcadas têm estimativa abaixo de 70% do total
+            </p>
+          )}
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
 // ─── Empty State Component ──────────────────────────────────
 
 interface EmptyStateProps {
@@ -790,6 +1086,12 @@ export default function SimuladorConvidadosPage() {
           <>
             <GuestOriginMap guests={guestPhones} weddingState={wedding.state ?? ""} />
             <AttendancePrediction
+              guests={guestPhones}
+              weddingState={wedding.state ?? ""}
+            />
+
+            {/* Gráfico de barras por categoria */}
+            <GuestAttendanceChart
               guests={guestPhones}
               weddingState={wedding.state ?? ""}
             />

@@ -1,10 +1,19 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Toast as ToastType, ToastVariant } from "@/hooks/use-toast";
-import { useToast } from "@/hooks/use-toast";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ToastContext,
+  useToast,
+  useToastState,
+  type Toast as ToastItem,
+  type ToastType,
+} from "@/hooks/use-toast";
 
-// ── Icon components ────────────────────────────────────────────────────────────
+// Re-exportar useToast para imports diretos deste módulo
+export { useToast };
+
+// ── Icons ──────────────────────────────────────────────────────────────────────
 
 function IconSuccess() {
   return (
@@ -64,57 +73,53 @@ function IconClose() {
 
 // ── Variant config ─────────────────────────────────────────────────────────────
 
-const VARIANT_STYLES: Record<
-  ToastVariant,
-  { container: string; icon: string; progress: string; IconEl: () => JSX.Element }
-> = {
+type VariantConfig = {
+  container: string;
+  icon: string;
+  progress: string;
+  IconEl: () => JSX.Element;
+};
+
+const VARIANT_STYLES: Record<ToastType, VariantConfig> = {
   success: {
-    container: "bg-white border border-green-200 text-verde-noite shadow-lg",
-    icon: "text-green-600",
-    progress: "bg-green-500",
+    // teal #2C6B5E
+    container: "bg-[#2C6B5E] text-white shadow-lg",
+    icon: "text-white/90",
+    progress: "bg-white/50",
     IconEl: IconSuccess,
   },
   error: {
-    container: "bg-white border border-red-200 text-verde-noite shadow-lg",
-    icon: "text-red-500",
-    progress: "bg-red-500",
+    container: "bg-red-500 text-white shadow-lg",
+    icon: "text-white/90",
+    progress: "bg-white/50",
     IconEl: IconError,
   },
   warning: {
-    container: "bg-white border border-amber-200 text-verde-noite shadow-lg",
-    icon: "text-amber-500",
-    progress: "bg-amber-400",
+    // copper #C4734F
+    container: "bg-[#C4734F] text-white shadow-lg",
+    icon: "text-white/90",
+    progress: "bg-white/50",
     IconEl: IconWarning,
   },
   info: {
-    container: "bg-white border border-teal/30 text-verde-noite shadow-lg",
-    icon: "text-teal",
-    progress: "bg-teal",
+    // verde-noite #1A3A33
+    container: "bg-[#1A3A33] text-white shadow-lg",
+    icon: "text-white/90",
+    progress: "bg-white/50",
     IconEl: IconInfo,
   },
 };
 
-// ── Single Toast item ──────────────────────────────────────────────────────────
+// ── Single Toast card ──────────────────────────────────────────────────────────
 
-interface ToastItemProps {
-  toast: ToastType;
-}
-
-function ToastItem({ toast }: ToastItemProps) {
-  const remove = useToast((s) => s.remove);
+function ToastCard({ toast }: { toast: ToastItem }) {
+  const { removeToast } = useToast();
   const duration = toast.duration ?? 4000;
   const [progress, setProgress] = useState(100);
-  const [visible, setVisible] = useState(false);
   const startTime = useRef(Date.now());
   const rafRef = useRef<number | null>(null);
 
-  // Slide-in on mount
-  useEffect(() => {
-    const t = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(t);
-  }, []);
-
-  // Progress bar + auto-dismiss
+  // Barra de progresso + auto-dismiss via rAF
   useEffect(() => {
     const tick = () => {
       const elapsed = Date.now() - startTime.current;
@@ -123,47 +128,41 @@ function ToastItem({ toast }: ToastItemProps) {
       if (elapsed < duration) {
         rafRef.current = requestAnimationFrame(tick);
       } else {
-        handleDismiss();
+        removeToast(toast.id);
       }
     };
     rafRef.current = requestAnimationFrame(tick);
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [duration]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [duration, toast.id]);
 
-  function handleDismiss() {
-    setVisible(false);
-    setTimeout(() => remove(toast.id), 300);
-  }
-
-  const v = VARIANT_STYLES[toast.variant];
+  const v = VARIANT_STYLES[toast.type];
   const Icon = v.IconEl;
 
   return (
     <div
       role="alert"
       aria-live="assertive"
-      className={`
-        relative flex items-start gap-3 rounded-xl px-4 py-3 min-w-[280px] max-w-sm overflow-hidden
-        transition-all duration-300 ease-out
-        ${v.container}
-        ${visible ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"}
-      `}
+      className={[
+        "relative flex items-start gap-3 rounded-xl px-4 py-3",
+        "w-[calc(100vw-2.5rem)] max-w-sm overflow-hidden",
+        v.container,
+      ].join(" ")}
     >
       <span className={v.icon}>
         <Icon />
       </span>
       <p className="flex-1 font-body text-sm leading-snug pt-0.5">{toast.message}</p>
       <button
-        onClick={handleDismiss}
-        className="shrink-0 text-verde-noite/40 hover:text-verde-noite/80 transition-colors mt-0.5"
-        aria-label="Fechar"
+        onClick={() => removeToast(toast.id)}
+        className="shrink-0 text-white/60 hover:text-white transition-colors mt-0.5"
+        aria-label="Fechar notificação"
       >
         <IconClose />
       </button>
-      {/* Progress bar */}
+      {/* Barra de progresso */}
       <span
         className={`absolute bottom-0 left-0 h-0.5 ${v.progress} transition-none`}
         style={{ width: `${progress}%` }}
@@ -172,21 +171,54 @@ function ToastItem({ toast }: ToastItemProps) {
   );
 }
 
-// ── Toast stack (exported for use in provider) ─────────────────────────────────
+// ── Toast stack (portal de notificações) ──────────────────────────────────────
 
 export function ToastStack() {
-  const toasts = useToast((s) => s.toasts);
+  const { toasts } = useToast();
 
   return (
     <div
       aria-label="Notificações"
-      className="fixed bottom-5 right-5 z-[9999] flex flex-col gap-2 items-end pointer-events-none"
+      className={[
+        "fixed z-[9999] flex flex-col gap-2 pointer-events-none",
+        // Mobile: centralizado na parte inferior
+        "bottom-5 left-0 right-0 items-center",
+        // Desktop: canto inferior direito
+        "sm:left-auto sm:right-5 sm:items-end",
+      ].join(" ")}
     >
-      {toasts.map((t) => (
-        <div key={t.id} className="pointer-events-auto">
-          <ToastItem toast={t} />
-        </div>
-      ))}
+      <AnimatePresence initial={false}>
+        {toasts.map((t) => (
+          <motion.div
+            key={t.id}
+            className="pointer-events-auto"
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            layout
+          >
+            <ToastCard toast={t} />
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
+  );
+}
+
+// ── ToastProvider ──────────────────────────────────────────────────────────────
+
+interface ToastProviderProps {
+  children?: React.ReactNode;
+}
+
+export function ToastProvider({ children }: ToastProviderProps) {
+  const state = useToastState();
+
+  return (
+    <ToastContext.Provider value={state}>
+      {children}
+      <ToastStack />
+    </ToastContext.Provider>
   );
 }

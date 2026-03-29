@@ -9,6 +9,24 @@ export const metadata: Metadata = {
     canonical: "/casamento-no-rio",
   },
   openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    siteName: "Laço",
+    url: "https://laco.app/casamento-no-rio",
+    title: "Casamento no Rio de Janeiro — Laço",
+    description:
+      "A plataforma completa para planejar seu casamento no Rio de Janeiro. Site personalizado, RSVP digital e lista de presentes com Pix. Gratuito para começar.",
+    images: [
+      {
+        url: "https://laco.app/api/og?names=Casamento+no+Rio+de+Janeiro&style=classico",
+        width: 1200,
+        height: 630,
+        alt: "Casamento no Rio de Janeiro — Laço",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
     title: "Casamento no Rio de Janeiro — Laço",
     description:
       "A plataforma completa para planejar seu casamento no Rio. Gratuito para começar.",

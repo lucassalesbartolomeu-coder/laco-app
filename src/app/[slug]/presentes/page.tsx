@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import ShareWhatsApp from "@/components/share-whatsapp";
 
 interface Wedding {
   id: string;
@@ -164,6 +165,13 @@ export default function PresentesPage() {
         <h1 className="font-heading text-4xl md:text-5xl mb-2">{partnerNames}</h1>
         <p className="font-body text-lg text-white/80">Lista de Presentes</p>
       </header>
+
+      {/* ── Compartilhar ── */}
+      <div className="flex justify-center py-5 px-4 bg-off-white border-b border-gray-100">
+        <ShareWhatsApp
+          message={`Veja nossa lista de presentes: laco.app/${slug}/presentes`}
+        />
+      </div>
 
       {/* ── Content ── */}
       <main className="max-w-6xl mx-auto px-4 py-10">

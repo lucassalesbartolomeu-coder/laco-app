@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import BottomNav from "@/components/bottom-nav";
+import ShareWhatsApp from "@/components/share-whatsapp";
 
 /* ─── Icons ─────────────────────────────────────────────────────────── */
 

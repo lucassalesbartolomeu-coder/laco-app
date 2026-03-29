@@ -1,7 +1,15 @@
 "use client";
 
-import { ToastStack } from "@/components/ui/toast";
+import { ToastProvider } from "@/components/ui/toast";
 
-export default function ToastProvider() {
-  return <ToastStack />;
+/**
+ * Wrapper do ToastProvider para uso no layout raiz.
+ * Envolve os filhos com o contexto de toasts e renderiza a pilha de notificações.
+ */
+export default function ToastProviderWrapper({
+  children,
+}: {
+  children?: React.ReactNode;
+}) {
+  return <ToastProvider>{children}</ToastProvider>;
 }

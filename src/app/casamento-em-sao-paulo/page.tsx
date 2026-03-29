@@ -9,6 +9,24 @@ export const metadata: Metadata = {
     canonical: "/casamento-em-sao-paulo",
   },
   openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    siteName: "Laço",
+    url: "https://laco.app/casamento-em-sao-paulo",
+    title: "Casamento em São Paulo — Laço",
+    description:
+      "A plataforma completa para planejar seu casamento em São Paulo. Site personalizado, RSVP digital e lista de presentes com Pix. Gratuito para começar.",
+    images: [
+      {
+        url: "https://laco.app/api/og?names=Casamento+em+S%C3%A3o+Paulo&style=classico",
+        width: 1200,
+        height: 630,
+        alt: "Casamento em São Paulo — Laço",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
     title: "Casamento em São Paulo — Laço",
     description:
       "A plataforma completa para planejar seu casamento em São Paulo. Gratuito para começar.",

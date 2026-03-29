@@ -1,15 +1,16 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 
 type UserType = "couple" | "planner";
 type Mode = "login" | "register";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [userType, setUserType] = useState<UserType>("couple");
   const [mode, setMode] = useState<Mode>("login");
   const [name, setName] = useState("");
@@ -18,6 +19,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [refCode, setRefCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref) {
+      setRefCode(ref);
+      setMode("register");
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,15 +36,26 @@ export default function LoginPage() {
 
     try {
       if (mode === "register") {
+        if (name.trim().length < 2) {
+          setError("Por favor, informe seu nome (mínimo 2 caracteres).");
+          setLoading(false);
+          return;
+        }
+
         const payload: Record<string, unknown> = {
           email,
           password,
-          name,
+          name: name.trim(),
           role: userType === "planner" ? "PLANNER" : "COUPLE",
         };
 
         if (userType === "planner" && companyName) {
           payload.plannerData = { companyName };
+        }
+
+        // Passa código de indicação se existir
+        if (refCode) {
+          payload.referredBy = refCode;
         }
 
         const res = await fetch("/api/auth/register", {
@@ -87,6 +108,15 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
+      {/* Banner sutil quando vem via indicação */}
+      {refCode && isRegister && (
+        <div className="w-full bg-[#2C6B5E]/10 border-b border-[#2C6B5E]/20 py-2.5 px-4 text-center">
+          <p className="font-body text-sm text-[#2C6B5E]">
+            Você foi indicado para o Laço! Crie sua conta gratuita abaixo.
+          </p>
+        </div>
+      )}
+
       {/* Minimal nav */}
       <nav className="px-6 py-5">
         <Link href="/" className="font-logo text-2xl font-semibold text-verde-noite tracking-wide">
@@ -181,9 +211,11 @@ export default function LoginPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
+                    minLength={2}
+                    maxLength={50}
                     autoComplete="name"
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-verde-noite placeholder-verde-noite/30 focus:border-teal focus:ring-2 focus:ring-teal/10 outline-none transition"
-                    placeholder="Como podemos te chamar?"
+                    placeholder={isPlanner ? "Ex: Mariana Silva" : "Ex: Ana"}
                   />
                 </div>
               )}
@@ -344,5 +376,19 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-cream flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

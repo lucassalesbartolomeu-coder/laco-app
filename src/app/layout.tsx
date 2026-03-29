@@ -100,8 +100,9 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased bg-off-white text-verde-noite">
         <AuthSessionProvider>
-          {children}
-          <ToastProvider />
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </AuthSessionProvider>
       </body>
     </html>

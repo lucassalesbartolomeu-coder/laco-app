@@ -26,13 +26,14 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 
     const element = createElement(ContractDocument, {
       contract,
-      planner: { companyName: planner.companyName, phone: planner.phone },
+      planner: { companyName: planner.companyName, phone: planner.phone, cnpj: planner.cnpj },
       wedding: {
         partnerName1: contract.wedding.partnerName1,
         partnerName2: contract.wedding.partnerName2,
         weddingDate: contract.wedding.weddingDate,
         venue: contract.wedding.venue,
         city: contract.wedding.city,
+        estimatedGuests: contract.wedding.estimatedGuests,
       },
     }) as unknown as ReactElement;
 

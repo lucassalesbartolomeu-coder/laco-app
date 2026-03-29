@@ -183,10 +183,21 @@ export default function HomePage() {
       </nav>
 
       {/* ─── HERO ─── */}
-      <section className="relative min-h-screen flex items-center bg-verde-noite overflow-hidden pt-14">
-        {/* Background texture */}
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}
+      <section
+        className="relative min-h-screen flex items-center overflow-hidden pt-14"
+        style={{
+          background:
+            "linear-gradient(135deg, #1A3A33 0%, #1A3A33 55%, #2C6B5E 100%)",
+        }}
+      >
+        {/* Dot pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, #ffffff 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
         />
 
         {/* Gradient orbs */}
@@ -194,80 +205,324 @@ export default function HomePage() {
         <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-copper/10 rounded-full blur-3xl" />
 
         <div className="relative z-10 max-w-6xl mx-auto px-5 py-20 w-full">
-          <div className="max-w-3xl">
-            {/* Social proof pill */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-8"
-            >
-              <span className="flex -space-x-1">
-                {["AB", "CR", "JM"].map((i) => (
-                  <span key={i} className="w-5 h-5 rounded-full bg-copper text-white text-[9px] font-bold flex items-center justify-center border border-verde-noite">
-                    {i[0]}
-                  </span>
-                ))}
-              </span>
-              <span className="font-body text-xs text-white/80">
-                +2.400 casamentos organizados no Laço
-              </span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="font-heading text-5xl md:text-7xl text-white leading-[1.05] mb-6"
-            >
-              O casamento
-              <br />
-              dos seus sonhos,
-              <br />
-              <span className="text-copper">organizado.</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="font-body text-lg text-white/65 mb-10 max-w-xl leading-relaxed"
-            >
-              Convidados, presentes, site, orçamento e RSVP — tudo em um só lugar.
-              Gratuito para começar.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-3"
-            >
-              <Link
-                href="/registro"
-                className="inline-flex items-center justify-center gap-2 bg-copper text-white font-body font-semibold text-base px-8 py-4 rounded-xl hover:bg-copper/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
+          <div className="flex flex-col md:flex-row items-center gap-12 md:gap-8">
+            {/* ── Left column: text & CTA ── */}
+            <div className="flex-1 min-w-0">
+              {/* Social proof pill */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-8"
               >
-                Criar meu casamento grátis
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-              <Link
-                href="/cerimonialista/dashboard"
-                className="inline-flex items-center justify-center gap-2 border border-white/25 text-white font-body text-base px-8 py-4 rounded-xl hover:bg-white/5 transition-all"
-              >
-                Sou cerimonialista
-              </Link>
-            </motion.div>
+                <span className="flex -space-x-1">
+                  {["AB", "CR", "JM"].map((i) => (
+                    <span
+                      key={i}
+                      className="w-5 h-5 rounded-full bg-copper text-white text-[9px] font-bold flex items-center justify-center border border-verde-noite"
+                    >
+                      {i[0]}
+                    </span>
+                  ))}
+                </span>
+                <span className="font-body text-xs text-white/80">
+                  +2.400 casamentos organizados no Laço
+                </span>
+              </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="font-body text-xs text-white/35 mt-4"
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="font-heading text-5xl md:text-6xl text-white leading-[1.05] mb-6"
+              >
+                O casamento
+                <br />
+                dos seus sonhos,
+                <br />
+                <span className="text-copper">organizado.</span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="font-body text-lg text-white/65 mb-10 max-w-xl leading-relaxed"
+              >
+                Convidados, presentes, site, orçamento e RSVP — tudo em um só
+                lugar. Gratuito para começar.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="flex flex-col sm:flex-row gap-3"
+              >
+                <Link
+                  href="/registro"
+                  className="inline-flex items-center justify-center gap-2 bg-copper text-white font-body font-semibold text-base px-8 py-4 rounded-xl hover:bg-copper/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Criar meu casamento grátis
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </Link>
+                <Link
+                  href="/cerimonialista/dashboard"
+                  className="inline-flex items-center justify-center gap-2 border border-white/25 text-white font-body text-base px-8 py-4 rounded-xl hover:bg-white/5 transition-all"
+                >
+                  Sou cerimonialista
+                </Link>
+              </motion.div>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="font-body text-xs text-white/35 mt-4"
+              >
+                Sem cartão de crédito · Cancele quando quiser
+              </motion.p>
+            </div>
+
+            {/* ── Right column: iPhone mockup ── */}
+            <motion.div
+              initial={{ opacity: 0, x: 60 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.35, ease: "easeOut" }}
+              className="hidden md:flex flex-shrink-0 relative items-center justify-center"
+              style={{ width: 300 }}
             >
-              Sem cartão de crédito · Cancele quando quiser
-            </motion.p>
+              {/* Floating badge — confirmados (teal) */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, x: 10 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                transition={{ delay: 0.75, duration: 0.4 }}
+                className="absolute -top-3 -right-8 z-20"
+              >
+                <motion.div
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{
+                    duration: 2.8,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.4,
+                  }}
+                  className="flex items-center gap-1.5 bg-teal text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
+                >
+                  ✓ 248 confirmados
+                </motion.div>
+              </motion.div>
+
+              {/* Floating badge — presentes (copper) */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, x: 10 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                transition={{ delay: 0.9, duration: 0.4 }}
+                className="absolute top-1/2 -right-10 z-20 -translate-y-1/2"
+              >
+                <motion.div
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{
+                    duration: 3.2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.7,
+                  }}
+                  className="flex items-center gap-1.5 bg-copper text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
+                >
+                  🎁 12 presentes
+                </motion.div>
+              </motion.div>
+
+              {/* Floating badge — dias (verde-noite) */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, x: -10 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                transition={{ delay: 1.05, duration: 0.4 }}
+                className="absolute -bottom-3 -left-8 z-20"
+              >
+                <motion.div
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{
+                    duration: 3.0,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1.0,
+                  }}
+                  className="flex items-center gap-1.5 text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
+                  style={{
+                    backgroundColor: "#1A3A33",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                  }}
+                >
+                  📅 186 dias
+                </motion.div>
+              </motion.div>
+
+              {/* iPhone frame */}
+              <div
+                className="relative bg-[#1a1a1a] rounded-[2.8rem] shadow-2xl overflow-hidden border-2 border-white/10"
+                style={{ width: 280, height: 560 }}
+              >
+                {/* Notch */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-[#1a1a1a] rounded-b-2xl z-10" />
+
+                {/* Screen content */}
+                <div className="absolute inset-[3px] bg-[#f5f3ef] rounded-[2.4rem] overflow-hidden flex flex-col">
+                  {/* Status bar */}
+                  <div className="h-8 bg-[#1a2e26] flex items-end justify-between px-5 pb-1 pt-6 shrink-0">
+                    <span className="text-white/60 text-[9px] font-body">
+                      9:41
+                    </span>
+                    <div className="flex gap-1 items-center">
+                      <div className="w-3 h-1.5 border border-white/40 rounded-sm">
+                        <div className="w-2/3 h-full bg-white/60 rounded-sm" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* App header */}
+                  <div className="bg-[#1a2e26] px-5 pb-5 pt-2 shrink-0">
+                    <p className="font-logo text-white text-lg tracking-tight">
+                      Laço
+                    </p>
+                  </div>
+
+                  {/* Dashboard cards */}
+                  <div className="flex-1 overflow-hidden px-3 pt-3 space-y-2.5">
+                    {/* Couple card */}
+                    <div className="bg-white rounded-2xl p-4 shadow-sm">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-teal to-copper flex items-center justify-center">
+                          <span className="text-white text-[9px] font-bold">
+                            A&B
+                          </span>
+                        </div>
+                        <div>
+                          <p className="font-body text-[11px] font-semibold text-[#1a2e26]">
+                            Ana & Bruno
+                          </p>
+                          <p className="font-body text-[9px] text-[#1a2e26]/50">
+                            12 de outubro, 2026
+                          </p>
+                        </div>
+                      </div>
+                      {/* Countdown */}
+                      <div className="bg-[#f5f3ef] rounded-xl p-2.5 text-center mb-2.5">
+                        <p className="font-heading text-2xl text-[#1a2e26] leading-none">
+                          248
+                        </p>
+                        <p className="font-body text-[9px] text-[#1a2e26]/50">
+                          dias restantes
+                        </p>
+                      </div>
+                      {/* RSVP stats */}
+                      <div className="grid grid-cols-3 gap-1.5">
+                        {[
+                          {
+                            label: "Confirmados",
+                            value: "87",
+                            color: "bg-emerald-100 text-emerald-700",
+                          },
+                          {
+                            label: "Pendentes",
+                            value: "43",
+                            color: "bg-amber-100 text-amber-700",
+                          },
+                          {
+                            label: "Total",
+                            value: "130",
+                            color: "bg-[#e8f4f2] text-teal",
+                          },
+                        ].map((s) => (
+                          <div
+                            key={s.label}
+                            className={`${s.color} rounded-lg p-1.5 text-center`}
+                          >
+                            <p className="font-body text-sm font-bold leading-none">
+                              {s.value}
+                            </p>
+                            <p className="font-body text-[7px] mt-0.5 opacity-80">
+                              {s.label}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Quick actions */}
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { icon: "🎁", label: "Presentes", sub: "12 itens" },
+                        {
+                          icon: "📋",
+                          label: "Fornecedores",
+                          sub: "5 contratados",
+                        },
+                      ].map((a) => (
+                        <div
+                          key={a.label}
+                          className="bg-white rounded-xl p-3 shadow-sm"
+                        >
+                          <p className="text-base mb-1">{a.icon}</p>
+                          <p className="font-body text-[10px] font-semibold text-[#1a2e26]">
+                            {a.label}
+                          </p>
+                          <p className="font-body text-[8px] text-[#1a2e26]/40">
+                            {a.sub}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Budget bar */}
+                    <div className="bg-white rounded-xl p-3 shadow-sm">
+                      <div className="flex justify-between items-center mb-1.5">
+                        <p className="font-body text-[10px] font-semibold text-[#1a2e26]">
+                          Orçamento
+                        </p>
+                        <p className="font-body text-[9px] text-[#1a2e26]/50">
+                          68%
+                        </p>
+                      </div>
+                      <div className="h-1.5 bg-[#f5f3ef] rounded-full overflow-hidden">
+                        <div className="h-full w-[68%] bg-gradient-to-r from-teal to-copper rounded-full" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom nav */}
+                  <div className="bg-white border-t border-gray-100 flex justify-around py-2 px-3 shrink-0">
+                    {["🏠", "👥", "🎁", "📊"].map((icon) => (
+                      <div
+                        key={icon}
+                        className="flex flex-col items-center gap-0.5"
+                      >
+                        <span className="text-sm">{icon}</span>
+                        <div
+                          className={`w-1 h-1 rounded-full ${icon === "🏠" ? "bg-teal" : "bg-transparent"}`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Home indicator */}
+                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-20 h-1 bg-white/30 rounded-full" />
+              </div>
+            </motion.div>
           </div>
         </div>
 
@@ -277,8 +532,18 @@ export default function HomePage() {
           transition={{ repeat: Infinity, duration: 2 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/30"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </motion.div>
       </section>

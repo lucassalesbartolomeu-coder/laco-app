@@ -93,6 +93,13 @@ export default function ExecucaoPage() {
         { href: `${base}/fornecedores`, icon: "🏢", label: "Meus Fornecedores", desc: "Contratos, orcamentos, status de cada fornecedor", badge: null },
       ],
     },
+    {
+      category: "Dia D",
+      color: "bg-teal",
+      items: [
+        { href: `${base}/timeline`, icon: "🗓️", label: "Timeline do Dia", desc: "Cronograma completo do grande dia, passo a passo", badge: null },
+      ],
+    },
   ];
 
   return (

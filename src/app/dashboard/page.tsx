@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/bottom-nav";
+import ActivityFeed from "@/components/activity-feed";
+import ActivationChecklist from "@/components/activation-checklist";
+import SmartSuggestions from "@/components/smart-suggestions";
 
 interface Wedding {
   id: string;
@@ -358,7 +361,7 @@ export default function DashboardPage() {
         {/* ── Greeting ── */}
         <div>
           <h2 className="font-heading text-2xl font-semibold text-verde-noite">
-            {firstName ? `Olá, ${firstName}` : "Bem-vindo"}
+            {firstName ? `Olá, ${firstName}!` : "Olá!"}
           </h2>
           <p className="font-body text-sm text-verde-noite/50 mt-0.5">
             {w ? "Seu painel de casamento" : "Comece organizando seu casamento"}
@@ -397,6 +400,9 @@ export default function DashboardPage() {
           </div>
         ) : (
           <>
+            {/* ── Activation Checklist ── */}
+            <ActivationChecklist weddingId={w.id} />
+
             {/* ── Hero countdown ── */}
             <div className="bg-gradient-to-br from-verde-noite via-teal to-verde-noite/90 rounded-3xl p-6 shadow-lg overflow-hidden relative">
               {/* dot pattern overlay */}
@@ -514,6 +520,17 @@ export default function DashboardPage() {
                 />
               </div>
             )}
+
+            {/* ── Smart Suggestions ── */}
+            <SmartSuggestions weddingId={w.id} />
+
+            {/* ── Atividade Recente ── */}
+            <div>
+              <p className="font-heading text-lg font-semibold text-verde-noite mb-3">
+                Atividade Recente
+              </p>
+              <ActivityFeed weddingId={w.id} />
+            </div>
 
             {/* ── Quick actions ── */}
             <div>
