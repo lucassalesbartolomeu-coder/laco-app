@@ -586,8 +586,8 @@ export default function ConvidadosPage() {
           {activeList === "B" && (
             <div className="mt-2 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2">
               <p className="font-body text-xs text-amber-700">
-                <strong>Dica:</strong> Nossa matematica de presenca e bem realista — a Lista B acaba sendo mais
-                uma seguranca do que necessidade. Use para organizar, mas confie nos numeros da Lista Oficial.
+                <strong>Dica:</strong> Nossa matemática de presença é bem realista — a Lista B acaba sendo mais
+                uma segurança do que necessidade. Use para organizar, mas confie nos números da Lista Oficial.
               </p>
             </div>
           )}
@@ -932,7 +932,7 @@ export default function ConvidadosPage() {
                 exit={{ opacity: 0 }}
               />
               <motion.div
-                className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 z-10"
+                className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 z-10 pb-safe"
                 variants={modalVariants}
                 initial="hidden"
                 animate="visible"

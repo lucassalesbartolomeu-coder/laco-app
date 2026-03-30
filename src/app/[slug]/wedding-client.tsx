@@ -269,11 +269,11 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
           dietaryRestriction: rsvpDietary || undefined,
         }),
       });
-      if (!res.ok) throw new Error("Erro ao enviar confirmacao");
+      if (!res.ok) throw new Error("Erro ao enviar confirmação");
       track("rsvp_submitted", { attending: rsvpAttending, plusOne: rsvpCompanion });
       setRsvpSuccess(true);
     } catch (err: unknown) {
-      setRsvpError(err instanceof Error ? err.message : "Erro ao enviar confirmacao");
+      setRsvpError(err instanceof Error ? err.message : "Erro ao enviar confirmação");
     } finally {
       setRsvpSubmitting(false);
     }
@@ -295,12 +295,12 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
   if (notFound || !wedding) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-fog gap-6">
-        <h1 className="font-heading text-4xl text-midnight">Casamento nao encontrado</h1>
+        <h1 className="font-heading text-4xl text-midnight">Casamento não encontrado</h1>
         <p className="font-body text-midnight/60">
-          O link pode estar incorreto ou o casamento ainda nao foi publicado.
+          O link pode estar incorreto ou o casamento ainda não foi publicado.
         </p>
         <a href="/" className="font-body text-gold hover:underline">
-          Voltar ao inicio
+          Voltar ao início
         </a>
       </div>
     );
@@ -622,7 +622,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
               </svg>
               <p className="font-heading text-2xl mb-2">Obrigado, {rsvpName}!</p>
               <p className="font-body text-midnight/70 mb-6">
-                Sua confirmacao foi registrada com sucesso.
+                Sua confirmação foi registrada com sucesso.
               </p>
               <a
                 href={`https://wa.me/?text=${encodeURIComponent(`Confirmei minha presença no casamento de ${wedding.partnerName1} & ${wedding.partnerName2}! Confirme a sua também: ${typeof window !== "undefined" ? window.location.href : ""}`)}`}
@@ -672,7 +672,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
                     onChange={() => setRsvpAttending("no")}
                     className="accent-midnight w-4 h-4"
                   />
-                  <span className="font-body">Infelizmente nao poderei</span>
+                  <span className="font-body">Infelizmente não poderei</span>
                 </label>
               </div>
 
@@ -725,7 +725,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
                 disabled={rsvpSubmitting}
                 className="wt-accent-bg w-full bg-gold text-white font-body font-semibold py-3 rounded-lg hover:bg-gold/90 transition-colors disabled:opacity-50"
               >
-                {rsvpSubmitting ? "Enviando..." : "Confirmar presenca"}
+                {rsvpSubmitting ? "Enviando..." : "Confirmar presença"}
               </button>
             </form>
           )}

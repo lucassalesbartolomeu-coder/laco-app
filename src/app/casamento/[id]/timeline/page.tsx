@@ -399,6 +399,7 @@ export default function TimelinePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<TimelineEvent | null>(null);
   const [templateLoading, setTemplateLoading] = useState<string | null>(null);
+  const [pendingTemplate, setPendingTemplate] = useState<string | null>(null);
   const fetchedRef = useRef(false);
 
   const fetchData = useCallback(async () => {
@@ -490,12 +491,13 @@ export default function TimelinePage() {
     const templateEvents = TEMPLATES[templateKey];
     if (!templateEvents) return;
 
-    if (events.length > 0) {
-      const confirmed = window.confirm(
-        "Isso substituirá a timeline atual. Deseja continuar?"
-      );
-      if (!confirmed) return;
+    if (events.length > 0 && pendingTemplate !== templateKey) {
+      setPendingTemplate(templateKey);
+      return;
+    }
+    setPendingTemplate(null);
 
+    if (events.length > 0) {
       // Deleta todos os eventos atuais
       await Promise.all(
         events.map((e) =>
@@ -644,6 +646,26 @@ export default function TimelinePage() {
               ))}
             </div>
           </details>
+        </div>
+      )}
+
+      {/* Inline confirm banner for template replace */}
+      {pendingTemplate && (
+        <div className="px-4 mt-3">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex items-center gap-3">
+            <span className="text-amber-500 text-lg flex-shrink-0">⚠️</span>
+            <p className="font-body text-xs text-amber-800 flex-1">Isso substituirá a timeline atual. Deseja continuar?</p>
+            <div className="flex gap-2 flex-shrink-0">
+              <button onClick={() => handleUseTemplate(pendingTemplate)}
+                className="px-3 py-1.5 rounded-lg text-xs font-body font-medium bg-amber-500 text-white hover:bg-amber-600 transition">
+                Substituir
+              </button>
+              <button onClick={() => setPendingTemplate(null)}
+                className="px-3 py-1.5 rounded-lg text-xs font-body text-amber-700 hover:bg-amber-100 transition">
+                Cancelar
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

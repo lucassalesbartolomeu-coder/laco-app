@@ -294,7 +294,7 @@ export default function SimuladorPage() {
           </p>
 
           <p className="font-body text-gray-500 mb-1">
-            de {simulation.totalInvited} convidados ({ratePercent}% de presenca
+            de {simulation.totalInvited} convidados ({ratePercent}% de presença
             estimada)
           </p>
 

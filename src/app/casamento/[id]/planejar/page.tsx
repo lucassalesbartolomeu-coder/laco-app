@@ -108,7 +108,7 @@ export default function PlanejarPage() {
           </div>
           <h1 className="font-heading text-3xl text-white mb-2">Planejar</h1>
           <p className="font-body text-sm text-white/70 max-w-md">
-            Simuladores com IA e dados reais do mercado brasileiro. Entenda seus numeros antes de fechar qualquer contrato.
+            Simuladores com IA e dados reais do mercado brasileiro. Entenda seus números antes de fechar qualquer contrato.
           </p>
         </div>
       </div>

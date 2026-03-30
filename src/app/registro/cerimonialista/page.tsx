@@ -332,7 +332,7 @@ export default function RegistroCerimonialista() {
                   type="button"
                   onClick={() => {
                     if (!companyName.trim() || !phone.trim() || !region) {
-                      setError("Preencha empresa, telefone e regiao");
+                      setError("Preencha empresa, telefone e região");
                       return;
                     }
                     handleSubmit();
