@@ -223,19 +223,21 @@ function PartnerInvitePanel({
         </div>
       ) : inviteLink ? (
         <div className="space-y-2">
+          {/* Short code highlight */}
           <div className="flex items-center gap-2">
-            <input
-              readOnly
-              value={inviteLink}
-              className="flex-1 text-xs font-body bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-midnight/70 min-w-0"
-            />
+            <div className="flex-1 bg-midnight/5 rounded-xl px-3 py-2 text-center">
+              <p className="font-body text-[10px] text-midnight/40 mb-0.5">Código de convite</p>
+              <p className="font-display text-lg font-bold text-midnight tracking-widest">
+                {inviteLink.split("/").pop()}
+              </p>
+            </div>
             <button
               onClick={copyLink}
-              className={`px-3 py-1.5 rounded-lg text-xs font-body transition flex-shrink-0 ${
+              className={`px-3 py-2 rounded-xl text-xs font-body transition flex-shrink-0 ${
                 copied ? "bg-green-100 text-green-700" : "bg-midnight text-white hover:bg-midnight/90"
               }`}
             >
-              {copied ? "Copiado!" : "Copiar"}
+              {copied ? "Copiado!" : "Copiar link"}
             </button>
           </div>
           <button

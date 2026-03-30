@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { randomBytes } from "crypto";
 import {
   getAuthenticatedUser,
   verifyWeddingOwnership,
@@ -10,9 +9,17 @@ import {
   errorResponse,
 } from "@/lib/api-helpers";
 
+// Human-friendly 6-char code, no ambiguous chars (O/0, I/1)
+function generateShortCode(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
 type Params = { params: Promise<{ id: string }> };
 
-// POST /api/weddings/[id]/partner — Gera token de convite para o parceiro
+// POST /api/weddings/[id]/partner — Gera código de convite para o parceiro
 export async function POST(_request: Request, { params }: Params) {
   try {
     const user = await getAuthenticatedUser();
@@ -26,8 +33,14 @@ export async function POST(_request: Request, { params }: Params) {
     // Only the original owner can generate invite tokens
     if (wedding!.userId !== user.id) return forbiddenResponse();
 
-    // Generate a secure random token
-    const token = randomBytes(24).toString("hex");
+    // Generate a short human-friendly code (6 chars)
+    let token = generateShortCode();
+    // Retry if collision (very unlikely)
+    for (let i = 0; i < 5; i++) {
+      const exists = await prisma.wedding.findUnique({ where: { partnerInviteToken: token } });
+      if (!exists) break;
+      token = generateShortCode();
+    }
 
     const updated = await prisma.wedding.update({
       where: { id },

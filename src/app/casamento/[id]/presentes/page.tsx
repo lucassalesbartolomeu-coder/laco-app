@@ -514,7 +514,7 @@ export default function PresentesPage() {
 
               {/* Modal panel */}
               <motion.div
-                className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8 z-10"
+                className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8 z-10 pb-safe"
                 variants={modalVariants}
                 initial="hidden"
                 animate="visible"

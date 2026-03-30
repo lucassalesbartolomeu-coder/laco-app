@@ -487,9 +487,9 @@ export default function OrcamentoPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Pago por</label>
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Quem pagou</label>
                     <input value={form.paidBy} onChange={e => setForm(f => ({ ...f, paidBy: e.target.value }))}
-                      placeholder="Nome ou banco"
+                      placeholder="Ex: noiva, cartão Itaú"
                       className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                   <div>
