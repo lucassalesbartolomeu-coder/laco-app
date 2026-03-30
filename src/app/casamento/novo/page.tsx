@@ -177,7 +177,8 @@ export default function NovoCasamentoPage() {
 
       if (res.ok) {
         track("wedding_created", { style, city, state });
-        router.push("/dashboard");
+        const created = await res.json();
+        router.push(`/casamento/${created.id}/convidados`);
       } else {
         console.error("Erro ao criar casamento");
         setSubmitting(false);

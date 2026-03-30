@@ -43,7 +43,7 @@ export default function MaisPage() {
 
   const services = [
     {
-      category: "Sua Cerimonialista",
+      category: "Cerimonialista / Assessor(a)",
       items: [
         { icon: "👩‍💼", label: "Painel da Cerimonialista", desc: "Conecte sua cerimonialista — ela acompanha lista, fornecedores e timeline", href: "/cerimonialista/dashboard", available: true },
         { icon: "📋", label: "Questionarios", desc: "Responda questionarios de preferencias da sua cerimonialista", href: `${base}/questionarios`, available: true },

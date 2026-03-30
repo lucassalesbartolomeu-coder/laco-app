@@ -220,7 +220,7 @@ export default function ActivationChecklist({ weddingId }: { weddingId: string |
                       href={step.href}
                       className="flex-shrink-0 flex items-center gap-1 font-body text-xs font-medium text-midnight hover:text-midnight/80 transition-colors"
                     >
-                      Ir agora
+                      {step.id === "compartilhar_site" ? "Compartilhar" : step.id === "convidar_parceiro" ? "Convidar" : "Ir agora"}
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                       </svg>
