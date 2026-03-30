@@ -997,7 +997,7 @@ export default function ConvidadosPage() {
                 exit={{ opacity: 0 }}
               />
               <motion.div
-                className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 z-10 max-h-[80vh] flex flex-col"
+                className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 z-10 max-h-[80vh] flex flex-col pb-safe"
                 variants={modalVariants}
                 initial="hidden"
                 animate="visible"
@@ -1147,7 +1147,7 @@ export default function ConvidadosPage() {
                 exit={{ opacity: 0 }}
               />
               <motion.div
-                className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8 z-10 max-h-[85vh] overflow-y-auto"
+                className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8 z-10 max-h-[85vh] overflow-y-auto pb-safe"
                 variants={modalVariants}
                 initial="hidden"
                 animate="visible"

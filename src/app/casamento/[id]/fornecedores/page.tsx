@@ -254,7 +254,7 @@ export default function FornecedoresPage() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
           onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-3xl w-full max-w-md max-h-[92vh] overflow-y-auto"
+          <div className="bg-white rounded-3xl w-full max-w-md max-h-[92vh] overflow-y-auto pb-safe"
             onClick={e => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-5">

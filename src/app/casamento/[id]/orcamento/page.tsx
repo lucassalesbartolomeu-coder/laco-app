@@ -63,6 +63,27 @@ export default function OrcamentoPage() {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [saving, setSaving] = useState(false);
   const [filterCat, setFilterCat] = useState("todas");
+  const [loadingTemplate, setLoadingTemplate] = useState(false);
+
+  async function loadTemplate() {
+    setLoadingTemplate(true);
+    try {
+      await Promise.all(
+        CATEGORIES.map(cat =>
+          fetch(`/api/weddings/${id}/budget`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ category: cat, description: cat, estimatedCost: 0, paidAmount: 0, status: "pendente" }),
+          })
+        )
+      );
+      await load();
+      toast.success("Todos os itens base adicionados! Edite os valores.");
+    } catch {
+      toast.error("Erro ao carregar itens base.");
+    }
+    setLoadingTemplate(false);
+  }
 
   async function load() {
     const [iRes, sRes] = await Promise.all([
@@ -252,16 +273,40 @@ export default function OrcamentoPage() {
 
         {/* Empty state */}
         {items.length === 0 && (
-          <div className="bg-white rounded-3xl border border-gray-100 p-12 text-center">
+          <div className="bg-white rounded-3xl border border-gray-100 p-8 text-center">
             <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-midnight/10 flex items-center justify-center">
               <svg className="w-7 h-7 text-midnight" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p className="font-body text-midnight/50 mb-5">Nenhum item no orçamento ainda</p>
+            <p className="font-body text-midnight/50 mb-2">Nenhum item no orçamento ainda</p>
+            <p className="font-body text-xs text-midnight/30 mb-6">Comece do zero ou carregue todos os {CATEGORIES.length} itens de casamento de uma vez</p>
+            <div className="flex flex-col gap-3">
+              <button onClick={() => loadTemplate()} disabled={loadingTemplate}
+                className="px-6 py-3 bg-midnight text-white rounded-xl font-body text-sm hover:bg-midnight/90 transition disabled:opacity-50">
+                {loadingTemplate ? "Carregando..." : `✦ Carregar ${CATEGORIES.length} itens base`}
+              </button>
+              <button onClick={openNew}
+                className="px-6 py-2.5 border border-gray-200 text-midnight rounded-xl font-body text-sm hover:bg-gray-50 transition">
+                Adicionar item manualmente
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Add more button — always visible when items exist */}
+        {items.length > 0 && (
+          <div className="flex gap-3">
             <button onClick={openNew}
-              className="px-6 py-2.5 bg-gold text-white rounded-xl font-body text-sm hover:bg-gold/90 transition">
-              Adicionar primeiro item
+              className="flex-1 flex items-center justify-center gap-2 py-3 bg-white border border-gray-200 rounded-2xl font-body text-sm text-midnight hover:border-midnight/30 transition">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              Adicionar item
+            </button>
+            <button onClick={openNew}
+              className="flex items-center gap-1.5 px-4 py-3 bg-white border border-gray-200 rounded-2xl font-body text-sm text-midnight/60 hover:border-midnight/30 transition">
+              + Outros custos
             </button>
           </div>
         )}
