@@ -161,24 +161,24 @@ export default function OrcamentoPage() {
     : 0;
 
   if (loading) return (
-    <div className="min-h-screen bg-cream flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-fog flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-fog">
       {/* Header */}
       <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <h1 className="font-heading text-xl font-semibold text-verde-noite">Orçamento</h1>
-            <p className="font-body text-xs text-verde-noite/50 mt-0.5">
+            <h1 className="font-heading text-xl font-semibold text-midnight">Orçamento</h1>
+            <p className="font-body text-xs text-midnight/50 mt-0.5">
               {items.length} {items.length === 1 ? "item" : "itens"}
             </p>
           </div>
           <button onClick={openNew}
-            className="flex items-center gap-1.5 px-4 py-2 bg-copper text-white rounded-xl font-body text-sm font-medium hover:bg-copper/90 transition">
+            className="flex items-center gap-1.5 px-4 py-2 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
@@ -194,31 +194,31 @@ export default function OrcamentoPage() {
           <div className="bg-white rounded-3xl border border-gray-100 p-5 space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <p className="font-body text-xs text-verde-noite/50 mb-0.5">Estimado</p>
-                <p className="font-body text-lg font-bold text-verde-noite">{fmt(summary.totalEstimated)}</p>
+                <p className="font-body text-xs text-midnight/50 mb-0.5">Estimado</p>
+                <p className="font-body text-lg font-bold text-midnight">{fmt(summary.totalEstimated)}</p>
               </div>
               <div>
-                <p className="font-body text-xs text-verde-noite/50 mb-0.5">Realizado</p>
-                <p className="font-body text-lg font-bold text-verde-noite">{fmt(summary.totalActual)}</p>
+                <p className="font-body text-xs text-midnight/50 mb-0.5">Realizado</p>
+                <p className="font-body text-lg font-bold text-midnight">{fmt(summary.totalActual)}</p>
               </div>
               <div>
-                <p className="font-body text-xs text-verde-noite/50 mb-0.5">Pago</p>
+                <p className="font-body text-xs text-midnight/50 mb-0.5">Pago</p>
                 <p className="font-body text-lg font-bold text-green-600">{fmt(summary.totalPaid)}</p>
               </div>
               <div>
-                <p className="font-body text-xs text-verde-noite/50 mb-0.5">A pagar</p>
-                <p className="font-body text-lg font-bold text-copper">{fmt(summary.totalPending)}</p>
+                <p className="font-body text-xs text-midnight/50 mb-0.5">A pagar</p>
+                <p className="font-body text-lg font-bold text-gold">{fmt(summary.totalPending)}</p>
               </div>
             </div>
             {/* Progress bar */}
             <div>
               <div className="flex justify-between mb-1.5">
-                <span className="font-body text-xs text-verde-noite/50">Pago do estimado</span>
-                <span className="font-body text-xs font-semibold text-verde-noite">{progressPct}%</span>
+                <span className="font-body text-xs text-midnight/50">Pago do estimado</span>
+                <span className="font-body text-xs font-semibold text-midnight">{progressPct}%</span>
               </div>
               <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-teal to-teal/70 rounded-full transition-all duration-700"
+                  className="h-full bg-gradient-to-r from-midnight to-midnight/70 rounded-full transition-all duration-700"
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
@@ -232,7 +232,7 @@ export default function OrcamentoPage() {
             <button
               onClick={() => setFilterCat("todas")}
               className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-body font-medium transition ${
-                filterCat === "todas" ? "bg-verde-noite text-white" : "bg-white border border-gray-200 text-verde-noite/60"
+                filterCat === "todas" ? "bg-midnight text-white" : "bg-white border border-gray-200 text-midnight/60"
               }`}
             >
               Todas
@@ -241,7 +241,7 @@ export default function OrcamentoPage() {
               <button key={c}
                 onClick={() => setFilterCat(c)}
                 className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-body font-medium transition ${
-                  filterCat === c ? "bg-verde-noite text-white" : "bg-white border border-gray-200 text-verde-noite/60"
+                  filterCat === c ? "bg-midnight text-white" : "bg-white border border-gray-200 text-midnight/60"
                 }`}
               >
                 {c}
@@ -253,14 +253,14 @@ export default function OrcamentoPage() {
         {/* Empty state */}
         {items.length === 0 && (
           <div className="bg-white rounded-3xl border border-gray-100 p-12 text-center">
-            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-teal/10 flex items-center justify-center">
-              <svg className="w-7 h-7 text-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-midnight/10 flex items-center justify-center">
+              <svg className="w-7 h-7 text-midnight" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p className="font-body text-verde-noite/50 mb-5">Nenhum item no orçamento ainda</p>
+            <p className="font-body text-midnight/50 mb-5">Nenhum item no orçamento ainda</p>
             <button onClick={openNew}
-              className="px-6 py-2.5 bg-copper text-white rounded-xl font-body text-sm hover:bg-copper/90 transition">
+              className="px-6 py-2.5 bg-gold text-white rounded-xl font-body text-sm hover:bg-gold/90 transition">
               Adicionar primeiro item
             </button>
           </div>
@@ -270,8 +270,8 @@ export default function OrcamentoPage() {
         {Object.entries(groups).map(([cat, catItems]) => (
           <div key={cat}>
             <div className="flex items-center justify-between mb-2 px-1">
-              <p className="font-body text-xs font-semibold text-verde-noite/40 uppercase tracking-widest">{cat}</p>
-              <p className="font-body text-xs text-verde-noite/40">
+              <p className="font-body text-xs font-semibold text-midnight/40 uppercase tracking-widest">{cat}</p>
+              <p className="font-body text-xs text-midnight/40">
                 {fmt(catItems.reduce((s, i) => s + i.estimatedCost, 0))}
               </p>
             </div>
@@ -289,7 +289,7 @@ export default function OrcamentoPage() {
                         className={`mt-0.5 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition ${
                           item.status === "pago"
                             ? "bg-green-400 border-green-400"
-                            : "border-gray-300 hover:border-teal"
+                            : "border-gray-300 hover:border-midnight"
                         }`}
                       >
                         {item.status === "pago" && (
@@ -301,21 +301,21 @@ export default function OrcamentoPage() {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <span className={`font-body text-sm font-medium ${item.status === "pago" ? "text-verde-noite/40 line-through" : "text-verde-noite"}`}>
+                          <span className={`font-body text-sm font-medium ${item.status === "pago" ? "text-midnight/40 line-through" : "text-midnight"}`}>
                             {item.description}
                           </span>
                           <div className="flex items-center gap-1">
                             <div className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
-                            <span className="font-body text-[11px] text-verde-noite/50">{sc.label}</span>
+                            <span className="font-body text-[11px] text-midnight/50">{sc.label}</span>
                           </div>
                         </div>
 
                         <div className="flex flex-wrap gap-x-4 gap-y-0.5">
-                          <span className="font-body text-xs text-verde-noite/60">
+                          <span className="font-body text-xs text-midnight/60">
                             Estimado: <span className="font-semibold">{fmt(item.estimatedCost)}</span>
                           </span>
                           {item.actualCost != null && item.actualCost !== item.estimatedCost && (
-                            <span className="font-body text-xs text-verde-noite/60">
+                            <span className="font-body text-xs text-midnight/60">
                               Real: <span className="font-semibold">{fmt(item.actualCost)}</span>
                             </span>
                           )}
@@ -325,7 +325,7 @@ export default function OrcamentoPage() {
                             </span>
                           )}
                           {item.dueDate && (
-                            <span className="font-body text-xs text-verde-noite/40">
+                            <span className="font-body text-xs text-midnight/40">
                               Vence: {new Date(item.dueDate).toLocaleDateString("pt-BR")}
                             </span>
                           )}
@@ -334,24 +334,24 @@ export default function OrcamentoPage() {
                         {/* Mini progress for partially paid */}
                         {paidPct > 0 && paidPct < 100 && (
                           <div className="mt-2 h-1 bg-gray-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-teal rounded-full" style={{ width: `${paidPct}%` }} />
+                            <div className="h-full bg-midnight rounded-full" style={{ width: `${paidPct}%` }} />
                           </div>
                         )}
 
                         {item.notes && (
-                          <p className="font-body text-xs text-verde-noite/40 mt-1.5 line-clamp-1">{item.notes}</p>
+                          <p className="font-body text-xs text-midnight/40 mt-1.5 line-clamp-1">{item.notes}</p>
                         )}
                       </div>
 
                       <div className="flex gap-1 flex-shrink-0">
                         <button onClick={() => openEdit(item)}
-                          className="p-1.5 rounded-lg text-verde-noite/30 hover:text-teal hover:bg-teal/5 transition">
+                          className="p-1.5 rounded-lg text-midnight/30 hover:text-midnight hover:bg-midnight/5 transition">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                           </svg>
                         </button>
                         <button onClick={() => remove(item.id)}
-                          className="p-1.5 rounded-lg text-verde-noite/30 hover:text-red-400 hover:bg-red-50 transition">
+                          className="p-1.5 rounded-lg text-midnight/30 hover:text-red-400 hover:bg-red-50 transition">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
@@ -374,10 +374,10 @@ export default function OrcamentoPage() {
             onClick={e => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="font-heading text-lg font-semibold text-verde-noite">
+                <h2 className="font-heading text-lg font-semibold text-midnight">
                   {editing ? "Editar item" : "Novo item"}
                 </h2>
-                <button onClick={() => setShowForm(false)} className="text-verde-noite/30 hover:text-verde-noite transition">
+                <button onClick={() => setShowForm(false)} className="text-midnight/30 hover:text-midnight transition">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -386,60 +386,60 @@ export default function OrcamentoPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Categoria *</label>
+                  <label className="block font-body text-xs text-midnight/60 mb-1.5">Categoria *</label>
                   <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal">
+                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Descrição *</label>
+                  <label className="block font-body text-xs text-midnight/60 mb-1.5">Descrição *</label>
                   <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                     placeholder="Ex: Buffet para 200 pessoas"
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal" />
+                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Valor estimado *</label>
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor estimado *</label>
                     <input type="number" value={form.estimatedCost} onChange={e => setForm(f => ({ ...f, estimatedCost: e.target.value }))}
                       placeholder="0"
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal" />
+                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                   <div>
-                    <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Valor real</label>
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor real</label>
                     <input type="number" value={form.actualCost} onChange={e => setForm(f => ({ ...f, actualCost: e.target.value }))}
                       placeholder="0"
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal" />
+                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Valor pago</label>
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor pago</label>
                     <input type="number" value={form.paidAmount} onChange={e => setForm(f => ({ ...f, paidAmount: e.target.value }))}
                       placeholder="0"
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal" />
+                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                   <div>
-                    <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Vencimento</label>
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Vencimento</label>
                     <input type="date" value={form.dueDate} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))}
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal" />
+                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Pago por</label>
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Pago por</label>
                     <input value={form.paidBy} onChange={e => setForm(f => ({ ...f, paidBy: e.target.value }))}
                       placeholder="Nome ou banco"
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal" />
+                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                   <div>
-                    <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Status</label>
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Status</label>
                     <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal">
+                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
                       <option value="pendente">Pendente</option>
                       <option value="pago">Pago</option>
                       <option value="cancelado">Cancelado</option>
@@ -448,10 +448,10 @@ export default function OrcamentoPage() {
                 </div>
 
                 <div>
-                  <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Observações</label>
+                  <label className="block font-body text-xs text-midnight/60 mb-1.5">Observações</label>
                   <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                     rows={2} placeholder="Parcelas, condições..."
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal resize-none" />
+                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight resize-none" />
                 </div>
               </div>
 
@@ -461,7 +461,7 @@ export default function OrcamentoPage() {
                   Cancelar
                 </button>
                 <button onClick={save} disabled={saving || !form.description.trim() || !form.estimatedCost}
-                  className="flex-1 px-4 py-2.5 font-body text-sm bg-copper text-white rounded-xl hover:bg-copper/90 disabled:opacity-50 transition">
+                  className="flex-1 px-4 py-2.5 font-body text-sm bg-gold text-white rounded-xl hover:bg-gold/90 disabled:opacity-50 transition">
                   {saving ? "Salvando..." : editing ? "Salvar" : "Adicionar"}
                 </button>
               </div>

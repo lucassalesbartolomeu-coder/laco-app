@@ -150,9 +150,9 @@ export async function POST(req: NextRequest, { params }: Params) {
     const aiMenu = ai?.menu as { entrada?: string; principal?: string; sobremesa?: string } | undefined;
 
     const palette: KitPalette = {
-      primary: aiPalette?.primary?.hex ?? "#1A3A33",
-      secondary: aiPalette?.secondary?.hex ?? "#C4734F",
-      accent: aiPalette?.accent?.hex ?? "#D4AF6A",
+      primary: aiPalette?.primary?.hex ?? "#1A1F3A",
+      secondary: aiPalette?.secondary?.hex ?? "#C9A96E",
+      accent: aiPalette?.accent?.hex ?? "#C9A96E",
       background: aiPalette?.background?.hex ?? "#FAF8F4",
       text: aiPalette?.text?.hex ?? "#1A1A1A",
       muted: aiPalette?.muted?.hex ?? "#6B7280",

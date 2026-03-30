@@ -32,8 +32,8 @@ export default function MaisPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -76,9 +76,9 @@ export default function MaisPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-off-white pb-24">
+    <div className="min-h-screen bg-ivory pb-24">
       {/* Header */}
-      <div className="bg-verde-noite px-5 pt-12 pb-8">
+      <div className="bg-midnight px-5 pt-12 pb-8">
         <h1 className="font-heading text-3xl text-white mb-1">Mais</h1>
         <p className="font-body text-sm text-white/60">Servicos, cerimonialista, conta e configuracoes</p>
       </div>
@@ -87,7 +87,7 @@ export default function MaisPage() {
       <div className="px-4 -mt-3 relative z-10 space-y-6">
         {services.map((section) => (
           <div key={section.category}>
-            <h2 className="font-heading text-sm text-verde-noite/60 uppercase tracking-wider mb-2 px-1">
+            <h2 className="font-heading text-sm text-midnight/60 uppercase tracking-wider mb-2 px-1">
               {section.category}
             </h2>
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
@@ -96,7 +96,7 @@ export default function MaisPage() {
                   <div className="flex items-center gap-3.5 px-4 py-3.5">
                     <span className={`text-xl flex-shrink-0 ${!item.available ? "grayscale opacity-50" : ""}`}>{item.icon}</span>
                     <div className="flex-1 min-w-0">
-                      <p className={`font-body text-sm font-medium ${item.available ? "text-verde-noite" : "text-gray-400"}`}>
+                      <p className={`font-body text-sm font-medium ${item.available ? "text-midnight" : "text-gray-400"}`}>
                         {item.label}
                       </p>
                       <p className="font-body text-[11px] text-gray-400 leading-snug">{item.desc}</p>

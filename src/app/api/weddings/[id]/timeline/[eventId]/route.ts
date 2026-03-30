@@ -8,6 +8,7 @@ import {
   notFoundResponse,
   errorResponse,
 } from "@/lib/api-helpers";
+import * as Sentry from "@sentry/nextjs";
 
 type Params = { params: Promise<{ id: string; eventId: string }> };
 
@@ -44,8 +45,9 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     });
 
     return NextResponse.json(updated);
-  } catch (err) {
-    return errorResponse(err);
+  } catch (error) {
+    Sentry.captureException(error);
+    return errorResponse();
   }
 }
 
@@ -68,7 +70,8 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
     await prisma.timelineEvent.delete({ where: { id: eventId } });
 
     return NextResponse.json({ success: true });
-  } catch (err) {
-    return errorResponse(err);
+  } catch (error) {
+    Sentry.captureException(error);
+    return errorResponse();
   }
 }

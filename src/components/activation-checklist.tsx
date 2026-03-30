@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -123,15 +123,15 @@ export default function ActivationChecklist({ weddingId }: { weddingId: string |
         className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
       >
         {/* Accent top bar */}
-        <div className="h-1 bg-gradient-to-r from-teal via-copper to-teal/40" />
+        <div className="h-1 bg-gradient-to-r from-midnight via-gold to-midnight/40" />
 
         {/* Header */}
         <div className="px-4 pt-4 pb-3">
           <div className="flex items-center justify-between mb-1">
-            <p className="font-heading text-base font-semibold text-verde-noite">
+            <p className="font-heading text-base font-semibold text-midnight">
               Configuração inicial
             </p>
-            <span className="font-body text-xs text-verde-noite/40">
+            <span className="font-body text-xs text-midnight/40">
               {status.completedSteps}/5 concluídos
             </span>
           </div>
@@ -139,7 +139,7 @@ export default function ActivationChecklist({ weddingId }: { weddingId: string |
           {/* Progress bar */}
           <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-teal to-copper rounded-full"
+              className="h-full bg-gradient-to-r from-midnight to-gold rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progressPercent}%` }}
               transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
@@ -157,16 +157,16 @@ export default function ActivationChecklist({ weddingId }: { weddingId: string |
               <li key={step.id} className="py-2.5 first:pt-1">
                 <div
                   className={`flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors ${
-                    isActive ? "bg-teal/5 border border-teal/20" : ""
+                    isActive ? "bg-midnight/5 border border-midnight/20" : ""
                   }`}
                 >
                   {/* Status indicator */}
                   <div
                     className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center transition-all ${
                       step.done
-                        ? "bg-teal text-white"
+                        ? "bg-midnight text-white"
                         : isActive
-                        ? "bg-teal/10 text-teal ring-2 ring-teal/30"
+                        ? "bg-midnight/10 text-midnight ring-2 ring-midnight/30"
                         : "bg-gray-100 text-gray-300"
                     }`}
                   >
@@ -189,12 +189,12 @@ export default function ActivationChecklist({ weddingId }: { weddingId: string |
                     <p
                       className={`font-body text-sm font-medium leading-tight ${
                         step.done
-                          ? "text-verde-noite/40 line-through"
+                          ? "text-midnight/40 line-through"
                           : isActive
-                          ? "text-verde-noite"
+                          ? "text-midnight"
                           : isPending
-                          ? "text-verde-noite/50"
-                          : "text-verde-noite"
+                          ? "text-midnight/50"
+                          : "text-midnight"
                       }`}
                     >
                       {step.label}
@@ -203,7 +203,7 @@ export default function ActivationChecklist({ weddingId }: { weddingId: string |
                       <motion.p
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
-                        className="font-body text-xs text-verde-noite/50 mt-0.5 leading-snug"
+                        className="font-body text-xs text-midnight/50 mt-0.5 leading-snug"
                       >
                         {step.description}
                       </motion.p>
@@ -218,7 +218,7 @@ export default function ActivationChecklist({ weddingId }: { weddingId: string |
                   ) : !step.done && step.href && isActive ? (
                     <Link
                       href={step.href}
-                      className="flex-shrink-0 flex items-center gap-1 font-body text-xs font-medium text-teal hover:text-teal/80 transition-colors"
+                      className="flex-shrink-0 flex items-center gap-1 font-body text-xs font-medium text-midnight hover:text-midnight/80 transition-colors"
                     >
                       Ir agora
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

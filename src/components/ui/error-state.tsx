@@ -19,11 +19,11 @@ export function ErrorState({
   showHome = true,
 }: ErrorStateProps) {
   return (
-    <div className="min-h-screen bg-off-white flex flex-col items-center justify-center px-6 pb-24">
+    <div className="min-h-screen bg-ivory flex flex-col items-center justify-center px-6 pb-24">
       {/* Icon */}
-      <div className="w-16 h-16 bg-copper/10 rounded-full flex items-center justify-center mb-4">
+      <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mb-4">
         <svg
-          className="w-8 h-8 text-copper"
+          className="w-8 h-8 text-gold"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -38,10 +38,10 @@ export function ErrorState({
       </div>
 
       {/* Text */}
-      <h2 className="font-heading text-xl font-semibold text-verde-noite mb-2 text-center">
+      <h2 className="font-heading text-xl font-semibold text-midnight mb-2 text-center">
         {title}
       </h2>
-      <p className="font-body text-sm text-verde-noite/60 text-center mb-8 max-w-xs">
+      <p className="font-body text-sm text-midnight/60 text-center mb-8 max-w-xs">
         {message}
       </p>
 
@@ -50,7 +50,7 @@ export function ErrorState({
         {onRetry && (
           <button
             onClick={onRetry}
-            className="w-full bg-verde-noite text-white font-heading font-semibold text-sm py-3.5 rounded-xl active:scale-95 transition-transform"
+            className="w-full bg-midnight text-white font-heading font-semibold text-sm py-3.5 rounded-xl active:scale-95 transition-transform"
           >
             Tentar novamente
           </button>
@@ -58,7 +58,7 @@ export function ErrorState({
         {showHome && (
           <a
             href="/dashboard"
-            className="w-full text-center text-verde-noite/70 font-body text-sm py-3 rounded-xl border border-verde-noite/20 active:bg-verde-noite/5 transition-colors"
+            className="w-full text-center text-midnight/70 font-body text-sm py-3 rounded-xl border border-midnight/20 active:bg-midnight/5 transition-colors"
           >
             Ir para o início
           </a>

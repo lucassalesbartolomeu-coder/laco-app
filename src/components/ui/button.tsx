@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 /**
  * Button — componente de botão Laço.
- * Variantes: primary, secondary, ghost, destructive, copper.
+ * Variantes: primary, secondary, ghost, destructive, gold.
  * Tamanhos: sm, md, lg.
  * Estados: loading, disabled.
  */
@@ -12,7 +12,7 @@ import { Spinner } from "./skeleton";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "ghost" | "destructive" | "copper";
+  variant?: "primary" | "secondary" | "ghost" | "destructive" | "gold";
   size?: "sm" | "md" | "lg";
   loading?: boolean;
   leftIcon?: ReactNode;
@@ -22,15 +22,15 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<NonNullable<ButtonProps["variant"]>, string> = {
   primary:
-    "bg-verde-noite text-white hover:bg-verde-noite/90 active:bg-verde-noite/80",
+    "bg-midnight text-white hover:bg-midnight/90 active:bg-midnight/80",
   secondary:
-    "bg-white text-verde-noite border border-verde-noite/20 hover:bg-verde-noite/5 active:bg-verde-noite/10",
+    "bg-white text-midnight border border-midnight/20 hover:bg-midnight/5 active:bg-midnight/10",
   ghost:
-    "bg-transparent text-verde-noite hover:bg-verde-noite/5 active:bg-verde-noite/10",
+    "bg-transparent text-midnight hover:bg-midnight/5 active:bg-midnight/10",
   destructive:
     "bg-error text-white hover:bg-error/90 active:bg-error/80",
-  copper:
-    "bg-copper text-white hover:bg-copper/90 active:bg-copper/80",
+  gold:
+    "bg-gold text-white hover:bg-gold/90 active:bg-gold/80",
 };
 
 const sizeStyles: Record<NonNullable<ButtonProps["size"]>, string> = {
@@ -60,7 +60,7 @@ export function Button({
         // Base
         "inline-flex items-center justify-center font-heading font-semibold",
         "transition-all duration-150 select-none",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-midnight focus-visible:ring-offset-2",
         "active:scale-[0.98]",
         // Disabled
         isDisabled && "opacity-50 cursor-not-allowed active:scale-100",

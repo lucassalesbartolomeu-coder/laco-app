@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useParams } from "next/navigation";
 import { useEffect, useState, FormEvent } from "react";
@@ -76,10 +76,10 @@ function resolveTheme(wedding: Wedding): WeddingTheme {
 
 function ThemeInjector({ theme }: { theme: WeddingTheme }) {
   const p = theme.palette ?? {};
-  const primary = p.primary ?? "#2C6B5E";
-  const accent = p.accent ?? "#C4734F";
-  const background = p.background ?? "#F5F3EF";
-  const hero = p.hero ?? "#1A3A33";
+  const primary = p.primary ?? "#1A1F3A";
+  const accent = p.accent ?? "#C9A96E";
+  const background = p.background ?? "#F0EDE7";
+  const hero = p.hero ?? "#1A1F3A";
   const heroBorder = p.heroBorder ?? accent;
   const text = p.text ?? "#1A1A1A";
   const headingFont = theme.fonts?.heading ?? "Cormorant Garamond";
@@ -172,8 +172,8 @@ function statusLabel(s: Gift["status"]) {
 }
 
 function statusColor(s: Gift["status"]) {
-  if (s === "available") return "bg-teal/20 text-teal";
-  if (s === "reserved") return "bg-copper/20 text-copper";
+  if (s === "available") return "bg-midnight/20 text-midnight";
+  if (s === "reserved") return "bg-gold/20 text-gold";
   return "bg-gray-200 text-gray-500";
 }
 
@@ -282,10 +282,10 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
   /* ── Loading state ── */
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-cream">
+      <div className="min-h-screen flex items-center justify-center bg-fog">
         <div className="animate-pulse flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-full border-4 border-teal border-t-transparent animate-spin" />
-          <p className="font-body text-verde-noite/60">Carregando...</p>
+          <div className="w-12 h-12 rounded-full border-4 border-midnight border-t-transparent animate-spin" />
+          <p className="font-body text-midnight/60">Carregando...</p>
         </div>
       </div>
     );
@@ -294,12 +294,12 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
   /* ── 404 ── */
   if (notFound || !wedding) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-cream gap-6">
-        <h1 className="font-heading text-4xl text-verde-noite">Casamento nao encontrado</h1>
-        <p className="font-body text-verde-noite/60">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-fog gap-6">
+        <h1 className="font-heading text-4xl text-midnight">Casamento nao encontrado</h1>
+        <p className="font-body text-midnight/60">
           O link pode estar incorreto ou o casamento ainda nao foi publicado.
         </p>
-        <a href="/" className="font-body text-copper hover:underline">
+        <a href="/" className="font-body text-gold hover:underline">
           Voltar ao inicio
         </a>
       </div>
@@ -311,11 +311,11 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
 
   /* ─────────────────── RENDER ─────────────────── */
   return (
-    <main className="wt scroll-smooth font-body text-verde-noite">
+    <main className="wt scroll-smooth font-body text-midnight">
       <ThemeInjector theme={theme} />
 
       {/* ═══════ 1. HERO ═══════ */}
-      <section className="wt-hero relative min-h-screen flex flex-col items-center justify-center bg-verde-noite text-white overflow-hidden">
+      <section className="wt-hero relative min-h-screen flex flex-col items-center justify-center bg-midnight text-white overflow-hidden">
         {/* Cover image with parallax feel */}
         {wedding.coverImage ? (
           <div className="absolute inset-0">
@@ -331,8 +331,8 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='white' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='25' fill='none' stroke='white' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='10' fill='none' stroke='white' stroke-width='0.5'/%3E%3C/svg%3E")`,
               backgroundSize: "80px 80px",
             }} />
-            <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-teal/15 rounded-full blur-3xl" />
-            <div className="absolute bottom-1/3 left-1/4 w-[400px] h-[400px] bg-copper/10 rounded-full blur-3xl" />
+            <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-midnight/15 rounded-full blur-3xl" />
+            <div className="absolute bottom-1/3 left-1/4 w-[400px] h-[400px] bg-gold/10 rounded-full blur-3xl" />
           </div>
         )}
 
@@ -370,7 +370,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
             className="flex items-center gap-4 w-full justify-center"
           >
             <div className="flex-1 max-w-[100px] h-px bg-gradient-to-r from-transparent to-white/30" />
-            <span className="font-heading text-4xl md:text-5xl text-copper/90">&amp;</span>
+            <span className="font-heading text-4xl md:text-5xl text-gold/90">&amp;</span>
             <div className="flex-1 max-w-[100px] h-px bg-gradient-to-l from-transparent to-white/30" />
           </motion.div>
 
@@ -438,7 +438,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
           >
             <a
               href="#confirmacao"
-              className="inline-flex items-center justify-center gap-2 bg-copper text-white font-body font-semibold text-sm px-7 py-3.5 rounded-full hover:bg-copper/90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-copper/30"
+              className="inline-flex items-center justify-center gap-2 bg-gold text-white font-body font-semibold text-sm px-7 py-3.5 rounded-full hover:bg-gold/90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-gold/30"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -476,7 +476,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
       </section>
 
       {/* ═══════ Compartilhar ═══════ */}
-      <div className="wt-bg flex justify-center py-6 px-5 bg-cream">
+      <div className="wt-bg flex justify-center py-6 px-5 bg-fog">
         <ShareWhatsApp
           message={`Veja o nosso site de casamento: laco.app/${slug}`}
           label="Compartilhar site"
@@ -484,26 +484,26 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
       </div>
 
       {/* ═══════ 2. NOSSA HISTORIA ═══════ */}
-      <section className="wt-bg py-20 px-5 bg-cream">
+      <section className="wt-bg py-20 px-5 bg-fog">
         <FadeIn className="max-w-2xl mx-auto text-center">
           {/* decorative separator */}
           <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="w-16 h-px bg-gradient-to-r from-transparent to-verde-noite/20" />
-            <svg className="w-5 h-5 text-copper/60" viewBox="0 0 24 24" fill="currentColor">
+            <div className="w-16 h-px bg-gradient-to-r from-transparent to-midnight/20" />
+            <svg className="w-5 h-5 text-gold/60" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z" />
             </svg>
-            <div className="w-16 h-px bg-gradient-to-l from-transparent to-verde-noite/20" />
+            <div className="w-16 h-px bg-gradient-to-l from-transparent to-midnight/20" />
           </div>
 
-          <h2 className="font-heading text-4xl md:text-5xl text-verde-noite mb-8">Nossa História</h2>
+          <h2 className="font-heading text-4xl md:text-5xl text-midnight mb-8">Nossa História</h2>
           {wedding.storyText ? (
-            <div className="space-y-5 text-left font-body text-verde-noite/75 leading-[1.8] text-[15px]">
+            <div className="space-y-5 text-left font-body text-midnight/75 leading-[1.8] text-[15px]">
               {wedding.storyText.split("\n").filter(Boolean).map((p, i) => (
-                <p key={i} className={i === 0 ? "first-letter:text-5xl first-letter:font-heading first-letter:text-copper first-letter:float-left first-letter:mr-2 first-letter:leading-[0.85]" : ""}>{p}</p>
+                <p key={i} className={i === 0 ? "first-letter:text-5xl first-letter:font-heading first-letter:text-gold first-letter:float-left first-letter:mr-2 first-letter:leading-[0.85]" : ""}>{p}</p>
               ))}
             </div>
           ) : (
-            <p className="font-body text-verde-noite/40 italic text-center">
+            <p className="font-body text-midnight/40 italic text-center">
               Em breve compartilharemos nossa história...
             </p>
           )}
@@ -514,33 +514,33 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
       <section className="py-20 px-5 bg-white">
         <FadeIn className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <p className="font-body text-xs uppercase tracking-widest text-copper/70 mb-3">Detalhes do evento</p>
-            <h2 className="font-heading text-4xl md:text-5xl text-verde-noite">Cerimônia &amp; Festa</h2>
+            <p className="font-body text-xs uppercase tracking-widest text-gold/70 mb-3">Detalhes do evento</p>
+            <h2 className="font-heading text-4xl md:text-5xl text-midnight">Cerimônia &amp; Festa</h2>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* ceremony */}
             {wedding.ceremonyVenue && (
-              <div className="bg-cream border border-verde-noite/10 rounded-3xl p-8 text-center">
-                <div className="w-10 h-10 bg-copper/10 text-copper rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="bg-fog border border-midnight/10 rounded-3xl p-8 text-center">
+                <div className="w-10 h-10 bg-gold/10 text-gold rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <p className="font-body text-xs uppercase tracking-widest text-copper/70 mb-2">Cerimônia</p>
-                <h3 className="font-heading text-2xl text-verde-noite mb-1">{wedding.ceremonyVenue}</h3>
+                <p className="font-body text-xs uppercase tracking-widest text-gold/70 mb-2">Cerimônia</p>
+                <h3 className="font-heading text-2xl text-midnight mb-1">{wedding.ceremonyVenue}</h3>
                 {wedding.ceremonyAddress && (
-                  <p className="font-body text-verde-noite/55 text-sm mb-3">
+                  <p className="font-body text-midnight/55 text-sm mb-3">
                     {wedding.ceremonyAddress}
                   </p>
                 )}
-                <p className="font-body text-verde-noite/75 text-sm mb-5 font-medium">
+                <p className="font-body text-midnight/75 text-sm mb-5 font-medium">
                   {formatDateTime(wedding.weddingDate)}
                 </p>
                 {wedding.ceremonyAddress && (
                   <button
                     onClick={() => window.open(mapsUrl(wedding.ceremonyAddress!), "_blank")}
-                    className="inline-flex items-center gap-1.5 border border-teal/30 text-teal px-5 py-2 rounded-full text-sm hover:bg-teal hover:text-white transition-all"
+                    className="inline-flex items-center gap-1.5 border border-midnight/30 text-midnight px-5 py-2 rounded-full text-sm hover:bg-midnight hover:text-white transition-all"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -554,7 +554,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
 
             {/* reception / venue */}
             {wedding.venue && (
-              <div className="group relative overflow-hidden bg-gradient-to-br from-verde-noite to-teal rounded-3xl p-8 text-center text-white">
+              <div className="group relative overflow-hidden bg-gradient-to-br from-midnight to-midnight rounded-3xl p-8 text-center text-white">
                 <div className="absolute inset-0 opacity-10 bg-[length:30px_30px]" style={{backgroundImage:"url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='1.5' fill='%23FFFFFF'/%3E%3C/svg%3E\")"}} />
                 <div className="relative z-10">
                   <div className="w-10 h-10 bg-white/15 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -591,7 +591,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
             {/* fallback when no venues */}
             {!wedding.ceremonyVenue && !wedding.venue && (
               <div className="md:col-span-2 text-center py-8">
-                <p className="font-body text-verde-noite/50 italic">
+                <p className="font-body text-midnight/50 italic">
                   Informações do local em breve...
                 </p>
               </div>
@@ -601,18 +601,18 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
       </section>
 
       {/* ═══════ 4. RSVP ═══════ */}
-      <section id="confirmacao" className="py-20 px-5 bg-cream">
+      <section id="confirmacao" className="py-20 px-5 bg-fog">
         <FadeIn className="max-w-lg mx-auto">
           <div className="text-center mb-10">
-            <p className="font-body text-xs uppercase tracking-widest text-copper/70 mb-3">Sua presença é a nossa alegria</p>
-            <h2 className="font-heading text-4xl md:text-5xl text-verde-noite">Confirme sua Presença</h2>
+            <p className="font-body text-xs uppercase tracking-widest text-gold/70 mb-3">Sua presença é a nossa alegria</p>
+            <h2 className="font-heading text-4xl md:text-5xl text-midnight">Confirme sua Presença</h2>
           </div>
 
           {rsvpSuccess ? (
-            <div className="text-center bg-teal/10 rounded-2xl p-10">
+            <div className="text-center bg-midnight/10 rounded-2xl p-10">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-14 h-14 text-teal mx-auto mb-4"
+                className="w-14 h-14 text-midnight mx-auto mb-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -621,7 +621,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
               <p className="font-heading text-2xl mb-2">Obrigado, {rsvpName}!</p>
-              <p className="font-body text-verde-noite/70 mb-6">
+              <p className="font-body text-midnight/70 mb-6">
                 Sua confirmacao foi registrada com sucesso.
               </p>
               <a
@@ -646,7 +646,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
                   required
                   value={rsvpName}
                   onChange={(e) => setRsvpName(e.target.value)}
-                  className="w-full border border-verde-noite/20 rounded-lg px-4 py-3 font-body focus:outline-none focus:ring-2 focus:ring-teal/40"
+                  className="w-full border border-midnight/20 rounded-lg px-4 py-3 font-body focus:outline-none focus:ring-2 focus:ring-midnight/40"
                   placeholder="Seu nome"
                 />
               </div>
@@ -660,7 +660,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
                     name="attending"
                     checked={rsvpAttending === "yes"}
                     onChange={() => setRsvpAttending("yes")}
-                    className="accent-teal w-4 h-4"
+                    className="accent-midnight w-4 h-4"
                   />
                   <span className="font-body">Irei com prazer</span>
                 </label>
@@ -670,7 +670,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
                     name="attending"
                     checked={rsvpAttending === "no"}
                     onChange={() => setRsvpAttending("no")}
-                    className="accent-teal w-4 h-4"
+                    className="accent-midnight w-4 h-4"
                   />
                   <span className="font-body">Infelizmente nao poderei</span>
                 </label>
@@ -684,7 +684,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
                       type="checkbox"
                       checked={rsvpCompanion}
                       onChange={(e) => setRsvpCompanion(e.target.checked)}
-                      className="accent-teal w-4 h-4"
+                      className="accent-midnight w-4 h-4"
                     />
                     <span className="font-body">Levarei acompanhante</span>
                   </label>
@@ -693,7 +693,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
                       type="text"
                       value={rsvpCompanionName}
                       onChange={(e) => setRsvpCompanionName(e.target.value)}
-                      className="w-full border border-verde-noite/20 rounded-lg px-4 py-3 font-body focus:outline-none focus:ring-2 focus:ring-teal/40"
+                      className="w-full border border-midnight/20 rounded-lg px-4 py-3 font-body focus:outline-none focus:ring-2 focus:ring-midnight/40"
                       placeholder="Nome do acompanhante"
                     />
                   )}
@@ -709,7 +709,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
                   value={rsvpDietary}
                   onChange={(e) => setRsvpDietary(e.target.value)}
                   rows={3}
-                  className="w-full border border-verde-noite/20 rounded-lg px-4 py-3 font-body focus:outline-none focus:ring-2 focus:ring-teal/40 resize-none"
+                  className="w-full border border-midnight/20 rounded-lg px-4 py-3 font-body focus:outline-none focus:ring-2 focus:ring-midnight/40 resize-none"
                   placeholder="Vegetariano, intolerancia a lactose, etc."
                 />
               </div>
@@ -723,7 +723,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
               <button
                 type="submit"
                 disabled={rsvpSubmitting}
-                className="wt-accent-bg w-full bg-copper text-white font-body font-semibold py-3 rounded-lg hover:bg-copper/90 transition-colors disabled:opacity-50"
+                className="wt-accent-bg w-full bg-gold text-white font-body font-semibold py-3 rounded-lg hover:bg-gold/90 transition-colors disabled:opacity-50"
               >
                 {rsvpSubmitting ? "Enviando..." : "Confirmar presenca"}
               </button>
@@ -734,7 +734,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
 
       {/* ═══════ 5. PRESENTES ═══════ */}
       {topGifts.length > 0 && (
-        <section id="presentes" className="wt-bg py-20 px-5 bg-cream">
+        <section id="presentes" className="wt-bg py-20 px-5 bg-fog">
           <FadeIn className="max-w-5xl mx-auto">
             <h2 className="font-heading text-4xl text-center mb-12">Lista de Presentes</h2>
 
@@ -757,7 +757,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
                   <h3 className="font-body font-semibold text-sm leading-tight mb-1 line-clamp-2">
                     {gift.name}
                   </h3>
-                  <p className="font-body text-copper font-bold text-sm mb-2">
+                  <p className="font-body text-gold font-bold text-sm mb-2">
                     R$ {gift.price.toFixed(2).replace(".", ",")}
                   </p>
                   <span
@@ -770,7 +770,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
                       href={gift.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-auto text-xs font-body text-teal hover:underline"
+                      className="mt-auto text-xs font-body text-midnight hover:underline"
                     >
                       Quero presentear
                     </a>
@@ -782,7 +782,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
             <div className="text-center mt-10">
               <a
                 href={`/${slug}/presentes`}
-                className="wt-primary wt-primary-border inline-block border border-teal text-teal rounded-full px-8 py-3 font-body text-sm hover:bg-teal hover:text-white transition-colors"
+                className="wt-primary wt-primary-border inline-block border border-midnight text-midnight rounded-full px-8 py-3 font-body text-sm hover:bg-midnight hover:text-white transition-colors"
               >
                 Ver lista completa
               </a>
@@ -800,7 +800,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
       </section>
 
       {/* ═══════ 7. FOOTER / VIRAL WATERMARK ═══════ */}
-      <footer className="bg-verde-noite py-12 px-5">
+      <footer className="bg-midnight py-12 px-5">
         <div className="max-w-xl mx-auto text-center space-y-6">
           {/* message */}
           {wedding.message && (
@@ -823,7 +823,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
               href="/registro"
               className="group inline-flex items-center gap-2.5 bg-white/8 hover:bg-white/15 border border-white/15 rounded-2xl px-6 py-3.5 transition-all"
             >
-              <span className="font-logo text-2xl text-white tracking-tight">Laço</span>
+              <span className="font-display text-2xl text-white tracking-tight">Laço</span>
               <div className="h-4 w-px bg-white/20" />
               <span className="font-body text-xs text-white/60 group-hover:text-white/80 transition-colors">
                 Crie o seu casamento grátis →

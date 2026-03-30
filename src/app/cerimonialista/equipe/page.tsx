@@ -84,7 +84,7 @@ export default function EquipePage() {
   if (authStatus === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -93,14 +93,14 @@ export default function EquipePage() {
     <div className="p-6 lg:p-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-heading text-3xl text-verde-noite">Equipe</h1>
-          <p className="font-body text-sm text-verde-noite/50 mt-1">
+          <h1 className="font-heading text-3xl text-midnight">Equipe</h1>
+          <p className="font-body text-sm text-midnight/50 mt-1">
             Gerencie assistentes e atribua casamentos
           </p>
         </div>
         <button
           onClick={openCreate}
-          className="px-5 py-2.5 bg-copper text-white rounded-xl font-body text-sm font-medium hover:bg-copper/90 transition"
+          className="px-5 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition"
         >
           Adicionar membro
         </button>
@@ -108,8 +108,8 @@ export default function EquipePage() {
 
       {members.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-sm p-16 text-center">
-          <p className="font-heading text-xl text-verde-noite/40 mb-2">Equipe vazia</p>
-          <p className="font-body text-sm text-verde-noite/30">
+          <p className="font-heading text-xl text-midnight/40 mb-2">Equipe vazia</p>
+          <p className="font-body text-sm text-midnight/30">
             Adicione assistentes para delegar casamentos
           </p>
         </div>
@@ -119,15 +119,15 @@ export default function EquipePage() {
             <div key={m.id} className="bg-white rounded-2xl shadow-sm p-5">
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <h3 className="font-heading text-lg text-verde-noite">{m.name}</h3>
-                  <span className="inline-block mt-1 px-2 py-0.5 bg-teal/10 text-teal text-xs font-body rounded-full capitalize">
+                  <h3 className="font-heading text-lg text-midnight">{m.name}</h3>
+                  <span className="inline-block mt-1 px-2 py-0.5 bg-midnight/10 text-midnight text-xs font-body rounded-full capitalize">
                     {m.role}
                   </span>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => openEdit(m)}
-                    className="p-1.5 text-verde-noite/40 hover:text-verde-noite transition"
+                    className="p-1.5 text-midnight/40 hover:text-midnight transition"
                     title="Editar"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -148,13 +148,13 @@ export default function EquipePage() {
 
               <div className="space-y-1">
                 {m.email && (
-                  <p className="font-body text-sm text-verde-noite/60">
-                    <span className="text-verde-noite/40">Email: </span>{m.email}
+                  <p className="font-body text-sm text-midnight/60">
+                    <span className="text-midnight/40">Email: </span>{m.email}
                   </p>
                 )}
                 {m.phone && (
-                  <p className="font-body text-sm text-verde-noite/60">
-                    <span className="text-verde-noite/40">Tel: </span>{m.phone}
+                  <p className="font-body text-sm text-midnight/60">
+                    <span className="text-midnight/40">Tel: </span>{m.phone}
                   </p>
                 )}
               </div>
@@ -167,28 +167,28 @@ export default function EquipePage() {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
-            <h2 className="font-heading text-xl text-verde-noite mb-5">
+            <h2 className="font-heading text-xl text-midnight mb-5">
               {editing ? "Editar membro" : "Novo membro da equipe"}
             </h2>
 
             <div className="space-y-4">
               <div>
-                <label className="block font-body text-sm mb-1 text-verde-noite/70">Nome *</label>
+                <label className="block font-body text-sm mb-1 text-midnight/70">Nome *</label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-gold outline-none"
                   placeholder="Nome completo"
                 />
               </div>
 
               <div>
-                <label className="block font-body text-sm mb-1 text-verde-noite/70">Função</label>
+                <label className="block font-body text-sm mb-1 text-midnight/70">Função</label>
                 <select
                   value={form.role}
                   onChange={(e) => setForm({ ...form, role: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-gold outline-none"
                 >
                   {ROLES.map((r) => (
                     <option key={r} value={r} className="capitalize">
@@ -199,23 +199,23 @@ export default function EquipePage() {
               </div>
 
               <div>
-                <label className="block font-body text-sm mb-1 text-verde-noite/70">Email</label>
+                <label className="block font-body text-sm mb-1 text-midnight/70">Email</label>
                 <input
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-gold outline-none"
                   placeholder="email@exemplo.com"
                 />
               </div>
 
               <div>
-                <label className="block font-body text-sm mb-1 text-verde-noite/70">Telefone</label>
+                <label className="block font-body text-sm mb-1 text-midnight/70">Telefone</label>
                 <input
                   type="tel"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-gold outline-none"
                   placeholder="(11) 99999-9999"
                 />
               </div>
@@ -225,14 +225,14 @@ export default function EquipePage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="flex-1 py-2.5 border border-gray-300 text-verde-noite/70 rounded-xl font-body text-sm hover:bg-gray-50 transition"
+                  className="flex-1 py-2.5 border border-gray-300 text-midnight/70 rounded-xl font-body text-sm hover:bg-gray-50 transition"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex-1 py-2.5 bg-copper text-white rounded-xl font-body text-sm font-medium hover:bg-copper/90 transition disabled:opacity-50"
+                  className="flex-1 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition disabled:opacity-50"
                 >
                   {saving ? "Salvando..." : editing ? "Salvar" : "Adicionar"}
                 </button>

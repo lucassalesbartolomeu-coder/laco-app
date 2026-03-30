@@ -38,14 +38,14 @@ export const TEMPLATES: Record<string, TemplateConfig> = {
     name: "Clássico",
     description: "Elegante, atemporal, linhas formais e paleta sofisticada",
     colors: {
-      primary: "#1A3A33",
-      secondary: "#C4734F",
-      accent: "#D4AF6A",
+      primary: "#1A1F3A",
+      secondary: "#C9A96E",
+      accent: "#C9A96E",
       background: "#FAF8F4",
       text: "#1A1A1A",
       muted: "#6B7280",
-      hero: "#1A3A33",
-      heroBorder: "#D4AF6A",
+      hero: "#1A1F3A",
+      heroBorder: "#C9A96E",
     },
     fonts: {
       heading: "Cormorant Garamond",
@@ -116,7 +116,7 @@ export const TEMPLATES: Record<string, TemplateConfig> = {
     description: "Cursive elegante, rosa e lavanda, gradientes suaves",
     colors: {
       primary: "#9D4E6E",
-      secondary: "#C4734F",
+      secondary: "#C9A96E",
       accent: "#E8A0B4",
       background: "#FDF4F7",
       text: "#2D1320",
@@ -168,12 +168,12 @@ export const TEMPLATES: Record<string, TemplateConfig> = {
     colors: {
       primary: "#7C5C3E",
       secondary: "#BF8D6B",
-      accent: "#D4AF6A",
+      accent: "#C9A96E",
       background: "#FBF6EE",
       text: "#3D2B1F",
       muted: "#9C8472",
       hero: "#5A3F2A",
-      heroBorder: "#D4AF6A",
+      heroBorder: "#C9A96E",
     },
     fonts: {
       heading: "Josefin Sans",
@@ -219,7 +219,7 @@ export const PRESET_PALETTES: PresetPalette[] = [
     id: "verde-cobre",
     name: "Verde & Cobre",
     description: "Natural e sofisticado",
-    colors: ["#1A3A33", "#2C6B5E", "#C4734F", "#FAF8F4", "#D4AF6A"],
+    colors: ["#1A1F3A", "#1A1F3A", "#C9A96E", "#FAF8F4", "#C9A96E"],
   },
   {
     id: "rosa-champagne",

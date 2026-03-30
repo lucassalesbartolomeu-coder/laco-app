@@ -22,11 +22,11 @@ function baseLayout(content: string): string {
       <div style="max-width:520px;margin:0 auto;">
         <!-- Header -->
         <div style="text-align:center;margin-bottom:24px;">
-          <span style="font-size:28px;font-weight:700;color:#1A3A33;letter-spacing:-0.5px;">Laço</span>
+          <span style="font-size:28px;font-weight:700;color:#1A1F3A;letter-spacing:-0.5px;">Laço</span>
         </div>
         <!-- Card -->
         <div style="background:#ffffff;border-radius:16px;padding:36px 32px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-          <div style="height:3px;background:linear-gradient(90deg,#1A3A33,#C4734F);border-radius:3px;margin-bottom:28px;"></div>
+          <div style="height:3px;background:linear-gradient(90deg,#1A1F3A,#C9A96E);border-radius:3px;margin-bottom:28px;"></div>
           ${content}
         </div>
         <!-- Footer -->
@@ -86,13 +86,13 @@ export async function sendGiftReceivedEmail(params: {
     <div style="background:#F0F7F4;border-radius:12px;padding:20px;margin-bottom:24px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <span style="font-size:14px;color:#6B7280;">Valor recebido</span>
-        <span style="font-size:22px;font-weight:700;color:#1A3A33;">${amountFormatted}</span>
+        <span style="font-size:22px;font-weight:700;color:#1A1F3A;">${amountFormatted}</span>
       </div>
     </div>
 
     ${
       params.message
-        ? `<div style="background:#FFF8F5;border-left:3px solid #C4734F;padding:14px 16px;border-radius:0 8px 8px 0;margin-bottom:24px;">
+        ? `<div style="background:#FFF8F5;border-left:3px solid #C9A96E;padding:14px 16px;border-radius:0 8px 8px 0;margin-bottom:24px;">
         <p style="font-size:14px;color:#374151;font-style:italic;margin:0;">"${params.message}"</p>
       </div>`
         : ""
@@ -102,7 +102,7 @@ export async function sendGiftReceivedEmail(params: {
       Acesse seu painel para acompanhar todos os presentes recebidos.
     </p>
 
-    <a href="https://laco.app/app/dashboard" style="display:inline-block;margin-top:20px;padding:12px 28px;background:#1A3A33;color:#fff;text-decoration:none;font-size:14px;font-weight:600;border-radius:40px;">
+    <a href="https://laco.app/app/dashboard" style="display:inline-block;margin-top:20px;padding:12px 28px;background:#1A1F3A;color:#fff;text-decoration:none;font-size:14px;font-weight:600;border-radius:40px;">
       Ver meu painel →
     </a>
   `);
@@ -240,14 +240,14 @@ export async function sendWelcomeEmail(params: {
     </p>
 
     <div style="background:#F0F7F4;border-radius:12px;padding:20px;margin-bottom:24px;">
-      <p style="font-size:14px;font-weight:600;color:#1A3A33;margin:0 0 12px;">Por onde começar:</p>
+      <p style="font-size:14px;font-weight:600;color:#1A1F3A;margin:0 0 12px;">Por onde começar:</p>
       <p style="font-size:13px;color:#374151;margin:0 0 8px;">🎁 Crie sua lista de presentes</p>
       <p style="font-size:13px;color:#374151;margin:0 0 8px;">👥 Adicione seus convidados</p>
       <p style="font-size:13px;color:#374151;margin:0 0 8px;">💳 Configure o recebimento via Pix</p>
       <p style="font-size:13px;color:#374151;margin:0;">🌐 Compartilhe seu site personalizado</p>
     </div>
 
-    <a href="https://laco.app/app/dashboard" style="display:inline-block;padding:14px 32px;background:#1A3A33;color:#fff;text-decoration:none;font-size:15px;font-weight:600;border-radius:40px;">
+    <a href="https://laco.app/app/dashboard" style="display:inline-block;padding:14px 32px;background:#1A1F3A;color:#fff;text-decoration:none;font-size:15px;font-weight:600;border-radius:40px;">
       Começar agora →
     </a>
   `);
@@ -277,7 +277,7 @@ export async function sendWithdrawalRequestedEmail(params: {
     <div style="background:#F0F7F4;border-radius:12px;padding:20px;margin-bottom:24px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <span style="font-size:14px;color:#6B7280;">Valor solicitado</span>
-        <span style="font-size:22px;font-weight:700;color:#1A3A33;">${amountFormatted}</span>
+        <span style="font-size:22px;font-weight:700;color:#1A1F3A;">${amountFormatted}</span>
       </div>
       <p style="font-size:13px;color:#6B7280;margin:8px 0 0;">Lista: ${params.weddingName}</p>
     </div>

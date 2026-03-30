@@ -20,8 +20,8 @@ export default function GlobalError({
         style={{
           margin: 0,
           fontFamily: "system-ui, sans-serif",
-          background: "#F5F3EF",
-          color: "#1A3A33",
+          background: "#F0EDE7",
+          color: "#1A1F3A",
           minHeight: "100vh",
           display: "flex",
           alignItems: "center",
@@ -43,7 +43,7 @@ export default function GlobalError({
               fontFamily: "Georgia, serif",
               letterSpacing: "0.05em",
               marginBottom: "32px",
-              color: "#1A3A33",
+              color: "#1A1F3A",
             }}
           >
             Laço
@@ -55,7 +55,7 @@ export default function GlobalError({
               width: "56px",
               height: "56px",
               borderRadius: "50%",
-              background: "rgba(196,115,79,0.1)",
+              background: "rgba(201,169,110,0.1)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -67,7 +67,7 @@ export default function GlobalError({
               height="28"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#C4734F"
+              stroke="#C9A96E"
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -88,7 +88,7 @@ export default function GlobalError({
           <p
             style={{
               fontSize: "14px",
-              color: "rgba(26,58,51,0.6)",
+              color: "rgba(26,31,58,0.6)",
               margin: "0 0 32px",
               lineHeight: "1.5",
             }}
@@ -100,7 +100,7 @@ export default function GlobalError({
             <button
               onClick={reset}
               style={{
-                background: "#1A3A33",
+                background: "#1A1F3A",
                 color: "white",
                 border: "none",
                 borderRadius: "12px",
@@ -116,11 +116,11 @@ export default function GlobalError({
             <a
               href="/"
               style={{
-                color: "rgba(26,58,51,0.7)",
+                color: "rgba(26,31,58,0.7)",
                 fontSize: "14px",
                 textDecoration: "none",
                 padding: "12px 20px",
-                border: "1px solid rgba(26,58,51,0.2)",
+                border: "1px solid rgba(26,31,58,0.2)",
                 borderRadius: "12px",
                 display: "block",
               }}

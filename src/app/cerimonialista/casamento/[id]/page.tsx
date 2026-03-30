@@ -50,7 +50,7 @@ export default function CerimonialistaWeddingDetail() {
   if (authStatus === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -58,7 +58,7 @@ export default function CerimonialistaWeddingDetail() {
   if (!wedding) {
     return (
       <div className="p-8 text-center">
-        <p className="font-body text-verde-noite/50">Casamento nao encontrado ou sem permissao.</p>
+        <p className="font-body text-midnight/50">Casamento nao encontrado ou sem permissao.</p>
       </div>
     );
   }
@@ -79,7 +79,7 @@ export default function CerimonialistaWeddingDetail() {
       {/* Back */}
       <Link
         href="/cerimonialista/dashboard"
-        className="inline-flex items-center gap-1 font-body text-sm text-teal hover:text-teal/80 transition mb-6"
+        className="inline-flex items-center gap-1 font-body text-sm text-midnight hover:text-midnight/80 transition mb-6"
       >
         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -89,10 +89,10 @@ export default function CerimonialistaWeddingDetail() {
 
       {/* Header */}
       <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-        <h1 className="font-heading text-3xl text-verde-noite mb-2">
+        <h1 className="font-heading text-3xl text-midnight mb-2">
           {wedding.partnerName1} & {wedding.partnerName2}
         </h1>
-        <div className="flex flex-wrap gap-4 font-body text-sm text-verde-noite/60">
+        <div className="flex flex-wrap gap-4 font-body text-sm text-midnight/60">
           {wedding.weddingDate && <span>{formatDate(wedding.weddingDate)}</span>}
           {wedding.venue && <span>{wedding.venue}</span>}
           {wedding.city && <span>{wedding.city}/{wedding.state}</span>}
@@ -100,20 +100,20 @@ export default function CerimonialistaWeddingDetail() {
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
           <div className="text-center">
-            <p className="font-heading text-2xl text-verde-noite">{totalGuests}</p>
-            <p className="font-body text-xs text-verde-noite/50">Convidados</p>
+            <p className="font-heading text-2xl text-midnight">{totalGuests}</p>
+            <p className="font-body text-xs text-midnight/50">Convidados</p>
           </div>
           <div className="text-center">
             <p className="font-heading text-2xl text-green-600">{confirmedGuests}</p>
-            <p className="font-body text-xs text-verde-noite/50">Confirmados</p>
+            <p className="font-body text-xs text-midnight/50">Confirmados</p>
           </div>
           <div className="text-center">
-            <p className="font-heading text-2xl text-verde-noite">{formatCurrency(totalBudget)}</p>
-            <p className="font-body text-xs text-verde-noite/50">Orcamento</p>
+            <p className="font-heading text-2xl text-midnight">{formatCurrency(totalBudget)}</p>
+            <p className="font-body text-xs text-midnight/50">Orcamento</p>
           </div>
           <div className="text-center">
-            <p className="font-heading text-2xl text-copper">{formatCurrency(totalPaid)}</p>
-            <p className="font-body text-xs text-verde-noite/50">Pago</p>
+            <p className="font-heading text-2xl text-gold">{formatCurrency(totalPaid)}</p>
+            <p className="font-body text-xs text-midnight/50">Pago</p>
           </div>
         </div>
       </div>
@@ -125,7 +125,7 @@ export default function CerimonialistaWeddingDetail() {
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`flex-1 py-2.5 rounded-lg font-body text-sm font-medium transition ${
-              tab === t.key ? "bg-verde-noite text-white" : "text-verde-noite/50 hover:text-verde-noite"
+              tab === t.key ? "bg-midnight text-white" : "text-midnight/50 hover:text-midnight"
             }`}
           >
             {t.label}
@@ -138,11 +138,11 @@ export default function CerimonialistaWeddingDetail() {
         {tab === "convidados" && (
           <div className="space-y-2">
             {wedding.guests?.length === 0 ? (
-              <p className="font-body text-verde-noite/40 text-center py-8">Nenhum convidado</p>
+              <p className="font-body text-midnight/40 text-center py-8">Nenhum convidado</p>
             ) : (
               <table className="w-full font-body text-sm">
                 <thead>
-                  <tr className="border-b text-left text-xs text-verde-noite/40 uppercase">
+                  <tr className="border-b text-left text-xs text-midnight/40 uppercase">
                     <th className="pb-2">Nome</th>
                     <th className="pb-2">Categoria</th>
                     <th className="pb-2">Status</th>
@@ -151,8 +151,8 @@ export default function CerimonialistaWeddingDetail() {
                 <tbody>
                   {wedding.guests?.map((g) => (
                     <tr key={g.id} className="border-b border-gray-50">
-                      <td className="py-2 text-verde-noite">{g.name}</td>
-                      <td className="py-2 text-verde-noite/60">{g.category || "—"}</td>
+                      <td className="py-2 text-midnight">{g.name}</td>
+                      <td className="py-2 text-midnight/60">{g.category || "—"}</td>
                       <td className="py-2">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           g.rsvpStatus === "confirmado" ? "bg-green-100 text-green-700" :
@@ -171,11 +171,11 @@ export default function CerimonialistaWeddingDetail() {
         {tab === "fornecedores" && (
           <div className="space-y-2">
             {wedding.vendors?.length === 0 ? (
-              <p className="font-body text-verde-noite/40 text-center py-8">Nenhum fornecedor</p>
+              <p className="font-body text-midnight/40 text-center py-8">Nenhum fornecedor</p>
             ) : (
               <table className="w-full font-body text-sm">
                 <thead>
-                  <tr className="border-b text-left text-xs text-verde-noite/40 uppercase">
+                  <tr className="border-b text-left text-xs text-midnight/40 uppercase">
                     <th className="pb-2">Nome</th>
                     <th className="pb-2">Categoria</th>
                     <th className="pb-2">Orcamento</th>
@@ -185,9 +185,9 @@ export default function CerimonialistaWeddingDetail() {
                 <tbody>
                   {wedding.vendors?.map((v) => (
                     <tr key={v.id} className="border-b border-gray-50">
-                      <td className="py-2 text-verde-noite">{v.name}</td>
-                      <td className="py-2 text-verde-noite/60">{v.category}</td>
-                      <td className="py-2 text-verde-noite/60">{v.budget ? formatCurrency(v.budget) : "—"}</td>
+                      <td className="py-2 text-midnight">{v.name}</td>
+                      <td className="py-2 text-midnight/60">{v.category}</td>
+                      <td className="py-2 text-midnight/60">{v.budget ? formatCurrency(v.budget) : "—"}</td>
                       <td className="py-2">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           v.status === "contratado" ? "bg-green-100 text-green-700" :
@@ -206,11 +206,11 @@ export default function CerimonialistaWeddingDetail() {
         {tab === "orcamento" && (
           <div className="space-y-2">
             {wedding.budgetItems?.length === 0 ? (
-              <p className="font-body text-verde-noite/40 text-center py-8">Nenhum item no orcamento</p>
+              <p className="font-body text-midnight/40 text-center py-8">Nenhum item no orcamento</p>
             ) : (
               <table className="w-full font-body text-sm">
                 <thead>
-                  <tr className="border-b text-left text-xs text-verde-noite/40 uppercase">
+                  <tr className="border-b text-left text-xs text-midnight/40 uppercase">
                     <th className="pb-2">Descricao</th>
                     <th className="pb-2">Categoria</th>
                     <th className="pb-2">Estimado</th>
@@ -221,10 +221,10 @@ export default function CerimonialistaWeddingDetail() {
                 <tbody>
                   {wedding.budgetItems?.map((b) => (
                     <tr key={b.id} className="border-b border-gray-50">
-                      <td className="py-2 text-verde-noite">{b.description}</td>
-                      <td className="py-2 text-verde-noite/60">{b.category}</td>
-                      <td className="py-2 text-verde-noite/60">{formatCurrency(b.estimatedCost)}</td>
-                      <td className="py-2 text-verde-noite/60">{b.actualCost ? formatCurrency(b.actualCost) : "—"}</td>
+                      <td className="py-2 text-midnight">{b.description}</td>
+                      <td className="py-2 text-midnight/60">{b.category}</td>
+                      <td className="py-2 text-midnight/60">{formatCurrency(b.estimatedCost)}</td>
+                      <td className="py-2 text-midnight/60">{b.actualCost ? formatCurrency(b.actualCost) : "—"}</td>
                       <td className="py-2">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           b.status === "pago" ? "bg-green-100 text-green-700" :

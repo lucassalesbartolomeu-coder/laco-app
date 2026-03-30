@@ -219,7 +219,7 @@ export default function FinanceiroPage() {
   if (authStatus === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -235,8 +235,8 @@ export default function FinanceiroPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="font-heading text-3xl text-verde-noite">Financeiro</h1>
-          <p className="font-body text-sm text-verde-noite/50 mt-1">
+          <h1 className="font-heading text-3xl text-midnight">Financeiro</h1>
+          <p className="font-body text-sm text-midnight/50 mt-1">
             Comissões e desempenho financeiro
           </p>
         </div>
@@ -250,8 +250,8 @@ export default function FinanceiroPage() {
                 onClick={() => setPeriod(opt.value)}
                 className={`px-4 py-2 font-body text-sm transition ${
                   period === opt.value
-                    ? "bg-verde-noite text-white"
-                    : "text-verde-noite/60 hover:bg-gray-50"
+                    ? "bg-midnight text-white"
+                    : "text-midnight/60 hover:bg-gray-50"
                 }`}
               >
                 {opt.label}
@@ -262,7 +262,7 @@ export default function FinanceiroPage() {
           {/* Export CSV */}
           <button
             onClick={exportCsv}
-            className="flex items-center gap-2 px-4 py-2 border border-teal text-teal rounded-xl font-body text-sm font-medium hover:bg-teal/5 transition"
+            className="flex items-center gap-2 px-4 py-2 border border-midnight text-midnight rounded-xl font-body text-sm font-medium hover:bg-midnight/5 transition"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -277,24 +277,24 @@ export default function FinanceiroPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="bg-white rounded-2xl shadow-sm p-5">
-          <p className="font-body text-sm text-verde-noite/50 mb-1">Total acumulado</p>
-          <p className="font-heading text-2xl text-verde-noite">{formatCurrency(totalAccumulated)}</p>
-          <p className="font-body text-xs text-verde-noite/40 mt-1">
+          <p className="font-body text-sm text-midnight/50 mb-1">Total acumulado</p>
+          <p className="font-heading text-2xl text-midnight">{formatCurrency(totalAccumulated)}</p>
+          <p className="font-body text-xs text-midnight/40 mt-1">
             {filtered.length} comissão{filtered.length !== 1 ? "ões" : ""}
           </p>
         </div>
         <div className="bg-white rounded-2xl shadow-sm p-5">
-          <p className="font-body text-sm text-verde-noite/50 mb-1">Pendente de receber</p>
-          <p className="font-heading text-2xl text-copper">{formatCurrency(totalPending)}</p>
-          <p className="font-body text-xs text-verde-noite/40 mt-1">
+          <p className="font-body text-sm text-midnight/50 mb-1">Pendente de receber</p>
+          <p className="font-heading text-2xl text-gold">{formatCurrency(totalPending)}</p>
+          <p className="font-body text-xs text-midnight/40 mt-1">
             {filtered.filter((a) => !a.commissionPaid).length} pendente
             {filtered.filter((a) => !a.commissionPaid).length !== 1 ? "s" : ""}
           </p>
         </div>
         <div className="bg-white rounded-2xl shadow-sm p-5">
-          <p className="font-body text-sm text-verde-noite/50 mb-1">Recebido este mês</p>
-          <p className="font-heading text-2xl text-teal">{formatCurrency(receivedThisMonth)}</p>
-          <p className="font-body text-xs text-verde-noite/40 mt-1">
+          <p className="font-body text-sm text-midnight/50 mb-1">Recebido este mês</p>
+          <p className="font-heading text-2xl text-midnight">{formatCurrency(receivedThisMonth)}</p>
+          <p className="font-body text-xs text-midnight/40 mt-1">
             {MONTH_ABBR[now.getMonth()]} {now.getFullYear()}
           </p>
         </div>
@@ -302,7 +302,7 @@ export default function FinanceiroPage() {
 
       {/* Chart */}
       <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-        <h2 className="font-heading text-lg text-verde-noite mb-5">
+        <h2 className="font-heading text-lg text-midnight mb-5">
           Comissões — últimos 6 meses
         </h2>
         <CommissionsChart bars={chartBars} />
@@ -311,12 +311,12 @@ export default function FinanceiroPage() {
       {/* Table */}
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="font-heading text-lg text-verde-noite">Comissões</h2>
+          <h2 className="font-heading text-lg text-midnight">Comissões</h2>
         </div>
 
         {sorted.length === 0 ? (
           <div className="p-16 text-center">
-            <p className="font-body text-verde-noite/40 text-sm">
+            <p className="font-body text-midnight/40 text-sm">
               Nenhuma comissão no período selecionado
             </p>
           </div>
@@ -326,25 +326,25 @@ export default function FinanceiroPage() {
               <thead className="bg-gray-50 border-b border-gray-100">
                 <tr>
                   <th
-                    className="text-left px-6 py-3 font-body text-xs text-verde-noite/50 font-medium uppercase tracking-wide cursor-pointer hover:text-verde-noite transition select-none"
+                    className="text-left px-6 py-3 font-body text-xs text-midnight/50 font-medium uppercase tracking-wide cursor-pointer hover:text-midnight transition select-none"
                     onClick={() => toggleSort("couple")}
                   >
                     Casal <SortIcon field="couple" />
                   </th>
                   <th
-                    className="text-left px-6 py-3 font-body text-xs text-verde-noite/50 font-medium uppercase tracking-wide cursor-pointer hover:text-verde-noite transition select-none hidden md:table-cell"
+                    className="text-left px-6 py-3 font-body text-xs text-midnight/50 font-medium uppercase tracking-wide cursor-pointer hover:text-midnight transition select-none hidden md:table-cell"
                     onClick={() => toggleSort("date")}
                   >
                     Data Casamento <SortIcon field="date" />
                   </th>
                   <th
-                    className="text-left px-6 py-3 font-body text-xs text-verde-noite/50 font-medium uppercase tracking-wide cursor-pointer hover:text-verde-noite transition select-none"
+                    className="text-left px-6 py-3 font-body text-xs text-midnight/50 font-medium uppercase tracking-wide cursor-pointer hover:text-midnight transition select-none"
                     onClick={() => toggleSort("value")}
                   >
                     Valor <SortIcon field="value" />
                   </th>
                   <th
-                    className="text-left px-6 py-3 font-body text-xs text-verde-noite/50 font-medium uppercase tracking-wide cursor-pointer hover:text-verde-noite transition select-none"
+                    className="text-left px-6 py-3 font-body text-xs text-midnight/50 font-medium uppercase tracking-wide cursor-pointer hover:text-midnight transition select-none"
                     onClick={() => toggleSort("status")}
                   >
                     Status <SortIcon field="status" />
@@ -354,28 +354,28 @@ export default function FinanceiroPage() {
               <tbody className="divide-y divide-gray-50">
                 {sorted.map((a) => (
                   <tr key={a.id} className="hover:bg-gray-50/50 transition">
-                    <td className="px-6 py-4 font-body text-sm text-verde-noite font-medium">
+                    <td className="px-6 py-4 font-body text-sm text-midnight font-medium">
                       {a.wedding.partnerName1} &amp; {a.wedding.partnerName2}
                     </td>
-                    <td className="px-6 py-4 font-body text-sm text-verde-noite/60 hidden md:table-cell">
+                    <td className="px-6 py-4 font-body text-sm text-midnight/60 hidden md:table-cell">
                       {formatDate(a.wedding.weddingDate)}
                     </td>
-                    <td className="px-6 py-4 font-body text-sm text-verde-noite">
+                    <td className="px-6 py-4 font-body text-sm text-midnight">
                       {a.commissionAmount != null
                         ? formatCurrency(a.commissionAmount)
-                        : <span className="text-verde-noite/30">—</span>}
+                        : <span className="text-midnight/30">—</span>}
                     </td>
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           a.commissionPaid
-                            ? "bg-teal/10 text-teal"
-                            : "bg-copper/10 text-copper"
+                            ? "bg-midnight/10 text-midnight"
+                            : "bg-gold/10 text-gold"
                         }`}
                       >
                         <span
                           className={`w-1.5 h-1.5 rounded-full ${
-                            a.commissionPaid ? "bg-teal" : "bg-copper"
+                            a.commissionPaid ? "bg-midnight" : "bg-gold"
                           }`}
                         />
                         {a.commissionPaid ? "Pago" : "Pendente"}

@@ -100,10 +100,10 @@ export default function RegistroCerimonialista() {
   }
 
   const inputClass =
-    "w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-verde-noite focus:border-teal focus:ring-1 focus:ring-teal outline-none transition";
+    "w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-midnight focus:border-gold focus:ring-1 focus:ring-gold outline-none transition";
 
   return (
-    <div className="min-h-screen bg-verde-noite flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-midnight flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-8">
@@ -120,7 +120,7 @@ export default function RegistroCerimonialista() {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center font-body text-sm font-semibold transition-all ${
                   step >= s
-                    ? "bg-copper text-white"
+                    ? "bg-gold text-white"
                     : "bg-white/20 text-white/50"
                 }`}
               >
@@ -140,12 +140,12 @@ export default function RegistroCerimonialista() {
           {/* Step 1: Personal */}
           {step === 1 && (
             <div className="space-y-5">
-              <h2 className="font-heading text-2xl text-verde-noite mb-2">
+              <h2 className="font-heading text-2xl text-midnight mb-2">
                 Seus dados
               </h2>
 
               <div>
-                <label className="block font-body text-sm text-verde-noite/70 mb-1">
+                <label className="block font-body text-sm text-midnight/70 mb-1">
                   Nome completo *
                 </label>
                 <input
@@ -158,7 +158,7 @@ export default function RegistroCerimonialista() {
               </div>
 
               <div>
-                <label className="block font-body text-sm text-verde-noite/70 mb-1">
+                <label className="block font-body text-sm text-midnight/70 mb-1">
                   Email *
                 </label>
                 <input
@@ -171,7 +171,7 @@ export default function RegistroCerimonialista() {
               </div>
 
               <div>
-                <label className="block font-body text-sm text-verde-noite/70 mb-1">
+                <label className="block font-body text-sm text-midnight/70 mb-1">
                   Senha *
                 </label>
                 <input
@@ -194,7 +194,7 @@ export default function RegistroCerimonialista() {
                   setError("");
                   setStep(2);
                 }}
-                className="w-full py-3 bg-verde-noite text-white rounded-xl font-body font-medium hover:bg-verde-noite/90 transition"
+                className="w-full py-3 bg-midnight text-white rounded-xl font-body font-medium hover:bg-midnight/90 transition"
               >
                 Proximo
               </button>
@@ -204,12 +204,12 @@ export default function RegistroCerimonialista() {
           {/* Step 2: Professional */}
           {step === 2 && (
             <div className="space-y-5">
-              <h2 className="font-heading text-2xl text-verde-noite mb-2">
+              <h2 className="font-heading text-2xl text-midnight mb-2">
                 Dados profissionais
               </h2>
 
               <div>
-                <label className="block font-body text-sm text-verde-noite/70 mb-1">
+                <label className="block font-body text-sm text-midnight/70 mb-1">
                   Nome da empresa *
                 </label>
                 <input
@@ -223,7 +223,7 @@ export default function RegistroCerimonialista() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-body text-sm text-verde-noite/70 mb-1">
+                  <label className="block font-body text-sm text-midnight/70 mb-1">
                     CNPJ
                   </label>
                   <input
@@ -235,7 +235,7 @@ export default function RegistroCerimonialista() {
                   />
                 </div>
                 <div>
-                  <label className="block font-body text-sm text-verde-noite/70 mb-1">
+                  <label className="block font-body text-sm text-midnight/70 mb-1">
                     Telefone *
                   </label>
                   <input
@@ -249,7 +249,7 @@ export default function RegistroCerimonialista() {
               </div>
 
               <div>
-                <label className="block font-body text-sm text-verde-noite/70 mb-1">
+                <label className="block font-body text-sm text-midnight/70 mb-1">
                   Regiao de atuacao *
                 </label>
                 <select
@@ -267,7 +267,7 @@ export default function RegistroCerimonialista() {
               </div>
 
               <div>
-                <label className="block font-body text-sm text-verde-noite/70 mb-2">
+                <label className="block font-body text-sm text-midnight/70 mb-2">
                   Especialidades
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -278,8 +278,8 @@ export default function RegistroCerimonialista() {
                       onClick={() => toggleSpecialty(s)}
                       className={`px-3 py-1.5 rounded-full text-xs font-body font-medium border transition-all ${
                         selectedSpecialties.includes(s)
-                          ? "bg-teal text-white border-teal"
-                          : "bg-white text-verde-noite/70 border-gray-200 hover:border-teal"
+                          ? "bg-midnight text-white border-midnight"
+                          : "bg-white text-midnight/70 border-gray-200 hover:border-midnight"
                       }`}
                     >
                       {s}
@@ -289,7 +289,7 @@ export default function RegistroCerimonialista() {
               </div>
 
               <div>
-                <label className="block font-body text-sm text-verde-noite/70 mb-1">
+                <label className="block font-body text-sm text-midnight/70 mb-1">
                   Instagram
                 </label>
                 <input
@@ -302,7 +302,7 @@ export default function RegistroCerimonialista() {
               </div>
 
               <div>
-                <label className="block font-body text-sm text-verde-noite/70 mb-1">
+                <label className="block font-body text-sm text-midnight/70 mb-1">
                   Bio / Sobre voce
                 </label>
                 <textarea
@@ -324,7 +324,7 @@ export default function RegistroCerimonialista() {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="flex-1 py-3 border-2 border-gray-300 text-verde-noite rounded-xl font-body font-medium hover:bg-gray-50 transition"
+                  className="flex-1 py-3 border-2 border-gray-300 text-midnight rounded-xl font-body font-medium hover:bg-gray-50 transition"
                 >
                   Voltar
                 </button>
@@ -338,7 +338,7 @@ export default function RegistroCerimonialista() {
                     handleSubmit();
                   }}
                   disabled={loading}
-                  className="flex-1 py-3 bg-copper text-white rounded-xl font-body font-medium hover:bg-copper/90 transition disabled:opacity-50"
+                  className="flex-1 py-3 bg-gold text-white rounded-xl font-body font-medium hover:bg-gold/90 transition disabled:opacity-50"
                 >
                   {loading ? "Criando conta..." : "Criar conta"}
                 </button>
@@ -349,7 +349,7 @@ export default function RegistroCerimonialista() {
 
         <p className="text-center text-white/40 text-sm mt-6 font-body">
           Ja tem conta?{" "}
-          <a href="/login" className="text-copper hover:underline">
+          <a href="/login" className="text-gold hover:underline">
             Entrar
           </a>
         </p>

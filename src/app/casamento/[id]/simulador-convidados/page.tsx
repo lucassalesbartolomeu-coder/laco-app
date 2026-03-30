@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
@@ -45,7 +45,7 @@ const SAMPLE_PHONES: DDDSamplePhone[] = [
 ];
 
 const REGION_COLORS: Record<string, string> = {
-  Sudeste: "bg-teal",
+  Sudeste: "bg-midnight",
   Sul: "bg-blue-500",
   Nordeste: "bg-orange-500",
   Centro: "bg-yellow-600",
@@ -199,7 +199,7 @@ function DDDDemo() {
       className="bg-white rounded-2xl shadow-md p-6 sm:p-8"
     >
       <div className="mb-6">
-        <h2 className="font-heading text-2xl text-verde-noite mb-2">
+        <h2 className="font-heading text-2xl text-midnight mb-2">
           <span className="flex items-center gap-2">
             <Phone className="w-6 h-6" />
             Detector de DDD
@@ -212,7 +212,7 @@ function DDDDemo() {
 
       {/* Phone Input Section */}
       <div className="mb-8">
-        <label className="block font-body text-sm text-verde-noite mb-3">
+        <label className="block font-body text-sm text-midnight mb-3">
           Teste um número de telefone
         </label>
         <div className="relative">
@@ -222,7 +222,7 @@ function DDDDemo() {
             value={inputValue}
             onChange={handlePhoneChange}
             maxLength={15}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-teal transition-colors font-body"
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-midnight transition-colors font-body"
           />
           <Phone className="absolute right-4 top-3.5 w-5 h-5 text-gray-400 pointer-events-none" />
         </div>
@@ -234,15 +234,15 @@ function DDDDemo() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
-              className="mt-4 p-4 bg-gradient-to-r from-teal/10 to-teal/5 rounded-xl border border-teal/20"
+              className="mt-4 p-4 bg-gradient-to-r from-midnight/10 to-midnight/5 rounded-xl border border-midnight/20"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-teal/20 rounded-full flex items-center justify-center">
-                  <MapPin className="w-5 h-5 text-teal" />
+                <div className="w-10 h-10 bg-midnight/20 rounded-full flex items-center justify-center">
+                  <MapPin className="w-5 h-5 text-midnight" />
                 </div>
                 <div>
-                  <p className="font-heading text-sm text-teal">DDD {inputValue.slice(1, 3)}</p>
-                  <p className="font-body text-verde-noite">
+                  <p className="font-heading text-sm text-midnight">DDD {inputValue.slice(1, 3)}</p>
+                  <p className="font-body text-midnight">
                     {detectedDDD.city}, {detectedDDD.state}
                   </p>
                 </div>
@@ -271,11 +271,11 @@ function DDDDemo() {
               className="p-3 rounded-lg border border-gray-100 flex items-center justify-between"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-teal to-teal/70 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                <div className="w-8 h-8 bg-gradient-to-br from-midnight to-midnight/70 rounded-full flex items-center justify-center text-white text-xs font-semibold">
                   {sample.ddd}
                 </div>
                 <div>
-                  <p className="font-body text-sm text-verde-noite font-medium">
+                  <p className="font-body text-sm text-midnight font-medium">
                     {sample.phone}
                   </p>
                   <p className="font-body text-xs text-gray-500">
@@ -287,7 +287,7 @@ function DDDDemo() {
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="w-4 h-4 border-2 border-teal border-t-transparent rounded-full"
+                  className="w-4 h-4 border-2 border-midnight border-t-transparent rounded-full"
                 />
               )}
             </motion.div>
@@ -296,8 +296,8 @@ function DDDDemo() {
       </div>
 
       {/* Explanation */}
-      <div className="mt-8 p-4 bg-cream rounded-xl border border-copper/10">
-        <p className="font-body text-sm text-verde-noite leading-relaxed">
+      <div className="mt-8 p-4 bg-fog rounded-xl border border-gold/10">
+        <p className="font-body text-sm text-midnight leading-relaxed">
           O Laço lê automaticamente os 2 primeiros dígitos de cada número de
           telefone para saber de qual estado e cidade vem o convidado. Isso
           ajuda a prever a taxa de presença baseada na distância.
@@ -356,7 +356,7 @@ function GuestOriginMap({ guests }: GuestOriginMapProps) {
       className="bg-white rounded-2xl shadow-md p-6 sm:p-8"
     >
       <div className="mb-6">
-        <h2 className="font-heading text-2xl text-verde-noite mb-2 flex items-center gap-2">
+        <h2 className="font-heading text-2xl text-midnight mb-2 flex items-center gap-2">
           <MapPin className="w-6 h-6" />
           Origem dos Convidados
         </h2>
@@ -380,13 +380,13 @@ function GuestOriginMap({ guests }: GuestOriginMapProps) {
             >
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <p className="font-heading text-sm text-verde-noite">
+                  <p className="font-heading text-sm text-midnight">
                     {stat.state}
                   </p>
                   <p className="font-body text-xs text-gray-500">{region}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-heading text-sm text-verde-noite">
+                  <p className="font-heading text-sm text-midnight">
                     {stat.count}
                   </p>
                   <p className="font-body text-xs text-gray-500">
@@ -504,10 +504,10 @@ function AttendancePrediction({
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.6 }}
-      className="bg-gradient-to-br from-teal/5 to-teal/2 rounded-2xl shadow-md p-6 sm:p-8 border border-teal/20"
+      className="bg-gradient-to-br from-midnight/5 to-midnight/2 rounded-2xl shadow-md p-6 sm:p-8 border border-midnight/20"
     >
       <div className="mb-6">
-        <h2 className="font-heading text-2xl text-verde-noite mb-2 flex items-center gap-2">
+        <h2 className="font-heading text-2xl text-midnight mb-2 flex items-center gap-2">
           <TrendingUp className="w-6 h-6" />
           Previsão de Presença
         </h2>
@@ -518,48 +518,48 @@ function AttendancePrediction({
 
       <div className="grid sm:grid-cols-3 gap-4 mb-6">
         {/* Same State */}
-        <div className="p-4 bg-white rounded-xl border border-teal/10">
+        <div className="p-4 bg-white rounded-xl border border-midnight/10">
           <p className="font-body text-xs text-gray-500 mb-1">Mesmo Estado</p>
-          <p className="font-heading text-2xl text-teal mb-1">
+          <p className="font-heading text-2xl text-midnight mb-1">
             {prediction.samState}
           </p>
-          <p className="font-body text-xs text-verde-noite">~88% presença</p>
+          <p className="font-body text-xs text-midnight">~88% presença</p>
         </div>
 
         {/* Adjacent State */}
-        <div className="p-4 bg-white rounded-xl border border-teal/10">
+        <div className="p-4 bg-white rounded-xl border border-midnight/10">
           <p className="font-body text-xs text-gray-500 mb-1">Estado Adjacente</p>
-          <p className="font-heading text-2xl text-teal mb-1">
+          <p className="font-heading text-2xl text-midnight mb-1">
             {prediction.adjacentState}
           </p>
-          <p className="font-body text-xs text-verde-noite">~72% presença</p>
+          <p className="font-body text-xs text-midnight">~72% presença</p>
         </div>
 
         {/* Far State */}
-        <div className="p-4 bg-white rounded-xl border border-teal/10">
+        <div className="p-4 bg-white rounded-xl border border-midnight/10">
           <p className="font-body text-xs text-gray-500 mb-1">Estado Distante</p>
-          <p className="font-heading text-2xl text-teal mb-1">
+          <p className="font-heading text-2xl text-midnight mb-1">
             {prediction.farState}
           </p>
-          <p className="font-body text-xs text-verde-noite">~55% presença</p>
+          <p className="font-body text-xs text-midnight">~55% presença</p>
         </div>
       </div>
 
       {/* Main Prediction */}
-      <div className="bg-white rounded-xl p-6 border border-teal/20">
+      <div className="bg-white rounded-xl p-6 border border-midnight/20">
         <p className="font-body text-sm text-gray-600 mb-2">Estimativa total</p>
         <div className="flex items-baseline gap-2 mb-2">
           <CountUp
             target={prediction.expected}
             duration={1.2}
-            className="font-heading text-4xl text-verde-noite"
+            className="font-heading text-4xl text-midnight"
           />
           <span className="font-heading text-xl text-gray-400">
             de {guests.length}
           </span>
         </div>
         <div className="text-right">
-          <span className="font-heading text-lg text-teal">{percentage}%</span>
+          <span className="font-heading text-lg text-midnight">{percentage}%</span>
         </div>
       </div>
 
@@ -582,7 +582,7 @@ function AttendancePrediction({
               cy="60"
               r="50"
               fill="none"
-              stroke="#2C6B5E"
+              stroke="#1A1F3A"
               strokeWidth="8"
               strokeDasharray="314"
               initial={{ strokeDashoffset: 314 }}
@@ -599,7 +599,7 @@ function AttendancePrediction({
               y="60"
               textAnchor="middle"
               dominantBaseline="middle"
-              className="font-heading text-2xl fill-verde-noite"
+              className="font-heading text-2xl fill-midnight"
               fontSize="20"
             >
               {percentage}%
@@ -714,12 +714,12 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.75 }}
-        className="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-teal/10"
+        className="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-midnight/10"
       >
         {/* Cabeçalho */}
         <div className="flex items-start justify-between mb-5 gap-4">
           <div>
-            <h2 className="font-heading text-2xl text-verde-noite mb-1 flex items-center gap-2">
+            <h2 className="font-heading text-2xl text-midnight mb-1 flex items-center gap-2">
               <TrendingUp className="w-6 h-6 no-print" />
               Visualização por Categoria
             </h2>
@@ -729,7 +729,7 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
           </div>
           <button
             onClick={() => window.print()}
-            className="no-print flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-verde-noite text-verde-noite font-body text-sm font-medium hover:bg-verde-noite/5 transition-all duration-200"
+            className="no-print flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-midnight text-midnight font-body text-sm font-medium hover:bg-midnight/5 transition-all duration-200"
             title="Exportar como PDF via impressão"
           >
             <Printer className="w-4 h-4" />
@@ -747,13 +747,13 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
           </div>
           <div className="flex items-center gap-1.5">
             <svg width="16" height="10" aria-hidden="true">
-              <rect width="16" height="10" rx="3" fill="#2C6B5E" />
+              <rect width="16" height="10" rx="3" fill="#1A1F3A" />
             </svg>
             <span className="font-body text-xs text-gray-500">Estimativa de presença</span>
           </div>
           <div className="flex items-center gap-1.5">
             <svg width="16" height="10" aria-hidden="true">
-              <rect width="16" height="10" rx="3" fill="#C4734F" />
+              <rect width="16" height="10" rx="3" fill="#C9A96E" />
             </svg>
             <span className="font-body text-xs text-gray-500">Mínimo esperado</span>
           </div>
@@ -788,7 +788,7 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
                     dominantBaseline="middle"
                     fontSize="11"
                     fontFamily="inherit"
-                    fill="#1A3A33"
+                    fill="#1A1F3A"
                   >
                     {categoryLabel(cat).length > 18
                       ? categoryLabel(cat).slice(0, 16) + "…"
@@ -816,7 +816,7 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
                     height={BAR_H}
                     rx="3"
                     fill="#e5e7eb"
-                    stroke={lowAttendance ? "#C4734F" : "none"}
+                    stroke={lowAttendance ? "#C9A96E" : "none"}
                     strokeWidth={lowAttendance ? "1.5" : "0"}
                   />
                   <text
@@ -837,35 +837,35 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
                     width={expectedW}
                     height={BAR_H}
                     rx="3"
-                    fill="#2C6B5E"
+                    fill="#1A1F3A"
                   />
                   <text
                     x={barX + expectedW + 5}
                     y={y + BAR_H + BAR_GAP + BAR_H / 2}
                     dominantBaseline="middle"
                     fontSize="10"
-                    fill="#2C6B5E"
+                    fill="#1A1F3A"
                     fontFamily="inherit"
                     fontWeight="600"
                   >
                     {stats.expected}
                   </text>
 
-                  {/* Barra 3 — Mínimo (copper) */}
+                  {/* Barra 3 — Mínimo (gold) */}
                   <rect
                     x={barX}
                     y={y + (BAR_H + BAR_GAP) * 2}
                     width={minW}
                     height={BAR_H}
                     rx="3"
-                    fill="#C4734F"
+                    fill="#C9A96E"
                   />
                   <text
                     x={barX + minW + 5}
                     y={y + (BAR_H + BAR_GAP) * 2 + BAR_H / 2}
                     dominantBaseline="middle"
                     fontSize="10"
-                    fill="#C4734F"
+                    fill="#C9A96E"
                     fontFamily="inherit"
                   >
                     {minExpected}
@@ -882,7 +882,7 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
 
         {/* Resumo numérico */}
         <div className="mt-5 pt-5 border-t border-gray-100 space-y-1.5">
-          <p className="font-body text-base text-verde-noite">
+          <p className="font-body text-base text-midnight">
             <strong>Estimativa:</strong>{" "}
             {result.confidenceRange.min}–{result.confidenceRange.max} de{" "}
             {result.totalInvited} convidados
@@ -896,7 +896,7 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
             {confidencePctMin}%–{confidencePctMax}%
           </p>
           {hasLowCategory && (
-            <p className="font-body text-sm text-copper flex items-center gap-1 pt-1">
+            <p className="font-body text-sm text-gold flex items-center gap-1 pt-1">
               ⚠️ Categorias marcadas têm estimativa abaixo de 70% do total
             </p>
           )}
@@ -921,13 +921,13 @@ function EmptyState({ id }: EmptyStateProps) {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
-      className="bg-gradient-to-br from-cream to-cream/50 rounded-2xl shadow-md p-8 sm:p-10 border border-copper/20 text-center"
+      className="bg-gradient-to-br from-cream to-cream/50 rounded-2xl shadow-md p-8 sm:p-10 border border-gold/20 text-center"
     >
-      <div className="w-16 h-16 bg-copper/10 rounded-full flex items-center justify-center mx-auto mb-4">
-        <AlertCircle className="w-8 h-8 text-copper" />
+      <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-4">
+        <AlertCircle className="w-8 h-8 text-gold" />
       </div>
 
-      <h2 className="font-heading text-2xl text-verde-noite mb-2">
+      <h2 className="font-heading text-2xl text-midnight mb-2">
         Ainda não tem convidados?
       </h2>
 
@@ -939,17 +939,17 @@ function EmptyState({ id }: EmptyStateProps) {
       <div className="space-y-3 mb-6">
         <Link
           href={`/casamento/${id}/importar`}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-teal text-white rounded-xl font-body font-medium hover:bg-teal/90 transition-all duration-200 justify-center"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-midnight text-white rounded-xl font-body font-medium hover:bg-midnight/90 transition-all duration-200 justify-center"
         >
           <span>Importar lista de convidados</span>
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
 
-      <div className="border-t border-copper/10 pt-6">
+      <div className="border-t border-gold/10 pt-6">
         <button
           onClick={() => setShowManual(!showManual)}
-          className="font-body text-sm text-copper hover:text-copper/80 transition-colors underline"
+          className="font-body text-sm text-gold hover:text-gold/80 transition-colors underline"
         >
           Ou simular com dados aleatórios
         </button>
@@ -960,9 +960,9 @@ function EmptyState({ id }: EmptyStateProps) {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-4 p-4 bg-white rounded-xl border border-copper/20"
+              className="mt-4 p-4 bg-white rounded-xl border border-gold/20"
             >
-              <label className="block font-body text-sm text-verde-noite mb-2">
+              <label className="block font-body text-sm text-midnight mb-2">
                 Quantos convidados?
               </label>
               <input
@@ -973,7 +973,7 @@ function EmptyState({ id }: EmptyStateProps) {
                 onChange={(e) => setGuestCount(Number(e.target.value))}
                 className="w-full mb-2"
               />
-              <p className="font-body text-center text-lg text-teal font-semibold">
+              <p className="font-body text-center text-lg text-midnight font-semibold">
                 {guestCount} convidados
               </p>
               <p className="font-body text-xs text-gray-500 mt-2">
@@ -1024,8 +1024,8 @@ export default function SimuladorConvidadosPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -1036,12 +1036,12 @@ export default function SimuladorConvidadosPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-ivory flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-md p-8 max-w-md w-full text-center">
           <p className="font-body text-red-500 mb-4">{error}</p>
           <Link
             href={`/casamento/${id}`}
-            className="font-body text-teal underline"
+            className="font-body text-midnight underline"
           >
             Voltar ao casamento
           </Link>
@@ -1058,7 +1058,7 @@ export default function SimuladorConvidadosPage() {
     [];
 
   return (
-    <div className="min-h-screen bg-off-white py-10 px-4 pb-20">
+    <div className="min-h-screen bg-ivory py-10 px-4 pb-20">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Hero Section */}
         <motion.div
@@ -1067,7 +1067,7 @@ export default function SimuladorConvidadosPage() {
           transition={{ duration: 0.5 }}
           className="text-center mb-10"
         >
-          <h1 className="font-heading text-4xl sm:text-5xl text-verde-noite mb-3">
+          <h1 className="font-heading text-4xl sm:text-5xl text-midnight mb-3">
             Simulador de Convidados
           </h1>
           <p className="font-body text-lg text-gray-600 max-w-2xl mx-auto">
@@ -1101,9 +1101,9 @@ export default function SimuladorConvidadosPage() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 }}
-              className="bg-cream rounded-2xl shadow-md p-6 sm:p-8 border border-copper/10"
+              className="bg-fog rounded-2xl shadow-md p-6 sm:p-8 border border-gold/10"
             >
-              <p className="font-body text-sm text-verde-noite leading-relaxed">
+              <p className="font-body text-sm text-midnight leading-relaxed">
                 <strong>Como funciona?</strong> O Laço detecta o DDD (código de
                 área) de cada convidado através do número de telefone. Com isso,
                 sabemos em qual estado ele está e podemos estimar a probabilidade
@@ -1124,13 +1124,13 @@ export default function SimuladorConvidadosPage() {
         >
           <Link
             href={`/casamento/${id}/simulador`}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-verde-noite text-verde-noite rounded-xl font-body font-medium hover:bg-verde-noite/5 transition-all duration-200"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-midnight text-midnight rounded-xl font-body font-medium hover:bg-midnight/5 transition-all duration-200"
           >
             Ver Simulador Inteligente
           </Link>
           <Link
             href={`/casamento/${id}/convidados`}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-teal text-teal rounded-xl font-body font-medium hover:bg-teal/5 transition-all duration-200"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-midnight text-midnight rounded-xl font-body font-medium hover:bg-midnight/5 transition-all duration-200"
           >
             Gerenciar Convidados
           </Link>

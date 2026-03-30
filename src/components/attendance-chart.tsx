@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -20,8 +20,8 @@ interface AttendanceChartProps {
 // ─── Helpers ───────────────────────────────────────────────
 
 function barColor(rate: number): string {
-  if (rate >= 0.7) return "#2C6B5E"; // teal
-  if (rate >= 0.4) return "#C4734F"; // copper
+  if (rate >= 0.7) return "#1A1F3A"; // teal
+  if (rate >= 0.4) return "#C9A96E"; // gold
   return "#E57373";                   // light red
 }
 
@@ -57,7 +57,7 @@ export default function AttendanceChart({
     >
       {/* ── Title ── */}
       <div className="mb-8">
-        <h2 className="font-heading text-2xl text-verde-noite">
+        <h2 className="font-heading text-2xl text-midnight">
           Gráfico de Presença
         </h2>
         <p className="font-body text-sm text-gray-500 mt-1">
@@ -70,21 +70,21 @@ export default function AttendanceChart({
         {/* Total convidados */}
         <div
           className="rounded-xl p-5 flex flex-col gap-1"
-          style={{ backgroundColor: "#F5F3EF" }}
+          style={{ backgroundColor: "#F0EDE7" }}
         >
           <span
             className="font-body text-xs uppercase tracking-widest"
-            style={{ color: "#1A3A3366" }}
+            style={{ color: "#1A1F3A66" }}
           >
             Total convidados
           </span>
           <span
             className="font-heading text-3xl"
-            style={{ color: "#1A3A33" }}
+            style={{ color: "#1A1F3A" }}
           >
             {totalInvited}
           </span>
-          <span className="font-body text-xs" style={{ color: "#1A3A3380" }}>
+          <span className="font-body text-xs" style={{ color: "#1A1F3A80" }}>
             na lista
           </span>
         </div>
@@ -92,21 +92,21 @@ export default function AttendanceChart({
         {/* Estimativa de presença */}
         <div
           className="rounded-xl p-5 flex flex-col gap-1"
-          style={{ backgroundColor: "#2C6B5E15" }}
+          style={{ backgroundColor: "#1A1F3A15" }}
         >
           <span
             className="font-body text-xs uppercase tracking-widest"
-            style={{ color: "#2C6B5E99" }}
+            style={{ color: "#1A1F3A99" }}
           >
             Estimativa de presença
           </span>
           <span
             className="font-heading text-3xl"
-            style={{ color: "#2C6B5E" }}
+            style={{ color: "#1A1F3A" }}
           >
             {expectedTotal}
           </span>
-          <span className="font-body text-xs" style={{ color: "#2C6B5E99" }}>
+          <span className="font-body text-xs" style={{ color: "#1A1F3A99" }}>
             {overallPct}% dos convidados
           </span>
         </div>
@@ -114,21 +114,21 @@ export default function AttendanceChart({
         {/* Mínimo esperado */}
         <div
           className="rounded-xl p-5 flex flex-col gap-1"
-          style={{ backgroundColor: "#C4734F12" }}
+          style={{ backgroundColor: "#C9A96E12" }}
         >
           <span
             className="font-body text-xs uppercase tracking-widest"
-            style={{ color: "#C4734F99" }}
+            style={{ color: "#C9A96E99" }}
           >
             Mínimo esperado
           </span>
           <span
             className="font-heading text-3xl"
-            style={{ color: "#C4734F" }}
+            style={{ color: "#C9A96E" }}
           >
             {confidenceLow}
           </span>
-          <span className="font-body text-xs" style={{ color: "#C4734F99" }}>
+          <span className="font-body text-xs" style={{ color: "#C9A96E99" }}>
             limite inferior (−8%)
           </span>
         </div>
@@ -153,7 +153,7 @@ export default function AttendanceChart({
                 className="font-body text-sm shrink-0 text-right"
                 style={{
                   width: BAR_LABEL_WIDTH,
-                  color: "#1A3A33",
+                  color: "#1A1F3A",
                   minWidth: BAR_LABEL_WIDTH,
                 }}
               >
@@ -163,7 +163,7 @@ export default function AttendanceChart({
               {/* Bar track */}
               <div
                 className="relative flex-1 rounded-full overflow-hidden"
-                style={{ height: 20, backgroundColor: "#F5F3EF" }}
+                style={{ height: 20, backgroundColor: "#F0EDE7" }}
                 aria-label={`${cat.label}: ${pct}%`}
               >
                 {/* Animated fill */}
@@ -213,7 +213,7 @@ export default function AttendanceChart({
                 className="font-body text-sm shrink-0 text-right"
                 style={{
                   width: BAR_COUNT_WIDTH,
-                  color: "#1A3A3380",
+                  color: "#1A1F3A80",
                   minWidth: BAR_COUNT_WIDTH,
                 }}
               >
@@ -227,8 +227,8 @@ export default function AttendanceChart({
       {/* ── Legend ── */}
       <div className="flex flex-wrap gap-5 mt-8 pt-6 border-t border-gray-100">
         {[
-          { color: "#2C6B5E", label: "Alta presença (≥70%)" },
-          { color: "#C4734F", label: "Média presença (≥40%)" },
+          { color: "#1A1F3A", label: "Alta presença (≥70%)" },
+          { color: "#C9A96E", label: "Média presença (≥40%)" },
           { color: "#E57373", label: "Baixa presença (<40%)" },
         ].map((item) => (
           <div key={item.label} className="flex items-center gap-2">
@@ -236,7 +236,7 @@ export default function AttendanceChart({
               className="inline-block rounded-full shrink-0"
               style={{ width: 12, height: 12, backgroundColor: item.color }}
             />
-            <span className="font-body text-xs" style={{ color: "#1A3A3380" }}>
+            <span className="font-body text-xs" style={{ color: "#1A1F3A80" }}>
               {item.label}
             </span>
           </div>

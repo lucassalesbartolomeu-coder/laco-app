@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -34,7 +34,7 @@ const PLANS = [
     description: "Para casais que querem o melhor.",
     cta: "Começar trial grátis",
     ctaHref: "/registro?plano=pro",
-    ctaStyle: "copper" as const,
+    ctaStyle: "gold" as const,
     popular: true,
     trialNote: "14 dias grátis, sem cartão",
     features: [
@@ -56,7 +56,7 @@ const PLANS = [
     description: "Para profissionais que gerenciam múltiplos casamentos.",
     cta: "Criar conta profissional",
     ctaHref: "/registro/cerimonialista",
-    ctaStyle: "teal" as const,
+    ctaStyle: "midnight" as const,
     popular: false,
     trialNote: "14 dias grátis, sem cartão",
     features: [
@@ -149,19 +149,19 @@ function XIcon({ className }: { className?: string }) {
 function CellValue({ value }: { value: string | boolean }) {
   if (value === true) {
     return (
-      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-teal/10">
-        <CheckIcon className="w-3.5 h-3.5 text-teal" />
+      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-midnight/10">
+        <CheckIcon className="w-3.5 h-3.5 text-midnight" />
       </span>
     );
   }
   if (value === false) {
     return (
-      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-verde-noite/5">
-        <XIcon className="w-3.5 h-3.5 text-verde-noite/25" />
+      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-midnight/5">
+        <XIcon className="w-3.5 h-3.5 text-midnight/25" />
       </span>
     );
   }
-  return <span className="font-body text-sm text-verde-noite/70">{value}</span>;
+  return <span className="font-body text-sm text-midnight/70">{value}</span>;
 }
 
 export default function BillingToggle() {
@@ -176,7 +176,7 @@ export default function BillingToggle() {
       <div className="flex items-center justify-center gap-3 mt-8">
         <span
           className={`font-body text-sm transition ${
-            !isAnnual ? "text-verde-noite font-medium" : "text-verde-noite/40"
+            !isAnnual ? "text-midnight font-medium" : "text-midnight/40"
           }`}
         >
           Mensal
@@ -186,8 +186,8 @@ export default function BillingToggle() {
           role="switch"
           aria-checked={isAnnual}
           onClick={() => setBilling(isAnnual ? "monthly" : "annual")}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal ${
-            isAnnual ? "bg-teal" : "bg-verde-noite/20"
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-midnight ${
+            isAnnual ? "bg-midnight" : "bg-midnight/20"
           }`}
         >
           <span
@@ -198,13 +198,13 @@ export default function BillingToggle() {
         </button>
         <span
           className={`font-body text-sm transition ${
-            isAnnual ? "text-verde-noite font-medium" : "text-verde-noite/40"
+            isAnnual ? "text-midnight font-medium" : "text-midnight/40"
           }`}
         >
           Anual
         </span>
         {isAnnual && (
-          <span className="bg-copper/10 text-copper text-xs font-body font-medium px-2.5 py-1 rounded-full">
+          <span className="bg-gold/10 text-gold text-xs font-body font-medium px-2.5 py-1 rounded-full">
             2 meses grátis
           </span>
         )}
@@ -221,28 +221,28 @@ export default function BillingToggle() {
               key={plan.id}
               className={`relative flex flex-col rounded-2xl p-8 transition-shadow ${
                 plan.popular
-                  ? "border-2 border-copper shadow-float bg-white"
-                  : "border border-verde-noite/10 bg-white hover:shadow-card-hover"
+                  ? "border-2 border-gold shadow-float bg-white"
+                  : "border border-midnight/10 bg-white hover:shadow-card-hover"
               }`}
             >
               {plan.popular && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="bg-copper text-white text-xs font-body font-semibold px-4 py-1.5 rounded-full shadow-sm whitespace-nowrap">
+                  <span className="bg-gold text-white text-xs font-body font-semibold px-4 py-1.5 rounded-full shadow-sm whitespace-nowrap">
                     Mais popular
                   </span>
                 </div>
               )}
 
               <div className="mb-6">
-                <p className="font-body text-xs text-verde-noite/40 uppercase tracking-widest mb-2">
+                <p className="font-body text-xs text-midnight/40 uppercase tracking-widest mb-2">
                   {plan.label}
                 </p>
                 <div className="flex items-end gap-1 mb-1">
                   {isFree ? (
-                    <p className="font-heading text-4xl text-verde-noite">Grátis</p>
+                    <p className="font-heading text-4xl text-midnight">Grátis</p>
                   ) : (
                     <>
-                      <p className="font-heading text-4xl text-verde-noite">
+                      <p className="font-heading text-4xl text-midnight">
                         R${" "}
                         <span>
                           {price.toLocaleString("pt-BR", {
@@ -251,31 +251,31 @@ export default function BillingToggle() {
                           })}
                         </span>
                       </p>
-                      <span className="font-body text-sm text-verde-noite/40 mb-1.5">
+                      <span className="font-body text-sm text-midnight/40 mb-1.5">
                         {plan.priceSuffix}
                       </span>
                     </>
                   )}
                 </div>
                 {isFree ? (
-                  <p className="font-body text-xs text-verde-noite/40">Para sempre</p>
+                  <p className="font-body text-xs text-midnight/40">Para sempre</p>
                 ) : isAnnual ? (
-                  <p className="font-body text-xs text-verde-noite/40">
+                  <p className="font-body text-xs text-midnight/40">
                     Cobrado anualmente · {plan.trialNote}
                   </p>
                 ) : (
-                  <p className="font-body text-xs text-verde-noite/40">{plan.trialNote}</p>
+                  <p className="font-body text-xs text-midnight/40">{plan.trialNote}</p>
                 )}
-                <p className="font-body text-sm text-verde-noite/60 mt-3">{plan.description}</p>
+                <p className="font-body text-sm text-midnight/60 mt-3">{plan.description}</p>
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">
                 {plan.features.map((feat) => (
                   <li key={feat.text} className="flex items-start gap-2.5">
-                    <span className="mt-0.5 w-4 h-4 rounded-full bg-teal/10 text-teal flex items-center justify-center shrink-0">
+                    <span className="mt-0.5 w-4 h-4 rounded-full bg-midnight/10 text-midnight flex items-center justify-center shrink-0">
                       <CheckIcon className="w-2.5 h-2.5" />
                     </span>
-                    <span className="font-body text-sm text-verde-noite/70">{feat.text}</span>
+                    <span className="font-body text-sm text-midnight/70">{feat.text}</span>
                   </li>
                 ))}
               </ul>
@@ -283,11 +283,11 @@ export default function BillingToggle() {
               <Link
                 href={plan.ctaHref}
                 className={`block text-center py-3 rounded-xl font-body font-semibold text-sm transition-all hover:scale-[1.01] active:scale-[0.99] ${
-                  plan.ctaStyle === "copper"
-                    ? "bg-copper text-white hover:bg-copper/90"
-                    : plan.ctaStyle === "teal"
-                    ? "bg-teal text-white hover:bg-teal/90"
-                    : "border border-verde-noite/20 text-verde-noite hover:bg-verde-noite/5"
+                  plan.ctaStyle === "gold"
+                    ? "bg-gold text-white hover:bg-gold/90"
+                    : plan.ctaStyle === "midnight"
+                    ? "bg-midnight text-white hover:bg-midnight/90"
+                    : "border border-midnight/20 text-midnight hover:bg-midnight/5"
                 }`}
               >
                 {plan.cta}
@@ -299,23 +299,23 @@ export default function BillingToggle() {
 
       {/* ─── COMPARISON TABLE ─── */}
       <div className="mt-20">
-        <h2 className="font-heading text-3xl text-verde-noite text-center mb-8">
+        <h2 className="font-heading text-3xl text-midnight text-center mb-8">
           Comparativo completo
         </h2>
-        <div className="overflow-x-auto rounded-2xl border border-verde-noite/10 bg-white">
+        <div className="overflow-x-auto rounded-2xl border border-midnight/10 bg-white">
           <table className="w-full min-w-[600px]">
             <thead>
-              <tr className="border-b border-verde-noite/8">
-                <th className="text-left py-4 px-6 font-body text-sm font-medium text-verde-noite/50 w-2/5">
+              <tr className="border-b border-midnight/8">
+                <th className="text-left py-4 px-6 font-body text-sm font-medium text-midnight/50 w-2/5">
                   Recurso
                 </th>
-                <th className="text-center py-4 px-4 font-body text-sm font-medium text-verde-noite/50">
+                <th className="text-center py-4 px-4 font-body text-sm font-medium text-midnight/50">
                   Gratuito
                 </th>
-                <th className="text-center py-4 px-4 font-heading text-sm font-semibold text-copper relative">
+                <th className="text-center py-4 px-4 font-heading text-sm font-semibold text-gold relative">
                   Pro
                 </th>
-                <th className="text-center py-4 px-4 font-body text-sm font-medium text-verde-noite/50">
+                <th className="text-center py-4 px-4 font-body text-sm font-medium text-midnight/50">
                   Cerimonialista
                 </th>
               </tr>
@@ -324,17 +324,17 @@ export default function BillingToggle() {
               {COMPARISON_ROWS.map((row, i) => (
                 <tr
                   key={row.feature}
-                  className={`border-b border-verde-noite/5 last:border-0 ${
-                    i % 2 === 0 ? "bg-white" : "bg-cream/40"
+                  className={`border-b border-midnight/5 last:border-0 ${
+                    i % 2 === 0 ? "bg-white" : "bg-fog/40"
                   }`}
                 >
-                  <td className="py-3.5 px-6 font-body text-sm text-verde-noite/70">
+                  <td className="py-3.5 px-6 font-body text-sm text-midnight/70">
                     {row.feature}
                   </td>
                   <td className="py-3.5 px-4 text-center">
                     <CellValue value={row.gratuito} />
                   </td>
-                  <td className="py-3.5 px-4 text-center bg-copper/[0.03]">
+                  <td className="py-3.5 px-4 text-center bg-gold/[0.03]">
                     <CellValue value={row.pro} />
                   </td>
                   <td className="py-3.5 px-4 text-center">
@@ -349,25 +349,25 @@ export default function BillingToggle() {
 
       {/* ─── FAQ ─── */}
       <div className="mt-20 max-w-2xl mx-auto">
-        <h2 className="font-heading text-3xl text-verde-noite text-center mb-8">
+        <h2 className="font-heading text-3xl text-midnight text-center mb-8">
           Perguntas frequentes
         </h2>
         <div className="space-y-3">
           {FAQ_ITEMS.map((item, i) => (
             <div
               key={i}
-              className="rounded-xl border border-verde-noite/10 bg-white overflow-hidden"
+              className="rounded-xl border border-midnight/10 bg-white overflow-hidden"
             >
               <button
                 type="button"
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left hover:bg-cream/50 transition"
+                className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left hover:bg-fog/50 transition"
               >
-                <span className="font-body text-sm font-medium text-verde-noite">
+                <span className="font-body text-sm font-medium text-midnight">
                   {item.q}
                 </span>
                 <span
-                  className={`shrink-0 w-5 h-5 text-verde-noite/40 transition-transform ${
+                  className={`shrink-0 w-5 h-5 text-midnight/40 transition-transform ${
                     openFaq === i ? "rotate-180" : ""
                   }`}
                 >
@@ -383,7 +383,7 @@ export default function BillingToggle() {
               </button>
               {openFaq === i && (
                 <div className="px-6 pb-4">
-                  <p className="font-body text-sm text-verde-noite/60 leading-relaxed">
+                  <p className="font-body text-sm text-midnight/60 leading-relaxed">
                     {item.a}
                   </p>
                 </div>

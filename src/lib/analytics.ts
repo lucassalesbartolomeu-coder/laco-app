@@ -33,6 +33,13 @@ export function initAnalytics() {
   });
 }
 
+export function trackEvent(
+  name: string,
+  params?: Record<string, string | number>
+): void {
+  track(name, params);
+}
+
 export function track(event: string, properties?: Record<string, unknown>): void {
   if (!hasAnalyticsConsent()) return;
   if (GA_ID) gtag("event", event, properties || {});
@@ -47,4 +54,5 @@ export function identify(userId: string, traits?: Record<string, unknown>): void
 export function page(name: string, properties?: Record<string, unknown>): void {
   if (!hasAnalyticsConsent()) return;
   if (GA_ID) gtag("event", "page_view", { page_title: name, ...properties });
+  if (process.env.NODE_ENV === "development") console.log("[analytics:page]", name, properties);
 }

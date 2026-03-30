@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -357,8 +357,8 @@ export default function PresentesPage() {
 
   if (authStatus === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -368,12 +368,12 @@ export default function PresentesPage() {
   /* ── Render ─────────────────────────────────────────────────────── */
 
   return (
-    <div className="min-h-screen bg-off-white py-8 px-4">
+    <div className="min-h-screen bg-ivory py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 font-body text-sm text-teal hover:text-teal/80 transition-colors mb-6"
+          className="inline-flex items-center gap-2 font-body text-sm text-midnight hover:text-midnight/80 transition-colors mb-6"
         >
           <ArrowLeftIcon className="w-4 h-4" />
           Voltar ao painel
@@ -381,7 +381,7 @@ export default function PresentesPage() {
 
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="font-heading text-3xl sm:text-4xl text-verde-noite mb-1">
+            <h1 className="font-heading text-3xl sm:text-4xl text-midnight mb-1">
               Presentes
             </h1>
             <p className="font-body text-gray-500">
@@ -392,7 +392,7 @@ export default function PresentesPage() {
           <button
             type="button"
             onClick={openAddModal}
-            className="inline-flex items-center gap-2 px-5 py-3 bg-copper text-white rounded-xl font-body font-medium hover:bg-copper/90 transition-all duration-200"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-gold text-white rounded-xl font-body font-medium hover:bg-gold/90 transition-all duration-200"
           >
             <PlusIcon className="w-5 h-5" />
             Adicionar presente
@@ -423,7 +423,7 @@ export default function PresentesPage() {
                 {/* Card body */}
                 <div className="p-5">
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-heading text-lg text-verde-noite">
+                    <h3 className="font-heading text-lg text-midnight">
                       {gift.name}
                     </h3>
                     <span
@@ -448,7 +448,7 @@ export default function PresentesPage() {
                     </p>
                   )}
 
-                  <p className="font-heading text-xl text-copper mb-4">
+                  <p className="font-heading text-xl text-gold mb-4">
                     {formatCurrency(gift.price)}
                   </p>
 
@@ -457,7 +457,7 @@ export default function PresentesPage() {
                     <button
                       type="button"
                       onClick={() => openEditModal(gift)}
-                      className="inline-flex items-center gap-1.5 font-body text-sm text-teal hover:text-teal/80 transition-colors"
+                      className="inline-flex items-center gap-1.5 font-body text-sm text-midnight hover:text-midnight/80 transition-colors"
                     >
                       <PencilIcon />
                       Editar
@@ -476,7 +476,7 @@ export default function PresentesPage() {
                       <button
                         type="button"
                         onClick={() => markAsReceived(gift)}
-                        className="inline-flex items-center gap-1.5 font-body text-sm text-copper hover:text-copper/80 transition-colors ml-auto"
+                        className="inline-flex items-center gap-1.5 font-body text-sm text-gold hover:text-gold/80 transition-colors ml-auto"
                       >
                         <CheckIcon />
                         Marcar como Recebido
@@ -521,7 +521,7 @@ export default function PresentesPage() {
                 exit="exit"
                 transition={{ duration: 0.25, ease: "easeOut" }}
               >
-                <h2 className="font-heading text-2xl text-verde-noite mb-6">
+                <h2 className="font-heading text-2xl text-midnight mb-6">
                   {editingGift ? "Editar Presente" : "Novo Presente"}
                 </h2>
 
@@ -539,7 +539,7 @@ export default function PresentesPage() {
                       type="text"
                       value={formNome}
                       onChange={(e) => setFormNome(e.target.value)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200"
                     />
                   </div>
 
@@ -556,7 +556,7 @@ export default function PresentesPage() {
                       rows={3}
                       value={formDescricao}
                       onChange={(e) => setFormDescricao(e.target.value)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200 resize-none"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200 resize-none"
                     />
                   </div>
 
@@ -579,7 +579,7 @@ export default function PresentesPage() {
                         min="0"
                         value={formValor}
                         onChange={(e) => setFormValor(e.target.value)}
-                        className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
+                        className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200"
                       />
                     </div>
                   </div>
@@ -598,7 +598,7 @@ export default function PresentesPage() {
                       placeholder="https://..."
                       value={formLink}
                       onChange={(e) => setFormLink(e.target.value)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200"
                     />
                   </div>
 
@@ -615,7 +615,7 @@ export default function PresentesPage() {
                       type="text"
                       value={formLoja}
                       onChange={(e) => setFormLoja(e.target.value)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -636,7 +636,7 @@ export default function PresentesPage() {
                     type="button"
                     onClick={handleSave}
                     disabled={!formNome.trim() || submitting}
-                    className="flex-1 px-4 py-3 bg-copper text-white rounded-xl font-body font-medium hover:bg-copper/90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-3 bg-gold text-white rounded-xl font-body font-medium hover:bg-gold/90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {submitting ? "Salvando..." : "Salvar"}
                   </button>
@@ -675,12 +675,12 @@ export default function PresentesPage() {
                 exit="exit"
                 transition={{ duration: 0.25, ease: "easeOut" }}
               >
-                <h2 className="font-heading text-xl text-verde-noite mb-2">
+                <h2 className="font-heading text-xl text-midnight mb-2">
                   Excluir presente
                 </h2>
                 <p className="font-body text-sm text-gray-500 mb-6">
                   Tem certeza que deseja excluir{" "}
-                  <span className="font-medium text-verde-noite">
+                  <span className="font-medium text-midnight">
                     {deleteTarget.name}
                   </span>
                   ? Esta acao nao pode ser desfeita.

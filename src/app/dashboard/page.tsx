@@ -1,9 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import BottomNav from "@/components/bottom-nav";
 import ActivityFeed from "@/components/activity-feed";
 import ActivationChecklist from "@/components/activation-checklist";
@@ -74,18 +75,18 @@ function StatTile({
   label,
   value,
   sub,
-  color = "teal",
+  color = "midnight",
   icon,
 }: {
   label: string;
   value: string | number;
   sub?: string;
-  color?: "teal" | "copper" | "green";
+  color?: "midnight" | "gold" | "green";
   icon: React.ReactNode;
 }) {
   const colors = {
-    teal: "bg-teal/10 text-teal",
-    copper: "bg-copper/10 text-copper",
+    midnight: "bg-midnight/10 text-midnight",
+    gold: "bg-gold/10 text-gold",
     green: "bg-green-50 text-green-600",
   };
   return (
@@ -94,9 +95,9 @@ function StatTile({
         {icon}
       </div>
       <div>
-        <p className="font-heading text-2xl font-semibold text-verde-noite leading-none">{value}</p>
-        {sub && <p className="font-body text-[10px] text-verde-noite/40 mt-0.5">{sub}</p>}
-        <p className="font-body text-xs text-verde-noite/50 mt-1">{label}</p>
+        <p className="font-heading text-2xl font-semibold text-midnight leading-none">{value}</p>
+        {sub && <p className="font-body text-[10px] text-midnight/40 mt-0.5">{sub}</p>}
+        <p className="font-body text-xs text-midnight/50 mt-1">{label}</p>
       </div>
     </div>
   );
@@ -121,12 +122,12 @@ function ActionTile({
       href={href}
       className={`relative flex flex-col items-center justify-center gap-2 rounded-2xl border py-5 transition-all active:scale-[0.97] ${
         highlight
-          ? "bg-copper text-white border-transparent shadow-sm hover:bg-copper/90"
-          : "bg-white border-gray-100 shadow-sm hover:border-teal/40 hover:shadow-md"
+          ? "bg-gold text-white border-transparent shadow-sm hover:bg-gold/90"
+          : "bg-white border-gray-100 shadow-sm hover:border-midnight/40 hover:shadow-md"
       }`}
     >
-      <div className={highlight ? "text-white" : "text-teal"}>{icon}</div>
-      <span className={`font-body text-xs font-medium text-center leading-tight ${highlight ? "text-white" : "text-verde-noite/70"}`}>
+      <div className={highlight ? "text-white" : "text-midnight"}>{icon}</div>
+      <span className={`font-body text-xs font-medium text-center leading-tight ${highlight ? "text-white" : "text-midnight/70"}`}>
         {label}
       </span>
       {badge != null && badge > 0 && (
@@ -191,7 +192,7 @@ function PartnerInvitePanel({
 
   if (!isOwner) {
     return (
-      <div className="flex items-center gap-1.5 text-xs font-body text-teal bg-teal/10 px-2.5 py-1 rounded-full w-fit">
+      <div className="flex items-center gap-1.5 text-xs font-body text-midnight bg-midnight/10 px-2.5 py-1 rounded-full w-fit">
         Casamento compartilhado
       </div>
     );
@@ -203,7 +204,7 @@ function PartnerInvitePanel({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-400 rounded-full" />
-            <span className="font-body text-xs text-verde-noite/60">Parceiro(a) vinculado(a)</span>
+            <span className="font-body text-xs text-midnight/60">Parceiro(a) vinculado(a)</span>
           </div>
           <button
             onClick={unlinkPartner}
@@ -218,12 +219,12 @@ function PartnerInvitePanel({
           <input
             readOnly
             value={inviteLink}
-            className="flex-1 text-xs font-body bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-verde-noite/70 min-w-0"
+            className="flex-1 text-xs font-body bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-midnight/70 min-w-0"
           />
           <button
             onClick={copyLink}
             className={`px-3 py-1.5 rounded-lg text-xs font-body transition flex-shrink-0 ${
-              copied ? "bg-green-100 text-green-700" : "bg-teal text-white hover:bg-teal/90"
+              copied ? "bg-green-100 text-green-700" : "bg-midnight text-white hover:bg-midnight/90"
             }`}
           >
             {copied ? "Copiado!" : "Copiar"}
@@ -233,7 +234,7 @@ function PartnerInvitePanel({
         <button
           onClick={generateInvite}
           disabled={generating}
-          className="flex items-center gap-1.5 text-xs font-body text-verde-noite/50 hover:text-teal transition"
+          className="flex items-center gap-1.5 text-xs font-body text-midnight/50 hover:text-midnight transition"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -318,10 +319,10 @@ export default function DashboardPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
+      <div className="min-h-screen bg-fog flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
-          <p className="font-body text-sm text-verde-noite/40">Carregando…</p>
+          <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+          <p className="font-body text-sm text-midnight/40">Carregando…</p>
         </div>
       </div>
     );
@@ -341,14 +342,20 @@ export default function DashboardPage() {
   const days = w ? daysUntil(w.weddingDate) : null;
 
   return (
-    <div className="min-h-screen bg-cream pb-24">
+    <div className="min-h-screen bg-fog pb-24">
       {/* Header */}
       <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="font-logo text-2xl font-semibold text-verde-noite tracking-wide">
-            Laço
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/brand/logo-dark.svg"
+              alt="Laço"
+              width={80}
+              height={24}
+              priority
+            />
           </Link>
-          <Link href="/perfil" className="w-8 h-8 rounded-full bg-teal/10 flex items-center justify-center text-teal hover:bg-teal/20 transition">
+          <Link href="/perfil" className="w-8 h-8 rounded-full bg-midnight/10 flex items-center justify-center text-midnight hover:bg-midnight/20 transition">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
@@ -360,10 +367,10 @@ export default function DashboardPage() {
 
         {/* ── Greeting ── */}
         <div>
-          <h2 className="font-heading text-2xl font-semibold text-verde-noite">
+          <h2 className="font-heading text-2xl font-semibold text-midnight">
             {firstName ? `Olá, ${firstName}!` : "Olá!"}
           </h2>
-          <p className="font-body text-sm text-verde-noite/50 mt-0.5">
+          <p className="font-body text-sm text-midnight/50 mt-0.5">
             {w ? "Seu painel de casamento" : "Comece organizando seu casamento"}
           </p>
         </div>
@@ -371,29 +378,29 @@ export default function DashboardPage() {
         {!w ? (
           /* ── Empty state ── */
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="h-1.5 bg-gradient-to-r from-teal via-copper to-teal/40" />
+            <div className="h-1.5 bg-gradient-to-r from-midnight via-gold to-midnight/40" />
             <div className="px-8 py-14 text-center">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-copper/10 flex items-center justify-center">
-                <svg className="w-8 h-8 text-copper" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gold/10 flex items-center justify-center">
+                <svg className="w-8 h-8 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               </div>
-              <h3 className="font-heading text-2xl font-semibold text-verde-noite mb-2">
+              <h3 className="font-heading text-2xl font-semibold text-midnight mb-2">
                 Seu casamento começa aqui
               </h3>
-              <p className="font-body text-verde-noite/55 text-sm max-w-sm mx-auto mb-8 leading-relaxed">
+              <p className="font-body text-midnight/55 text-sm max-w-sm mx-auto mb-8 leading-relaxed">
                 Crie seu casamento e comece a organizar convidados, fornecedores e muito mais — tudo num só lugar.
               </p>
               <Link
                 href="/casamento/novo"
-                className="inline-flex items-center gap-2 px-8 py-3.5 bg-copper text-white rounded-xl font-body font-medium hover:bg-copper/90 transition-all active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-8 py-3.5 bg-gold text-white rounded-xl font-body font-medium hover:bg-gold/90 transition-all active:scale-[0.98]"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
                 Criar meu casamento
               </Link>
-              <p className="font-body text-xs text-verde-noite/35 mt-8">
+              <p className="font-body text-xs text-midnight/35 mt-8">
                 Mais de 2.400 casais já usam o Laço
               </p>
             </div>
@@ -404,11 +411,11 @@ export default function DashboardPage() {
             <ActivationChecklist weddingId={w.id} />
 
             {/* ── Hero countdown ── */}
-            <div className="bg-gradient-to-br from-verde-noite via-teal to-verde-noite/90 rounded-3xl p-6 shadow-lg overflow-hidden relative">
+            <div className="bg-gradient-to-br from-midnight via-midnight to-midnight/90 rounded-3xl p-6 shadow-lg overflow-hidden relative">
               {/* dot pattern overlay */}
               <div className="absolute inset-0 opacity-20" style={{backgroundImage:"radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px)", backgroundSize:"20px 20px"}} />
-              {/* copper accent blur */}
-              <div className="absolute top-4 right-10 w-24 h-24 bg-copper/30 rounded-full blur-2xl" />
+              {/* gold accent blur */}
+              <div className="absolute top-4 right-10 w-24 h-24 bg-gold/30 rounded-full blur-2xl" />
               {/* decorative circle */}
               <div className="absolute -top-8 -right-8 w-40 h-40 bg-white/5 rounded-full" />
               <div className="absolute -bottom-12 -left-6 w-32 h-32 bg-white/5 rounded-full" />
@@ -501,7 +508,7 @@ export default function DashboardPage() {
                 <StatTile
                   label="Pendentes"
                   value={guestStats.pending}
-                  color="copper"
+                  color="gold"
                   icon={
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -511,7 +518,7 @@ export default function DashboardPage() {
                 <StatTile
                   label="Recusados"
                   value={guestStats.declined}
-                  color="teal"
+                  color="midnight"
                   icon={
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -526,7 +533,7 @@ export default function DashboardPage() {
 
             {/* ── Atividade Recente ── */}
             <div>
-              <p className="font-heading text-lg font-semibold text-verde-noite mb-3">
+              <p className="font-heading text-lg font-semibold text-midnight mb-3">
                 Atividade Recente
               </p>
               <ActivityFeed weddingId={w.id} />
@@ -534,7 +541,7 @@ export default function DashboardPage() {
 
             {/* ── Quick actions ── */}
             <div>
-              <p className="font-body text-xs font-medium text-verde-noite/40 uppercase tracking-wider mb-3">
+              <p className="font-body text-xs font-medium text-midnight/40 uppercase tracking-wider mb-3">
                 Acesso rápido
               </p>
               <div className="grid grid-cols-3 gap-3">
@@ -600,7 +607,7 @@ export default function DashboardPage() {
 
             {/* ── Partner section ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-              <p className="font-body text-xs font-medium text-verde-noite/40 uppercase tracking-wider mb-3">
+              <p className="font-body text-xs font-medium text-midnight/40 uppercase tracking-wider mb-3">
                 Parceiro(a)
               </p>
               <PartnerInvitePanel
@@ -614,12 +621,12 @@ export default function DashboardPage() {
             {weddings.length > 1 && (
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <p className="font-body text-xs font-medium text-verde-noite/40 uppercase tracking-wider">
+                  <p className="font-body text-xs font-medium text-midnight/40 uppercase tracking-wider">
                     Outros casamentos
                   </p>
                   <Link
                     href="/casamento/novo"
-                    className="flex items-center gap-1 font-body text-xs text-copper hover:text-copper/80 transition"
+                    className="flex items-center gap-1 font-body text-xs text-gold hover:text-gold/80 transition"
                   >
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -631,11 +638,11 @@ export default function DashboardPage() {
                   {weddings.slice(1).map((ww) => (
                     <div key={ww.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center justify-between gap-3">
                       <div>
-                        <p className="font-heading text-sm font-semibold text-verde-noite">
+                        <p className="font-heading text-sm font-semibold text-midnight">
                           {ww.partnerName1} &amp; {ww.partnerName2}
                         </p>
                         {ww.weddingDate && (
-                          <p className="font-body text-xs text-verde-noite/50 mt-0.5">
+                          <p className="font-body text-xs text-midnight/50 mt-0.5">
                             {new Date(ww.weddingDate).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
                           </p>
                         )}
@@ -643,7 +650,7 @@ export default function DashboardPage() {
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <Link
                           href={`/casamento/${ww.id}/convidados`}
-                          className="px-3 py-1.5 text-xs font-body text-teal border border-teal/30 rounded-xl hover:bg-teal/5 transition"
+                          className="px-3 py-1.5 text-xs font-body text-midnight border border-midnight/30 rounded-xl hover:bg-midnight/5 transition"
                         >
                           Abrir
                         </Link>
@@ -675,7 +682,7 @@ export default function DashboardPage() {
               <div className="flex justify-center">
                 <Link
                   href="/casamento/novo"
-                  className="flex items-center gap-1.5 font-body text-xs text-verde-noite/40 hover:text-verde-noite/60 transition"
+                  className="flex items-center gap-1.5 font-body text-xs text-midnight/40 hover:text-midnight/60 transition"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />

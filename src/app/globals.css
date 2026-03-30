@@ -4,10 +4,27 @@
 @tailwind utilities;
 
 :root {
-  --background: #F5F3EF;
-  --foreground: #1A3A33;
-  --teal: #2C6B5E;
-  --copper: #C4734F;
+  --background: #FAF7F2;
+  --foreground: #1A1F3A;
+
+  /* Brand tokens — BRAND.md v2 */
+  --midnight:  #1A1F3A;
+  --gold:      #C9A96E;
+  --champagne: #E8D5B0;
+  --ivory:     #FAF7F2;
+  --fog:       #F0EDE7;
+  --stone:     #8A8FA8;
+}
+
+@layer utilities {
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Bottom nav spacer — ensures content doesn't hide behind fixed nav */
+  .pb-bottom-nav {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 @layer base {
@@ -20,18 +37,18 @@
   body {
     color: var(--foreground);
     background: var(--background);
-    font-family: "Plus Jakarta Sans", sans-serif;
+    font-family: "DM Sans", system-ui, sans-serif;
   }
 
-  /* Selection color */
+  /* Selection color — gold tint */
   ::selection {
-    background-color: #2C6B5E22;
-    color: #1A3A33;
+    background-color: rgba(201,169,110,0.18);
+    color: #1A1F3A;
   }
 
-  /* Focus ring — accessible but brand-aligned */
+  /* Focus ring — accessible, brand-aligned */
   :focus-visible {
-    outline: 2px solid #2C6B5E;
+    outline: 2px solid #C9A96E;
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -69,67 +86,21 @@
   .card-hover:hover {
     transform: translateY(-1px);
   }
+
+  /* Gold gradient for progress bars */
+  .bg-gradient-gold {
+    background: linear-gradient(90deg, #C9A96E, #E8D5B0);
+  }
 }
 
-/* ─── Print / PDF export ──────────────────────────────────
-   Usage: window.print() — shows only #attendance-chart, hides nav.
-   Colors are forced so teal/copper bars render in print.
-*/
+/* ─── Print / PDF export ─────────────────────────────────────────────── */
 @media print {
-  /* Hide everything by default */
-  body > *,
-  #__next > *,
-  nav,
-  header,
-  footer,
-  .print\:hidden {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .no-print {
     display: none !important;
   }
-
-  /* Show only the chart section */
-  #attendance-chart {
-    display: block !important;
-  }
-
-  /* Reset page chrome */
-  html,
-  body {
-    background: #ffffff !important;
-    color: #1a3a33 !important;
-    margin: 0;
-    padding: 0;
-  }
-
-  /* Force color printing so bar fills appear */
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  /* Remove shadows and rounded corners for clean PDF */
-  #attendance-chart {
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    padding: 2rem !important;
-    width: 100% !important;
-  }
-}
-
-/* Scrollbar — subtle, brand-aligned */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #2C6B5E33;
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #2C6B5E66;
 }

@@ -220,7 +220,7 @@ export default function QuestionariosPage() {
   if (authStatus === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -230,14 +230,14 @@ export default function QuestionariosPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-heading text-3xl text-verde-noite">Questionários</h1>
-          <p className="font-body text-sm text-verde-noite/50 mt-1">
+          <h1 className="font-heading text-3xl text-midnight">Questionários</h1>
+          <p className="font-body text-sm text-midnight/50 mt-1">
             Envie questionários de preferências para os casais
           </p>
         </div>
         <button
           onClick={openModal}
-          className="px-5 py-2.5 bg-copper text-white rounded-xl font-body text-sm font-medium hover:bg-copper/90 transition"
+          className="px-5 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition"
         >
           Novo Questionário
         </button>
@@ -246,8 +246,8 @@ export default function QuestionariosPage() {
       {/* List */}
       {questionnaires.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-sm p-16 text-center">
-          <p className="font-heading text-xl text-verde-noite/40 mb-2">Nenhum questionário ainda</p>
-          <p className="font-body text-sm text-verde-noite/30">
+          <p className="font-heading text-xl text-midnight/40 mb-2">Nenhum questionário ainda</p>
+          <p className="font-body text-sm text-midnight/30">
             Crie o primeiro e compartilhe com um casal
           </p>
         </div>
@@ -258,7 +258,7 @@ export default function QuestionariosPage() {
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <h3 className="font-heading text-lg text-verde-noite">
+                    <h3 className="font-heading text-lg text-midnight">
                       {q.wedding.partnerName1} & {q.wedding.partnerName2}
                     </h3>
                     {q.answeredAt ? (
@@ -271,11 +271,11 @@ export default function QuestionariosPage() {
                       </span>
                     )}
                   </div>
-                  <p className="font-body text-sm text-verde-noite/50">
+                  <p className="font-body text-sm text-midnight/50">
                     {q.title} · Criado em {formatDate(q.createdAt)}
                     {q.answeredAt && ` · Respondido em ${formatDate(q.answeredAt)}`}
                   </p>
-                  <p className="font-body text-xs text-verde-noite/30 mt-1 break-all">
+                  <p className="font-body text-xs text-midnight/30 mt-1 break-all">
                     {typeof window !== "undefined" ? getPublicLink(q.token) : `…/questionario/${q.token}`}
                   </p>
                 </div>
@@ -283,7 +283,7 @@ export default function QuestionariosPage() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => handleCopyLink(q.token)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 border border-teal text-teal rounded-lg font-body text-xs font-medium hover:bg-teal/5 transition"
+                    className="flex items-center gap-1.5 px-3 py-1.5 border border-midnight text-midnight rounded-lg font-body text-xs font-medium hover:bg-midnight/5 transition"
                   >
                     <CopyIcon />
                     {copiedToken === q.token ? "Copiado!" : "Copiar link"}
@@ -292,7 +292,7 @@ export default function QuestionariosPage() {
                   {q.answeredAt && (
                     <button
                       onClick={() => setViewQ(q)}
-                      className="px-3 py-1.5 bg-verde-noite text-white rounded-lg font-body text-xs font-medium hover:bg-verde-noite/90 transition"
+                      className="px-3 py-1.5 bg-midnight text-white rounded-lg font-body text-xs font-medium hover:bg-midnight/90 transition"
                     >
                       Ver respostas
                     </button>
@@ -322,7 +322,7 @@ export default function QuestionariosPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-heading text-xl text-verde-noite">Novo Questionário</h2>
+              <h2 className="font-heading text-xl text-midnight">Novo Questionário</h2>
               <button
                 onClick={() => setModalOpen(false)}
                 className="p-1.5 rounded-lg hover:bg-gray-100 transition text-gray-400"
@@ -334,13 +334,13 @@ export default function QuestionariosPage() {
             <div className="space-y-5">
               {/* Casamento */}
               <div>
-                <label className="block font-body text-sm mb-1.5 text-verde-noite/70">
+                <label className="block font-body text-sm mb-1.5 text-midnight/70">
                   Casamento *
                 </label>
                 <select
                   value={newWeddingId}
                   onChange={(e) => setNewWeddingId(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl font-body text-sm text-midnight bg-white focus:border-gold outline-none"
                 >
                   <option value="">Selecione um casamento</option>
                   {weddings.map((w) => (
@@ -353,25 +353,25 @@ export default function QuestionariosPage() {
 
               {/* Title */}
               <div>
-                <label className="block font-body text-sm mb-1.5 text-verde-noite/70">
+                <label className="block font-body text-sm mb-1.5 text-midnight/70">
                   Título
                 </label>
                 <input
                   type="text"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl font-body text-sm text-midnight bg-white focus:border-gold outline-none"
                 />
               </div>
 
               {/* Questions */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="font-body text-sm text-verde-noite/70">Perguntas</label>
+                  <label className="font-body text-sm text-midnight/70">Perguntas</label>
                   <button
                     type="button"
                     onClick={addQuestion}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-teal/10 text-teal rounded-lg font-body text-xs font-medium hover:bg-teal/20 transition"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-midnight/10 text-midnight rounded-lg font-body text-xs font-medium hover:bg-midnight/20 transition"
                   >
                     <PlusIcon />
                     Adicionar pergunta
@@ -388,7 +388,7 @@ export default function QuestionariosPage() {
                             value={q.question}
                             onChange={(e) => updateQuestion(idx, "question", e.target.value)}
                             placeholder="Texto da pergunta"
-                            className="w-full px-3 py-2 border border-gray-200 rounded-lg font-body text-sm text-verde-noite bg-white focus:border-teal outline-none"
+                            className="w-full px-3 py-2 border border-gray-200 rounded-lg font-body text-sm text-midnight bg-white focus:border-gold outline-none"
                           />
                         </div>
                         <button
@@ -407,8 +407,8 @@ export default function QuestionariosPage() {
                             onClick={() => updateQuestion(idx, "type", t)}
                             className={`px-3 py-1 rounded-lg font-body text-xs transition ${
                               q.type === t
-                                ? "bg-teal text-white"
-                                : "bg-gray-100 text-verde-noite/60 hover:bg-gray-200"
+                                ? "bg-midnight text-white"
+                                : "bg-gray-100 text-midnight/60 hover:bg-gray-200"
                             }`}
                           >
                             {t === "text" ? "Texto livre" : t === "choice" ? "Múltipla escolha" : "Escala"}
@@ -418,7 +418,7 @@ export default function QuestionariosPage() {
 
                       {(q.type === "choice" || q.type === "scale") && (
                         <div>
-                          <label className="block font-body text-xs text-verde-noite/50 mb-1">
+                          <label className="block font-body text-xs text-midnight/50 mb-1">
                             Opções (uma por linha)
                           </label>
                           <textarea
@@ -426,7 +426,7 @@ export default function QuestionariosPage() {
                             value={(q.options ?? []).join("\n")}
                             onChange={(e) => updateQuestion(idx, "options", e.target.value)}
                             placeholder="Opção 1&#10;Opção 2&#10;Opção 3"
-                            className="w-full px-3 py-2 border border-gray-200 rounded-lg font-body text-xs text-verde-noite bg-white focus:border-teal outline-none resize-none"
+                            className="w-full px-3 py-2 border border-gray-200 rounded-lg font-body text-xs text-midnight bg-white focus:border-gold outline-none resize-none"
                           />
                         </div>
                       )}
@@ -442,14 +442,14 @@ export default function QuestionariosPage() {
               <div className="flex gap-3 pt-1">
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="flex-1 py-2.5 border border-gray-200 text-verde-noite/60 rounded-xl font-body text-sm hover:bg-gray-50 transition"
+                  className="flex-1 py-2.5 border border-gray-200 text-midnight/60 rounded-xl font-body text-sm hover:bg-gray-50 transition"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleCreate}
                   disabled={creating || !newWeddingId || questions.length === 0}
-                  className="flex-1 py-2.5 bg-copper text-white rounded-xl font-body text-sm font-medium hover:bg-copper/90 transition disabled:opacity-50"
+                  className="flex-1 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition disabled:opacity-50"
                 >
                   {creating ? "Criando..." : "Criar e compartilhar"}
                 </button>
@@ -465,8 +465,8 @@ export default function QuestionariosPage() {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h2 className="font-heading text-xl text-verde-noite">{viewQ.title}</h2>
-                <p className="font-body text-sm text-verde-noite/50">
+                <h2 className="font-heading text-xl text-midnight">{viewQ.title}</h2>
+                <p className="font-body text-sm text-midnight/50">
                   {viewQ.wedding.partnerName1} & {viewQ.wedding.partnerName2}
                 </p>
               </div>
@@ -483,8 +483,8 @@ export default function QuestionariosPage() {
                 const answer = viewQ.answers?.find((a) => a.questionId === q.id);
                 return (
                   <div key={q.id} className="border-b border-gray-100 pb-4 last:border-0">
-                    <p className="font-body text-sm font-medium text-verde-noite mb-1">{q.question}</p>
-                    <p className="font-body text-sm text-verde-noite/60">
+                    <p className="font-body text-sm font-medium text-midnight mb-1">{q.question}</p>
+                    <p className="font-body text-sm text-midnight/60">
                       {answer?.answer || <span className="italic text-gray-300">Sem resposta</span>}
                     </p>
                   </div>
@@ -494,7 +494,7 @@ export default function QuestionariosPage() {
 
             <button
               onClick={() => setViewQ(null)}
-              className="mt-5 w-full py-2.5 border border-gray-200 text-verde-noite/60 rounded-xl font-body text-sm hover:bg-gray-50 transition"
+              className="mt-5 w-full py-2.5 border border-gray-200 text-midnight/60 rounded-xl font-body text-sm hover:bg-gray-50 transition"
             >
               Fechar
             </button>

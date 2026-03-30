@@ -119,24 +119,24 @@ export default function FornecedoresPage() {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-cream flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-fog flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-fog">
       {/* Header */}
       <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <h1 className="font-heading text-xl font-semibold text-verde-noite">Fornecedores</h1>
-            <p className="font-body text-xs text-verde-noite/50 mt-0.5">
+            <h1 className="font-heading text-xl font-semibold text-midnight">Fornecedores</h1>
+            <p className="font-body text-xs text-midnight/50 mt-0.5">
               {vendors.length} cadastrados · {vendors.filter(v => v.status === "contratado").length} contratados
             </p>
           </div>
           <button onClick={openNew}
-            className="flex items-center gap-1.5 px-4 py-2 bg-copper text-white rounded-xl font-body text-sm font-medium hover:bg-copper/90 transition">
+            className="flex items-center gap-1.5 px-4 py-2 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
@@ -150,13 +150,13 @@ export default function FornecedoresPage() {
         {/* Summary cards */}
         {vendors.length > 0 && (
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-verde-noite rounded-2xl p-4 text-white">
+            <div className="bg-midnight rounded-2xl p-4 text-white">
               <p className="font-body text-xs opacity-60 mb-1">Contratado</p>
               <p className="font-body text-xl font-bold">{fmt(totalContratado)}</p>
             </div>
             <div className="bg-white border border-gray-100 rounded-2xl p-4">
-              <p className="font-body text-xs text-verde-noite/50 mb-1">Em cotação</p>
-              <p className="font-body text-xl font-bold text-verde-noite">{fmt(totalCotado)}</p>
+              <p className="font-body text-xs text-midnight/50 mb-1">Em cotação</p>
+              <p className="font-body text-xl font-bold text-midnight">{fmt(totalCotado)}</p>
             </div>
           </div>
         )}
@@ -165,9 +165,9 @@ export default function FornecedoresPage() {
         <div className="flex gap-2">
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Buscar fornecedor..."
-            className="flex-1 px-3 py-2 text-sm font-body bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-teal" />
+            className="flex-1 px-3 py-2 text-sm font-body bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
           <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-            className="px-3 py-2 text-sm font-body bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-teal">
+            className="px-3 py-2 text-sm font-body bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
             <option value="todos">Todos</option>
             <option value="cotado">Cotado</option>
             <option value="contratado">Contratado</option>
@@ -178,14 +178,14 @@ export default function FornecedoresPage() {
         {/* Empty state */}
         {vendors.length === 0 && (
           <div className="bg-white rounded-3xl border border-gray-100 p-12 text-center">
-            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-copper/10 flex items-center justify-center">
-              <svg className="w-7 h-7 text-copper" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gold/10 flex items-center justify-center">
+              <svg className="w-7 h-7 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
-            <p className="font-body text-verde-noite/50 mb-5">Nenhum fornecedor ainda</p>
+            <p className="font-body text-midnight/50 mb-5">Nenhum fornecedor ainda</p>
             <button onClick={openNew}
-              className="px-6 py-2.5 bg-copper text-white rounded-xl font-body text-sm hover:bg-copper/90 transition">
+              className="px-6 py-2.5 bg-gold text-white rounded-xl font-body text-sm hover:bg-gold/90 transition">
               Adicionar fornecedor
             </button>
           </div>
@@ -194,7 +194,7 @@ export default function FornecedoresPage() {
         {/* Grouped list */}
         {Object.entries(groups).map(([cat, items]) => (
           <div key={cat}>
-            <p className="font-body text-xs font-semibold text-verde-noite/40 uppercase tracking-widest mb-2 px-1">{cat}</p>
+            <p className="font-body text-xs font-semibold text-midnight/40 uppercase tracking-widest mb-2 px-1">{cat}</p>
             <div className="space-y-2">
               {items.map(v => {
                 const sc = STATUS_CONFIG[v.status] ?? { label: v.status, color: "bg-gray-100 text-gray-600 border border-gray-200" };
@@ -203,39 +203,39 @@ export default function FornecedoresPage() {
                     <div className="flex items-start gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                          <span className="font-body font-semibold text-verde-noite text-sm">{v.name}</span>
+                          <span className="font-body font-semibold text-midnight text-sm">{v.name}</span>
                           <span className={`text-[11px] px-2 py-0.5 rounded-full font-body font-medium ${sc.color}`}>
                             {sc.label}
                           </span>
                         </div>
                         <div className="flex flex-wrap gap-x-4 gap-y-1">
                           {v.budget != null && (
-                            <span className="font-body text-xs font-semibold text-copper">{fmt(v.budget)}</span>
+                            <span className="font-body text-xs font-semibold text-gold">{fmt(v.budget)}</span>
                           )}
                           {v.phone && (
-                            <a href={`tel:${v.phone}`} className="font-body text-xs text-teal hover:underline">{v.phone}</a>
+                            <a href={`tel:${v.phone}`} className="font-body text-xs text-midnight hover:underline">{v.phone}</a>
                           )}
                           {v.email && (
-                            <a href={`mailto:${v.email}`} className="font-body text-xs text-teal hover:underline truncate max-w-[180px]">{v.email}</a>
+                            <a href={`mailto:${v.email}`} className="font-body text-xs text-midnight hover:underline truncate max-w-[180px]">{v.email}</a>
                           )}
                           {v.website && (
                             <a href={v.website} target="_blank" rel="noopener noreferrer"
-                              className="font-body text-xs text-teal hover:underline">Site ↗</a>
+                              className="font-body text-xs text-midnight hover:underline">Site ↗</a>
                           )}
                         </div>
                         {v.notes && (
-                          <p className="font-body text-xs text-verde-noite/50 mt-1.5 line-clamp-2">{v.notes}</p>
+                          <p className="font-body text-xs text-midnight/50 mt-1.5 line-clamp-2">{v.notes}</p>
                         )}
                       </div>
                       <div className="flex gap-1 flex-shrink-0">
                         <button onClick={() => openEdit(v)}
-                          className="p-1.5 rounded-lg text-verde-noite/30 hover:text-teal hover:bg-teal/5 transition">
+                          className="p-1.5 rounded-lg text-midnight/30 hover:text-midnight hover:bg-midnight/5 transition">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                           </svg>
                         </button>
                         <button onClick={() => remove(v.id)}
-                          className="p-1.5 rounded-lg text-verde-noite/30 hover:text-red-400 hover:bg-red-50 transition">
+                          className="p-1.5 rounded-lg text-midnight/30 hover:text-red-400 hover:bg-red-50 transition">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
@@ -258,10 +258,10 @@ export default function FornecedoresPage() {
             onClick={e => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="font-heading text-lg font-semibold text-verde-noite">
+                <h2 className="font-heading text-lg font-semibold text-midnight">
                   {editing ? "Editar fornecedor" : "Novo fornecedor"}
                 </h2>
-                <button onClick={() => setShowForm(false)} className="text-verde-noite/30 hover:text-verde-noite transition">
+                <button onClick={() => setShowForm(false)} className="text-midnight/30 hover:text-midnight transition">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -270,24 +270,24 @@ export default function FornecedoresPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Nome *</label>
+                  <label className="block font-body text-xs text-midnight/60 mb-1.5">Nome *</label>
                   <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                     placeholder="Ex: Studio Luz Fotografia"
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal" />
+                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Categoria *</label>
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Categoria *</label>
                     <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal">
+                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
                       {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Status</label>
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Status</label>
                     <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal">
+                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
                       <option value="cotado">Cotado</option>
                       <option value="contratado">Contratado</option>
                       <option value="cancelado">Cancelado</option>
@@ -296,39 +296,39 @@ export default function FornecedoresPage() {
                 </div>
 
                 <div>
-                  <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Valor orçado (R$)</label>
+                  <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor orçado (R$)</label>
                   <input type="number" value={form.budget} onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}
                     placeholder="0"
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal" />
+                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Telefone</label>
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Telefone</label>
                     <input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
                       placeholder="(11) 9..."
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal" />
+                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                   <div>
-                    <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Email</label>
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Email</label>
                     <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                       placeholder="email@..."
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal" />
+                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Site / Instagram</label>
+                  <label className="block font-body text-xs text-midnight/60 mb-1.5">Site / Instagram</label>
                   <input value={form.website} onChange={e => setForm(f => ({ ...f, website: e.target.value }))}
                     placeholder="https://..."
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal" />
+                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                 </div>
 
                 <div>
-                  <label className="block font-body text-xs text-verde-noite/60 mb-1.5">Observações</label>
+                  <label className="block font-body text-xs text-midnight/60 mb-1.5">Observações</label>
                   <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                     rows={2} placeholder="Condições, detalhes do contrato..."
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-teal resize-none" />
+                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight resize-none" />
                 </div>
               </div>
 
@@ -338,7 +338,7 @@ export default function FornecedoresPage() {
                   Cancelar
                 </button>
                 <button onClick={save} disabled={saving || !form.name.trim()}
-                  className="flex-1 px-4 py-2.5 font-body text-sm bg-copper text-white rounded-xl hover:bg-copper/90 disabled:opacity-50 transition">
+                  className="flex-1 px-4 py-2.5 font-body text-sm bg-gold text-white rounded-xl hover:bg-gold/90 disabled:opacity-50 transition">
                   {saving ? "Salvando..." : editing ? "Salvar" : "Adicionar"}
                 </button>
               </div>

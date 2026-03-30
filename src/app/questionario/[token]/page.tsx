@@ -29,7 +29,7 @@ interface QuestionnaireData {
 
 function CheckCircleIcon() {
   return (
-    <svg className="w-16 h-16 text-teal mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <svg className="w-16 h-16 text-midnight mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
   );
@@ -51,7 +51,7 @@ function TextQuestion({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder="Sua resposta..."
-      className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal outline-none resize-none transition"
+      className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm text-midnight bg-white focus:border-midnight outline-none resize-none transition"
     />
   );
 }
@@ -72,20 +72,20 @@ function ChoiceQuestion({
           key={opt}
           className={`flex items-center gap-3 px-4 py-3 border rounded-xl cursor-pointer transition ${
             value === opt
-              ? "border-teal bg-teal/5"
+              ? "border-midnight bg-midnight/5"
               : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
           }`}
         >
           <div
             className={`w-4 h-4 rounded-full border-2 flex-shrink-0 transition ${
-              value === opt ? "border-teal bg-teal" : "border-gray-300"
+              value === opt ? "border-midnight bg-midnight" : "border-gray-300"
             }`}
           >
             {value === opt && (
               <div className="w-full h-full rounded-full bg-white scale-50" />
             )}
           </div>
-          <span className="font-body text-sm text-verde-noite">{opt}</span>
+          <span className="font-body text-sm text-midnight">{opt}</span>
           <input
             type="radio"
             className="sr-only"
@@ -115,18 +115,18 @@ function ScaleQuestion({
           key={opt}
           className={`flex items-center gap-3 px-4 py-3 border rounded-xl cursor-pointer transition ${
             value === opt
-              ? "border-teal bg-teal/5"
+              ? "border-midnight bg-midnight/5"
               : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
           }`}
         >
           <div
             className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 transition ${
-              value === opt ? "bg-teal text-white" : "bg-gray-100 text-gray-500"
+              value === opt ? "bg-midnight text-white" : "bg-gray-100 text-gray-500"
             }`}
           >
             {idx + 1}
           </div>
-          <span className="font-body text-sm text-verde-noite">{opt}</span>
+          <span className="font-body text-sm text-midnight">{opt}</span>
           <input
             type="radio"
             className="sr-only"
@@ -204,18 +204,18 @@ export default function QuestionarioPublicoPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (notFound || !data) {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-ivory flex items-center justify-center px-4">
         <div className="text-center">
-          <p className="font-heading text-2xl text-verde-noite/40 mb-2">Questionário não encontrado</p>
-          <p className="font-body text-sm text-verde-noite/30">
+          <p className="font-heading text-2xl text-midnight/40 mb-2">Questionário não encontrado</p>
+          <p className="font-body text-sm text-midnight/30">
             O link pode ter expirado ou estar incorreto.
           </p>
         </div>
@@ -225,11 +225,11 @@ export default function QuestionarioPublicoPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-ivory flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
           <CheckCircleIcon />
-          <h1 className="font-heading text-2xl text-verde-noite mt-4 mb-2">Obrigado!</h1>
-          <p className="font-body text-sm text-verde-noite/60 leading-relaxed">
+          <h1 className="font-heading text-2xl text-midnight mt-4 mb-2">Obrigado!</h1>
+          <p className="font-body text-sm text-midnight/60 leading-relaxed">
             Suas respostas foram enviadas para a cerimonialista. Em breve ela entrará em contato.
           </p>
         </div>
@@ -238,9 +238,9 @@ export default function QuestionarioPublicoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-off-white">
+    <div className="min-h-screen bg-ivory">
       {/* Header */}
-      <div className="bg-verde-noite px-5 pt-12 pb-8">
+      <div className="bg-midnight px-5 pt-12 pb-8">
         <p className="font-body text-xs text-white/40 uppercase tracking-wider mb-2">Laco</p>
         <h1 className="font-heading text-3xl text-white mb-1">{data.title}</h1>
         <p className="font-body text-sm text-white/60">
@@ -253,14 +253,14 @@ export default function QuestionarioPublicoPage() {
 
       {/* Questions */}
       <div className="px-4 py-6 max-w-lg mx-auto space-y-6">
-        <p className="font-body text-sm text-verde-noite/60 leading-relaxed">
+        <p className="font-body text-sm text-midnight/60 leading-relaxed">
           Sua cerimonialista gostaria de conhecer melhor as preferências de vocês. Por favor, responda com calma — não há resposta errada!
         </p>
 
         {data.questions.map((q, idx) => (
           <div key={q.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <p className="font-body text-sm font-medium text-verde-noite mb-3">
-              <span className="text-teal font-semibold mr-2">{idx + 1}.</span>
+            <p className="font-body text-sm font-medium text-midnight mb-3">
+              <span className="text-midnight font-semibold mr-2">{idx + 1}.</span>
               {q.question}
             </p>
 
@@ -295,12 +295,12 @@ export default function QuestionarioPublicoPage() {
         <button
           onClick={handleSubmit}
           disabled={submitting}
-          className="w-full py-3.5 bg-teal text-white rounded-2xl font-body text-sm font-medium hover:bg-teal/90 transition disabled:opacity-50 shadow-sm"
+          className="w-full py-3.5 bg-midnight text-white rounded-2xl font-body text-sm font-medium hover:bg-midnight/90 transition disabled:opacity-50 shadow-sm"
         >
           {submitting ? "Enviando..." : "Enviar respostas"}
         </button>
 
-        <p className="font-body text-xs text-center text-verde-noite/30 pb-4">
+        <p className="font-body text-xs text-center text-midnight/30 pb-4">
           Powered by Laco
         </p>
       </div>

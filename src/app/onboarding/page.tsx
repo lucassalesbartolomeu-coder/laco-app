@@ -75,7 +75,7 @@ function Confetti() {
       id: i,
       left: Math.random() * 100,
       delay: Math.random() * 0.3,
-      color: ["#1A3A33", "#2C6B5E", "#C4734F", "#FFF8F0"][Math.floor(Math.random() * 4)],
+      color: ["#1A1F3A", "#1A1F3A", "#C9A96E", "#FFF8F0"][Math.floor(Math.random() * 4)],
     }));
     setPieces(confettiPieces);
   }, []);
@@ -333,8 +333,8 @@ export default function OnboardingPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-cream">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-fog">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -349,12 +349,12 @@ export default function OnboardingPage() {
     const dateNotDecided = !formData.weddingDate;
 
     return (
-      <div className="min-h-screen bg-cream flex flex-col items-center justify-center p-6">
+      <div className="min-h-screen bg-fog flex flex-col items-center justify-center p-6">
         {/* Skip button */}
         <div className="w-full max-w-lg mb-4 flex justify-end">
           <button
             onClick={handleCoupleSkip}
-            className="font-body text-sm text-verde-noite/40 hover:text-verde-noite transition"
+            className="font-body text-sm text-midnight/40 hover:text-midnight transition"
           >
             Pular →
           </button>
@@ -368,7 +368,7 @@ export default function OnboardingPage() {
                 key={i}
                 className="flex-1 h-1 rounded-full transition-all duration-300"
                 style={{
-                  backgroundColor: i <= currentIndex ? "#2C6B5E" : "#E5E7EB",
+                  backgroundColor: i <= currentIndex ? "#1A1F3A" : "#E5E7EB",
                 }}
               />
             ))}
@@ -392,14 +392,14 @@ export default function OnboardingPage() {
                   <div className="space-y-6">
                     <div className="text-center space-y-2">
                       <div className="text-6xl mb-4">💍</div>
-                      <h1 className="font-heading text-3xl text-verde-noite">Bem-vindos ao Laço</h1>
-                      <p className="font-body text-verde-noite/60">Vamos preparar tudo para o casamento de vocês</p>
+                      <h1 className="font-heading text-3xl text-midnight">Bem-vindos ao Laço</h1>
+                      <p className="font-body text-midnight/60">Vamos preparar tudo para o casamento de vocês</p>
                     </div>
 
                     <div className="space-y-3 mt-8">
                       <button
                         onClick={handleCoupleNext}
-                        className="w-full py-3 rounded-xl bg-teal text-white font-body font-medium hover:bg-teal/90 transition"
+                        className="w-full py-3 rounded-xl bg-midnight text-white font-body font-medium hover:bg-midnight/90 transition"
                       >
                         Vou planejar por conta própria
                       </button>
@@ -407,13 +407,13 @@ export default function OnboardingPage() {
                         onClick={() => {
                           handleCoupleNext();
                         }}
-                        className="w-full py-3 rounded-xl border border-teal text-teal font-body font-medium hover:bg-teal/5 transition"
+                        className="w-full py-3 rounded-xl border border-midnight text-midnight font-body font-medium hover:bg-midnight/5 transition"
                       >
                         Já tenho cerimonialista
                       </button>
                     </div>
 
-                    <p className="font-body text-xs text-verde-noite/50 text-center">
+                    <p className="font-body text-xs text-midnight/50 text-center">
                       +2.400 casais planejando seu casamento no Laço
                     </p>
                   </div>
@@ -423,14 +423,14 @@ export default function OnboardingPage() {
                 {coupleStep === "about" && (
                   <div className="space-y-6">
                     <div className="text-center space-y-2">
-                      <h1 className="font-heading text-2xl text-verde-noite">Sobre vocês</h1>
-                      <p className="font-body text-verde-noite/60 text-sm">Os nomes de vocês aparecem em tudo no Laço</p>
+                      <h1 className="font-heading text-2xl text-midnight">Sobre vocês</h1>
+                      <p className="font-body text-midnight/60 text-sm">Os nomes de vocês aparecem em tudo no Laço</p>
                     </div>
 
                     {/* Live preview */}
                     {(formData.partnerName1 || formData.partnerName2) && (
-                      <div className="text-center p-4 bg-cream rounded-xl border border-teal/20">
-                        <p className="font-heading text-xl text-teal">
+                      <div className="text-center p-4 bg-fog rounded-xl border border-midnight/20">
+                        <p className="font-heading text-xl text-midnight">
                           {formData.partnerName1 || "Nome"} & {formData.partnerName2 || "Nome"}
                         </p>
                       </div>
@@ -442,25 +442,25 @@ export default function OnboardingPage() {
                         value={formData.partnerName1}
                         onChange={(e) => setFormData({ ...formData, partnerName1: e.target.value })}
                         placeholder="Nome do(a) noivo(a) 1"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-teal transition"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-midnight transition"
                       />
                       <input
                         type="text"
                         value={formData.partnerName2}
                         onChange={(e) => setFormData({ ...formData, partnerName2: e.target.value })}
                         placeholder="Nome do(a) noivo(a) 2"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-teal transition"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-midnight transition"
                       />
                     </div>
 
                     {/* Date picker */}
                     <div className="space-y-2">
-                      <label className="font-body text-sm text-verde-noite">Data do casamento</label>
+                      <label className="font-body text-sm text-midnight">Data do casamento</label>
                       <input
                         type="date"
                         value={formData.weddingDate || ""}
                         onChange={(e) => setFormData({ ...formData, weddingDate: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-teal transition"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-midnight transition"
                       />
                       {dateNotDecided && (
                         <label className="flex items-center gap-2 cursor-pointer">
@@ -469,7 +469,7 @@ export default function OnboardingPage() {
                               setFormData({ ...formData, weddingDate: undefined });
                             }
                           }} />
-                          <span className="font-body text-xs text-verde-noite/60">Ainda não decidimos</span>
+                          <span className="font-body text-xs text-midnight/60">Ainda não decidimos</span>
                         </label>
                       )}
                     </div>
@@ -480,13 +480,13 @@ export default function OnboardingPage() {
                 {coupleStep === "details" && (
                   <div className="space-y-6">
                     <div className="text-center space-y-2">
-                      <h1 className="font-heading text-2xl text-verde-noite">O grande dia</h1>
-                      <p className="font-body text-verde-noite/60 text-sm">Essas informações ajudam a encontrar fornecedores</p>
+                      <h1 className="font-heading text-2xl text-midnight">O grande dia</h1>
+                      <p className="font-body text-midnight/60 text-sm">Essas informações ajudam a encontrar fornecedores</p>
                     </div>
 
                     {/* Guest count slider */}
                     <div className="space-y-3">
-                      <label className="font-body text-sm text-verde-noite font-medium">
+                      <label className="font-body text-sm text-midnight font-medium">
                         Número de convidados: {formData.estimatedGuests || 100}
                       </label>
                       <input
@@ -495,17 +495,17 @@ export default function OnboardingPage() {
                         max="500"
                         value={formData.estimatedGuests || 100}
                         onChange={(e) => setFormData({ ...formData, estimatedGuests: parseInt(e.target.value) })}
-                        className="w-full h-2 bg-cream rounded-lg appearance-none cursor-pointer"
+                        className="w-full h-2 bg-fog rounded-lg appearance-none cursor-pointer"
                         style={{
-                          background: `linear-gradient(to right, #2C6B5E 0%, #2C6B5E ${((formData.estimatedGuests || 100 - 50) / 450) * 100}%, #E5E7EB ${((formData.estimatedGuests || 100 - 50) / 450) * 100}%, #E5E7EB 100%)`,
+                          background: `linear-gradient(to right, #1A1F3A 0%, #1A1F3A ${((formData.estimatedGuests || 100 - 50) / 450) * 100}%, #E5E7EB ${((formData.estimatedGuests || 100 - 50) / 450) * 100}%, #E5E7EB 100%)`,
                         }}
                       />
-                      <p className="font-body text-xs text-verde-noite/50">De 50 a 500 convidados</p>
+                      <p className="font-body text-xs text-midnight/50">De 50 a 500 convidados</p>
                     </div>
 
                     {/* Wedding style */}
                     <div className="space-y-3">
-                      <label className="font-body text-sm text-verde-noite font-medium">Estilo do casamento</label>
+                      <label className="font-body text-sm text-midnight font-medium">Estilo do casamento</label>
                       <div className="grid grid-cols-3 gap-2">
                         {WEDDING_STYLES.map((style) => (
                           <button
@@ -513,12 +513,12 @@ export default function OnboardingPage() {
                             onClick={() => setFormData({ ...formData, style: style.id })}
                             className={`p-3 rounded-xl border-2 transition font-body text-xs text-center ${
                               formData.style === style.id
-                                ? "border-teal bg-teal/10"
-                                : "border-gray-200 hover:border-teal/50"
+                                ? "border-midnight bg-midnight/10"
+                                : "border-gray-200 hover:border-midnight/50"
                             }`}
                           >
                             <div className="text-2xl mb-1">{style.emoji}</div>
-                            <div className="font-medium text-verde-noite">{style.label}</div>
+                            <div className="font-medium text-midnight">{style.label}</div>
                           </button>
                         ))}
                       </div>
@@ -531,12 +531,12 @@ export default function OnboardingPage() {
                         value={formData.city || ""}
                         onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                         placeholder="Cidade"
-                        className="col-span-2 px-4 py-2.5 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-teal"
+                        className="col-span-2 px-4 py-2.5 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-midnight"
                       />
                       <select
                         value={formData.state || ""}
                         onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                        className="px-4 py-2.5 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-teal"
+                        className="px-4 py-2.5 border border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-midnight"
                       >
                         <option value="">UF</option>
                         {BRAZILIAN_STATES.map((state) => (
@@ -554,7 +554,7 @@ export default function OnboardingPage() {
                         className="rounded border-gray-300"
                         onChange={() => setFormData({ ...formData, })}
                       />
-                      <span className="font-body text-sm text-verde-noite">Destination wedding?</span>
+                      <span className="font-body text-sm text-midnight">Destination wedding?</span>
                     </label>
                   </div>
                 )}
@@ -563,11 +563,11 @@ export default function OnboardingPage() {
                 {coupleStep === "budget" && (
                   <div className="space-y-6">
                     <div className="text-center space-y-2">
-                      <h1 className="font-heading text-2xl text-verde-noite">Orçamento</h1>
-                      <p className="font-body text-verde-noite/60 text-sm">A primeira decisão que importa</p>
+                      <h1 className="font-heading text-2xl text-midnight">Orçamento</h1>
+                      <p className="font-body text-midnight/60 text-sm">A primeira decisão que importa</p>
                     </div>
 
-                    <p className="font-body text-sm text-verde-noite/70 leading-relaxed">
+                    <p className="font-body text-sm text-midnight/70 leading-relaxed">
                       Saber o orçamento estimado ajuda a filtrar fornecedores e evitar surpresas.
                     </p>
 
@@ -578,26 +578,26 @@ export default function OnboardingPage() {
                             router.push(`/casamento/${weddingId}/orcamento-inteligente`);
                           }
                         }}
-                        className="w-full p-4 rounded-xl border-2 border-teal hover:bg-teal/5 transition text-left"
+                        className="w-full p-4 rounded-xl border-2 border-midnight hover:bg-midnight/5 transition text-left"
                       >
-                        <div className="font-body font-medium text-teal text-sm">🎯 Simulador Inteligente</div>
-                        <p className="font-body text-xs text-verde-noite/60 mt-1">Deixe a IA calcular seu orçamento</p>
+                        <div className="font-body font-medium text-midnight text-sm">🎯 Simulador Inteligente</div>
+                        <p className="font-body text-xs text-midnight/60 mt-1">Deixe a IA calcular seu orçamento</p>
                       </button>
 
                       <div className="relative">
-                        <span className="absolute left-4 top-3 font-body text-sm text-verde-noite/60">R$</span>
+                        <span className="absolute left-4 top-3 font-body text-sm text-midnight/60">R$</span>
                         <input
                           type="number"
                           value={formData.estimatedBudget || ""}
                           onChange={(e) => setFormData({ ...formData, estimatedBudget: parseInt(e.target.value) || undefined })}
                           placeholder="Tenho um valor em mente"
-                          className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-teal transition"
+                          className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl font-body text-sm focus:outline-none focus:border-midnight transition"
                         />
                       </div>
                     </div>
 
-                    <div className="p-3 bg-copper/10 border border-copper/20 rounded-xl">
-                      <p className="font-body text-xs text-copper leading-relaxed">
+                    <div className="p-3 bg-gold/10 border border-gold/20 rounded-xl">
+                      <p className="font-body text-xs text-gold leading-relaxed">
                         💡 Casamentos no Brasil custam em média R$ 60.000 — mas cada casal é único.
                       </p>
                     </div>
@@ -608,14 +608,14 @@ export default function OnboardingPage() {
                 {coupleStep === "guests" && (
                   <div className="space-y-6">
                     <div className="text-center space-y-2">
-                      <h1 className="font-heading text-2xl text-verde-noite">Seus convidados</h1>
-                      <p className="font-body text-verde-noite/60 text-sm">O coração do casamento</p>
+                      <h1 className="font-heading text-2xl text-midnight">Seus convidados</h1>
+                      <p className="font-body text-midnight/60 text-sm">O coração do casamento</p>
                     </div>
 
                     {/* DDD explanation with visual */}
-                    <div className="p-4 bg-teal/5 border border-teal/20 rounded-xl space-y-2">
-                      <p className="font-body text-sm text-verde-noite font-medium">Como o Laço ajuda com presença</p>
-                      <p className="font-body text-xs text-verde-noite/70">
+                    <div className="p-4 bg-midnight/5 border border-midnight/20 rounded-xl space-y-2">
+                      <p className="font-body text-sm text-midnight font-medium">Como o Laço ajuda com presença</p>
+                      <p className="font-body text-xs text-midnight/70">
                         O Laço lê o DDD de cada convidado para entender de onde vêm e estimar realistically a presença.
                       </p>
                     </div>
@@ -627,7 +627,7 @@ export default function OnboardingPage() {
                             router.push(`/casamento/${weddingId}/importar`);
                           }
                         }}
-                        className="w-full p-4 rounded-xl bg-teal text-white hover:bg-teal/90 transition text-left"
+                        className="w-full p-4 rounded-xl bg-midnight text-white hover:bg-midnight/90 transition text-left"
                       >
                         <div className="font-body font-medium text-sm">📱 Importar da agenda</div>
                         <p className="font-body text-xs text-white/80 mt-1">Sincronize seus contatos</p>
@@ -637,13 +637,13 @@ export default function OnboardingPage() {
                         onClick={handleCoupleNext}
                         className="w-full p-4 rounded-xl border-2 border-gray-200 hover:bg-gray-50 transition text-left"
                       >
-                        <div className="font-body font-medium text-verde-noite text-sm">✍️ Vou adicionar depois</div>
-                        <p className="font-body text-xs text-verde-noite/60 mt-1">Continue para a celebração</p>
+                        <div className="font-body font-medium text-midnight text-sm">✍️ Vou adicionar depois</div>
+                        <p className="font-body text-xs text-midnight/60 mt-1">Continue para a celebração</p>
                       </button>
                     </div>
 
                     {formData.estimatedGuests && (
-                      <p className="font-body text-xs text-verde-noite/60 text-center">
+                      <p className="font-body text-xs text-midnight/60 text-center">
                         Com {formData.estimatedGuests} convidados, estimamos ~78% de presença
                       </p>
                     )}
@@ -657,9 +657,9 @@ export default function OnboardingPage() {
 
                     <div className="text-center space-y-2">
                       <div className="text-6xl mb-4">🎉</div>
-                      <h1 className="font-heading text-3xl text-verde-noite">Pronto!</h1>
-                      <p className="font-body text-verde-noite/60">
-                        O casamento de <span className="font-medium text-verde-noite">{formData.partnerName1} & {formData.partnerName2}</span> está criado
+                      <h1 className="font-heading text-3xl text-midnight">Pronto!</h1>
+                      <p className="font-body text-midnight/60">
+                        O casamento de <span className="font-medium text-midnight">{formData.partnerName1} & {formData.partnerName2}</span> está criado
                       </p>
                     </div>
 
@@ -669,26 +669,26 @@ export default function OnboardingPage() {
                         <>
                           <Link
                             href={`/casamento/${weddingId}/orcamento-inteligente`}
-                            className="block p-4 rounded-xl bg-copper/10 border border-copper/20 hover:bg-copper/20 transition text-left"
+                            className="block p-4 rounded-xl bg-gold/10 border border-gold/20 hover:bg-gold/20 transition text-left"
                           >
-                            <div className="font-body font-medium text-copper text-sm">💰 Orçamento Inteligente</div>
-                            <p className="font-body text-xs text-verde-noite/60 mt-1">Calcule com precisão</p>
+                            <div className="font-body font-medium text-gold text-sm">💰 Orçamento Inteligente</div>
+                            <p className="font-body text-xs text-midnight/60 mt-1">Calcule com precisão</p>
                           </Link>
 
                           <Link
                             href={`/casamento/${weddingId}/convidados`}
-                            className="block p-4 rounded-xl bg-teal/10 border border-teal/20 hover:bg-teal/20 transition text-left"
+                            className="block p-4 rounded-xl bg-midnight/10 border border-midnight/20 hover:bg-midnight/20 transition text-left"
                           >
-                            <div className="font-body font-medium text-teal text-sm">👥 Lista de Convidados</div>
-                            <p className="font-body text-xs text-verde-noite/60 mt-1">Comece a montar</p>
+                            <div className="font-body font-medium text-midnight text-sm">👥 Lista de Convidados</div>
+                            <p className="font-body text-xs text-midnight/60 mt-1">Comece a montar</p>
                           </Link>
 
                           <Link
                             href={`/casamento/${weddingId}/identity-kit`}
-                            className="block p-4 rounded-xl bg-verde-noite/10 border border-verde-noite/20 hover:bg-verde-noite/20 transition text-left"
+                            className="block p-4 rounded-xl bg-midnight/10 border border-midnight/20 hover:bg-midnight/20 transition text-left"
                           >
-                            <div className="font-body font-medium text-verde-noite text-sm">✨ Identidade Visual</div>
-                            <p className="font-body text-xs text-verde-noite/60 mt-1">Gerada com IA</p>
+                            <div className="font-body font-medium text-midnight text-sm">✨ Identidade Visual</div>
+                            <p className="font-body text-xs text-midnight/60 mt-1">Gerada com IA</p>
                           </Link>
                         </>
                       )}
@@ -703,7 +703,7 @@ export default function OnboardingPage() {
               {currentIndex > 0 && coupleStep !== "celebrate" && (
                 <button
                   onClick={handleCoupleBack}
-                  className="px-4 py-2.5 rounded-xl border border-gray-200 font-body text-sm text-verde-noite/60 hover:bg-gray-50 transition"
+                  className="px-4 py-2.5 rounded-xl border border-gray-200 font-body text-sm text-midnight/60 hover:bg-gray-50 transition"
                 >
                   ← Voltar
                 </button>
@@ -713,7 +713,7 @@ export default function OnboardingPage() {
                 <button
                   onClick={handleCoupleComplete}
                   disabled={saving}
-                  className="flex-1 py-3 rounded-xl bg-copper text-white font-body font-medium hover:bg-copper/90 transition disabled:opacity-50"
+                  className="flex-1 py-3 rounded-xl bg-gold text-white font-body font-medium hover:bg-gold/90 transition disabled:opacity-50"
                 >
                   {saving ? "Salvando…" : "Ir para o Dashboard →"}
                 </button>
@@ -721,7 +721,7 @@ export default function OnboardingPage() {
                 <button
                   onClick={handleCoupleNext}
                   disabled={saving || (coupleStep === "about" && (!formData.partnerName1 || !formData.partnerName2))}
-                  className="flex-1 py-3 rounded-xl bg-teal text-white font-body font-medium hover:bg-teal/90 transition disabled:opacity-50"
+                  className="flex-1 py-3 rounded-xl bg-midnight text-white font-body font-medium hover:bg-midnight/90 transition disabled:opacity-50"
                 >
                   {saving ? "Salvando…" : "Próximo →"}
                 </button>
@@ -741,14 +741,14 @@ export default function OnboardingPage() {
   const plannerStepData = PLANNER_STEPS[plannerStep];
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-fog flex flex-col items-center justify-center p-6">
       {/* Skip button */}
       <div className="w-full max-w-lg mb-4 flex justify-end">
         <button
           onClick={() => {
             saveStep(-1).then(() => router.push("/cerimonialista/dashboard"));
           }}
-          className="font-body text-sm text-verde-noite/40 hover:text-verde-noite transition"
+          className="font-body text-sm text-midnight/40 hover:text-midnight transition"
         >
           Pular introdução →
         </button>
@@ -762,7 +762,7 @@ export default function OnboardingPage() {
               key={i}
               className="flex-1 h-1 rounded-full transition-all duration-300"
               style={{
-                backgroundColor: i <= plannerStep ? "#2C6B5E" : "#E5E7EB",
+                backgroundColor: i <= plannerStep ? "#1A1F3A" : "#E5E7EB",
               }}
             />
           ))}
@@ -772,26 +772,26 @@ export default function OnboardingPage() {
         <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
           <div className="p-8">
             {/* Icon */}
-            <div className="w-16 h-16 bg-cream rounded-2xl flex items-center justify-center text-4xl mb-6">
+            <div className="w-16 h-16 bg-fog rounded-2xl flex items-center justify-center text-4xl mb-6">
               {plannerStepData.icon}
             </div>
 
             {/* Step badge */}
-            <span className="inline-block px-2.5 py-1 bg-teal/10 text-teal font-body text-xs rounded-full mb-3">
+            <span className="inline-block px-2.5 py-1 bg-midnight/10 text-midnight font-body text-xs rounded-full mb-3">
               Passo {plannerStep + 1} de {totalSteps}
             </span>
 
-            <h1 className="font-heading text-2xl text-verde-noite mb-2">{plannerStepData.title}</h1>
-            <p className="font-body text-verde-noite/60 text-sm mb-4">{plannerStepData.subtitle}</p>
-            <p className="font-body text-verde-noite/80 leading-relaxed">{plannerStepData.description}</p>
+            <h1 className="font-heading text-2xl text-midnight mb-2">{plannerStepData.title}</h1>
+            <p className="font-body text-midnight/60 text-sm mb-4">{plannerStepData.subtitle}</p>
+            <p className="font-body text-midnight/80 leading-relaxed">{plannerStepData.description}</p>
 
             {/* Social proof */}
             {plannerStep === 0 && (
               <div className="mt-6 space-y-4">
-                <div className="flex items-center gap-3 p-3 bg-copper/5 rounded-xl border border-copper/10">
+                <div className="flex items-center gap-3 p-3 bg-gold/5 rounded-xl border border-gold/10">
                   <span className="text-xl flex-shrink-0">⭐</span>
-                  <p className="font-body text-xs text-verde-noite/70">
-                    <span className="font-semibold text-verde-noite">Cerimonialistas em SP, RJ e MG</span> já usam o Laço
+                  <p className="font-body text-xs text-midnight/70">
+                    <span className="font-semibold text-midnight">Cerimonialistas em SP, RJ e MG</span> já usam o Laço
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -801,11 +801,11 @@ export default function OnboardingPage() {
                     { icon: "💰", label: "Controle financeiro", tag: "comissões" },
                     { icon: "📅", label: "Agenda integrada", tag: "Google Cal" },
                   ].map((feature) => (
-                    <div key={feature.label} className="flex items-start gap-2 p-2.5 bg-cream rounded-xl">
+                    <div key={feature.label} className="flex items-start gap-2 p-2.5 bg-fog rounded-xl">
                       <span className="text-base mt-0.5">{feature.icon}</span>
                       <div>
-                        <p className="font-body text-xs font-medium text-verde-noite leading-tight">{feature.label}</p>
-                        <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-copper/10 text-copper font-body text-[9px] font-semibold rounded-full uppercase tracking-wide">
+                        <p className="font-body text-xs font-medium text-midnight leading-tight">{feature.label}</p>
+                        <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-gold/10 text-gold font-body text-[9px] font-semibold rounded-full uppercase tracking-wide">
                           {feature.tag}
                         </span>
                       </div>
@@ -821,7 +821,7 @@ export default function OnboardingPage() {
             {plannerStep > 0 && (
               <button
                 onClick={handlePlannerBack}
-                className="px-4 py-2.5 rounded-xl border border-gray-200 font-body text-sm text-verde-noite/60 hover:bg-gray-50 transition"
+                className="px-4 py-2.5 rounded-xl border border-gray-200 font-body text-sm text-midnight/60 hover:bg-gray-50 transition"
               >
                 ← Voltar
               </button>
@@ -831,7 +831,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handlePlannerComplete}
                 disabled={plannerSaving}
-                className="flex-1 py-3 rounded-xl bg-copper text-white font-body font-medium hover:bg-copper/90 transition disabled:opacity-50"
+                className="flex-1 py-3 rounded-xl bg-gold text-white font-body font-medium hover:bg-gold/90 transition disabled:opacity-50"
               >
                 {plannerSaving ? "Salvando…" : "Abrir meu painel →"}
               </button>
@@ -839,7 +839,7 @@ export default function OnboardingPage() {
               <div className="flex-1 flex gap-2">
                 <Link
                   href={plannerStepData.href}
-                  className="flex-1 py-3 rounded-xl bg-teal text-white font-body text-sm text-center hover:bg-teal/90 transition"
+                  className="flex-1 py-3 rounded-xl bg-midnight text-white font-body text-sm text-center hover:bg-midnight/90 transition"
                   onClick={() => saveStep(plannerStep + 1)}
                 >
                   {plannerStepData.action}
@@ -847,7 +847,7 @@ export default function OnboardingPage() {
                 <button
                   onClick={handlePlannerNext}
                   disabled={plannerSaving}
-                  className="px-4 py-3 rounded-xl border border-gray-200 font-body text-sm text-verde-noite/60 hover:bg-gray-50 transition"
+                  className="px-4 py-3 rounded-xl border border-gray-200 font-body text-sm text-midnight/60 hover:bg-gray-50 transition"
                 >
                   Próximo →
                 </button>
@@ -856,7 +856,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handlePlannerNext}
                 disabled={plannerSaving}
-                className="flex-1 py-3 rounded-xl bg-teal text-white font-body font-medium hover:bg-teal/90 transition disabled:opacity-50"
+                className="flex-1 py-3 rounded-xl bg-midnight text-white font-body font-medium hover:bg-midnight/90 transition disabled:opacity-50"
               >
                 {plannerSaving ? "Salvando…" : "Próximo →"}
               </button>

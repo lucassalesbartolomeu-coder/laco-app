@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {
   getAuthenticatedUser,
@@ -9,6 +9,7 @@ import {
   errorResponse,
   validationError,
 } from "@/lib/api-helpers";
+import * as Sentry from "@sentry/nextjs";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -29,8 +30,9 @@ export async function GET(_request: NextRequest, { params }: Params) {
     });
 
     return NextResponse.json(events);
-  } catch (err) {
-    return errorResponse(err);
+  } catch (error) {
+    Sentry.captureException(error);
+    return errorResponse();
   }
 }
 
@@ -76,7 +78,8 @@ export async function POST(request: NextRequest, { params }: Params) {
     });
 
     return NextResponse.json(event, { status: 201 });
-  } catch (err) {
-    return errorResponse(err);
+  } catch (error) {
+    Sentry.captureException(error);
+    return errorResponse();
   }
 }

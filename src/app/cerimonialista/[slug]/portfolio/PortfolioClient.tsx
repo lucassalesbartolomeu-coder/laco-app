@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -36,18 +36,18 @@ function WeddingCardVisual({
           className="object-cover group-hover:scale-105 transition-transform duration-700"
           sizes="(max-width: 768px) 100vw, 50vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-verde-noite/50 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-midnight/50 via-transparent to-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="h-52 bg-gradient-to-br from-verde-noite via-teal to-verde-noite/80 flex items-center justify-center relative overflow-hidden">
+    <div className="h-52 bg-gradient-to-br from-midnight via-midnight to-midnight/80 flex items-center justify-center relative overflow-hidden">
       <div
         className="absolute inset-0 opacity-15"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 25% 75%, #C4734F 0%, transparent 55%), radial-gradient(circle at 75% 20%, #2C6B5E 0%, transparent 50%)",
+            "radial-gradient(circle at 25% 75%, #C9A96E 0%, transparent 55%), radial-gradient(circle at 75% 20%, #1A1F3A 0%, transparent 50%)",
         }}
       />
       <span className="font-heading text-7xl text-white/25 select-none tracking-widest">
@@ -68,7 +68,7 @@ function StatPill({
 }) {
   return (
     <div className="flex items-center gap-2.5 px-5 py-3 bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl">
-      <span className="text-copper shrink-0">{icon}</span>
+      <span className="text-gold shrink-0">{icon}</span>
       <span className="font-body text-sm text-white/90 leading-tight">
         <span className="font-semibold text-white">{value}</span>{" "}
         <span className="text-white/70">{label}</span>
@@ -159,10 +159,10 @@ export default function PortfolioClient({ slug }: { slug: string }) {
   // ── Loading ──────────────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-cream">
+      <div className="flex items-center justify-center min-h-screen bg-fog">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-2 border-teal border-t-transparent rounded-full animate-spin" />
-          <p className="font-body text-sm text-verde-noite/40">Carregando portfólio...</p>
+          <div className="w-10 h-10 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+          <p className="font-body text-sm text-midnight/40">Carregando portfólio...</p>
         </div>
       </div>
     );
@@ -171,13 +171,13 @@ export default function PortfolioClient({ slug }: { slug: string }) {
   // ── Erro ─────────────────────────────────────────────────────────────────────
   if (fetchError || !planner) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-cream gap-4">
-        <div className="w-16 h-16 rounded-full bg-verde-noite/5 flex items-center justify-center">
-          <svg className="w-8 h-8 text-verde-noite/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-fog gap-4">
+        <div className="w-16 h-16 rounded-full bg-midnight/5 flex items-center justify-center">
+          <svg className="w-8 h-8 text-midnight/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p className="font-body text-verde-noite/40">Portfólio não encontrado.</p>
+        <p className="font-body text-midnight/40">Portfólio não encontrado.</p>
       </div>
     );
   }
@@ -185,7 +185,7 @@ export default function PortfolioClient({ slug }: { slug: string }) {
   const city = planner.region ?? "";
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-fog">
 
       {/* ══════════════════════════════════════════════════════════════════════
           HERO FULL-WIDTH
@@ -204,16 +204,16 @@ export default function PortfolioClient({ slug }: { slug: string }) {
               sizes="100vw"
             />
             {/* Camada escura sobre a foto */}
-            <div className="absolute inset-0 bg-gradient-to-b from-verde-noite/70 via-verde-noite/55 to-verde-noite/90" />
+            <div className="absolute inset-0 bg-gradient-to-b from-midnight/70 via-midnight/55 to-midnight/90" />
           </div>
         ) : (
-          <div className="absolute inset-0 bg-verde-noite">
+          <div className="absolute inset-0 bg-midnight">
             {/* Gradiente decorativo */}
             <div
               className="absolute inset-0 opacity-30"
               style={{
                 backgroundImage:
-                  "radial-gradient(ellipse at 15% 85%, #C4734F 0%, transparent 55%), radial-gradient(ellipse at 85% 10%, #2C6B5E 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, #1A3A33 0%, transparent 80%)",
+                  "radial-gradient(ellipse at 15% 85%, #C9A96E 0%, transparent 55%), radial-gradient(ellipse at 85% 10%, #1A1F3A 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, #1A1F3A 0%, transparent 80%)",
               }}
             />
             {/* Padrão sutil de bolinhas */}
@@ -243,7 +243,7 @@ export default function PortfolioClient({ slug }: { slug: string }) {
                 />
               </div>
             ) : (
-              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-teal to-copper flex items-center justify-center ring-4 ring-white/20 shadow-float mx-auto">
+              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-midnight to-gold flex items-center justify-center ring-4 ring-white/20 shadow-float mx-auto">
                 <span className="font-heading text-5xl text-white select-none">
                   {planner.companyName.charAt(0)}
                 </span>
@@ -257,7 +257,7 @@ export default function PortfolioClient({ slug }: { slug: string }) {
               {planner.companyName}
             </h1>
             {planner.isVerified && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-teal/90 backdrop-blur-sm text-white rounded-full shrink-0 shadow-sm">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-midnight/90 backdrop-blur-sm text-white rounded-full shrink-0 shadow-sm">
                 {IconCheck}
                 <span className="font-body text-xs font-semibold tracking-wide">
                   Verificado pelo Laço
@@ -305,7 +305,7 @@ export default function PortfolioClient({ slug }: { slug: string }) {
           {/* CTA hero */}
           <button
             onClick={() => setModalOpen(true)}
-            className="px-8 py-3.5 bg-copper text-white font-body text-sm font-semibold rounded-2xl shadow-float hover:bg-copper/90 active:scale-95 transition"
+            className="px-8 py-3.5 bg-gold text-white font-body text-sm font-semibold rounded-2xl shadow-float hover:bg-gold/90 active:scale-95 transition"
           >
             Solicitar Orçamento
           </button>
@@ -346,7 +346,7 @@ export default function PortfolioClient({ slug }: { slug: string }) {
       {(planner.bio || planner.specialties.length > 0) && (
         <section className="max-w-2xl mx-auto px-6 pt-12 pb-10 text-center">
           {planner.bio && (
-            <p className="font-body text-base md:text-lg text-verde-noite/75 leading-relaxed">
+            <p className="font-body text-base md:text-lg text-midnight/75 leading-relaxed">
               {planner.bio}
             </p>
           )}
@@ -356,7 +356,7 @@ export default function PortfolioClient({ slug }: { slug: string }) {
               {planner.specialties.map((s) => (
                 <span
                   key={s}
-                  className="px-4 py-1.5 bg-teal/8 border border-teal/20 text-teal rounded-full font-body text-xs font-medium capitalize tracking-wide"
+                  className="px-4 py-1.5 bg-midnight/8 border border-midnight/20 text-midnight rounded-full font-body text-xs font-medium capitalize tracking-wide"
                 >
                   {s}
                 </span>
@@ -371,28 +371,28 @@ export default function PortfolioClient({ slug }: { slug: string }) {
       ══════════════════════════════════════════════════════════════════════ */}
       <section className="max-w-6xl mx-auto px-6 py-12">
         <div className="text-center mb-10">
-          <h2 className="font-heading text-3xl md:text-4xl text-verde-noite mb-2">
+          <h2 className="font-heading text-3xl md:text-4xl text-midnight mb-2">
             Casamentos Realizados
           </h2>
-          <p className="font-body text-sm text-verde-noite/40">
+          <p className="font-body text-sm text-midnight/40">
             Cada história é única e merece ser celebrada.
           </p>
           {/* Linha decorativa */}
           <div className="flex items-center justify-center gap-3 mt-4">
-            <div className="h-px w-16 bg-copper/30" />
-            <div className="w-1.5 h-1.5 rounded-full bg-copper/50" />
-            <div className="h-px w-16 bg-copper/30" />
+            <div className="h-px w-16 bg-gold/30" />
+            <div className="w-1.5 h-1.5 rounded-full bg-gold/50" />
+            <div className="h-px w-16 bg-gold/30" />
           </div>
         </div>
 
         {weddings.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-verde-noite/5">
-            <div className="w-16 h-16 rounded-full bg-verde-noite/5 flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-verde-noite/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="text-center py-20 bg-white rounded-3xl border border-midnight/5">
+            <div className="w-16 h-16 rounded-full bg-midnight/5 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-midnight/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
-            <p className="font-body text-sm text-verde-noite/30">
+            <p className="font-body text-sm text-midnight/30">
               Nenhum casamento no portfólio ainda.
             </p>
           </div>
@@ -401,7 +401,7 @@ export default function PortfolioClient({ slug }: { slug: string }) {
             {weddings.map((w, i) => (
               <article
                 key={i}
-                className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden border border-verde-noite/5"
+                className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden border border-midnight/5"
               >
                 <WeddingCardVisual
                   name1={w.partnerName1}
@@ -411,20 +411,20 @@ export default function PortfolioClient({ slug }: { slug: string }) {
 
                 <div className="p-6">
                   {/* Nomes */}
-                  <h3 className="font-heading text-xl md:text-2xl text-verde-noite group-hover:text-teal transition-colors mb-3">
+                  <h3 className="font-heading text-xl md:text-2xl text-midnight group-hover:text-midnight transition-colors mb-3">
                     {w.partnerName1} &amp; {w.partnerName2}
                   </h3>
 
                   {/* Meta */}
                   <div className="flex flex-wrap gap-3">
                     {w.weddingDate && (
-                      <span className="flex items-center gap-1.5 font-body text-xs text-verde-noite/50">
+                      <span className="flex items-center gap-1.5 font-body text-xs text-midnight/50">
                         {IconCalendar}
                         <span className="capitalize">{formatDate(w.weddingDate)}</span>
                       </span>
                     )}
                     {(w.venue || w.city) && (
-                      <span className="flex items-center gap-1.5 font-body text-xs text-verde-noite/50">
+                      <span className="flex items-center gap-1.5 font-body text-xs text-midnight/50">
                         {IconLocation}
                         <span className="truncate max-w-[200px]">
                           {[w.venue, w.city && w.state ? `${w.city}/${w.state}` : w.city]
@@ -437,7 +437,7 @@ export default function PortfolioClient({ slug }: { slug: string }) {
 
                   {/* Estilo */}
                   {w.style && (
-                    <span className="inline-block mt-4 px-3 py-1 bg-cream text-verde-noite/55 text-xs font-body rounded-full capitalize border border-verde-noite/8 tracking-wide">
+                    <span className="inline-block mt-4 px-3 py-1 bg-fog text-midnight/55 text-xs font-body rounded-full capitalize border border-midnight/8 tracking-wide">
                       {w.style}
                     </span>
                   )}
@@ -451,16 +451,16 @@ export default function PortfolioClient({ slug }: { slug: string }) {
       {/* ══════════════════════════════════════════════════════════════════════
           SEÇÃO CTA FINAL
       ══════════════════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-verde-noite py-20 px-6 mt-8">
+      <section className="relative overflow-hidden bg-midnight py-20 px-6 mt-8">
         <div
           className="absolute inset-0 opacity-20"
           style={{
             backgroundImage:
-              "radial-gradient(ellipse at 20% 80%, #C4734F 0%, transparent 55%), radial-gradient(ellipse at 80% 20%, #2C6B5E 0%, transparent 50%)",
+              "radial-gradient(ellipse at 20% 80%, #C9A96E 0%, transparent 55%), radial-gradient(ellipse at 80% 20%, #1A1F3A 0%, transparent 50%)",
           }}
         />
         <div className="relative max-w-xl mx-auto text-center">
-          <p className="font-body text-xs text-copper/80 tracking-widest uppercase mb-3">
+          <p className="font-body text-xs text-gold/80 tracking-widest uppercase mb-3">
             Vamos começar
           </p>
           <h2 className="font-heading text-3xl md:text-4xl text-white mb-4">
@@ -471,7 +471,7 @@ export default function PortfolioClient({ slug }: { slug: string }) {
           </p>
           <button
             onClick={() => setModalOpen(true)}
-            className="px-10 py-4 bg-copper text-white font-body text-sm font-semibold rounded-2xl hover:bg-copper/90 active:scale-95 transition shadow-float"
+            className="px-10 py-4 bg-gold text-white font-body text-sm font-semibold rounded-2xl hover:bg-gold/90 active:scale-95 transition shadow-float"
           >
             Solicitar Orçamento
           </button>
@@ -479,14 +479,14 @@ export default function PortfolioClient({ slug }: { slug: string }) {
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
-      <footer className="text-center py-8 bg-cream border-t border-verde-noite/6">
-        <p className="font-body text-xs text-verde-noite/25 tracking-wide">
+      <footer className="text-center py-8 bg-fog border-t border-midnight/6">
+        <p className="font-body text-xs text-midnight/25 tracking-wide">
           Portfólio hospedado no{" "}
           <a
             href="https://laco.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-verde-noite/40 hover:text-teal transition"
+            className="text-midnight/40 hover:text-midnight transition"
           >
             Laço
           </a>
@@ -495,10 +495,10 @@ export default function PortfolioClient({ slug }: { slug: string }) {
 
       {/* ── Botão CTA fixo no mobile ─────────────────────────────────────── */}
       <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
-        <div className="bg-cream/95 backdrop-blur-md border-t border-verde-noite/10 px-4 py-3 pb-safe">
+        <div className="bg-fog/95 backdrop-blur-md border-t border-midnight/10 px-4 py-3 pb-safe">
           <button
             onClick={() => setModalOpen(true)}
-            className="w-full py-3.5 bg-copper text-white font-body text-sm font-semibold rounded-2xl shadow-float hover:bg-copper/90 active:scale-98 transition"
+            className="w-full py-3.5 bg-gold text-white font-body text-sm font-semibold rounded-2xl shadow-float hover:bg-gold/90 active:scale-98 transition"
           >
             Solicitar Orçamento
           </button>

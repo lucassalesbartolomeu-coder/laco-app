@@ -1,9 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
+import WhatsAppBlast from "@/components/whatsapp-blast";
 
 declare global {
   interface Window { ContactsManager: unknown; }
@@ -51,8 +52,8 @@ const CATEGORY_LABELS: Record<Category, string> = {
 };
 
 const CATEGORY_COLORS: Record<Category, string> = {
-  familia_noivo: "bg-teal/15 text-teal",
-  familia_noiva: "bg-copper/15 text-copper",
+  familia_noivo: "bg-midnight/15 text-midnight",
+  familia_noiva: "bg-gold/15 text-gold",
   amigos_noivo: "bg-blue-100 text-blue-700",
   amigos_noiva: "bg-pink-100 text-pink-700",
   trabalho: "bg-gray-100 text-gray-600",
@@ -71,7 +72,7 @@ const STATUS_CYCLE: Record<Status, Status> = {
 };
 
 const LIST_META: Record<GuestListType, { label: string; emoji: string; color: string; desc: string }> = {
-  A: { label: "Lista Oficial", emoji: "👑", color: "bg-teal text-white", desc: "Convidados confirmados — a cerimonialista tem acesso" },
+  A: { label: "Lista Oficial", emoji: "👑", color: "bg-midnight text-white", desc: "Convidados confirmados — a cerimonialista tem acesso" },
   B: { label: "Lista Reserva", emoji: "🔄", color: "bg-amber-500 text-white", desc: "Próximos da fila se alguém desistir" },
   C: { label: "Lista Talvez", emoji: "💭", color: "bg-gray-400 text-white", desc: "Pensando se convida ou não" },
 };
@@ -467,8 +468,8 @@ export default function ConvidadosPage() {
 
   if (authStatus === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -478,12 +479,12 @@ export default function ConvidadosPage() {
   /* ── Render ────────────────────────────────────────────────────── */
 
   return (
-    <div className="min-h-screen bg-off-white py-6 px-4 pb-32">
+    <div className="min-h-screen bg-ivory py-6 px-4 pb-32">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h1 className="font-heading text-3xl sm:text-4xl text-verde-noite">
+            <h1 className="font-heading text-3xl sm:text-4xl text-midnight">
               Convidados
             </h1>
             <p className="font-body text-sm text-gray-500 mt-1">
@@ -504,7 +505,7 @@ export default function ConvidadosPage() {
               disabled={pickingContacts}
               className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-body font-medium transition flex-shrink-0 ${
                 contactPickerSupported
-                  ? "bg-teal text-white hover:bg-teal/90 shadow-sm"
+                  ? "bg-midnight text-white hover:bg-midnight/90 shadow-sm"
                   : "bg-gray-100 text-gray-400 cursor-default"
               }`}
               title={contactPickerSupported ? "Importar contatos da agenda" : "Disponível no Chrome para Android"}
@@ -559,7 +560,7 @@ export default function ConvidadosPage() {
                 onClick={() => setActiveList(listType)}
                 className={`flex-1 sm:flex-initial relative px-4 py-3 rounded-xl font-body text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? "bg-white shadow-md text-verde-noite ring-2 ring-teal/30"
+                    ? "bg-white shadow-md text-midnight ring-2 ring-midnight/30"
                     : "bg-white/50 text-gray-500 hover:bg-white hover:shadow-sm"
                 }`}
               >
@@ -591,8 +592,8 @@ export default function ConvidadosPage() {
             </div>
           )}
           {activeList === "A" && totalA > 0 && (
-            <div className="mt-2 bg-teal/5 border border-teal/10 rounded-xl px-3 py-2">
-              <p className="font-body text-xs text-teal">
+            <div className="mt-2 bg-midnight/5 border border-midnight/10 rounded-xl px-3 py-2">
+              <p className="font-body text-xs text-midnight">
                 <strong>Lista Oficial</strong> — sua cerimonialista tem acesso a esta lista para coordenar
                 logistica, buffet e layout das mesas.
               </p>
@@ -604,10 +605,10 @@ export default function ConvidadosPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
           <div className="bg-white rounded-2xl shadow-sm p-4">
             <div className="flex items-center gap-2 mb-2">
-              <PeopleIcon className="w-5 h-5 text-teal" />
+              <PeopleIcon className="w-5 h-5 text-midnight" />
               <span className="font-body text-sm text-gray-500">Total</span>
             </div>
-            <p className="font-heading text-3xl text-verde-noite">{total}</p>
+            <p className="font-heading text-3xl text-midnight">{total}</p>
           </div>
           <div className="bg-white rounded-2xl shadow-sm p-4">
             <div className="flex items-center gap-2 mb-2">
@@ -615,7 +616,7 @@ export default function ConvidadosPage() {
               <span className="font-body text-sm text-gray-500">Confirmados</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <p className="font-heading text-3xl text-verde-noite">{confirmados}</p>
+              <p className="font-heading text-3xl text-midnight">{confirmados}</p>
               <span className="font-body text-sm text-green-600">{pctConfirmados}%</span>
             </div>
           </div>
@@ -624,14 +625,14 @@ export default function ConvidadosPage() {
               <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-500" />
               <span className="font-body text-sm text-gray-500">Pendentes</span>
             </div>
-            <p className="font-heading text-3xl text-verde-noite">{pendentes}</p>
+            <p className="font-heading text-3xl text-midnight">{pendentes}</p>
           </div>
           <div className="bg-white rounded-2xl shadow-sm p-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="inline-block w-2.5 h-2.5 rounded-full bg-gray-400" />
               <span className="font-body text-sm text-gray-500">Recusados</span>
             </div>
-            <p className="font-heading text-3xl text-verde-noite">{recusados}</p>
+            <p className="font-heading text-3xl text-midnight">{recusados}</p>
           </div>
         </div>
 
@@ -644,13 +645,13 @@ export default function ConvidadosPage() {
               placeholder="Buscar por nome..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200"
             />
           </div>
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            className="px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200 appearance-none"
+            className="px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200 appearance-none"
           >
             <option value="todos">Todos</option>
             {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
@@ -660,7 +661,7 @@ export default function ConvidadosPage() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200 appearance-none"
+            className="px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200 appearance-none"
           >
             <option value="todos">Todos</option>
             <option value="confirmado">Confirmado</option>
@@ -681,7 +682,7 @@ export default function ConvidadosPage() {
             </p>
             {currentListGuests.length === 0 && (
               <p className="font-body text-sm text-gray-400">
-                Adicione convidados usando o botao <span className="text-copper font-semibold">+</span> ou importe da sua agenda
+                Adicione convidados usando o botao <span className="text-gold font-semibold">+</span> ou importe da sua agenda
               </p>
             )}
           </div>
@@ -733,11 +734,11 @@ export default function ConvidadosPage() {
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-full bg-teal text-white flex items-center justify-center font-body text-sm font-semibold shrink-0">
+                            <div className="w-9 h-9 rounded-full bg-midnight text-white flex items-center justify-center font-body text-sm font-semibold shrink-0">
                               {getInitials(guest.name)}
                             </div>
                             <div>
-                              <span className="font-body text-verde-noite font-medium block">
+                              <span className="font-body text-midnight font-medium block">
                                 {guest.name}
                               </span>
                               {wasSent && (
@@ -789,7 +790,7 @@ export default function ConvidadosPage() {
                                 <button
                                   key={targetList}
                                   onClick={() => moveGuestToList(guest, targetList)}
-                                  className="px-2 py-1 rounded-lg text-[11px] font-body font-semibold hover:shadow-sm transition-all border border-gray-200 hover:border-gray-300 text-gray-600 hover:text-verde-noite"
+                                  className="px-2 py-1 rounded-lg text-[11px] font-body font-semibold hover:shadow-sm transition-all border border-gray-200 hover:border-gray-300 text-gray-600 hover:text-midnight"
                                   title={`Mover para ${LIST_META[targetList].label}`}
                                 >
                                   {targetList}
@@ -831,12 +832,12 @@ export default function ConvidadosPage() {
                   <div key={guest.id} className="bg-white rounded-2xl shadow-sm p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-teal text-white flex items-center justify-center font-body text-sm font-semibold shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-midnight text-white flex items-center justify-center font-body text-sm font-semibold shrink-0">
                           {getInitials(guest.name)}
                         </div>
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <p className="font-body text-verde-noite font-medium">{guest.name}</p>
+                            <p className="font-body text-midnight font-medium">{guest.name}</p>
                             {wasSentMobile && (
                               <span
                                 className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-body font-semibold bg-green-100 text-green-700"
@@ -853,7 +854,7 @@ export default function ConvidadosPage() {
                       <button
                         type="button"
                         onClick={() => setMoveTarget(guest)}
-                        className="p-2 rounded-lg text-gray-400 hover:text-teal hover:bg-teal/10 transition-colors"
+                        className="p-2 rounded-lg text-gray-400 hover:text-midnight hover:bg-midnight/10 transition-colors"
                         title="Mover para outra lista"
                       >
                         <ArrowIcon className="w-4 h-4" direction="right" />
@@ -907,7 +908,7 @@ export default function ConvidadosPage() {
             setFormList(activeList);
             setModalOpen(true);
           }}
-          className="fixed bottom-24 right-6 w-14 h-14 bg-copper text-white rounded-full shadow-lg hover:bg-copper/90 transition-all duration-200 flex items-center justify-center z-40"
+          className="fixed bottom-24 right-6 w-14 h-14 bg-gold text-white rounded-full shadow-lg hover:bg-gold/90 transition-all duration-200 flex items-center justify-center z-40"
         >
           <PlusIcon />
         </button>
@@ -938,7 +939,7 @@ export default function ConvidadosPage() {
                 exit="exit"
                 transition={{ duration: 0.25, ease: "easeOut" }}
               >
-                <h3 className="font-heading text-lg text-verde-noite mb-1">
+                <h3 className="font-heading text-lg text-midnight mb-1">
                   Mover {moveTarget.name}
                 </h3>
                 <p className="font-body text-sm text-gray-500 mb-4">
@@ -953,13 +954,13 @@ export default function ConvidadosPage() {
                         <button
                           key={targetList}
                           onClick={() => moveGuestToList(moveTarget, targetList)}
-                          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 hover:border-teal hover:bg-teal/5 transition-all text-left"
+                          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 hover:border-midnight hover:bg-midnight/5 transition-all text-left"
                         >
                           <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${meta.color}`}>
                             {meta.emoji}
                           </span>
                           <div>
-                            <p className="font-body text-sm font-medium text-verde-noite">{meta.label}</p>
+                            <p className="font-body text-sm font-medium text-midnight">{meta.label}</p>
                             <p className="font-body text-xs text-gray-400">{meta.desc}</p>
                           </div>
                         </button>
@@ -1003,7 +1004,7 @@ export default function ConvidadosPage() {
                 exit="exit"
                 transition={{ duration: 0.25, ease: "easeOut" }}
               >
-                <h2 className="font-heading text-xl text-verde-noite mb-1">
+                <h2 className="font-heading text-xl text-midnight mb-1">
                   {pickedContacts.length} contato{pickedContacts.length !== 1 ? "s" : ""} selecionado{pickedContacts.length !== 1 ? "s" : ""}
                 </h2>
                 <p className="font-body text-sm text-gray-500 mb-4">
@@ -1016,7 +1017,7 @@ export default function ConvidadosPage() {
                     <select
                       value={pickedCategory}
                       onChange={(e) => setPickedCategory(e.target.value as Category)}
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none appearance-none"
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none appearance-none"
                     >
                       {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
                         <option key={key} value={key}>{label}</option>
@@ -1028,7 +1029,7 @@ export default function ConvidadosPage() {
                     <select
                       value={pickedList}
                       onChange={(e) => setPickedList(e.target.value as GuestListType)}
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none appearance-none"
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none appearance-none"
                     >
                       <option value="A">{LIST_META.A.emoji} Lista Oficial</option>
                       <option value="B">{LIST_META.B.emoji} Lista Reserva</option>
@@ -1047,7 +1048,7 @@ export default function ConvidadosPage() {
                 )}
 
                 {cleaningNames && (
-                  <div className="flex items-center gap-2 mb-3 text-xs font-body text-teal">
+                  <div className="flex items-center gap-2 mb-3 text-xs font-body text-midnight">
                     <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
@@ -1064,8 +1065,8 @@ export default function ConvidadosPage() {
                           {c.suggested ? (
                             <>
                               <div className="flex items-center gap-2 flex-wrap">
-                                <p className="font-body text-sm font-semibold text-verde-noite">{c.suggested}</p>
-                                <span className="text-[10px] font-body bg-teal/10 text-teal px-2 py-0.5 rounded-full">sugerido pela IA</span>
+                                <p className="font-body text-sm font-semibold text-midnight">{c.suggested}</p>
+                                <span className="text-[10px] font-body bg-midnight/10 text-midnight px-2 py-0.5 rounded-full">sugerido pela IA</span>
                               </div>
                               <p className="font-body text-xs text-gray-400 line-through mt-0.5">{c.name}</p>
                               <div className="flex gap-3 mt-1">
@@ -1075,7 +1076,7 @@ export default function ConvidadosPage() {
                                       prev.map((p, j) => j === i ? { ...p, name: p.suggested!, suggested: undefined } : p)
                                     )
                                   }
-                                  className="text-[11px] font-body text-teal underline"
+                                  className="text-[11px] font-body text-midnight underline"
                                 >
                                   Aceitar sugestao
                                 </button>
@@ -1092,7 +1093,7 @@ export default function ConvidadosPage() {
                               </div>
                             </>
                           ) : (
-                            <p className="font-body text-sm font-medium text-verde-noite">{c.name}</p>
+                            <p className="font-body text-sm font-medium text-midnight">{c.name}</p>
                           )}
                           {c.phone && <p className="font-body text-xs text-gray-400 mt-0.5">{c.phone}</p>}
                         </div>
@@ -1117,7 +1118,7 @@ export default function ConvidadosPage() {
                   <button
                     onClick={confirmImportContacts}
                     disabled={importingContacts}
-                    className="flex-1 px-4 py-3 bg-teal text-white rounded-xl font-body font-medium hover:bg-teal/90 transition disabled:opacity-40"
+                    className="flex-1 px-4 py-3 bg-midnight text-white rounded-xl font-body font-medium hover:bg-midnight/90 transition disabled:opacity-40"
                   >
                     {importingContacts ? "Adicionando..." : `Adicionar na Lista ${pickedList}`}
                   </button>
@@ -1153,7 +1154,7 @@ export default function ConvidadosPage() {
                 exit="exit"
                 transition={{ duration: 0.25, ease: "easeOut" }}
               >
-                <h2 className="font-heading text-2xl text-verde-noite mb-6">
+                <h2 className="font-heading text-2xl text-midnight mb-6">
                   Novo Convidado
                 </h2>
 
@@ -1165,7 +1166,7 @@ export default function ConvidadosPage() {
                       type="text"
                       value={formName}
                       onChange={(e) => setFormName(e.target.value)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200"
                     />
                   </div>
                   <div>
@@ -1176,7 +1177,7 @@ export default function ConvidadosPage() {
                       value={formPhone}
                       onChange={(e) => setFormPhone(e.target.value)}
                       placeholder="(11) 99999-9999"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200"
                     />
                   </div>
                   <div>
@@ -1186,7 +1187,7 @@ export default function ConvidadosPage() {
                       type="email"
                       value={formEmail}
                       onChange={(e) => setFormEmail(e.target.value)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200"
                     />
                   </div>
 
@@ -1197,7 +1198,7 @@ export default function ConvidadosPage() {
                         id="guest-category"
                         value={formCategory}
                         onChange={(e) => setFormCategory(e.target.value as Category)}
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none appearance-none"
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none appearance-none"
                       >
                         {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
                           <option key={key} value={key}>{label}</option>
@@ -1210,7 +1211,7 @@ export default function ConvidadosPage() {
                         id="guest-list"
                         value={formList}
                         onChange={(e) => setFormList(e.target.value as GuestListType)}
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none appearance-none"
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none appearance-none"
                       >
                         <option value="A">{LIST_META.A.emoji} Oficial</option>
                         <option value="B">{LIST_META.B.emoji} Reserva</option>
@@ -1225,7 +1226,7 @@ export default function ConvidadosPage() {
                       id="guest-status"
                       value={formStatus}
                       onChange={(e) => setFormStatus(e.target.value as Status)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200 appearance-none"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200 appearance-none"
                     >
                       <option value="pendente">Pendente</option>
                       <option value="confirmado">Confirmado</option>
@@ -1246,7 +1247,7 @@ export default function ConvidadosPage() {
                     type="button"
                     onClick={handleAddGuest}
                     disabled={!formName.trim() || submitting}
-                    className="flex-1 px-4 py-3 bg-copper text-white rounded-xl font-body font-medium hover:bg-copper/90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-3 bg-gold text-white rounded-xl font-body font-medium hover:bg-gold/90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {submitting ? "Adicionando..." : "Adicionar"}
                   </button>

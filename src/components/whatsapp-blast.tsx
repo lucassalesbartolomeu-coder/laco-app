@@ -291,7 +291,7 @@ export default function WhatsAppBlast({
               <WhatsAppIcon className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="font-heading text-lg text-verde-noite leading-tight">WhatsApp em Massa</h2>
+              <h2 className="font-heading text-lg text-midnight leading-tight">WhatsApp em Massa</h2>
               <p className="font-body text-xs text-gray-400">
                 {step === 1 && "Passo 1 de 3 — Selecionar convidados"}
                 {step === 2 && "Passo 2 de 3 — Compor mensagem"}
@@ -323,9 +323,9 @@ export default function WhatsAppBlast({
               <div className="flex gap-2 mb-4">
                 <button
                   onClick={() => selectByList("A")}
-                  className="flex-1 px-3 py-2 rounded-xl border border-gray-200 hover:border-teal hover:bg-teal/5 transition text-left"
+                  className="flex-1 px-3 py-2 rounded-xl border border-gray-200 hover:border-midnight hover:bg-midnight/5 transition text-left"
                 >
-                  <p className="font-body text-xs font-semibold text-teal">👑 Lista A</p>
+                  <p className="font-body text-xs font-semibold text-midnight">👑 Lista A</p>
                   <p className="font-body text-[11px] text-gray-400">{listACnt} com telefone</p>
                 </button>
                 <button
@@ -361,7 +361,7 @@ export default function WhatsAppBlast({
                     onClick={() => setFilterTab(key)}
                     className={`flex-1 px-3 py-1.5 rounded-lg font-body text-sm font-medium transition ${
                       filterTab === key
-                        ? "bg-white text-verde-noite shadow-sm"
+                        ? "bg-white text-midnight shadow-sm"
                         : "text-gray-500 hover:text-gray-700"
                     }`}
                   >
@@ -378,7 +378,7 @@ export default function WhatsAppBlast({
                     onClick={() => setListFilter(l)}
                     className={`flex-1 px-2 py-1 rounded-lg font-body text-xs font-medium transition ${
                       listFilter === l
-                        ? "bg-white text-verde-noite shadow-sm"
+                        ? "bg-white text-midnight shadow-sm"
                         : "text-gray-400 hover:text-gray-600"
                     }`}
                   >
@@ -395,7 +395,7 @@ export default function WhatsAppBlast({
                   onChange={toggleSelectAll}
                   className="w-4 h-4 accent-green-600 rounded"
                 />
-                <span className="font-body text-sm font-semibold text-verde-noite flex-1">
+                <span className="font-body text-sm font-semibold text-midnight flex-1">
                   Selecionar todos visíveis
                 </span>
                 <span className="font-body text-xs text-gray-400">
@@ -432,7 +432,7 @@ export default function WhatsAppBlast({
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <p className="font-body text-sm font-medium text-verde-noite truncate">
+                          <p className="font-body text-sm font-medium text-midnight truncate">
                             {guest.name}
                           </p>
                           {wasSent && (
@@ -498,7 +498,7 @@ export default function WhatsAppBlast({
                       key={tag}
                       onClick={() => insertVariable(tag)}
                       title={desc}
-                      className="px-2.5 py-1 rounded-lg bg-teal/10 text-teal font-body text-xs font-medium hover:bg-teal/20 transition"
+                      className="px-2.5 py-1 rounded-lg bg-midnight/10 text-midnight font-body text-xs font-medium hover:bg-midnight/20 transition"
                     >
                       {tag}
                     </button>
@@ -508,14 +508,14 @@ export default function WhatsAppBlast({
 
               {/* Textarea */}
               <div>
-                <label className="block font-body text-sm font-medium text-verde-noite mb-2">
+                <label className="block font-body text-sm font-medium text-midnight mb-2">
                   Mensagem
                 </label>
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   rows={8}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none resize-none transition"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl font-body text-sm text-midnight bg-white focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none resize-none transition"
                 />
                 <div className="flex items-center justify-between mt-1">
                   <p className="font-body text-xs text-gray-400">
@@ -547,7 +547,7 @@ export default function WhatsAppBlast({
                   <p className="font-body text-xs text-gray-500">
                     Preparando {Math.min(sendingProgress + 5, sendingTotal)} de {sendingTotal}...
                   </p>
-                  <p className="font-body text-xs text-teal font-medium">
+                  <p className="font-body text-xs text-midnight font-medium">
                     {sendingTotal > 0 ? Math.round((Math.min(sendingProgress + 5, sendingTotal) / sendingTotal) * 100) : 0}%
                   </p>
                 </div>
@@ -606,7 +606,7 @@ export default function WhatsAppBlast({
                   ✓
                 </div>
                 <div>
-                  <p className="font-heading text-lg text-verde-noite">
+                  <p className="font-heading text-lg text-midnight">
                     {sentOk} mensagem{sentOk !== 1 ? "s" : ""} enviada{sentOk !== 1 ? "s" : ""}
                   </p>
                   {sentFail > 0 && (
@@ -632,7 +632,7 @@ export default function WhatsAppBlast({
                       {r.sent ? "✓" : "✗"}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="font-body text-sm font-medium text-verde-noite truncate">{r.name}</p>
+                      <p className="font-body text-sm font-medium text-midnight truncate">{r.name}</p>
                       <p className="font-body text-xs text-gray-400 truncate">
                         {r.phone ?? "Sem telefone"}
                       </p>
@@ -652,7 +652,7 @@ export default function WhatsAppBlast({
             <div className="px-6 py-4 border-t border-gray-100 flex-shrink-0">
               <button
                 onClick={onClose}
-                className="w-full px-5 py-2.5 bg-verde-noite text-white rounded-xl font-body font-medium text-sm hover:bg-verde-noite/90 transition"
+                className="w-full px-5 py-2.5 bg-midnight text-white rounded-xl font-body font-medium text-sm hover:bg-midnight/90 transition"
               >
                 Fechar
               </button>

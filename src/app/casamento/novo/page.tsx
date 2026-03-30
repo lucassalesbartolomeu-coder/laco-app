@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -38,9 +38,9 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
           <div
             className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-body font-semibold transition-all duration-300 ${
               step < currentStep
-                ? "bg-copper text-white"
+                ? "bg-gold text-white"
                 : step === currentStep
-                ? "bg-teal text-white"
+                ? "bg-midnight text-white"
                 : "border-2 border-gray-300 text-gray-400"
             }`}
           >
@@ -49,7 +49,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
           {i < 2 && (
             <div
               className={`w-12 sm:w-20 h-0.5 transition-all duration-300 ${
-                step < currentStep ? "bg-copper" : "bg-gray-300"
+                step < currentStep ? "bg-gold" : "bg-gray-300"
               }`}
             />
           )}
@@ -80,11 +80,11 @@ function FloatingInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder=" "
-        className="peer w-full px-4 pt-6 pb-2 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
+        className="peer w-full px-4 pt-6 pb-2 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200"
       />
       <label
         htmlFor={id}
-        className="absolute left-4 top-4 text-gray-400 font-body text-sm transition-all duration-200 pointer-events-none peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-teal peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs"
+        className="absolute left-4 top-4 text-gray-400 font-body text-sm transition-all duration-200 pointer-events-none peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-midnight peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs"
       >
         {label}
       </label>
@@ -138,8 +138,8 @@ export default function NovoCasamentoPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -193,9 +193,9 @@ export default function NovoCasamentoPage() {
   const isStep3Valid = weddingDate !== "";
 
   return (
-    <div className="min-h-screen bg-off-white py-10 px-4">
+    <div className="min-h-screen bg-ivory py-10 px-4">
       <div className="max-w-2xl mx-auto">
-        <h1 className="font-heading text-3xl sm:text-4xl text-verde-noite text-center mb-2">
+        <h1 className="font-heading text-3xl sm:text-4xl text-midnight text-center mb-2">
           Novo Casamento
         </h1>
         <p className="font-body text-gray-500 text-center mb-8">
@@ -220,7 +220,7 @@ export default function NovoCasamentoPage() {
                 exit="exit"
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               >
-                <h2 className="font-heading text-2xl text-verde-noite mb-6">
+                <h2 className="font-heading text-2xl text-midnight mb-6">
                   O Casal
                 </h2>
                 <div className="space-y-5">
@@ -250,7 +250,7 @@ export default function NovoCasamentoPage() {
                 exit="exit"
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               >
-                <h2 className="font-heading text-2xl text-verde-noite mb-6">
+                <h2 className="font-heading text-2xl text-midnight mb-6">
                   O Casamento
                 </h2>
                 <div className="space-y-5">
@@ -272,13 +272,13 @@ export default function NovoCasamentoPage() {
                         id="state"
                         value={state}
                         onChange={(e) => setState(e.target.value)}
-                        className={`w-full px-4 pt-6 pb-2 border border-gray-300 rounded-xl font-body bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200 appearance-none ${
-                          state ? "text-verde-noite" : "text-transparent"
+                        className={`w-full px-4 pt-6 pb-2 border border-gray-300 rounded-xl font-body bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200 appearance-none ${
+                          state ? "text-midnight" : "text-transparent"
                         }`}
                       >
                         <option value="" disabled />
                         {BRAZILIAN_STATES.map((uf) => (
-                          <option key={uf} value={uf} className="text-verde-noite">
+                          <option key={uf} value={uf} className="text-midnight">
                             {uf}
                           </option>
                         ))}
@@ -287,7 +287,7 @@ export default function NovoCasamentoPage() {
                         htmlFor="state"
                         className={`absolute left-4 pointer-events-none font-body transition-all duration-200 ${
                           state
-                            ? "top-1.5 text-xs text-teal"
+                            ? "top-1.5 text-xs text-midnight"
                             : "top-4 text-base text-gray-400"
                         }`}
                       >
@@ -311,7 +311,7 @@ export default function NovoCasamentoPage() {
                           onClick={() => setStyle(s.id)}
                           className={`flex flex-col items-center justify-center gap-1 p-4 rounded-xl border-2 transition-all duration-200 font-body text-sm ${
                             style === s.id
-                              ? "border-teal bg-teal/5 text-verde-noite"
+                              ? "border-midnight bg-midnight/5 text-midnight"
                               : "border-gray-200 text-gray-500 hover:border-gray-300"
                           }`}
                         >
@@ -335,7 +335,7 @@ export default function NovoCasamentoPage() {
                 exit="exit"
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               >
-                <h2 className="font-heading text-2xl text-verde-noite mb-6">
+                <h2 className="font-heading text-2xl text-midnight mb-6">
                   Detalhes
                 </h2>
                 <div className="space-y-6">
@@ -345,11 +345,11 @@ export default function NovoCasamentoPage() {
                       type="date"
                       value={weddingDate}
                       onChange={(e) => setWeddingDate(e.target.value)}
-                      className="w-full px-4 pt-6 pb-2 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition-all duration-200"
+                      className="w-full px-4 pt-6 pb-2 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200"
                     />
                     <label
                       htmlFor="weddingDate"
-                      className="absolute left-4 top-1.5 text-xs text-teal font-body pointer-events-none"
+                      className="absolute left-4 top-1.5 text-xs text-midnight font-body pointer-events-none"
                     >
                       Data do casamento
                     </label>
@@ -360,7 +360,7 @@ export default function NovoCasamentoPage() {
                       <label className="font-body text-sm text-gray-500">
                         Estimativa de convidados
                       </label>
-                      <span className="font-body text-lg font-semibold text-verde-noite">
+                      <span className="font-body text-lg font-semibold text-midnight">
                         {estimatedGuests}
                       </span>
                     </div>
@@ -373,7 +373,7 @@ export default function NovoCasamentoPage() {
                       onChange={(e) =>
                         setEstimatedGuests(Number(e.target.value))
                       }
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal"
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-midnight"
                     />
                     <div className="flex justify-between font-body text-xs text-gray-400 mt-1">
                       <span>50</span>
@@ -386,7 +386,7 @@ export default function NovoCasamentoPage() {
                       <label className="font-body text-sm text-gray-500">
                         Orçamento estimado
                       </label>
-                      <span className="font-body text-lg font-semibold text-verde-noite">
+                      <span className="font-body text-lg font-semibold text-midnight">
                         {formatCurrency(estimatedBudget)}
                       </span>
                     </div>
@@ -399,7 +399,7 @@ export default function NovoCasamentoPage() {
                       onChange={(e) =>
                         setEstimatedBudget(Number(e.target.value))
                       }
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal"
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-midnight"
                     />
                     <div className="flex justify-between font-body text-xs text-gray-400 mt-1">
                       <span>R$ 30.000</span>
@@ -417,7 +417,7 @@ export default function NovoCasamentoPage() {
             <button
               type="button"
               onClick={goBack}
-              className="px-6 py-3 border-2 border-copper text-copper rounded-xl font-body font-medium hover:bg-copper/5 transition-all duration-200"
+              className="px-6 py-3 border-2 border-gold text-gold rounded-xl font-body font-medium hover:bg-gold/5 transition-all duration-200"
             >
               Voltar
             </button>
@@ -433,7 +433,7 @@ export default function NovoCasamentoPage() {
                 (step === 1 && !isStep1Valid) ||
                 (step === 2 && !isStep2Valid)
               }
-              className="px-6 py-3 bg-copper text-white rounded-xl font-body font-medium hover:bg-copper/90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-6 py-3 bg-gold text-white rounded-xl font-body font-medium hover:bg-gold/90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Próximo
             </button>
@@ -442,7 +442,7 @@ export default function NovoCasamentoPage() {
               type="button"
               onClick={handleSubmit}
               disabled={!isStep3Valid || submitting}
-              className="px-6 py-3 bg-copper text-white rounded-xl font-body font-medium hover:bg-copper/90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-6 py-3 bg-gold text-white rounded-xl font-body font-medium hover:bg-gold/90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {submitting ? "Criando..." : "Criar meu casamento"}
             </button>

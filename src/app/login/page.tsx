@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -107,11 +107,11 @@ function LoginForm() {
   const isRegister = mode === "register";
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
+    <div className="min-h-screen bg-fog flex flex-col">
       {/* Banner sutil quando vem via indicação */}
       {refCode && isRegister && (
-        <div className="w-full bg-[#2C6B5E]/10 border-b border-[#2C6B5E]/20 py-2.5 px-4 text-center">
-          <p className="font-body text-sm text-[#2C6B5E]">
+        <div className="w-full bg-[#1A1F3A]/10 border-b border-[#1A1F3A]/20 py-2.5 px-4 text-center">
+          <p className="font-body text-sm text-[#1A1F3A]">
             Você foi indicado para o Laço! Crie sua conta gratuita abaixo.
           </p>
         </div>
@@ -119,7 +119,7 @@ function LoginForm() {
 
       {/* Minimal nav */}
       <nav className="px-6 py-5">
-        <Link href="/" className="font-logo text-2xl font-semibold text-verde-noite tracking-wide">
+        <Link href="/" className="font-display text-2xl font-semibold text-midnight tracking-wide">
           Laço
         </Link>
       </nav>
@@ -129,10 +129,10 @@ function LoginForm() {
 
           {/* Header */}
           <div className="text-center mb-10">
-            <h1 className="font-heading text-4xl font-semibold text-verde-noite mb-2">
+            <h1 className="font-heading text-4xl font-semibold text-midnight mb-2">
               {mode === "login" ? "Bem-vindo de volta" : "Comece agora"}
             </h1>
-            <p className="font-body text-verde-noite/55 text-base">
+            <p className="font-body text-midnight/55 text-base">
               {mode === "login"
                 ? "Entre na sua conta para continuar"
                 : "Crie sua conta gratuitamente"}
@@ -146,8 +146,8 @@ function LoginForm() {
               onClick={() => setUserType("couple")}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-body text-sm font-medium transition-all ${
                 userType === "couple"
-                  ? "bg-verde-noite text-white shadow-sm"
-                  : "text-verde-noite/50 hover:text-verde-noite"
+                  ? "bg-midnight text-white shadow-sm"
+                  : "text-midnight/50 hover:text-midnight"
               }`}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -160,8 +160,8 @@ function LoginForm() {
               onClick={() => setUserType("planner")}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-body text-sm font-medium transition-all ${
                 userType === "planner"
-                  ? "bg-verde-noite text-white shadow-sm"
-                  : "text-verde-noite/50 hover:text-verde-noite"
+                  ? "bg-midnight text-white shadow-sm"
+                  : "text-midnight/50 hover:text-midnight"
               }`}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -180,8 +180,8 @@ function LoginForm() {
                 onClick={() => { setMode("login"); setError(""); }}
                 className={`pb-3 mr-6 font-body text-sm font-medium border-b-2 transition-all -mb-px ${
                   mode === "login"
-                    ? "border-teal text-teal"
-                    : "border-transparent text-verde-noite/40 hover:text-verde-noite/60"
+                    ? "border-midnight text-midnight"
+                    : "border-transparent text-midnight/40 hover:text-midnight/60"
                 }`}
               >
                 Entrar
@@ -191,8 +191,8 @@ function LoginForm() {
                 onClick={() => { setMode("register"); setError(""); }}
                 className={`pb-3 font-body text-sm font-medium border-b-2 transition-all -mb-px ${
                   mode === "register"
-                    ? "border-teal text-teal"
-                    : "border-transparent text-verde-noite/40 hover:text-verde-noite/60"
+                    ? "border-midnight text-midnight"
+                    : "border-transparent text-midnight/40 hover:text-midnight/60"
                 }`}
               >
                 Criar conta
@@ -203,7 +203,7 @@ function LoginForm() {
               {/* Name field — register only */}
               {isRegister && (
                 <div>
-                  <label className="block font-body text-sm font-medium text-verde-noite/70 mb-1.5">
+                  <label className="block font-body text-sm font-medium text-midnight/70 mb-1.5">
                     Seu nome
                   </label>
                   <input
@@ -214,7 +214,7 @@ function LoginForm() {
                     minLength={2}
                     maxLength={50}
                     autoComplete="name"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-verde-noite placeholder-verde-noite/30 focus:border-teal focus:ring-2 focus:ring-teal/10 outline-none transition"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-midnight placeholder-stone/30 focus:border-midnight focus:ring-2 focus:ring-midnight/10 outline-none transition"
                     placeholder={isPlanner ? "Ex: Mariana Silva" : "Ex: Ana"}
                   />
                 </div>
@@ -223,7 +223,7 @@ function LoginForm() {
               {/* Company name — planner + register only */}
               {isRegister && isPlanner && (
                 <div>
-                  <label className="block font-body text-sm font-medium text-verde-noite/70 mb-1.5">
+                  <label className="block font-body text-sm font-medium text-midnight/70 mb-1.5">
                     Nome da empresa
                   </label>
                   <input
@@ -231,14 +231,14 @@ function LoginForm() {
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     autoComplete="organization"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-verde-noite placeholder-verde-noite/30 focus:border-teal focus:ring-2 focus:ring-teal/10 outline-none transition"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-midnight placeholder-stone/30 focus:border-midnight focus:ring-2 focus:ring-midnight/10 outline-none transition"
                     placeholder="Nome do seu escritório ou empresa"
                   />
                 </div>
               )}
 
               <div>
-                <label className="block font-body text-sm font-medium text-verde-noite/70 mb-1.5">
+                <label className="block font-body text-sm font-medium text-midnight/70 mb-1.5">
                   Email
                 </label>
                 <input
@@ -247,18 +247,18 @@ function LoginForm() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-verde-noite placeholder-verde-noite/30 focus:border-teal focus:ring-2 focus:ring-teal/10 outline-none transition"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-midnight placeholder-stone/30 focus:border-midnight focus:ring-2 focus:ring-midnight/10 outline-none transition"
                   placeholder="seu@email.com"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block font-body text-sm font-medium text-verde-noite/70">
+                  <label className="block font-body text-sm font-medium text-midnight/70">
                     Senha
                   </label>
                   {mode === "login" && (
-                    <Link href="/recuperar-senha" className="font-body text-xs text-teal hover:underline">
+                    <Link href="/recuperar-senha" className="font-body text-xs text-midnight hover:underline">
                       Esqueci minha senha
                     </Link>
                   )}
@@ -270,7 +270,7 @@ function LoginForm() {
                   required
                   minLength={6}
                   autoComplete={mode === "login" ? "current-password" : "new-password"}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-verde-noite placeholder-verde-noite/30 focus:border-teal focus:ring-2 focus:ring-teal/10 outline-none transition"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-midnight placeholder-stone/30 focus:border-midnight focus:ring-2 focus:ring-midnight/10 outline-none transition"
                   placeholder={mode === "register" ? "Mínimo 6 caracteres" : "••••••••"}
                 />
               </div>
@@ -287,7 +287,7 @@ function LoginForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-copper text-white rounded-xl font-body font-medium hover:bg-copper/90 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-1"
+                className="w-full py-3.5 bg-gold text-white rounded-xl font-body font-medium hover:bg-gold/90 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-1"
               >
                 {loading
                   ? "Aguarde..."
@@ -299,7 +299,7 @@ function LoginForm() {
               {/* Divider */}
               <div className="relative flex items-center gap-3 py-1">
                 <div className="flex-1 h-px bg-gray-100" />
-                <span className="font-body text-xs text-verde-noite/30 flex-shrink-0">ou continue com</span>
+                <span className="font-body text-xs text-midnight/30 flex-shrink-0">ou continue com</span>
                 <div className="flex-1 h-px bg-gray-100" />
               </div>
 
@@ -309,7 +309,7 @@ function LoginForm() {
                   type="button"
                   disabled
                   aria-label="Entrar com Google — em breve"
-                  className="w-full flex items-center justify-center gap-3 py-3 rounded-xl border border-gray-200 bg-white font-body text-sm font-medium text-verde-noite/40 cursor-not-allowed select-none"
+                  className="w-full flex items-center justify-center gap-3 py-3 rounded-xl border border-gray-200 bg-white font-body text-sm font-medium text-midnight/40 cursor-not-allowed select-none"
                 >
                   {/* Google "G" logo */}
                   <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" aria-hidden="true">
@@ -337,7 +337,7 @@ function LoginForm() {
                   Continuar com Google
                 </button>
                 {/* Tooltip */}
-                <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-verde-noite px-3 py-1.5 font-body text-xs text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+                <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-midnight px-3 py-1.5 font-body text-xs text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100">
                   Em breve
                   <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-verde-noite" />
                 </span>
@@ -346,9 +346,9 @@ function LoginForm() {
 
             {/* Planner full register notice */}
             {isPlanner && isRegister && (
-              <p className="font-body text-xs text-verde-noite/40 text-center mt-4 leading-relaxed">
+              <p className="font-body text-xs text-midnight/40 text-center mt-4 leading-relaxed">
                 Para cadastro profissional completo com perfil público,{" "}
-                <Link href="/registro/cerimonialista" className="text-teal hover:underline">
+                <Link href="/registro/cerimonialista" className="text-midnight hover:underline">
                   use este formulário
                 </Link>
               </p>
@@ -356,12 +356,12 @@ function LoginForm() {
           </div>
 
           {/* Switch mode link */}
-          <p className="text-center font-body text-sm text-verde-noite/50 mt-6">
+          <p className="text-center font-body text-sm text-midnight/50 mt-6">
             {mode === "login" ? "Não tem conta?" : "Já tem conta?"}{" "}
             <button
               type="button"
               onClick={switchMode}
-              className="text-teal hover:underline font-medium"
+              className="text-midnight hover:underline font-medium"
             >
               {mode === "login" ? "Criar agora, é grátis" : "Entrar"}
             </button>
@@ -369,7 +369,7 @@ function LoginForm() {
 
           {/* Trust note */}
           {isRegister && (
-            <p className="text-center font-body text-xs text-verde-noite/35 mt-4">
+            <p className="text-center font-body text-xs text-midnight/35 mt-4">
               Sem cartão de crédito · Cancele quando quiser
             </p>
           )}
@@ -383,8 +383,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-cream flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        <div className="min-h-screen bg-fog flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

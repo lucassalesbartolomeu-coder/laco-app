@@ -3,9 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
 import BottomNav from "@/components/bottom-nav";
-import ShareWhatsApp from "@/components/share-whatsapp";
 
 /* ─── Icons ─────────────────────────────────────────────────────────── */
 
@@ -42,8 +40,8 @@ export default function MeuSitePage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -74,14 +72,14 @@ export default function MeuSitePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-off-white pb-24">
+    <div className="min-h-screen bg-ivory pb-24">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-verde-noite via-verde-noite/95 to-teal/80 px-5 pt-12 pb-10 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-48 h-48 bg-copper/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-teal/20 rounded-full blur-2xl" />
+      <div className="bg-gradient-to-br from-midnight via-midnight/95 to-midnight/80 px-5 pt-12 pb-10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-gold/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-midnight/20 rounded-full blur-2xl" />
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
-            <GlobeIcon className="w-5 h-5 text-copper" />
+            <GlobeIcon className="w-5 h-5 text-gold" />
             <span className="font-body text-xs text-white/60 uppercase tracking-wider">Site + Identidade</span>
           </div>
           <h1 className="font-heading text-3xl text-white mb-2">Meu Site</h1>
@@ -98,7 +96,7 @@ export default function MeuSitePage() {
           <div className="p-5 border-b border-gray-50">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="font-heading text-xl text-verde-noite">Site do Casamento</h2>
+                <h2 className="font-heading text-xl text-midnight">Site do Casamento</h2>
                 <p className="font-body text-xs text-gray-400 mt-0.5">Nivel antoniaebruno.com — gerado pelo Laco</p>
               </div>
               <span className="px-2.5 py-1 rounded-full text-[10px] font-body font-semibold bg-amber-100 text-amber-700">Em breve</span>
@@ -128,7 +126,7 @@ export default function MeuSitePage() {
                 <div key={f.label} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2.5">
                   <span className="text-base">{f.icon}</span>
                   <div>
-                    <p className="font-body text-xs font-medium text-verde-noite">{f.label}</p>
+                    <p className="font-body text-xs font-medium text-midnight">{f.label}</p>
                     <p className="font-body text-[10px] text-gray-400">{f.desc}</p>
                   </div>
                 </div>
@@ -140,7 +138,7 @@ export default function MeuSitePage() {
         {/* ── Identidade Visual (Papelaria) ────────────────────────── */}
         <div>
           <div className="flex items-center justify-between mb-3 px-1">
-            <h2 className="font-heading text-xl text-verde-noite">Identidade Visual</h2>
+            <h2 className="font-heading text-xl text-midnight">Identidade Visual</h2>
             <span className="font-body text-xs text-gray-400">Kit completo de papelaria</span>
           </div>
 
@@ -150,11 +148,11 @@ export default function MeuSitePage() {
                 {item.available ? (
                   <Link
                     href={`${base}/identity-kit`}
-                    className="flex items-center gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-teal/20 transition-all active:scale-[0.98]"
+                    className="flex items-center gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-midnight/20 transition-all active:scale-[0.98]"
                   >
                     <span className="text-2xl flex-shrink-0">{item.icon}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="font-body text-sm font-medium text-verde-noite">{item.label}</p>
+                      <p className="font-body text-sm font-medium text-midnight">{item.label}</p>
                       <p className="font-body text-xs text-gray-400">{item.desc}</p>
                     </div>
                     <ArrowIcon className="w-4 h-4 text-gray-300 flex-shrink-0" />
@@ -163,7 +161,7 @@ export default function MeuSitePage() {
                   <div className="flex items-center gap-4 bg-white/60 rounded-2xl border border-gray-100/50 p-4 opacity-60">
                     <span className="text-2xl flex-shrink-0 grayscale">{item.icon}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="font-body text-sm font-medium text-verde-noite">{item.label}</p>
+                      <p className="font-body text-sm font-medium text-midnight">{item.label}</p>
                       <p className="font-body text-xs text-gray-400">{item.desc}</p>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
@@ -177,8 +175,8 @@ export default function MeuSitePage() {
           </div>
 
           {/* Reference note */}
-          <div className="mt-4 bg-copper/5 border border-copper/10 rounded-2xl p-4">
-            <p className="font-body text-xs text-copper/80">
+          <div className="mt-4 bg-gold/5 border border-gold/10 rounded-2xl p-4">
+            <p className="font-body text-xs text-gold/80">
               <strong>Inspiracao:</strong> Cada item gera uma peca visual no estilo de atelies premium como
               Atelie Digitale — aquarelas feitas a mao, nanquim, monogramas. So que gerado automaticamente
               com IA a partir das informacoes do seu casamento.

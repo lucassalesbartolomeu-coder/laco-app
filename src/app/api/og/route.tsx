@@ -1,4 +1,4 @@
-import { ImageResponse } from "next/og";
+﻿import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 
 export const runtime = "edge";
@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
       ? "#8B9E6E"
       : style === "rustico"
         ? "#B07D5A"
-        : "#C4734F"; // classico / default → copper
+        : "#C9A96E"; // classico / default → gold
 
   return new ImageResponse(
     (
@@ -29,18 +29,18 @@ export async function GET(req: NextRequest) {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#1A3A33",
+          backgroundColor: "#1A1F3A",
           position: "relative",
           fontFamily: "Georgia, serif",
         }}
       >
-        {/* Gradient fundo verde-noite → teal */}
+        {/* Gradient fundo verde-noite → midnight */}
         <div
           style={{
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(135deg, #1A3A33 0%, #1A3A33 45%, #2C6B5E 100%)",
+              "linear-gradient(135deg, #1A1F3A 0%, #1A1F3A 45%, #1A1F3A 100%)",
           }}
         />
 
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
             position: "absolute",
             inset: 0,
             background:
-              "radial-gradient(ellipse 70% 55% at 50% 50%, rgba(196,115,79,0.10) 0%, transparent 70%)",
+              "radial-gradient(ellipse 70% 55% at 50% 50%, rgba(201,169,110,0.10) 0%, transparent 70%)",
           }}
         />
 
@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
             top: "28px",
             left: "80px",
             fontSize: "22px",
-            color: "#F5F3EF",
+            color: "#F0EDE7",
             opacity: 0.5,
             fontFamily: "Georgia, serif",
             letterSpacing: "0.05em",
@@ -129,7 +129,7 @@ export async function GET(req: NextRequest) {
             style={{
               fontSize: names.length > 20 ? "68px" : "88px",
               fontFamily: "Georgia, serif",
-              color: "#F5F3EF",
+              color: "#F0EDE7",
               lineHeight: 1.05,
               letterSpacing: "-0.01em",
               fontWeight: 700,
@@ -198,7 +198,7 @@ export async function GET(req: NextRequest) {
             <div
               style={{
                 fontSize: "20px",
-                color: "#F5F3EF",
+                color: "#F0EDE7",
                 opacity: 0.6,
                 fontFamily: "Georgia, serif",
                 letterSpacing: "0.08em",

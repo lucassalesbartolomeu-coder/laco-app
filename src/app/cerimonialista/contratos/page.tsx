@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -221,7 +221,7 @@ export default function ContratosPage() {
   if (authStatus === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -230,14 +230,14 @@ export default function ContratosPage() {
     <div className="p-6 lg:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-heading text-3xl text-verde-noite">Contratos</h1>
-          <p className="font-body text-sm text-verde-noite/50 mt-1">
+          <h1 className="font-heading text-3xl text-midnight">Contratos</h1>
+          <p className="font-body text-sm text-midnight/50 mt-1">
             Crie, envie e gerencie contratos eletrônicos com os casais
           </p>
         </div>
         <button
           onClick={() => setModalOpen(true)}
-          className="px-5 py-2.5 bg-copper text-white rounded-xl font-body text-sm font-medium hover:bg-copper/90 transition"
+          className="px-5 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition"
         >
           Novo contrato
         </button>
@@ -245,8 +245,8 @@ export default function ContratosPage() {
 
       {contracts.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-sm p-16 text-center">
-          <p className="font-heading text-xl text-verde-noite/40 mb-2">Nenhum contrato ainda</p>
-          <p className="font-body text-sm text-verde-noite/30">
+          <p className="font-heading text-xl text-midnight/40 mb-2">Nenhum contrato ainda</p>
+          <p className="font-body text-sm text-midnight/30">
             Clique em &quot;Novo contrato&quot; para criar o primeiro
           </p>
         </div>
@@ -257,12 +257,12 @@ export default function ContratosPage() {
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-1">
-                    <h3 className="font-heading text-lg text-verde-noite">
+                    <h3 className="font-heading text-lg text-midnight">
                       {c.wedding.partnerName1} &amp; {c.wedding.partnerName2}
                     </h3>
                     <StatusBadge contract={c} />
                   </div>
-                  <p className="font-body text-sm text-verde-noite/50">
+                  <p className="font-body text-sm text-midnight/50">
                     Data: {formatDate(c.wedding.weddingDate)} · Criado em {formatDate(c.createdAt)}
                     {c.value != null && ` · ${formatCurrency(c.value)}`}
                   </p>
@@ -272,7 +272,7 @@ export default function ContratosPage() {
                   {!c.signedByPlanner && (
                     <button
                       onClick={() => handleSignPlanner(c)}
-                      className="px-3 py-1.5 bg-teal text-white rounded-lg font-body text-xs font-medium hover:bg-teal/90 transition"
+                      className="px-3 py-1.5 bg-midnight text-white rounded-lg font-body text-xs font-medium hover:bg-midnight/90 transition"
                     >
                       Assinar
                     </button>
@@ -283,14 +283,14 @@ export default function ContratosPage() {
                         navigator.clipboard.writeText(getCoupleLink(c.id));
                         toast.success("Link copiado!");
                       }}
-                      className="px-3 py-1.5 border border-teal text-teal rounded-lg font-body text-xs font-medium hover:bg-teal/5 transition"
+                      className="px-3 py-1.5 border border-midnight text-midnight rounded-lg font-body text-xs font-medium hover:bg-midnight/5 transition"
                     >
                       Copiar link do casal
                     </button>
                   )}
                   <button
                     onClick={() => downloadPdf(c.id)}
-                    className="px-3 py-1.5 border border-gray-300 text-verde-noite/70 rounded-lg font-body text-xs hover:bg-gray-50 transition"
+                    className="px-3 py-1.5 border border-gray-300 text-midnight/70 rounded-lg font-body text-xs hover:bg-gray-50 transition"
                   >
                     PDF
                   </button>
@@ -309,12 +309,12 @@ export default function ContratosPage() {
               {(c.signedByPlanner || c.signedByCouple) && (
                 <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap gap-4">
                   {c.signedByPlanner && (
-                    <p className="font-body text-xs text-verde-noite/50">
+                    <p className="font-body text-xs text-midnight/50">
                       Cerimonialista: <strong>{c.plannerName}</strong> em {formatDate(c.plannerSignedAt)}
                     </p>
                   )}
                   {c.signedByCouple && (
-                    <p className="font-body text-xs text-verde-noite/50">
+                    <p className="font-body text-xs text-midnight/50">
                       Casal: <strong>{c.coupleName}</strong> em {formatDate(c.coupleSignedAt)}
                     </p>
                   )}
@@ -332,15 +332,15 @@ export default function ContratosPage() {
             className="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="font-heading text-xl text-verde-noite mb-4">Novo Contrato</h2>
+            <h2 className="font-heading text-xl text-midnight mb-4">Novo Contrato</h2>
 
             <div className="space-y-4">
               <div>
-                <label className="block font-body text-sm mb-1 text-verde-noite/70">Casamento *</label>
+                <label className="block font-body text-sm mb-1 text-midnight/70">Casamento *</label>
                 <select
                   value={newWeddingId}
                   onChange={(e) => setNewWeddingId(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight outline-none"
                 >
                   <option value="">Selecione um casamento</option>
                   {weddings.map((w) => (
@@ -352,26 +352,26 @@ export default function ContratosPage() {
               </div>
 
               <div>
-                <label className="block font-body text-sm mb-1 text-verde-noite/70">Valor (opcional)</label>
+                <label className="block font-body text-sm mb-1 text-midnight/70">Valor (opcional)</label>
                 <input
                   type="number"
                   value={newValue}
                   onChange={(e) => setNewValue(e.target.value)}
                   placeholder="Ex: 5000"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight outline-none"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block font-body text-sm text-verde-noite/70">Termos do Contrato *</label>
+                  <label className="block font-body text-sm text-midnight/70">Termos do Contrato *</label>
                   <div className="flex gap-2">
                     {CONTRACT_TEMPLATES.map((t) => (
                       <button
                         key={t.label}
                         type="button"
                         onClick={() => setNewTerms(t.text)}
-                        className="px-2 py-1 text-xs font-body text-teal border border-teal/40 rounded-lg hover:bg-teal/5 transition"
+                        className="px-2 py-1 text-xs font-body text-midnight border border-midnight/40 rounded-lg hover:bg-midnight/5 transition"
                       >
                         {t.label}
                       </button>
@@ -383,7 +383,7 @@ export default function ContratosPage() {
                   onChange={(e) => setNewTerms(e.target.value)}
                   rows={12}
                   placeholder="Cole ou edite os termos do contrato..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal outline-none resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl font-body text-sm text-midnight bg-white focus:border-midnight outline-none resize-none"
                 />
               </div>
 
@@ -394,14 +394,14 @@ export default function ContratosPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => { setModalOpen(false); setCreateError(""); }}
-                  className="flex-1 py-2.5 border border-gray-300 text-verde-noite/70 rounded-xl font-body text-sm hover:bg-gray-50 transition"
+                  className="flex-1 py-2.5 border border-gray-300 text-midnight/70 rounded-xl font-body text-sm hover:bg-gray-50 transition"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleCreate}
                   disabled={creating || !newWeddingId || !newTerms.trim()}
-                  className="flex-1 py-2.5 bg-copper text-white rounded-xl font-body text-sm font-medium hover:bg-copper/90 transition disabled:opacity-50"
+                  className="flex-1 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition disabled:opacity-50"
                 >
                   {creating ? "Criando..." : "Criar Contrato"}
                 </button>
@@ -415,8 +415,8 @@ export default function ContratosPage() {
       {signModalContract && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-            <h2 className="font-heading text-xl text-verde-noite mb-2">Assinar Contrato</h2>
-            <p className="font-body text-sm text-verde-noite/60 mb-5">
+            <h2 className="font-heading text-xl text-midnight mb-2">Assinar Contrato</h2>
+            <p className="font-body text-sm text-midnight/60 mb-5">
               Digite seu nome completo para assinar digitalmente.
             </p>
 
@@ -426,12 +426,12 @@ export default function ContratosPage() {
                 value={signerName}
                 onChange={(e) => setSignerName(e.target.value)}
                 placeholder="Seu nome completo"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal outline-none"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight outline-none"
               />
 
               <label className="flex items-start gap-3 cursor-pointer">
-                <input type="checkbox" required className="mt-1 accent-teal w-4 h-4" />
-                <span className="font-body text-sm text-verde-noite/70">
+                <input type="checkbox" required className="mt-1 accent-midnight w-4 h-4" />
+                <span className="font-body text-sm text-midnight/70">
                   Declaro que li, entendi e aceito os termos deste contrato
                 </span>
               </label>
@@ -439,14 +439,14 @@ export default function ContratosPage() {
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setSignModalContract(null)}
-                  className="flex-1 py-2.5 border border-gray-300 text-verde-noite/70 rounded-xl font-body text-sm hover:bg-gray-50 transition"
+                  className="flex-1 py-2.5 border border-gray-300 text-midnight/70 rounded-xl font-body text-sm hover:bg-gray-50 transition"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={submitSign}
                   disabled={signing || !signerName.trim()}
-                  className="flex-1 py-2.5 bg-teal text-white rounded-xl font-body text-sm font-medium hover:bg-teal/90 transition disabled:opacity-50"
+                  className="flex-1 py-2.5 bg-midnight text-white rounded-xl font-body text-sm font-medium hover:bg-midnight/90 transition disabled:opacity-50"
                 >
                   {signing ? "Assinando..." : "Confirmar Assinatura"}
                 </button>

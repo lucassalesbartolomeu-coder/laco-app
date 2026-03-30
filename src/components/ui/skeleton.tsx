@@ -13,7 +13,7 @@ export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        "rounded-md bg-gradient-to-r from-verde-noite/8 via-verde-noite/4 to-verde-noite/8 bg-[length:200%_100%] animate-shimmer",
+        "rounded-md bg-gradient-to-r from-midnight/8 via-midnight/4 to-midnight/8 bg-[length:200%_100%] animate-shimmer",
         className
       )}
       aria-hidden="true"
@@ -26,9 +26,9 @@ export function Skeleton({ className }: SkeletonProps) {
 /** Skeleton genérico para páginas com cards de conteúdo */
 export function PageSkeleton() {
   return (
-    <div className="min-h-screen bg-off-white pb-24">
+    <div className="min-h-screen bg-ivory pb-24">
       {/* Header bar */}
-      <div className="bg-verde-noite px-4 pt-12 pb-6">
+      <div className="bg-midnight px-4 pt-12 pb-6">
         <Skeleton className="h-4 w-24 bg-white/20 mb-2" />
         <Skeleton className="h-7 w-48 bg-white/30" />
       </div>
@@ -64,9 +64,9 @@ export function PageSkeleton() {
 /** Skeleton para dashboard do casal */
 export function DashboardSkeleton() {
   return (
-    <div className="min-h-screen bg-off-white pb-24">
+    <div className="min-h-screen bg-ivory pb-24">
       {/* Header */}
-      <div className="bg-verde-noite px-4 pt-12 pb-8">
+      <div className="bg-midnight px-4 pt-12 pb-8">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <Skeleton className="h-3 w-20 bg-white/20" />
@@ -100,9 +100,9 @@ export function DashboardSkeleton() {
 /** Skeleton para lista de itens (convidados, fornecedores, etc) */
 export function ListSkeleton({ rows = 6 }: { rows?: number }) {
   return (
-    <div className="min-h-screen bg-off-white pb-24">
+    <div className="min-h-screen bg-ivory pb-24">
       {/* Header */}
-      <div className="bg-verde-noite px-4 pt-12 pb-6">
+      <div className="bg-midnight px-4 pt-12 pb-6">
         <Skeleton className="h-4 w-20 bg-white/20 mb-2" />
         <Skeleton className="h-7 w-44 bg-white/30 mb-1" />
         <Skeleton className="h-3 w-32 bg-white/20" />
@@ -141,8 +141,8 @@ export function ListSkeleton({ rows = 6 }: { rows?: number }) {
 /** Skeleton para páginas de orçamento/financeiro com gráficos */
 export function FinanceSkeleton() {
   return (
-    <div className="min-h-screen bg-off-white pb-24">
-      <div className="bg-verde-noite px-4 pt-12 pb-6">
+    <div className="min-h-screen bg-ivory pb-24">
+      <div className="bg-midnight px-4 pt-12 pb-6">
         <Skeleton className="h-4 w-20 bg-white/20 mb-2" />
         <Skeleton className="h-7 w-36 bg-white/30" />
       </div>
@@ -162,6 +162,50 @@ export function FinanceSkeleton() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+/** Hero section skeleton — dark header + content area */
+export function HeroSkeleton() {
+  return (
+    <div className="min-h-screen bg-ivory pb-24">
+      <div className="bg-midnight px-4 pt-12 pb-8">
+        <Skeleton className="h-4 w-24 bg-white/20 mb-2" />
+        <Skeleton className="h-8 w-48 bg-white/30 mb-2" />
+        <Skeleton className="h-4 w-64 bg-white/20" />
+      </div>
+      <div className="px-4 py-6 space-y-4">
+        <Skeleton className="h-24 w-full rounded-2xl" />
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-16 w-full rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Card skeleton — single card block */
+export function CardSkeleton({ className }: { className?: string }) {
+  return (
+    <div className={cn("bg-white rounded-2xl shadow-card p-4 space-y-3", className)}>
+      <Skeleton className="h-5 w-1/2" />
+      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="h-4 w-2/3" />
+    </div>
+  );
+}
+
+/** List item skeleton — single row */
+export function ListItemSkeleton({ className }: { className?: string }) {
+  return (
+    <div className={cn("flex items-center gap-3 p-4 bg-white rounded-xl shadow-sm", className)}>
+      <Skeleton className="h-10 w-10 rounded-full flex-shrink-0" />
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-4 w-2/3" />
+        <Skeleton className="h-3 w-1/2" />
+      </div>
+      <Skeleton className="h-6 w-20 rounded-full" />
     </div>
   );
 }

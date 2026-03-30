@@ -26,9 +26,9 @@ export default function BlogPage() {
   const posts = getAllPosts();
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-fog">
       {/* Header */}
-      <header className="bg-verde-noite text-white py-20 px-4 text-center">
+      <header className="bg-midnight text-white py-20 px-4 text-center">
         <Link href="/" className="font-heading text-2xl text-white/70 hover:text-white transition mb-6 inline-block">
           Laço
         </Link>
@@ -40,7 +40,7 @@ export default function BlogPage() {
 
       <main className="max-w-5xl mx-auto px-4 py-16">
         {posts.length === 0 ? (
-          <p className="text-center font-body text-verde-noite/50">
+          <p className="text-center font-body text-midnight/50">
             Nenhum artigo publicado ainda.
           </p>
         ) : (
@@ -52,27 +52,27 @@ export default function BlogPage() {
                 className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden block"
               >
                 {/* Cover placeholder */}
-                <div className="h-40 bg-gradient-to-br from-teal/20 to-verde-noite/20 flex items-center justify-center">
-                  <span className="font-logo text-4xl text-verde-noite/20">Laço</span>
+                <div className="h-40 bg-gradient-to-br from-midnight/20 to-midnight/20 flex items-center justify-center">
+                  <span className="font-display text-4xl text-midnight/20">Laço</span>
                 </div>
 
                 <div className="p-5">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2 py-0.5 bg-teal/10 text-teal text-xs font-body rounded-full">
+                    <span className="px-2 py-0.5 bg-midnight/10 text-midnight text-xs font-body rounded-full">
                       {post.category}
                     </span>
-                    <span className="font-body text-xs text-verde-noite/40">{post.readTime}</span>
+                    <span className="font-body text-xs text-midnight/40">{post.readTime}</span>
                   </div>
 
-                  <h2 className="font-heading text-lg text-verde-noite leading-tight mb-2 group-hover:text-teal transition-colors line-clamp-2">
+                  <h2 className="font-heading text-lg text-midnight leading-tight mb-2 group-hover:text-midnight transition-colors line-clamp-2">
                     {post.title}
                   </h2>
 
-                  <p className="font-body text-sm text-verde-noite/60 line-clamp-3 mb-4">
+                  <p className="font-body text-sm text-midnight/60 line-clamp-3 mb-4">
                     {post.excerpt}
                   </p>
 
-                  <p className="font-body text-xs text-verde-noite/40">
+                  <p className="font-body text-xs text-midnight/40">
                     {formatDate(post.date)}
                   </p>
                 </div>

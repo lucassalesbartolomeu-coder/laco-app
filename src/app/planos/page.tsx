@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 
 export default function PlanosPage() {
   return (
-    <main className="font-body text-verde-noite antialiased">
+    <main className="font-body text-midnight antialiased">
       {/* ─── NAV ─── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-verde-noite/95 backdrop-blur-sm border-b border-white/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-midnight/95 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
-          <Link href="/home" className="font-logo text-2xl text-white tracking-tight">
+          <Link href="/home" className="font-display text-2xl text-white tracking-tight">
             Laço
           </Link>
           <div className="flex items-center gap-5">
@@ -32,7 +32,7 @@ export default function PlanosPage() {
             </Link>
             <Link
               href="/registro"
-              className="font-body text-sm bg-copper text-white px-4 py-2 rounded-lg hover:bg-copper/90 transition font-medium"
+              className="font-body text-sm bg-gold text-white px-4 py-2 rounded-lg hover:bg-gold/90 transition font-medium"
             >
               Criar conta grátis
             </Link>
@@ -41,7 +41,7 @@ export default function PlanosPage() {
       </nav>
 
       {/* ─── HERO ─── */}
-      <section className="relative bg-verde-noite overflow-hidden pt-14">
+      <section className="relative bg-midnight overflow-hidden pt-14">
         {/* Background texture */}
         <div
           className="absolute inset-0 opacity-[0.03]"
@@ -51,11 +51,11 @@ export default function PlanosPage() {
           }}
         />
         {/* Gradient orbs */}
-        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-teal/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-copper/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-midnight/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 max-w-5xl mx-auto px-5 py-20 text-center">
-          <p className="font-body text-xs text-copper uppercase tracking-widest mb-4">
+          <p className="font-body text-xs text-gold uppercase tracking-widest mb-4">
             Planos &amp; Preços
           </p>
           <h1 className="font-heading text-5xl md:text-6xl text-white leading-tight mb-4">
@@ -70,14 +70,14 @@ export default function PlanosPage() {
       </section>
 
       {/* ─── PLANS + TOGGLE + TABLE + FAQ (client island) ─── */}
-      <section className="bg-cream py-16 px-5">
+      <section className="bg-fog py-16 px-5">
         <div className="max-w-5xl mx-auto">
           <BillingToggle />
         </div>
       </section>
 
       {/* ─── TRUST BAR ─── */}
-      <section className="bg-white border-y border-verde-noite/8 py-10 px-5">
+      <section className="bg-white border-y border-midnight/8 py-10 px-5">
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
             { n: "2.400+", label: "casamentos criados" },
@@ -86,15 +86,15 @@ export default function PlanosPage() {
             { n: "0", label: "taxa de cancelamento" },
           ].map((stat) => (
             <div key={stat.label}>
-              <p className="font-heading text-3xl text-verde-noite">{stat.n}</p>
-              <p className="font-body text-xs text-verde-noite/50 mt-0.5">{stat.label}</p>
+              <p className="font-heading text-3xl text-midnight">{stat.n}</p>
+              <p className="font-body text-xs text-midnight/50 mt-0.5">{stat.label}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ─── FINAL CTA ─── */}
-      <section className="bg-verde-noite py-20 px-5 text-center">
+      <section className="bg-midnight py-20 px-5 text-center">
         <div className="max-w-2xl mx-auto">
           <h2 className="font-heading text-4xl text-white mb-4">
             Ainda tem dúvidas?
@@ -106,7 +106,7 @@ export default function PlanosPage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/registro?plano=pro"
-              className="inline-flex items-center justify-center gap-2 bg-copper text-white font-body font-semibold text-base px-8 py-4 rounded-xl hover:bg-copper/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center justify-center gap-2 bg-gold text-white font-body font-semibold text-base px-8 py-4 rounded-xl hover:bg-gold/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               Começar trial Pro grátis
               <svg
@@ -133,11 +133,11 @@ export default function PlanosPage() {
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer className="bg-verde-noite border-t border-white/10 py-10 px-5">
+      <footer className="bg-midnight border-t border-white/10 py-10 px-5">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
             <div>
-              <Link href="/home" className="font-logo text-2xl text-white">
+              <Link href="/home" className="font-display text-2xl text-white">
                 Laço
               </Link>
               <p className="font-body text-xs text-white/30 mt-1">

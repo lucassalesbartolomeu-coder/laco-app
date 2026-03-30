@@ -32,7 +32,7 @@ function luminance(hex: string): number {
 
 /** Retorna cor legível (escura ou clara) sobre um fundo. */
 function readableOn(bg: string): string {
-  return luminance(bg) > 0.35 ? "#1A3A33" : "#FFFFFF";
+  return luminance(bg) > 0.35 ? "#1A1F3A" : "#FFFFFF";
 }
 
 /** Gera as iniciais do casal (ex: "A" + "B" = "AB"). */
@@ -68,9 +68,9 @@ function styleDescription(style?: string): string {
 // ─── Defaults ─────────────────────────────────────────────────
 
 const DEFAULT_PALETTE = {
-  primary: "#1A3A33",
-  secondary: "#2C6B5E",
-  accent: "#C4734F",
+  primary: "#1A1F3A",
+  secondary: "#1A1F3A",
+  accent: "#C9A96E",
   background: "#FFF8F0",
 };
 

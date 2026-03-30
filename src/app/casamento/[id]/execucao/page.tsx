@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -58,8 +58,8 @@ export default function ExecucaoPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -71,7 +71,7 @@ export default function ExecucaoPage() {
   const sections = [
     {
       category: "Convidados",
-      color: "bg-teal",
+      color: "bg-midnight",
       items: [
         { href: `${base}/convidados`, icon: "👥", label: "Lista de Convidados", desc: "Lista A/B/C, categorias, status RSVP", badge: guestStats.total > 0 ? `${guestStats.total}` : null },
         { href: `${base}/importar`, icon: "📲", label: "Importar Contatos", desc: "Da agenda, CSV, ou manual", badge: null },
@@ -80,7 +80,7 @@ export default function ExecucaoPage() {
     },
     {
       category: "Financeiro",
-      color: "bg-copper",
+      color: "bg-gold",
       items: [
         { href: `${base}/orcamento`, icon: "💰", label: "Orcamento Real", desc: "Custos reais vs estimados, parcelas, pagamentos", badge: null },
         { href: `${base}/presentes`, icon: "🎁", label: "Lista de Presentes", desc: "Presentes recebidos, valores, agradecimentos", badge: null },
@@ -88,14 +88,14 @@ export default function ExecucaoPage() {
     },
     {
       category: "Fornecedores",
-      color: "bg-verde-noite",
+      color: "bg-midnight",
       items: [
         { href: `${base}/fornecedores`, icon: "🏢", label: "Meus Fornecedores", desc: "Contratos, orcamentos, status de cada fornecedor", badge: null },
       ],
     },
     {
       category: "Dia D",
-      color: "bg-teal",
+      color: "bg-midnight",
       items: [
         { href: `${base}/timeline`, icon: "🗓️", label: "Timeline do Dia", desc: "Cronograma completo do grande dia, passo a passo", badge: null },
       ],
@@ -103,9 +103,9 @@ export default function ExecucaoPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-off-white pb-24">
+    <div className="min-h-screen bg-ivory pb-24">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-copper/90 via-copper to-copper/80 px-5 pt-12 pb-10 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-gold/90 via-gold to-gold/80 px-5 pt-12 pb-10 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
@@ -125,11 +125,11 @@ export default function ExecucaoPage() {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="font-body text-xs text-gray-400">Confirmacao de presenca</span>
-              <span className="font-body text-xs font-semibold text-teal">{pctConfirmed}%</span>
+              <span className="font-body text-xs font-semibold text-midnight">{pctConfirmed}%</span>
             </div>
             <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-teal to-green-400 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-midnight to-green-400 rounded-full transition-all duration-500"
                 style={{ width: `${pctConfirmed}%` }}
               />
             </div>
@@ -148,23 +148,23 @@ export default function ExecucaoPage() {
           <div key={section.category}>
             <div className="flex items-center gap-2 mb-3 px-1">
               <div className={`w-2 h-2 rounded-full ${section.color}`} />
-              <h2 className="font-heading text-base text-verde-noite">{section.category}</h2>
+              <h2 className="font-heading text-base text-midnight">{section.category}</h2>
             </div>
             <div className="space-y-2">
               {section.items.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-teal/20 transition-all active:scale-[0.98]"
+                  className="flex items-center gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-midnight/20 transition-all active:scale-[0.98]"
                 >
                   <span className="text-2xl flex-shrink-0">{item.icon}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-body text-sm font-medium text-verde-noite">{item.label}</p>
+                    <p className="font-body text-sm font-medium text-midnight">{item.label}</p>
                     <p className="font-body text-xs text-gray-400">{item.desc}</p>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {item.badge && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-body font-semibold bg-teal/10 text-teal">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-body font-semibold bg-midnight/10 text-midnight">
                         {item.badge}
                       </span>
                     )}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -33,7 +33,7 @@ const CATEGORIES = [
   "convites","doces","bolo","maquiagem","celebrante","carro","outros",
 ];
 
-const HIGHLIGHT_COLORS = ["#2C6B5E", "#C4734F", "#6B5B95"];
+const HIGHLIGHT_COLORS = ["#1A1F3A", "#C9A96E", "#6B5B95"];
 
 const fadeUp = {
   initial: { opacity: 0, y: 12 },
@@ -156,7 +156,7 @@ export default function CompararOrcamentosPage() {
   if (authStatus === "loading") {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -164,8 +164,8 @@ export default function CompararOrcamentosPage() {
   return (
     <div className="p-6 lg:p-8 max-w-7xl mx-auto">
       <motion.div {...fadeUp} className="mb-8">
-        <h1 className="font-heading text-3xl text-verde-noite">Comparar Orçamentos</h1>
-        <p className="font-body text-sm text-verde-noite/50 mt-1">
+        <h1 className="font-heading text-3xl text-midnight">Comparar Orçamentos</h1>
+        <p className="font-body text-sm text-midnight/50 mt-1">
           Selecione até 3 orçamentos da mesma categoria para comparar lado a lado
         </p>
       </motion.div>
@@ -173,11 +173,11 @@ export default function CompararOrcamentosPage() {
       {/* Filters */}
       <motion.div {...fadeUp} transition={{ delay: 0.05 }} className="bg-white rounded-2xl shadow-sm p-4 mb-6 flex flex-wrap gap-3">
         <div>
-          <label className="block font-body text-xs text-verde-noite/40 mb-1">Casamento</label>
+          <label className="block font-body text-xs text-midnight/40 mb-1">Casamento</label>
           <select
             value={selectedWeddingId}
             onChange={(e) => setSelectedWeddingId(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-gray-200 font-body text-sm focus:ring-2 focus:ring-teal/30 focus:border-teal outline-none transition"
+            className="px-3 py-2 rounded-lg border border-gray-200 font-body text-sm focus:ring-2 focus:ring-midnight/30 focus:border-midnight outline-none transition"
           >
             {weddings.map((w) => (
               <option key={w.id} value={w.id}>{w.couple}</option>
@@ -185,11 +185,11 @@ export default function CompararOrcamentosPage() {
           </select>
         </div>
         <div>
-          <label className="block font-body text-xs text-verde-noite/40 mb-1">Categoria</label>
+          <label className="block font-body text-xs text-midnight/40 mb-1">Categoria</label>
           <select
             value={filterCategory}
             onChange={(e) => { setFilterCategory(e.target.value); setSelectedIds([]); }}
-            className="px-3 py-2 rounded-lg border border-gray-200 font-body text-sm focus:ring-2 focus:ring-teal/30 focus:border-teal outline-none transition"
+            className="px-3 py-2 rounded-lg border border-gray-200 font-body text-sm focus:ring-2 focus:ring-midnight/30 focus:border-midnight outline-none transition"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>{c === "todos" ? "Todas as categorias" : c}</option>
@@ -199,7 +199,7 @@ export default function CompararOrcamentosPage() {
         {selectedIds.length > 0 && (
           <button
             onClick={() => setSelectedIds([])}
-            className="self-end px-3 py-2 text-sm font-body text-verde-noite/50 hover:text-verde-noite transition border border-gray-200 rounded-lg"
+            className="self-end px-3 py-2 text-sm font-body text-midnight/50 hover:text-midnight transition border border-gray-200 rounded-lg"
           >
             Limpar seleção
           </button>
@@ -208,22 +208,22 @@ export default function CompararOrcamentosPage() {
 
       {/* Quote cards list */}
       <motion.div {...fadeUp} transition={{ delay: 0.08 }} className="mb-6">
-        <h2 className="font-heading text-lg text-verde-noite mb-3">
+        <h2 className="font-heading text-lg text-midnight mb-3">
           Orçamentos disponíveis
-          <span className="ml-2 font-body text-sm text-verde-noite/40">
+          <span className="ml-2 font-body text-sm text-midnight/40">
             ({filteredQuotes.length}) — selecione até 3
           </span>
         </h2>
 
         {loading ? (
           <div className="flex justify-center py-12">
-            <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
           </div>
         ) : filteredQuotes.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
-            <p className="font-body text-verde-noite/40">
+            <p className="font-body text-midnight/40">
               Nenhum orçamento encontrado.{" "}
-              <a href="/cerimonialista/importar-orcamento" className="text-teal hover:underline">
+              <a href="/cerimonialista/importar-orcamento" className="text-midnight hover:underline">
                 Importar orçamento
               </a>
             </p>
@@ -242,7 +242,7 @@ export default function CompararOrcamentosPage() {
                   className={`p-4 rounded-xl border-2 text-left transition ${
                     isSelected
                       ? "shadow-md"
-                      : "border-gray-100 bg-white hover:border-teal/30"
+                      : "border-gray-100 bg-white hover:border-midnight/30"
                   }`}
                   style={isSelected ? { borderColor: color, backgroundColor: `${color}08` } : {}}
                 >
@@ -260,17 +260,17 @@ export default function CompararOrcamentosPage() {
                       </span>
                     )}
                   </div>
-                  <p className="font-body font-semibold text-verde-noite text-sm truncate">
+                  <p className="font-body font-semibold text-midnight text-sm truncate">
                     {quote.vendor.name}
                   </p>
-                  <p className="font-body text-xs text-verde-noite/50 capitalize mt-0.5">
+                  <p className="font-body text-xs text-midnight/50 capitalize mt-0.5">
                     {quote.vendor.category}
                   </p>
-                  <p className="font-heading text-lg text-verde-noite mt-2">
+                  <p className="font-heading text-lg text-midnight mt-2">
                     {formatCurrency(quote.totalValue)}
                   </p>
                   {quote.paymentTerms && (
-                    <p className="font-body text-xs text-verde-noite/40 mt-1 truncate">
+                    <p className="font-body text-xs text-midnight/40 mt-1 truncate">
                       {quote.paymentTerms}
                     </p>
                   )}
@@ -288,7 +288,7 @@ export default function CompararOrcamentosPage() {
                     </span>
                   </div>
                   {/* Item count */}
-                  <p className="font-body text-xs text-verde-noite/30 mt-1">
+                  <p className="font-body text-xs text-midnight/30 mt-1">
                     {(quote.items as QuoteItem[])?.length || 0} itens
                   </p>
                 </motion.button>
@@ -308,14 +308,14 @@ export default function CompararOrcamentosPage() {
             className="bg-white rounded-2xl shadow-sm overflow-hidden"
           >
             <div className="p-5 border-b border-gray-100">
-              <h2 className="font-heading text-xl text-verde-noite">Comparação lado a lado</h2>
+              <h2 className="font-heading text-xl text-midnight">Comparação lado a lado</h2>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-100">
-                    <th className="p-4 text-left font-body text-xs text-verde-noite/40 uppercase tracking-wide w-40">
+                    <th className="p-4 text-left font-body text-xs text-midnight/40 uppercase tracking-wide w-40">
                       Item
                     </th>
                     {comparing.map((q, i) => (
@@ -326,10 +326,10 @@ export default function CompararOrcamentosPage() {
                         >
                           #{i + 1}
                         </div>
-                        <p className="font-body font-semibold text-verde-noite text-sm">
+                        <p className="font-body font-semibold text-midnight text-sm">
                           {q.vendor.name}
                         </p>
-                        <p className="font-body text-xs text-verde-noite/40">{q.vendor.category}</p>
+                        <p className="font-body text-xs text-midnight/40">{q.vendor.category}</p>
                       </th>
                     ))}
                   </tr>
@@ -344,13 +344,13 @@ export default function CompararOrcamentosPage() {
 
                     return (
                       <tr key={desc} className="hover:bg-gray-50 transition">
-                        <td className="p-4 font-body text-sm text-verde-noite/70 capitalize">{desc}</td>
+                        <td className="p-4 font-body text-sm text-midnight/70 capitalize">{desc}</td>
                         {comparing.map((q) => {
                           const item = findItem(q, desc);
                           if (!item) {
                             return (
                               <td key={q.id} className="p-4 text-center">
-                                <span className="font-body text-sm text-verde-noite/20">—</span>
+                                <span className="font-body text-sm text-midnight/20">—</span>
                               </td>
                             );
                           }
@@ -364,13 +364,13 @@ export default function CompararOrcamentosPage() {
                                     ? "bg-green-50 text-green-700"
                                     : isMax
                                     ? "bg-red-50 text-red-600"
-                                    : "text-verde-noite"
+                                    : "text-midnight"
                                 }`}
                               >
                                 {formatCurrency(item.total)}
                               </div>
                               {item.qty !== 1 && (
-                                <p className="font-body text-xs text-verde-noite/30 mt-0.5">
+                                <p className="font-body text-xs text-midnight/30 mt-0.5">
                                   {item.qty}x {formatCurrency(item.unitPrice)}
                                 </p>
                               )}
@@ -383,9 +383,9 @@ export default function CompararOrcamentosPage() {
 
                   {/* Condições de pagamento */}
                   <tr className="bg-gray-50/50">
-                    <td className="p-4 font-body text-sm text-verde-noite/40 font-medium">Condições</td>
+                    <td className="p-4 font-body text-sm text-midnight/40 font-medium">Condições</td>
                     {comparing.map((q) => (
-                      <td key={q.id} className="p-4 text-center font-body text-sm text-verde-noite/60">
+                      <td key={q.id} className="p-4 text-center font-body text-sm text-midnight/60">
                         {q.paymentTerms || "—"}
                       </td>
                     ))}
@@ -393,7 +393,7 @@ export default function CompararOrcamentosPage() {
 
                   {/* Total row */}
                   <tr className="border-t-2 border-gray-200">
-                    <td className="p-4 font-body font-semibold text-verde-noite">Total</td>
+                    <td className="p-4 font-body font-semibold text-midnight">Total</td>
                     {comparing.map((q) => {
                       const isMin = q.totalValue === minTotal && minTotal !== maxTotal;
                       const isMax = q.totalValue === maxTotal && minTotal !== maxTotal;
@@ -405,7 +405,7 @@ export default function CompararOrcamentosPage() {
                                 ? "bg-green-50 text-green-700"
                                 : isMax
                                 ? "bg-red-50 text-red-600"
-                                : "text-verde-noite"
+                                : "text-midnight"
                             }`}
                           >
                             {formatCurrency(q.totalValue)}
@@ -436,7 +436,7 @@ export default function CompararOrcamentosPage() {
                           className={`px-4 py-2 rounded-xl font-body text-sm transition ${
                             q.status === "contratado"
                               ? "bg-green-100 text-green-700 cursor-default"
-                              : "bg-teal text-white hover:bg-teal/90 disabled:opacity-50"
+                              : "bg-midnight text-white hover:bg-midnight/90 disabled:opacity-50"
                           }`}
                         >
                           {updatingVendor === q.vendorId
@@ -455,9 +455,9 @@ export default function CompararOrcamentosPage() {
             {/* Summary */}
             {comparing.length >= 2 && minTotal !== maxTotal && (
               <div className="p-4 border-t border-gray-100 bg-gray-50/50">
-                <p className="font-body text-sm text-verde-noite/60 text-center">
+                <p className="font-body text-sm text-midnight/60 text-center">
                   Diferença entre menor e maior orçamento:{" "}
-                  <strong className="text-verde-noite">{formatCurrency(maxTotal - minTotal)}</strong>
+                  <strong className="text-midnight">{formatCurrency(maxTotal - minTotal)}</strong>
                   {" "}({(((maxTotal - minTotal) / minTotal) * 100).toFixed(1)}% de variação)
                 </p>
               </div>
@@ -467,8 +467,8 @@ export default function CompararOrcamentosPage() {
       </AnimatePresence>
 
       {comparing.length === 1 && (
-        <div className="mt-4 p-4 bg-teal/5 border border-teal/20 rounded-xl text-center">
-          <p className="font-body text-sm text-teal">
+        <div className="mt-4 p-4 bg-midnight/5 border border-midnight/20 rounded-xl text-center">
+          <p className="font-body text-sm text-midnight">
             Selecione mais 1 orçamento para comparar (máximo 3)
           </p>
         </div>

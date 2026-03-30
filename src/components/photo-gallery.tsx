@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useCallback, useState, useRef } from "react";
 import Image from "next/image";
@@ -26,7 +26,7 @@ function EmptyState() {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 120 100"
-        className="w-32 h-auto text-verde-noite/20"
+        className="w-32 h-auto text-midnight/20"
         fill="none"
         aria-hidden="true"
       >
@@ -45,10 +45,10 @@ function EmptyState() {
         />
       </svg>
       <div className="text-center space-y-1">
-        <p className="font-body text-verde-noite/60 text-base font-medium">
+        <p className="font-body text-midnight/60 text-base font-medium">
           As fotos vão aparecer aqui em breve
         </p>
-        <p className="font-body text-verde-noite/35 text-sm">
+        <p className="font-body text-midnight/35 text-sm">
           Os noivos ainda estão preparando a galeria
         </p>
       </div>
@@ -140,7 +140,7 @@ export default function PhotoGallery({ photos }: PhotoGalleryProps) {
             key={photo.id}
             type="button"
             onClick={() => setLightboxIndex(idx)}
-            className="break-inside-avoid rounded-xl overflow-hidden relative group w-full block cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-copper"
+            className="break-inside-avoid rounded-xl overflow-hidden relative group w-full block cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
             aria-label={photo.caption ?? `Foto ${idx + 1}`}
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}

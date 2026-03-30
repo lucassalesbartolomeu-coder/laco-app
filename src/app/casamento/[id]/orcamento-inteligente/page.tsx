@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
@@ -37,9 +37,9 @@ interface CategoryWithIndex extends VendorCategory {
 function ProgressBar({ current, total }: { current: number; total: number }) {
   const percent = (current / total) * 100;
   return (
-    <div className="h-1 bg-off-white overflow-hidden">
+    <div className="h-1 bg-ivory overflow-hidden">
       <motion.div
-        className="h-full bg-gradient-to-r from-teal to-verde-noite"
+        className="h-full bg-gradient-to-r from-midnight to-midnight"
         initial={{ width: 0 }}
         animate={{ width: `${percent}%` }}
         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -60,7 +60,7 @@ function WelcomeStep({ onNext }: { onNext: (guests: number, region: Region) => v
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-gradient-to-br from-verde-noite to-teal/20 flex flex-col items-center justify-center px-4 py-8"
+      className="min-h-screen bg-gradient-to-br from-midnight to-midnight/20 flex flex-col items-center justify-center px-4 py-8"
     >
       <div className="max-w-md w-full space-y-8">
         {/* Hero illustration */}
@@ -78,9 +78,9 @@ function WelcomeStep({ onNext }: { onNext: (guests: number, region: Region) => v
         <div className="bg-white rounded-2xl p-6 space-y-6">
           {/* Guest count */}
           <div>
-            <label className="font-heading text-lg text-verde-noite mb-2 block">
+            <label className="font-heading text-lg text-midnight mb-2 block">
               Quantos convidados?
-              <span className="font-body text-teal ml-2">{guests}</span>
+              <span className="font-body text-midnight ml-2">{guests}</span>
             </label>
             <input
               type="range"
@@ -88,9 +88,9 @@ function WelcomeStep({ onNext }: { onNext: (guests: number, region: Region) => v
               max="500"
               value={guests}
               onChange={(e) => setGuests(Number(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal"
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-midnight"
             />
-            <div className="flex justify-between font-body text-xs text-verde-noite/40 mt-2">
+            <div className="flex justify-between font-body text-xs text-midnight/40 mt-2">
               <span>10</span>
               <span>500</span>
             </div>
@@ -103,13 +103,13 @@ function WelcomeStep({ onNext }: { onNext: (guests: number, region: Region) => v
                 const val = Number(e.target.value);
                 if (!isNaN(val) && val >= 10 && val <= 500) setGuests(val);
               }}
-              className="mt-3 w-full border border-gray-200 rounded-xl px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-teal/30"
+              className="mt-3 w-full border border-gray-200 rounded-xl px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-midnight/30"
             />
           </div>
 
           {/* Region select */}
           <div>
-            <label className="font-heading text-lg text-verde-noite mb-3 block">
+            <label className="font-heading text-lg text-midnight mb-3 block">
               Região do casamento
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -119,16 +119,16 @@ function WelcomeStep({ onNext }: { onNext: (guests: number, region: Region) => v
                   onClick={() => setRegion(r.id)}
                   className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition ${
                     region === r.id
-                      ? "border-copper bg-copper/5"
-                      : "border-gray-200 bg-gray-50 hover:border-copper/30"
+                      ? "border-gold bg-gold/5"
+                      : "border-gray-200 bg-gray-50 hover:border-gold/30"
                   }`}
                 >
                   <span className="text-3xl">{r.emoji}</span>
-                  <span className="font-body text-xs text-verde-noite text-center">{r.name}</span>
+                  <span className="font-body text-xs text-midnight text-center">{r.name}</span>
                 </button>
               ))}
             </div>
-            <p className="font-body text-xs text-verde-noite/40 mt-3">
+            <p className="font-body text-xs text-midnight/40 mt-3">
               📍 Sabendo de onde vêm seus convidados, calculamos custos de transporte e logística
               com precisão regional.
             </p>
@@ -138,7 +138,7 @@ function WelcomeStep({ onNext }: { onNext: (guests: number, region: Region) => v
           <button
             onClick={() => onNext(guests, region)}
             disabled={!isValid}
-            className="w-full bg-copper text-cream font-heading font-bold py-3 px-4 rounded-xl hover:bg-copper/90 transition disabled:opacity-40"
+            className="w-full bg-gold text-cream font-heading font-bold py-3 px-4 rounded-xl hover:bg-gold/90 transition disabled:opacity-40"
           >
             Começar
           </button>
@@ -206,14 +206,14 @@ function QuizStep({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -50 }}
       transition={{ duration: 0.3 }}
-      className="min-h-screen bg-off-white pb-32"
+      className="min-h-screen bg-ivory pb-32"
     >
       {/* Header */}
       <div className="sticky top-0 z-20 bg-white border-b border-gray-100">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
           <button
             onClick={onBack}
-            className="text-verde-noite/50 hover:text-verde-noite transition"
+            className="text-midnight/50 hover:text-midnight transition"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -225,7 +225,7 @@ function QuizStep({
             </svg>
           </button>
           <div className="text-center">
-            <p className="font-body text-xs text-verde-noite/50">
+            <p className="font-body text-xs text-midnight/50">
               Passo {stepIndex} de {totalSteps}
             </p>
           </div>
@@ -240,7 +240,7 @@ function QuizStep({
           <div className="flex items-center gap-3 mb-2">
             <span className="text-3xl">{cat.icon}</span>
             <div className="flex-1">
-              <h2 className="font-heading text-2xl text-verde-noite font-bold">{cat.name}</h2>
+              <h2 className="font-heading text-2xl text-midnight font-bold">{cat.name}</h2>
             </div>
             <div
               className={`px-3 py-1 rounded-full text-xs font-body font-semibold border ${classifColor[cat.classification]}`}
@@ -249,12 +249,12 @@ function QuizStep({
               {CLASSIFICATION_LABELS[cat.classification].name}
             </div>
           </div>
-          <p className="font-body text-sm text-verde-noite/70">{cat.description}</p>
+          <p className="font-body text-sm text-midnight/70">{cat.description}</p>
         </div>
 
         {/* Quiz question */}
         <div>
-          <p className="font-heading text-lg text-verde-noite mb-4">{cat.quizQuestion}</p>
+          <p className="font-heading text-lg text-midnight mb-4">{cat.quizQuestion}</p>
 
           {/* Option cards */}
           <div className="space-y-3">
@@ -266,15 +266,15 @@ function QuizStep({
                 onClick={() => onSelect(option.tier)}
                 className={`w-full p-4 rounded-2xl text-left transition ${
                   selectedTier === option.tier
-                    ? "border-2 border-copper bg-copper/5 shadow-md"
-                    : "border-2 border-gray-200 bg-white hover:border-copper/30"
+                    ? "border-2 border-gold bg-gold/5 shadow-md"
+                    : "border-2 border-gray-200 bg-white hover:border-gold/30"
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{option.emoji}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-body font-medium text-verde-noite">{option.label}</p>
-                    <p className="font-body text-xs text-verde-noite/50">
+                    <p className="font-body font-medium text-midnight">{option.label}</p>
+                    <p className="font-body text-xs text-midnight/50">
                       {TIER_LABELS[option.tier].emoji} {TIER_LABELS[option.tier].name}
                     </p>
                   </div>
@@ -289,16 +289,16 @@ function QuizStep({
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-teal/5 border border-teal/15 rounded-2xl p-4 space-y-2"
+            className="bg-midnight/5 border border-midnight/15 rounded-2xl p-4 space-y-2"
           >
-            <p className="font-body text-sm text-verde-noite">
+            <p className="font-body text-sm text-midnight">
               Faixa de preço estimada para sua região e grupo:
             </p>
-            <p className="font-heading text-2xl text-teal font-bold">
+            <p className="font-heading text-2xl text-midnight font-bold">
               R$ {selectedRange.min.toLocaleString("pt-BR", { maximumFractionDigits: 0 })} —{" "}
               {selectedRange.max.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
             </p>
-            <p className="font-body text-xs text-verde-noite/60">
+            <p className="font-body text-xs text-midnight/60">
               Isso representa ~{Math.round(cat.budgetPercentage)}% do orçamento médio de casamentos na sua região.
             </p>
           </motion.div>
@@ -310,11 +310,11 @@ function QuizStep({
             onClick={() => setExpandedTips(!expandedTips)}
             className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition"
           >
-            <span className="font-heading text-sm text-verde-noite font-semibold">
+            <span className="font-heading text-sm text-midnight font-semibold">
               💡 Dicas Profissionais
             </span>
             <svg
-              className={`w-4 h-4 text-verde-noite/50 transition ${expandedTips ? "rotate-180" : ""}`}
+              className={`w-4 h-4 text-midnight/50 transition ${expandedTips ? "rotate-180" : ""}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -331,8 +331,8 @@ function QuizStep({
             >
               {cat.proTips.map((tip, i) => (
                 <div key={i} className="flex gap-2">
-                  <span className="text-teal flex-shrink-0 font-bold">•</span>
-                  <p className="font-body text-sm text-verde-noite/70">{tip}</p>
+                  <span className="text-midnight flex-shrink-0 font-bold">•</span>
+                  <p className="font-body text-sm text-midnight/70">{tip}</p>
                 </div>
               ))}
             </motion.div>
@@ -345,14 +345,14 @@ function QuizStep({
         <div className="max-w-2xl mx-auto flex gap-3">
           <button
             onClick={onBack}
-            className="flex-1 border border-gray-200 text-verde-noite font-body font-medium py-2.5 px-4 rounded-xl hover:bg-gray-50 transition"
+            className="flex-1 border border-gray-200 text-midnight font-body font-medium py-2.5 px-4 rounded-xl hover:bg-gray-50 transition"
           >
             Voltar
           </button>
           <button
             onClick={onNext}
             disabled={!selectedTier}
-            className="flex-1 bg-copper text-cream font-body font-medium py-2.5 px-4 rounded-xl hover:bg-copper/90 transition disabled:opacity-40"
+            className="flex-1 bg-gold text-cream font-body font-medium py-2.5 px-4 rounded-xl hover:bg-gold/90 transition disabled:opacity-40"
           >
             Próximo
           </button>
@@ -394,13 +394,13 @@ function ResultsStep({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-off-white pb-32"
+      className="min-h-screen bg-ivory pb-32"
     >
       {/* Header */}
       <div className="sticky top-0 z-20 bg-white border-b border-gray-100">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="text-center flex-1">
-            <h1 className="font-heading text-2xl text-verde-noite font-bold">Seu Orçamento</h1>
+            <h1 className="font-heading text-2xl text-midnight font-bold">Seu Orçamento</h1>
           </div>
         </div>
         <ProgressBar current={100} total={100} />
@@ -409,7 +409,7 @@ function ResultsStep({
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
         {/* Total budget display */}
         {budget && (
-          <div className="bg-gradient-to-br from-verde-noite to-teal rounded-2xl text-cream p-6 text-center space-y-2">
+          <div className="bg-gradient-to-br from-midnight to-midnight rounded-2xl text-cream p-6 text-center space-y-2">
             <p className="font-body text-sm opacity-90">Orçamento Estimado</p>
             <p className="font-heading text-4xl font-bold">
               R$ {(budget.minTotal / 1000).toFixed(1)}k
@@ -423,7 +423,7 @@ function ResultsStep({
         {/* Budget breakdown chart */}
         {budget && (
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
-            <h2 className="font-heading text-lg text-verde-noite font-bold">Distribuição por Categoria</h2>
+            <h2 className="font-heading text-lg text-midnight font-bold">Distribuição por Categoria</h2>
 
             <svg viewBox="0 0 100 20" className="w-full h-auto" preserveAspectRatio="none">
               {(() => {
@@ -444,7 +444,7 @@ function ResultsStep({
                     legal_ter: "#FBBF24",
                     adicional: "#22C55E",
                   };
-                  const color = colorMap[cat.classification] || "#2C6B5E";
+                  const color = colorMap[cat.classification] || "#1A1F3A";
 
                   const element = (
                     <rect
@@ -507,7 +507,7 @@ function ResultsStep({
         {/* Category breakdown */}
         <div className="bg-white rounded-2xl overflow-hidden shadow-sm divide-y divide-gray-100">
           <div className="px-6 py-4 bg-gray-50">
-            <h3 className="font-heading text-sm text-verde-noite font-bold">Detalhamento Completo</h3>
+            <h3 className="font-heading text-sm text-midnight font-bold">Detalhamento Completo</h3>
           </div>
 
           {groups.map((group) => (
@@ -544,16 +544,16 @@ function ResultsStep({
                 return (
                   <div key={cat.id} className="px-6 py-3 flex items-center justify-between">
                     <div className="flex-1">
-                      <p className="font-body font-medium text-verde-noite">{cat.icon} {cat.name}</p>
-                      <p className="font-body text-xs text-verde-noite/50 mt-0.5">
+                      <p className="font-body font-medium text-midnight">{cat.icon} {cat.name}</p>
+                      <p className="font-body text-xs text-midnight/50 mt-0.5">
                         {TIER_LABELS[tier].emoji} {TIER_LABELS[tier].name}
                       </p>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="font-body font-semibold text-verde-noite">
+                      <p className="font-body font-semibold text-midnight">
                         R$ {min.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
                       </p>
-                      <p className="font-body text-xs text-verde-noite/50">
+                      <p className="font-body text-xs text-midnight/50">
                         a {max.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
                       </p>
                     </div>
@@ -565,43 +565,43 @@ function ResultsStep({
         </div>
 
         {/* Share chip */}
-        <div className="bg-copper/10 border border-copper/20 rounded-2xl px-4 py-3 flex items-center justify-between">
+        <div className="bg-gold/10 border border-gold/20 rounded-2xl px-4 py-3 flex items-center justify-between">
           <div className="flex-1 min-w-0">
-            <p className="font-body text-sm text-verde-noite font-medium truncate">
+            <p className="font-body text-sm text-midnight font-medium truncate">
               Seu casamento estimado: {shareUrl}
             </p>
-            <p className="font-body text-xs text-verde-noite/50">Feito no Laço</p>
+            <p className="font-body text-xs text-midnight/50">Feito no Laço</p>
           </div>
           <button
             onClick={() => {
               const text = `Seu casamento estimado: ${shareUrl} — Feito no Laço`;
               navigator.clipboard.writeText(text);
             }}
-            className="flex-shrink-0 ml-2 p-2 hover:bg-copper/20 rounded-lg transition"
+            className="flex-shrink-0 ml-2 p-2 hover:bg-gold/20 rounded-lg transition"
             title="Copiar para clipboard"
           >
-            <svg className="w-4 h-4 text-copper" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
           </button>
         </div>
 
         {/* Comparison with market */}
-        <div className="bg-teal/5 border border-teal/15 rounded-2xl p-4">
-          <p className="font-body text-sm text-verde-noite mb-3">
+        <div className="bg-midnight/5 border border-midnight/15 rounded-2xl p-4">
+          <p className="font-body text-sm text-midnight mb-3">
             <strong>Insights do Mercado:</strong>
           </p>
-          <ul className="space-y-2 font-body text-xs text-verde-noite/70">
+          <ul className="space-y-2 font-body text-xs text-midnight/70">
             <li className="flex gap-2">
-              <span className="text-teal flex-shrink-0">✓</span>
+              <span className="text-midnight flex-shrink-0">✓</span>
               <span>Sua faixa de preço está alinhada com o mercado brasileiro 2024-2026</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-teal flex-shrink-0">✓</span>
+              <span className="text-midnight flex-shrink-0">✓</span>
               <span>Lembre-se: preços podem variar até 30% conforme sazonalidade e demanda</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-teal flex-shrink-0">✓</span>
+              <span className="text-midnight flex-shrink-0">✓</span>
               <span>Reserve uma margem de contingência de 10-15% no seu orçamento</span>
             </li>
           </ul>
@@ -613,14 +613,14 @@ function ResultsStep({
         <div className="max-w-2xl mx-auto flex gap-3">
           <button
             onClick={onReset}
-            className="flex-1 border border-gray-200 text-verde-noite font-body font-medium py-2.5 px-4 rounded-xl hover:bg-gray-50 transition"
+            className="flex-1 border border-gray-200 text-midnight font-body font-medium py-2.5 px-4 rounded-xl hover:bg-gray-50 transition"
           >
             Refazer Simulação
           </button>
           <button
             onClick={onSave}
             disabled={isSaving}
-            className="flex-1 bg-copper text-cream font-body font-medium py-2.5 px-4 rounded-xl hover:bg-copper/90 transition disabled:opacity-40 flex items-center justify-center gap-2"
+            className="flex-1 bg-gold text-cream font-body font-medium py-2.5 px-4 rounded-xl hover:bg-gold/90 transition disabled:opacity-40 flex items-center justify-center gap-2"
           >
             {isSaving ? (
               <>
@@ -787,8 +787,8 @@ export default function OrcamentoInteligentePage() {
   // Render steps
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }

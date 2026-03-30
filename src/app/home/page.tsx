@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -160,11 +160,11 @@ function AnimatedCounter({
 
 export default function HomePage() {
   return (
-    <main className="font-body text-verde-noite antialiased">
+    <main className="font-body text-midnight antialiased">
       {/* ─── NAV ─── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-verde-noite/95 backdrop-blur-sm border-b border-white/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-midnight/95 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
-          <span className="font-logo text-2xl text-white tracking-tight">Laço</span>
+          <span className="font-display text-2xl text-white tracking-tight">Laço</span>
           <div className="flex items-center gap-3">
             <Link
               href="/login"
@@ -174,7 +174,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/registro"
-              className="font-body text-sm bg-copper text-white px-4 py-2 rounded-lg hover:bg-copper/90 transition font-medium"
+              className="font-body text-sm bg-gold text-white px-4 py-2 rounded-lg hover:bg-gold/90 transition font-medium"
             >
               Criar conta grátis
             </Link>
@@ -187,7 +187,7 @@ export default function HomePage() {
         className="relative min-h-screen flex items-center overflow-hidden pt-14"
         style={{
           background:
-            "linear-gradient(135deg, #1A3A33 0%, #1A3A33 55%, #2C6B5E 100%)",
+            "linear-gradient(135deg, #1A1F3A 0%, #1A1F3A 55%, #1A1F3A 100%)",
         }}
       >
         {/* Dot pattern overlay */}
@@ -201,8 +201,8 @@ export default function HomePage() {
         />
 
         {/* Gradient orbs */}
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-teal/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-copper/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-midnight/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-gold/10 rounded-full blur-3xl" />
 
         <div className="relative z-10 max-w-6xl mx-auto px-5 py-20 w-full">
           <div className="flex flex-col md:flex-row items-center gap-12 md:gap-8">
@@ -219,7 +219,7 @@ export default function HomePage() {
                   {["AB", "CR", "JM"].map((i) => (
                     <span
                       key={i}
-                      className="w-5 h-5 rounded-full bg-copper text-white text-[9px] font-bold flex items-center justify-center border border-verde-noite"
+                      className="w-5 h-5 rounded-full bg-gold text-white text-[9px] font-bold flex items-center justify-center border border-midnight"
                     >
                       {i[0]}
                     </span>
@@ -240,7 +240,7 @@ export default function HomePage() {
                 <br />
                 dos seus sonhos,
                 <br />
-                <span className="text-copper">organizado.</span>
+                <span className="text-gold">organizado.</span>
               </motion.h1>
 
               <motion.p
@@ -261,7 +261,7 @@ export default function HomePage() {
               >
                 <Link
                   href="/registro"
-                  className="inline-flex items-center justify-center gap-2 bg-copper text-white font-body font-semibold text-base px-8 py-4 rounded-xl hover:bg-copper/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-2 bg-gold text-white font-body font-semibold text-base px-8 py-4 rounded-xl hover:bg-gold/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Criar meu casamento grátis
                   <svg
@@ -319,13 +319,13 @@ export default function HomePage() {
                     ease: "easeInOut",
                     delay: 0.4,
                   }}
-                  className="flex items-center gap-1.5 bg-teal text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
+                  className="flex items-center gap-1.5 bg-midnight text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
                 >
                   ✓ 248 confirmados
                 </motion.div>
               </motion.div>
 
-              {/* Floating badge — presentes (copper) */}
+              {/* Floating badge — presentes (gold) */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, x: 10 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
@@ -340,7 +340,7 @@ export default function HomePage() {
                     ease: "easeInOut",
                     delay: 0.7,
                   }}
-                  className="flex items-center gap-1.5 bg-copper text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
+                  className="flex items-center gap-1.5 bg-gold text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
                 >
                   🎁 12 presentes
                 </motion.div>
@@ -363,7 +363,7 @@ export default function HomePage() {
                   }}
                   className="flex items-center gap-1.5 text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
                   style={{
-                    backgroundColor: "#1A3A33",
+                    backgroundColor: "#1A1F3A",
                     border: "1px solid rgba(255,255,255,0.2)",
                   }}
                 >
@@ -395,7 +395,7 @@ export default function HomePage() {
 
                   {/* App header */}
                   <div className="bg-[#1a2e26] px-5 pb-5 pt-2 shrink-0">
-                    <p className="font-logo text-white text-lg tracking-tight">
+                    <p className="font-display text-white text-lg tracking-tight">
                       Laço
                     </p>
                   </div>
@@ -405,7 +405,7 @@ export default function HomePage() {
                     {/* Couple card */}
                     <div className="bg-white rounded-2xl p-4 shadow-sm">
                       <div className="flex items-center gap-2 mb-3">
-                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-teal to-copper flex items-center justify-center">
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-midnight to-gold flex items-center justify-center">
                           <span className="text-white text-[9px] font-bold">
                             A&B
                           </span>
@@ -444,7 +444,7 @@ export default function HomePage() {
                           {
                             label: "Total",
                             value: "130",
-                            color: "bg-[#e8f4f2] text-teal",
+                            color: "bg-[#e8f4f2] text-midnight",
                           },
                         ].map((s) => (
                           <div
@@ -498,7 +498,7 @@ export default function HomePage() {
                         </p>
                       </div>
                       <div className="h-1.5 bg-[#f5f3ef] rounded-full overflow-hidden">
-                        <div className="h-full w-[68%] bg-gradient-to-r from-teal to-copper rounded-full" />
+                        <div className="h-full w-[68%] bg-gradient-to-r from-midnight to-gold rounded-full" />
                       </div>
                     </div>
                   </div>
@@ -512,7 +512,7 @@ export default function HomePage() {
                       >
                         <span className="text-sm">{icon}</span>
                         <div
-                          className={`w-1 h-1 rounded-full ${icon === "🏠" ? "bg-teal" : "bg-transparent"}`}
+                          className={`w-1 h-1 rounded-full ${icon === "🏠" ? "bg-midnight" : "bg-transparent"}`}
                         />
                       </div>
                     ))}
@@ -549,41 +549,41 @@ export default function HomePage() {
       </section>
 
       {/* ─── SOCIAL PROOF STRIP ─── */}
-      <section className="bg-white border-y border-verde-noite/8 py-10 px-5">
+      <section className="bg-white border-y border-midnight/8 py-10 px-5">
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
-            <p className="font-heading text-3xl md:text-4xl text-verde-noite">
+            <p className="font-heading text-3xl md:text-4xl text-midnight">
               <AnimatedCounter target={2400} suffix="+" />
             </p>
-            <p className="font-body text-xs text-verde-noite/50 mt-1">casamentos criados</p>
+            <p className="font-body text-xs text-midnight/50 mt-1">casamentos criados</p>
           </div>
           <div>
-            <p className="font-heading text-3xl md:text-4xl text-verde-noite">
+            <p className="font-heading text-3xl md:text-4xl text-midnight">
               <AnimatedCounter target={98} suffix="%" />
             </p>
-            <p className="font-body text-xs text-verde-noite/50 mt-1">satisfação dos casais</p>
+            <p className="font-body text-xs text-midnight/50 mt-1">satisfação dos casais</p>
           </div>
           <div>
-            <p className="font-heading text-3xl md:text-4xl text-verde-noite">
+            <p className="font-heading text-3xl md:text-4xl text-midnight">
               <AnimatedCounter target={180} suffix="k+" />
             </p>
-            <p className="font-body text-xs text-verde-noite/50 mt-1">convidados gerenciados</p>
+            <p className="font-body text-xs text-midnight/50 mt-1">convidados gerenciados</p>
           </div>
           <div>
-            <p className="font-heading text-3xl md:text-4xl text-verde-noite">
+            <p className="font-heading text-3xl md:text-4xl text-midnight">
               <AnimatedCounter prefix="R$" target={4} suffix="M+" />
             </p>
-            <p className="font-body text-xs text-verde-noite/50 mt-1">em presentes recebidos</p>
+            <p className="font-body text-xs text-midnight/50 mt-1">em presentes recebidos</p>
           </div>
         </div>
       </section>
 
       {/* ─── COMO FUNCIONA ─── */}
-      <section className="bg-off-white py-24 px-5">
+      <section className="bg-ivory py-24 px-5">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-16">
-            <p className="font-body text-xs text-copper uppercase tracking-widest mb-3">Como funciona</p>
-            <h2 className="font-heading text-4xl md:text-5xl text-verde-noite">
+            <p className="font-body text-xs text-gold uppercase tracking-widest mb-3">Como funciona</p>
+            <h2 className="font-heading text-4xl md:text-5xl text-midnight">
               Pronto em 3 passos
             </h2>
           </motion.div>
@@ -598,14 +598,14 @@ export default function HomePage() {
                 className="relative"
               >
                 {i < STEPS.length - 1 && (
-                  <div className="hidden md:block absolute top-6 left-full w-full h-px bg-gradient-to-r from-verde-noite/20 to-transparent -translate-x-8 z-0" />
+                  <div className="hidden md:block absolute top-6 left-full w-full h-px bg-gradient-to-r from-midnight/20 to-transparent -translate-x-8 z-0" />
                 )}
                 <div className="relative z-10">
-                  <span className="font-heading text-6xl text-verde-noite/10 leading-none block mb-4">
+                  <span className="font-heading text-6xl text-midnight/10 leading-none block mb-4">
                     {s.n}
                   </span>
-                  <h3 className="font-heading text-xl text-verde-noite mb-2">{s.title}</h3>
-                  <p className="font-body text-sm text-verde-noite/60 leading-relaxed">{s.desc}</p>
+                  <h3 className="font-heading text-xl text-midnight mb-2">{s.title}</h3>
+                  <p className="font-body text-sm text-midnight/60 leading-relaxed">{s.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -617,8 +617,8 @@ export default function HomePage() {
       <section className="bg-white py-24 px-5">
         <div className="max-w-5xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-16">
-            <p className="font-body text-xs text-copper uppercase tracking-widest mb-3">Funcionalidades</p>
-            <h2 className="font-heading text-4xl md:text-5xl text-verde-noite">
+            <p className="font-body text-xs text-gold uppercase tracking-widest mb-3">Funcionalidades</p>
+            <h2 className="font-heading text-4xl md:text-5xl text-midnight">
               Tudo que você precisa
             </h2>
           </motion.div>
@@ -630,13 +630,13 @@ export default function HomePage() {
                 {...fadeUp}
                 transition={{ duration: 0.55, delay: i * 0.07, ease: "easeOut" }}
                 viewport={{ once: true, margin: "-40px" }}
-                className="group bg-cream rounded-2xl p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+                className="group bg-fog rounded-2xl p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
               >
-                <div className="w-10 h-10 bg-verde-noite/8 text-verde-noite rounded-xl flex items-center justify-center mb-4 group-hover:bg-teal group-hover:text-white transition-all">
+                <div className="w-10 h-10 bg-midnight/8 text-midnight rounded-xl flex items-center justify-center mb-4 group-hover:bg-midnight group-hover:text-white transition-all">
                   {f.icon}
                 </div>
-                <h3 className="font-heading text-lg text-verde-noite mb-1">{f.title}</h3>
-                <p className="font-body text-sm text-verde-noite/60 leading-relaxed">{f.desc}</p>
+                <h3 className="font-heading text-lg text-midnight mb-1">{f.title}</h3>
+                <p className="font-body text-sm text-midnight/60 leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -644,7 +644,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── PARA QUEM ─── */}
-      <section className="bg-verde-noite py-24 px-5">
+      <section className="bg-midnight py-24 px-5">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-16">
             <h2 className="font-heading text-4xl md:text-5xl text-white">Para quem é o Laço?</h2>
@@ -652,7 +652,7 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             <motion.div {...fadeUp} className="bg-white/5 border border-white/10 rounded-2xl p-8">
-              <div className="w-10 h-10 bg-copper/20 text-copper rounded-xl flex items-center justify-center mb-5">
+              <div className="w-10 h-10 bg-gold/20 text-gold rounded-xl flex items-center justify-center mb-5">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
@@ -667,21 +667,21 @@ export default function HomePage() {
                   "Identity Kit com tema visual personalizado",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <span className="mt-0.5 w-4 h-4 rounded-full bg-copper/30 text-copper flex items-center justify-center text-xs shrink-0">✓</span>
+                    <span className="mt-0.5 w-4 h-4 rounded-full bg-gold/30 text-gold flex items-center justify-center text-xs shrink-0">✓</span>
                     <span className="font-body text-sm text-white/70">{item}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 href="/registro"
-                className="mt-8 inline-flex items-center gap-2 bg-copper text-white font-body text-sm font-medium px-6 py-3 rounded-xl hover:bg-copper/90 transition"
+                className="mt-8 inline-flex items-center gap-2 bg-gold text-white font-body text-sm font-medium px-6 py-3 rounded-xl hover:bg-gold/90 transition"
               >
                 Criar conta de casal
               </Link>
             </motion.div>
 
             <motion.div {...fadeUp} transition={{ duration: 0.55, delay: 0.1 }} viewport={{ once: true }} className="bg-white/5 border border-white/10 rounded-2xl p-8">
-              <div className="w-10 h-10 bg-teal/30 text-teal rounded-xl flex items-center justify-center mb-5">
+              <div className="w-10 h-10 bg-midnight/30 text-midnight rounded-xl flex items-center justify-center mb-5">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
@@ -696,14 +696,14 @@ export default function HomePage() {
                   "OCR de orçamentos de fornecedores",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <span className="mt-0.5 w-4 h-4 rounded-full bg-teal/40 text-teal flex items-center justify-center text-xs shrink-0">✓</span>
+                    <span className="mt-0.5 w-4 h-4 rounded-full bg-midnight/40 text-midnight flex items-center justify-center text-xs shrink-0">✓</span>
                     <span className="font-body text-sm text-white/70">{item}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 href="/registro/cerimonialista"
-                className="mt-8 inline-flex items-center gap-2 bg-teal text-white font-body text-sm font-medium px-6 py-3 rounded-xl hover:bg-teal/90 transition"
+                className="mt-8 inline-flex items-center gap-2 bg-midnight text-white font-body text-sm font-medium px-6 py-3 rounded-xl hover:bg-midnight/90 transition"
               >
                 Criar conta profissional
               </Link>
@@ -713,20 +713,20 @@ export default function HomePage() {
       </section>
 
       {/* ─── PLANOS ─── */}
-      <section className="bg-cream py-24 px-5">
+      <section className="bg-fog py-24 px-5">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-16">
-            <p className="font-body text-xs text-copper uppercase tracking-widest mb-3">Planos</p>
-            <h2 className="font-heading text-4xl md:text-5xl text-verde-noite">Simples e transparente</h2>
-            <p className="font-body text-verde-noite/50 mt-3">Comece grátis. Upgrade quando precisar.</p>
+            <p className="font-body text-xs text-gold uppercase tracking-widest mb-3">Planos</p>
+            <h2 className="font-heading text-4xl md:text-5xl text-midnight">Simples e transparente</h2>
+            <p className="font-body text-midnight/50 mt-3">Comece grátis. Upgrade quando precisar.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Free */}
-            <motion.div {...fadeUp} className="bg-white rounded-2xl p-8 border border-verde-noite/10">
-              <p className="font-body text-xs text-verde-noite/40 uppercase tracking-widest mb-2">Gratuito</p>
-              <p className="font-heading text-4xl text-verde-noite mb-1">R$ 0</p>
-              <p className="font-body text-sm text-verde-noite/50 mb-6">Para sempre</p>
+            <motion.div {...fadeUp} className="bg-white rounded-2xl p-8 border border-midnight/10">
+              <p className="font-body text-xs text-midnight/40 uppercase tracking-widest mb-2">Gratuito</p>
+              <p className="font-heading text-4xl text-midnight mb-1">R$ 0</p>
+              <p className="font-body text-sm text-midnight/50 mb-6">Para sempre</p>
               <ul className="space-y-3 mb-8">
                 {[
                   "Até 50 convidados",
@@ -735,22 +735,22 @@ export default function HomePage() {
                   "Lista de presentes básica",
                   "Controle de orçamento",
                 ].map((f) => (
-                  <li key={f} className="flex items-center gap-2 font-body text-sm text-verde-noite/70">
-                    <span className="text-teal">✓</span> {f}
+                  <li key={f} className="flex items-center gap-2 font-body text-sm text-midnight/70">
+                    <span className="text-midnight">✓</span> {f}
                   </li>
                 ))}
               </ul>
               <Link
                 href="/registro"
-                className="block text-center py-3 rounded-xl border border-verde-noite/20 font-body text-sm text-verde-noite hover:bg-verde-noite/5 transition"
+                className="block text-center py-3 rounded-xl border border-midnight/20 font-body text-sm text-midnight hover:bg-midnight/5 transition"
               >
                 Começar grátis
               </Link>
             </motion.div>
 
             {/* Premium */}
-            <motion.div {...fadeUp} transition={{ duration: 0.55, delay: 0.1 }} viewport={{ once: true }} className="bg-verde-noite rounded-2xl p-8 relative overflow-hidden">
-              <div className="absolute top-4 right-4 bg-copper text-white text-xs font-body font-medium px-2.5 py-1 rounded-full">
+            <motion.div {...fadeUp} transition={{ duration: 0.55, delay: 0.1 }} viewport={{ once: true }} className="bg-midnight rounded-2xl p-8 relative overflow-hidden">
+              <div className="absolute top-4 right-4 bg-gold text-white text-xs font-body font-medium px-2.5 py-1 rounded-full">
                 Mais popular
               </div>
               <p className="font-body text-xs text-white/40 uppercase tracking-widest mb-2">Premium</p>
@@ -768,13 +768,13 @@ export default function HomePage() {
                   "Suporte prioritário",
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-2 font-body text-sm text-white/80">
-                    <span className="text-copper">✓</span> {f}
+                    <span className="text-gold">✓</span> {f}
                   </li>
                 ))}
               </ul>
               <Link
                 href="/registro"
-                className="block text-center py-3 rounded-xl bg-copper text-white font-body font-semibold text-sm hover:bg-copper/90 transition"
+                className="block text-center py-3 rounded-xl bg-gold text-white font-body font-semibold text-sm hover:bg-gold/90 transition"
               >
                 Começar trial grátis
               </Link>
@@ -787,8 +787,8 @@ export default function HomePage() {
       <section className="bg-white py-24 px-5">
         <div className="max-w-5xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-16">
-            <p className="font-body text-xs text-copper uppercase tracking-widest mb-3">Depoimentos</p>
-            <h2 className="font-heading text-4xl md:text-5xl text-verde-noite">O que dizem nossos casais</h2>
+            <p className="font-body text-xs text-gold uppercase tracking-widest mb-3">Depoimentos</p>
+            <h2 className="font-heading text-4xl md:text-5xl text-midnight">O que dizem nossos casais</h2>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -798,25 +798,25 @@ export default function HomePage() {
                 {...fadeUp}
                 transition={{ duration: 0.55, delay: i * 0.1, ease: "easeOut" }}
                 viewport={{ once: true }}
-                className="bg-cream rounded-2xl p-6"
+                className="bg-fog rounded-2xl p-6"
               >
                 <div className="flex gap-1 mb-4">
                   {[...Array(5)].map((_, j) => (
-                    <svg key={j} className="w-3.5 h-3.5 text-copper" fill="currentColor" viewBox="0 0 20 20">
+                    <svg key={j} className="w-3.5 h-3.5 text-gold" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
                   ))}
                 </div>
-                <p className="font-body text-sm text-verde-noite/75 leading-relaxed mb-5">
+                <p className="font-body text-sm text-midnight/75 leading-relaxed mb-5">
                   &ldquo;{t.text}&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-verde-noite text-white text-xs font-heading flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-midnight text-white text-xs font-heading flex items-center justify-center">
                     {t.initials}
                   </div>
                   <div>
-                    <p className="font-body text-sm font-medium text-verde-noite">{t.name}</p>
-                    <p className="font-body text-xs text-verde-noite/40">{t.city}</p>
+                    <p className="font-body text-sm font-medium text-midnight">{t.name}</p>
+                    <p className="font-body text-xs text-midnight/40">{t.city}</p>
                   </div>
                 </div>
               </motion.div>
@@ -826,7 +826,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── CTA FINAL ─── */}
-      <section className="bg-verde-noite py-24 px-5 text-center">
+      <section className="bg-midnight py-24 px-5 text-center">
         <motion.div {...fadeUp} className="max-w-2xl mx-auto">
           <h2 className="font-heading text-4xl md:text-5xl text-white mb-4">
             Comece a planejar hoje
@@ -836,7 +836,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/registro"
-            className="inline-flex items-center gap-2 bg-copper text-white font-body font-semibold text-lg px-10 py-4 rounded-xl hover:bg-copper/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center gap-2 bg-gold text-white font-body font-semibold text-lg px-10 py-4 rounded-xl hover:bg-gold/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             Criar conta gratuita
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -848,11 +848,11 @@ export default function HomePage() {
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer className="bg-verde-noite border-t border-white/10 py-10 px-5">
+      <footer className="bg-midnight border-t border-white/10 py-10 px-5">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
             <div>
-              <span className="font-logo text-2xl text-white">Laço</span>
+              <span className="font-display text-2xl text-white">Laço</span>
               <p className="font-body text-xs text-white/30 mt-1">
                 Planejamento de casamentos — Brasil
               </p>

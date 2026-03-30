@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
@@ -78,17 +78,17 @@ export default function CerimonialstaPage() {
 
   if (authStatus === "loading" || linkStatus === "loading") {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
   if (!session) return null;
 
   return (
-    <div className="min-h-screen bg-off-white pb-24">
+    <div className="min-h-screen bg-ivory pb-24">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-verde-noite to-verde-noite/90 px-5 pt-12 pb-10">
+      <div className="bg-gradient-to-br from-midnight to-midnight/90 px-5 pt-12 pb-10">
         <span className="font-body text-xs text-white/50 uppercase tracking-wider">Sua equipe</span>
         <h1 className="font-heading text-3xl text-white mt-1 mb-2">Cerimonialista</h1>
         <p className="font-body text-sm text-white/65 max-w-md">
@@ -101,12 +101,12 @@ export default function CerimonialstaPage() {
         {/* ── Nenhum vínculo ─────────────────────────────────────── */}
         {linkStatus === "none" && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 className="font-heading text-lg text-verde-noite mb-1">Convidar cerimonialista</h2>
+            <h2 className="font-heading text-lg text-midnight mb-1">Convidar cerimonialista</h2>
             <p className="font-body text-sm text-gray-400 mb-5">
               Informe o e-mail que a cerimonialista usa para acessar o Laco. Ela receberá uma solicitação de vínculo para aprovar.
             </p>
 
-            <label className="font-body text-xs text-verde-noite/60 uppercase tracking-wider mb-1.5 block">
+            <label className="font-body text-xs text-midnight/60 uppercase tracking-wider mb-1.5 block">
               E-mail da cerimonialista
             </label>
             <input
@@ -115,13 +115,13 @@ export default function CerimonialstaPage() {
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleInvite()}
               placeholder="cerimonialista@email.com"
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition mb-4"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition mb-4"
             />
 
             <button
               onClick={handleInvite}
               disabled={sending || !email.trim()}
-              className="w-full py-3 bg-teal text-white rounded-xl font-body text-sm font-medium hover:bg-teal/90 transition disabled:opacity-40"
+              className="w-full py-3 bg-midnight text-white rounded-xl font-body text-sm font-medium hover:bg-midnight/90 transition disabled:opacity-40"
             >
               {sending ? "Enviando..." : "Enviar solicitacao"}
             </button>
@@ -142,7 +142,7 @@ export default function CerimonialstaPage() {
                 </svg>
               </div>
               <div>
-                <p className="font-heading text-base text-verde-noite">Aguardando aprovacao</p>
+                <p className="font-heading text-base text-midnight">Aguardando aprovacao</p>
                 {planner && (
                   <p className="font-body text-sm text-gray-400">{planner.companyName}</p>
                 )}
@@ -165,15 +165,15 @@ export default function CerimonialstaPage() {
 
         {/* ── Vínculo ativo ─────────────────────────────────────── */}
         {linkStatus === "ativo" && planner && (
-          <div className="bg-white rounded-2xl shadow-sm border border-teal/20 p-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-midnight/20 p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-teal/10 flex items-center justify-center flex-shrink-0">
-                <svg className="w-5 h-5 text-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <div className="w-10 h-10 rounded-full bg-midnight/10 flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-midnight" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
               <div>
-                <p className="font-heading text-base text-verde-noite">Vinculo ativo</p>
+                <p className="font-heading text-base text-midnight">Vinculo ativo</p>
                 <p className="font-body text-sm text-gray-400">{planner.companyName}</p>
               </div>
             </div>
@@ -193,8 +193,8 @@ export default function CerimonialstaPage() {
         )}
 
         {/* Info card */}
-        <div className="bg-teal/5 border border-teal/10 rounded-2xl p-4">
-          <p className="font-body text-xs text-teal/80">
+        <div className="bg-midnight/5 border border-midnight/10 rounded-2xl p-4">
+          <p className="font-body text-xs text-midnight/80">
             <strong>Como funciona:</strong> Sua cerimonialista recebe a solicitacao no painel dela e aprova o vinculo. Apos aprovacao, ela acompanha lista de convidados, fornecedores e timeline em tempo real.
           </p>
         </div>

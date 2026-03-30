@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -69,31 +69,31 @@ export default function AgendaPage() {
   if (authStatus === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
     <div className="p-6 lg:p-8 max-w-4xl mx-auto">
-      <h1 className="font-heading text-3xl text-verde-noite mb-8">Agenda</h1>
+      <h1 className="font-heading text-3xl text-midnight mb-8">Agenda</h1>
 
       {/* Month navigation */}
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
-          className="p-2 rounded-lg text-verde-noite/50 hover:bg-gray-100 transition"
+          className="p-2 rounded-lg text-midnight/50 hover:bg-gray-100 transition"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h2 className="font-heading text-xl text-verde-noite">
+        <h2 className="font-heading text-xl text-midnight">
           {MONTHS[month]} {year}
         </h2>
         <button
           onClick={() => setCurrentDate(new Date(year, month + 1, 1))}
-          className="p-2 rounded-lg text-verde-noite/50 hover:bg-gray-100 transition"
+          className="p-2 rounded-lg text-midnight/50 hover:bg-gray-100 transition"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -105,7 +105,7 @@ export default function AgendaPage() {
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
         <div className="grid grid-cols-7">
           {WEEKDAYS.map((wd) => (
-            <div key={wd} className="py-3 text-center font-body text-xs text-verde-noite/40 font-semibold uppercase border-b">
+            <div key={wd} className="py-3 text-center font-body text-xs text-midnight/40 font-semibold uppercase border-b">
               {wd}
             </div>
           ))}
@@ -120,18 +120,18 @@ export default function AgendaPage() {
                 key={day}
                 onClick={() => setSelectedDate(dateStr(day))}
                 className={`p-2 border-b border-r border-gray-50 min-h-[72px] text-left transition hover:bg-gray-50 ${
-                  isSelected ? "bg-teal/5 ring-1 ring-teal" : ""
+                  isSelected ? "bg-midnight/5 ring-1 ring-midnight" : ""
                 }`}
               >
                 <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full font-body text-sm ${
-                  isToday ? "bg-copper text-white" : "text-verde-noite"
+                  isToday ? "bg-gold text-white" : "text-midnight"
                 }`}>
                   {day}
                 </span>
                 {dayEvents.length > 0 && (
                   <div className="mt-1">
                     {dayEvents.slice(0, 2).map((e) => (
-                      <div key={e.weddingId} className="bg-teal/10 text-teal rounded px-1 py-0.5 text-[10px] font-body truncate mt-0.5">
+                      <div key={e.weddingId} className="bg-midnight/10 text-midnight rounded px-1 py-0.5 text-[10px] font-body truncate mt-0.5">
                         {e.couple}
                       </div>
                     ))}
@@ -146,19 +146,19 @@ export default function AgendaPage() {
       {/* Selected day events */}
       {selectedDate && (
         <div className="bg-white rounded-2xl shadow-sm p-6">
-          <h3 className="font-heading text-lg text-verde-noite mb-4">
+          <h3 className="font-heading text-lg text-midnight mb-4">
             Eventos em {selectedDate.split("-").reverse().join("/")}
           </h3>
           {selectedEvents.length === 0 ? (
-            <p className="font-body text-verde-noite/40 text-sm">Nenhum evento neste dia.</p>
+            <p className="font-body text-midnight/40 text-sm">Nenhum evento neste dia.</p>
           ) : (
             <div className="space-y-3">
               {selectedEvents.map((e) => (
-                <div key={e.weddingId} className="flex items-center gap-4 p-3 bg-cream rounded-lg">
-                  <div className="w-2 h-8 rounded-full bg-copper" />
+                <div key={e.weddingId} className="flex items-center gap-4 p-3 bg-fog rounded-lg">
+                  <div className="w-2 h-8 rounded-full bg-gold" />
                   <div>
-                    <p className="font-body text-verde-noite font-medium">{e.couple}</p>
-                    {e.venue && <p className="font-body text-sm text-verde-noite/50">{e.venue}</p>}
+                    <p className="font-body text-midnight font-medium">{e.couple}</p>
+                    {e.venue && <p className="font-body text-sm text-midnight/50">{e.venue}</p>}
                   </div>
                 </div>
               ))}

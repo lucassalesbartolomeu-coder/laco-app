@@ -70,44 +70,44 @@ export default function ReferralSection({ isPlanner }: ReferralSectionProps) {
       {/* Main referral card */}
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
         {/* Top accent bar */}
-        <div className="h-1 bg-gradient-to-r from-[#1A3A33] via-[#2C6B5E] to-[#C4734F]" />
+        <div className="h-1 bg-gradient-to-r from-[#1A1F3A] via-[#1A1F3A] to-[#C9A96E]" />
 
         <div className="p-6">
           {/* Header row */}
           <div className="flex items-start justify-between mb-5">
             <div>
-              <p className="font-body text-xs font-semibold text-verde-noite/35 uppercase tracking-widest mb-1">
+              <p className="font-body text-xs font-semibold text-midnight/35 uppercase tracking-widest mb-1">
                 Indique &amp; Ganhe
               </p>
-              <h3 className="font-heading text-base font-semibold text-verde-noite">
+              <h3 className="font-heading text-base font-semibold text-midnight">
                 Compartilhe o Laço
               </h3>
             </div>
 
             {/* Ambassador badge */}
             {isAmbassador && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#C4734F]/10 border border-[#C4734F]/20">
-                <svg className="w-3.5 h-3.5 text-[#C4734F]" viewBox="0 0 24 24" fill="currentColor">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#C9A96E]/10 border border-[#C9A96E]/20">
+                <svg className="w-3.5 h-3.5 text-[#C9A96E]" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
-                <span className="font-body text-xs font-semibold text-[#C4734F]">Embaixador Laço</span>
+                <span className="font-body text-xs font-semibold text-[#C9A96E]">Embaixador Laço</span>
               </div>
             )}
           </div>
 
           {/* Stats row */}
           <div className="grid grid-cols-3 gap-3 mb-5">
-            <div className="bg-[#F5F3EF] rounded-2xl p-3 text-center">
-              <p className="font-heading text-2xl font-bold text-[#1A3A33]">{data.referralCount}</p>
-              <p className="font-body text-[10px] text-verde-noite/50 mt-0.5 leading-tight">Indicados</p>
+            <div className="bg-[#F0EDE7] rounded-2xl p-3 text-center">
+              <p className="font-heading text-2xl font-bold text-[#1A1F3A]">{data.referralCount}</p>
+              <p className="font-body text-[10px] text-midnight/50 mt-0.5 leading-tight">Indicados</p>
             </div>
-            <div className="bg-[#2C6B5E]/8 rounded-2xl p-3 text-center">
-              <p className="font-heading text-2xl font-bold text-[#2C6B5E]">{data.convertedCount}</p>
-              <p className="font-body text-[10px] text-verde-noite/50 mt-0.5 leading-tight">Convertidos</p>
+            <div className="bg-[#1A1F3A]/8 rounded-2xl p-3 text-center">
+              <p className="font-heading text-2xl font-bold text-[#1A1F3A]">{data.convertedCount}</p>
+              <p className="font-body text-[10px] text-midnight/50 mt-0.5 leading-tight">Convertidos</p>
             </div>
-            <div className="bg-[#F5F3EF] rounded-2xl p-3 text-center">
-              <p className="font-heading text-2xl font-bold text-[#C4734F]">{pendingCount}</p>
-              <p className="font-body text-[10px] text-verde-noite/50 mt-0.5 leading-tight">Pendentes</p>
+            <div className="bg-[#F0EDE7] rounded-2xl p-3 text-center">
+              <p className="font-heading text-2xl font-bold text-[#C9A96E]">{pendingCount}</p>
+              <p className="font-body text-[10px] text-midnight/50 mt-0.5 leading-tight">Pendentes</p>
             </div>
           </div>
 
@@ -115,31 +115,31 @@ export default function ReferralSection({ isPlanner }: ReferralSectionProps) {
           {!isAmbassador && (
             <div className="mb-5">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="font-body text-xs text-verde-noite/50">
+                <span className="font-body text-xs text-midnight/50">
                   Progresso para Embaixador
                 </span>
-                <span className="font-body text-xs font-semibold text-[#C4734F]">
+                <span className="font-body text-xs font-semibold text-[#C9A96E]">
                   {data.convertedCount}/{AMBASSADOR_THRESHOLD}
                 </span>
               </div>
               <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[#2C6B5E] to-[#C4734F] rounded-full transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-[#1A1F3A] to-[#C9A96E] rounded-full transition-all duration-500"
                   style={{ width: `${Math.min(100, (data.convertedCount / AMBASSADOR_THRESHOLD) * 100)}%` }}
                 />
               </div>
-              <p className="font-body text-[10px] text-verde-noite/40 mt-1">
+              <p className="font-body text-[10px] text-midnight/40 mt-1">
                 {AMBASSADOR_THRESHOLD - data.convertedCount} conversões restantes para ganhar o badge
               </p>
             </div>
           )}
 
           {/* Referral link */}
-          <div className="bg-[#F5F3EF] rounded-2xl px-4 py-3 mb-3 flex items-center gap-2 min-w-0">
-            <svg className="w-4 h-4 text-[#2C6B5E] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="bg-[#F0EDE7] rounded-2xl px-4 py-3 mb-3 flex items-center gap-2 min-w-0">
+            <svg className="w-4 h-4 text-[#1A1F3A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
             </svg>
-            <span className="font-body text-sm text-verde-noite/70 font-mono truncate flex-1">
+            <span className="font-body text-sm text-midnight/70 font-mono truncate flex-1">
               {referralLink}
             </span>
           </div>
@@ -151,7 +151,7 @@ export default function ReferralSection({ isPlanner }: ReferralSectionProps) {
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-body font-medium transition ${
                 copied
                   ? "bg-green-100 text-green-700"
-                  : "bg-[#1A3A33] text-white hover:bg-[#1A3A33]/90"
+                  : "bg-[#1A1F3A] text-white hover:bg-[#1A1F3A]/90"
               }`}
             >
               {copied ? (
@@ -191,11 +191,11 @@ export default function ReferralSection({ isPlanner }: ReferralSectionProps) {
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <p className="font-body text-xs font-semibold text-verde-noite/35 uppercase tracking-widest">
+              <p className="font-body text-xs font-semibold text-midnight/35 uppercase tracking-widest">
                 Comissões
               </p>
               {data.commissionRate !== null && (
-                <span className="px-2.5 py-0.5 rounded-full bg-[#C4734F]/10 font-body text-xs font-semibold text-[#C4734F]">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#C9A96E]/10 font-body text-xs font-semibold text-[#C9A96E]">
                   {data.commissionRate}% por casal
                 </span>
               )}
@@ -203,13 +203,13 @@ export default function ReferralSection({ isPlanner }: ReferralSectionProps) {
 
             {data.history.length === 0 ? (
               <div className="text-center py-6">
-                <div className="w-12 h-12 rounded-2xl bg-[#F5F3EF] flex items-center justify-center mx-auto mb-3">
-                  <svg className="w-6 h-6 text-verde-noite/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <div className="w-12 h-12 rounded-2xl bg-[#F0EDE7] flex items-center justify-center mx-auto mb-3">
+                  <svg className="w-6 h-6 text-midnight/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
-                <p className="font-body text-sm text-verde-noite/50">Nenhum casal indicado ainda</p>
-                <p className="font-body text-xs text-verde-noite/35 mt-1">
+                <p className="font-body text-sm text-midnight/50">Nenhum casal indicado ainda</p>
+                <p className="font-body text-xs text-midnight/35 mt-1">
                   Compartilhe seu link para começar a ganhar comissões
                 </p>
               </div>
@@ -218,14 +218,14 @@ export default function ReferralSection({ isPlanner }: ReferralSectionProps) {
                 {data.history.map((entry) => (
                   <div
                     key={entry.id}
-                    className="flex items-center justify-between rounded-2xl px-4 py-3 bg-[#F5F3EF]"
+                    className="flex items-center justify-between rounded-2xl px-4 py-3 bg-[#F0EDE7]"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                        entry.converted ? "bg-[#2C6B5E]/10" : "bg-gray-100"
+                        entry.converted ? "bg-[#1A1F3A]/10" : "bg-gray-100"
                       }`}>
                         <svg
-                          className={`w-4 h-4 ${entry.converted ? "text-[#2C6B5E]" : "text-verde-noite/30"}`}
+                          className={`w-4 h-4 ${entry.converted ? "text-[#1A1F3A]" : "text-midnight/30"}`}
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -235,10 +235,10 @@ export default function ReferralSection({ isPlanner }: ReferralSectionProps) {
                         </svg>
                       </div>
                       <div className="min-w-0">
-                        <p className="font-body text-sm font-medium text-verde-noite truncate">
+                        <p className="font-body text-sm font-medium text-midnight truncate">
                           {entry.name ?? "Usuário"}
                         </p>
-                        <p className="font-body text-[10px] text-verde-noite/40">
+                        <p className="font-body text-[10px] text-midnight/40">
                           {new Date(entry.createdAt).toLocaleDateString("pt-BR", {
                             day: "2-digit",
                             month: "short",
@@ -250,8 +250,8 @@ export default function ReferralSection({ isPlanner }: ReferralSectionProps) {
 
                     <span className={`flex-shrink-0 px-2.5 py-1 rounded-full font-body text-[10px] font-semibold ${
                       entry.converted
-                        ? "bg-[#2C6B5E]/10 text-[#2C6B5E]"
-                        : "bg-gray-100 text-verde-noite/40"
+                        ? "bg-[#1A1F3A]/10 text-[#1A1F3A]"
+                        : "bg-gray-100 text-midnight/40"
                     }`}>
                       {entry.converted ? "Convertido" : "Pendente"}
                     </span>
@@ -266,7 +266,7 @@ export default function ReferralSection({ isPlanner }: ReferralSectionProps) {
       {/* Benefits info (non-planner) */}
       {!isPlanner && (
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
-          <p className="font-body text-xs font-semibold text-verde-noite/35 uppercase tracking-widest mb-4">
+          <p className="font-body text-xs font-semibold text-midnight/35 uppercase tracking-widest mb-4">
             Benefícios
           </p>
           <div className="space-y-3">
@@ -278,10 +278,10 @@ export default function ReferralSection({ isPlanner }: ReferralSectionProps) {
               const unlocked = data.convertedCount >= item.threshold;
               return (
                 <div key={item.threshold} className={`flex items-center gap-3 rounded-2xl px-4 py-3 ${
-                  unlocked ? "bg-[#2C6B5E]/5" : "bg-[#F5F3EF]"
+                  unlocked ? "bg-[#1A1F3A]/5" : "bg-[#F0EDE7]"
                 }`}>
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    unlocked ? "bg-[#2C6B5E] text-white" : "bg-gray-100 text-verde-noite/30"
+                    unlocked ? "bg-[#1A1F3A] text-white" : "bg-gray-100 text-midnight/30"
                   }`}>
                     {unlocked ? (
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -294,10 +294,10 @@ export default function ReferralSection({ isPlanner }: ReferralSectionProps) {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className={`font-body text-xs font-semibold ${unlocked ? "text-[#2C6B5E]" : "text-verde-noite/40"}`}>
+                    <p className={`font-body text-xs font-semibold ${unlocked ? "text-[#1A1F3A]" : "text-midnight/40"}`}>
                       {item.label}
                     </p>
-                    <p className="font-body text-[10px] text-verde-noite/50 mt-0.5">{item.benefit}</p>
+                    <p className="font-body text-[10px] text-midnight/50 mt-0.5">{item.benefit}</p>
                   </div>
                 </div>
               );

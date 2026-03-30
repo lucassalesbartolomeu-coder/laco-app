@@ -99,9 +99,9 @@ function coupleNames(w: WeddingInfo) {
 
 // Fallback palette (Laço brand) if kit palette is missing
 const FALLBACK: KitPalette = {
-  primary: "#1A3A33",
-  secondary: "#C4734F",
-  accent: "#D4AF6A",
+  primary: "#1A1F3A",
+  secondary: "#C9A96E",
+  accent: "#C9A96E",
   background: "#FAF8F4",
   text: "#1A1A1A",
   muted: "#6B7280",

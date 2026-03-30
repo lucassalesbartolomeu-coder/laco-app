@@ -103,9 +103,9 @@ export async function POST(request: Request, { params }: Params) {
     const palette = ai.palette as Record<string, { hex: string }> | undefined;
     const invite = ai.invite as { description?: string; tagline?: string } | undefined;
 
-    const primary = palette?.primary?.hex ?? "#1A3A33";
-    const secondary = palette?.secondary?.hex ?? "#C4734F";
-    const accent = palette?.accent?.hex ?? "#D4AF6A";
+    const primary = palette?.primary?.hex ?? "#1A1F3A";
+    const secondary = palette?.secondary?.hex ?? "#C9A96E";
+    const accent = palette?.accent?.hex ?? "#C9A96E";
 
     const name1 = wedding!.partnerName1;
     const name2 = wedding!.partnerName2;

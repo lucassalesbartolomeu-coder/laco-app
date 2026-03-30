@@ -58,14 +58,14 @@ export default function ContactModal({ slug, companyName, onClose }: ContactModa
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-verde-noite/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-midnight/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
       {/* Panel */}
-      <div className="relative w-full max-w-lg bg-cream rounded-3xl shadow-float overflow-hidden animate-scale-in">
+      <div className="relative w-full max-w-lg bg-fog rounded-3xl shadow-float overflow-hidden animate-scale-in">
         {/* Header */}
-        <div className="bg-verde-noite px-8 py-6">
+        <div className="bg-midnight px-8 py-6">
           <h2 className="font-heading text-xl text-white">Solicitar Orçamento</h2>
           <p className="font-body text-sm text-white/60 mt-1">
             Entre em contato com {companyName}
@@ -81,18 +81,18 @@ export default function ContactModal({ slug, companyName, onClose }: ContactModa
 
         {success ? (
           <div className="px-8 py-12 text-center">
-            <div className="w-16 h-16 rounded-full bg-teal/10 flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <div className="w-16 h-16 rounded-full bg-midnight/10 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-midnight" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="font-heading text-xl text-verde-noite mb-2">Mensagem enviada!</h3>
-            <p className="font-body text-sm text-verde-noite/60 mb-6">
+            <h3 className="font-heading text-xl text-midnight mb-2">Mensagem enviada!</h3>
+            <p className="font-body text-sm text-midnight/60 mb-6">
               {companyName} receberá seu pedido em breve.
             </p>
             <button
               onClick={onClose}
-              className="px-6 py-2.5 bg-verde-noite text-white font-body text-sm rounded-xl hover:bg-teal transition"
+              className="px-6 py-2.5 bg-midnight text-white font-body text-sm rounded-xl hover:bg-midnight transition"
             >
               Fechar
             </button>
@@ -100,8 +100,8 @@ export default function ContactModal({ slug, companyName, onClose }: ContactModa
         ) : (
           <form onSubmit={handleSubmit} className="px-8 py-6 space-y-4">
             <div>
-              <label className="font-body text-xs text-verde-noite/60 uppercase tracking-wide mb-1 block">
-                Nome do casal <span className="text-copper">*</span>
+              <label className="font-body text-xs text-midnight/60 uppercase tracking-wide mb-1 block">
+                Nome do casal <span className="text-gold">*</span>
               </label>
               <input
                 name="coupleName"
@@ -109,13 +109,13 @@ export default function ContactModal({ slug, companyName, onClose }: ContactModa
                 onChange={handleChange}
                 required
                 placeholder="Ex: Ana & Carlos"
-                className="w-full px-4 py-3 rounded-xl bg-white border border-verde-noite/10 font-body text-sm text-verde-noite placeholder-verde-noite/30 focus:outline-none focus:ring-2 focus:ring-teal/40 transition"
+                className="w-full px-4 py-3 rounded-xl bg-white border border-midnight/10 font-body text-sm text-midnight placeholder-stone/30 focus:outline-none focus:ring-2 focus:ring-gold/40 transition"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="font-body text-xs text-verde-noite/60 uppercase tracking-wide mb-1 block">
+                <label className="font-body text-xs text-midnight/60 uppercase tracking-wide mb-1 block">
                   E-mail
                 </label>
                 <input
@@ -124,11 +124,11 @@ export default function ContactModal({ slug, companyName, onClose }: ContactModa
                   value={form.contactEmail}
                   onChange={handleChange}
                   placeholder="seu@email.com"
-                  className="w-full px-4 py-3 rounded-xl bg-white border border-verde-noite/10 font-body text-sm text-verde-noite placeholder-verde-noite/30 focus:outline-none focus:ring-2 focus:ring-teal/40 transition"
+                  className="w-full px-4 py-3 rounded-xl bg-white border border-midnight/10 font-body text-sm text-midnight placeholder-stone/30 focus:outline-none focus:ring-2 focus:ring-gold/40 transition"
                 />
               </div>
               <div>
-                <label className="font-body text-xs text-verde-noite/60 uppercase tracking-wide mb-1 block">
+                <label className="font-body text-xs text-midnight/60 uppercase tracking-wide mb-1 block">
                   Telefone / WhatsApp
                 </label>
                 <input
@@ -137,13 +137,13 @@ export default function ContactModal({ slug, companyName, onClose }: ContactModa
                   value={form.contactPhone}
                   onChange={handleChange}
                   placeholder="(11) 9 0000-0000"
-                  className="w-full px-4 py-3 rounded-xl bg-white border border-verde-noite/10 font-body text-sm text-verde-noite placeholder-verde-noite/30 focus:outline-none focus:ring-2 focus:ring-teal/40 transition"
+                  className="w-full px-4 py-3 rounded-xl bg-white border border-midnight/10 font-body text-sm text-midnight placeholder-stone/30 focus:outline-none focus:ring-2 focus:ring-gold/40 transition"
                 />
               </div>
             </div>
 
             <div>
-              <label className="font-body text-xs text-verde-noite/60 uppercase tracking-wide mb-1 block">
+              <label className="font-body text-xs text-midnight/60 uppercase tracking-wide mb-1 block">
                 Data prevista do casamento
               </label>
               <input
@@ -151,12 +151,12 @@ export default function ContactModal({ slug, companyName, onClose }: ContactModa
                 type="date"
                 value={form.weddingDate}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl bg-white border border-verde-noite/10 font-body text-sm text-verde-noite focus:outline-none focus:ring-2 focus:ring-teal/40 transition"
+                className="w-full px-4 py-3 rounded-xl bg-white border border-midnight/10 font-body text-sm text-midnight focus:outline-none focus:ring-2 focus:ring-gold/40 transition"
               />
             </div>
 
             <div>
-              <label className="font-body text-xs text-verde-noite/60 uppercase tracking-wide mb-1 block">
+              <label className="font-body text-xs text-midnight/60 uppercase tracking-wide mb-1 block">
                 Mensagem
               </label>
               <textarea
@@ -165,7 +165,7 @@ export default function ContactModal({ slug, companyName, onClose }: ContactModa
                 onChange={handleChange}
                 rows={3}
                 placeholder="Conte um pouco sobre o casamento dos seus sonhos..."
-                className="w-full px-4 py-3 rounded-xl bg-white border border-verde-noite/10 font-body text-sm text-verde-noite placeholder-verde-noite/30 focus:outline-none focus:ring-2 focus:ring-teal/40 transition resize-none"
+                className="w-full px-4 py-3 rounded-xl bg-white border border-midnight/10 font-body text-sm text-midnight placeholder-stone/30 focus:outline-none focus:ring-2 focus:ring-gold/40 transition resize-none"
               />
             </div>
 
@@ -177,14 +177,14 @@ export default function ContactModal({ slug, companyName, onClose }: ContactModa
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-3 rounded-xl border border-verde-noite/20 font-body text-sm text-verde-noite/60 hover:bg-verde-noite/5 transition"
+                className="flex-1 px-4 py-3 rounded-xl border border-midnight/20 font-body text-sm text-midnight/60 hover:bg-midnight/5 transition"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 px-4 py-3 rounded-xl bg-copper text-white font-body text-sm font-semibold hover:bg-copper/90 disabled:opacity-60 disabled:cursor-not-allowed transition"
+                className="flex-1 px-4 py-3 rounded-xl bg-gold text-white font-body text-sm font-semibold hover:bg-gold/90 disabled:opacity-60 disabled:cursor-not-allowed transition"
               >
                 {submitting ? "Enviando..." : "Enviar pedido"}
               </button>

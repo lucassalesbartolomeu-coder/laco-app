@@ -87,7 +87,7 @@ export default function ComissoesPage() {
   if (authStatus === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -98,14 +98,14 @@ export default function ComissoesPage() {
     <div className="p-6 lg:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-heading text-3xl text-verde-noite">Comissões</h1>
-          <p className="font-body text-sm text-verde-noite/50 mt-1">
+          <h1 className="font-heading text-3xl text-midnight">Comissões</h1>
+          <p className="font-body text-sm text-midnight/50 mt-1">
             Controle de comissões por casamento
           </p>
         </div>
         <button
           onClick={exportCsv}
-          className="px-5 py-2.5 border border-teal text-teal rounded-xl font-body text-sm font-medium hover:bg-teal/5 transition"
+          className="px-5 py-2.5 border border-midnight text-midnight rounded-xl font-body text-sm font-medium hover:bg-midnight/5 transition"
         >
           Exportar CSV
         </button>
@@ -114,12 +114,12 @@ export default function ComissoesPage() {
       {/* Summary */}
       <div className="grid grid-cols-2 gap-4 mb-8">
         <div className="bg-white rounded-2xl shadow-sm p-5">
-          <p className="font-body text-sm text-verde-noite/50 mb-1">Total Pendente</p>
-          <p className="font-heading text-2xl text-copper">{formatCurrency(data?.totalPending ?? 0)}</p>
+          <p className="font-body text-sm text-midnight/50 mb-1">Total Pendente</p>
+          <p className="font-heading text-2xl text-gold">{formatCurrency(data?.totalPending ?? 0)}</p>
         </div>
         <div className="bg-white rounded-2xl shadow-sm p-5">
-          <p className="font-body text-sm text-verde-noite/50 mb-1">Total Recebido</p>
-          <p className="font-heading text-2xl text-teal">{formatCurrency(data?.totalPaid ?? 0)}</p>
+          <p className="font-body text-sm text-midnight/50 mb-1">Total Recebido</p>
+          <p className="font-heading text-2xl text-midnight">{formatCurrency(data?.totalPaid ?? 0)}</p>
         </div>
       </div>
 
@@ -129,7 +129,7 @@ export default function ComissoesPage() {
           type="month"
           value={month}
           onChange={(e) => setMonth(e.target.value)}
-          className="px-4 py-2.5 border border-gray-300 rounded-xl font-body text-verde-noite bg-white focus:border-teal outline-none"
+          className="px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-gold outline-none"
         />
         <div className="flex gap-1">
           {[
@@ -142,8 +142,8 @@ export default function ComissoesPage() {
               onClick={() => setStatusFilter(opt.value)}
               className={`px-4 py-2 rounded-xl font-body text-sm transition ${
                 statusFilter === opt.value
-                  ? "bg-verde-noite text-white"
-                  : "bg-white border border-gray-300 text-verde-noite/70 hover:bg-gray-50"
+                  ? "bg-midnight text-white"
+                  : "bg-white border border-gray-300 text-midnight/70 hover:bg-gray-50"
               }`}
             >
               {opt.label}
@@ -155,17 +155,17 @@ export default function ComissoesPage() {
       {/* Table */}
       {assignments.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-sm p-16 text-center">
-          <p className="font-body text-verde-noite/40">Nenhuma comissão encontrada</p>
+          <p className="font-body text-midnight/40">Nenhuma comissão encontrada</p>
         </div>
       ) : (
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <table className="w-full">
             <thead className="border-b border-gray-100">
               <tr>
-                <th className="text-left px-6 py-4 font-body text-sm text-verde-noite/50 font-medium">Casal</th>
-                <th className="text-left px-6 py-4 font-body text-sm text-verde-noite/50 font-medium hidden md:table-cell">Data</th>
-                <th className="text-left px-6 py-4 font-body text-sm text-verde-noite/50 font-medium">Comissão</th>
-                <th className="text-left px-6 py-4 font-body text-sm text-verde-noite/50 font-medium">Status</th>
+                <th className="text-left px-6 py-4 font-body text-sm text-midnight/50 font-medium">Casal</th>
+                <th className="text-left px-6 py-4 font-body text-sm text-midnight/50 font-medium hidden md:table-cell">Data</th>
+                <th className="text-left px-6 py-4 font-body text-sm text-midnight/50 font-medium">Comissão</th>
+                <th className="text-left px-6 py-4 font-body text-sm text-midnight/50 font-medium">Status</th>
                 <th className="px-6 py-4" />
               </tr>
             </thead>
@@ -173,14 +173,14 @@ export default function ComissoesPage() {
               {assignments.map((a) => (
                 <tr key={a.id} className="hover:bg-gray-50/50 transition">
                   <td className="px-6 py-4">
-                    <p className="font-body font-medium text-verde-noite text-sm">
+                    <p className="font-body font-medium text-midnight text-sm">
                       {a.wedding.partnerName1} &amp; {a.wedding.partnerName2}
                     </p>
                     {a.wedding.city && (
-                      <p className="font-body text-xs text-verde-noite/40">{a.wedding.city}</p>
+                      <p className="font-body text-xs text-midnight/40">{a.wedding.city}</p>
                     )}
                   </td>
-                  <td className="px-6 py-4 hidden md:table-cell font-body text-sm text-verde-noite/60">
+                  <td className="px-6 py-4 hidden md:table-cell font-body text-sm text-midnight/60">
                     {formatDate(a.wedding.weddingDate)}
                   </td>
                   <td className="px-6 py-4">
@@ -190,12 +190,12 @@ export default function ComissoesPage() {
                           type="number"
                           value={editing.value}
                           onChange={(e) => setEditing({ id: a.id, value: e.target.value })}
-                          className="w-28 px-2 py-1 border border-gray-300 rounded-lg font-body text-sm text-verde-noite"
+                          className="w-28 px-2 py-1 border border-gray-300 rounded-lg font-body text-sm text-midnight"
                           autoFocus
                         />
                         <button
                           onClick={() => updateAmount(a.id, editing.value)}
-                          className="px-2 py-1 bg-teal text-white rounded-lg text-xs"
+                          className="px-2 py-1 bg-midnight text-white rounded-lg text-xs"
                         >
                           OK
                         </button>
@@ -211,7 +211,7 @@ export default function ComissoesPage() {
                         onClick={() =>
                           setEditing({ id: a.id, value: a.commissionAmount?.toString() ?? "" })
                         }
-                        className="font-body text-sm text-verde-noite hover:underline"
+                        className="font-body text-sm text-midnight hover:underline"
                       >
                         {a.commissionAmount != null ? formatCurrency(a.commissionAmount) : "— definir"}
                       </button>
@@ -234,7 +234,7 @@ export default function ComissoesPage() {
                       className={`px-3 py-1.5 rounded-lg font-body text-xs font-medium transition ${
                         a.commissionPaid
                           ? "border border-gray-300 text-gray-500 hover:bg-gray-50"
-                          : "bg-teal text-white hover:bg-teal/90"
+                          : "bg-midnight text-white hover:bg-midnight/90"
                       }`}
                     >
                       {a.commissionPaid ? "Desmarcar" : "Marcar como paga"}

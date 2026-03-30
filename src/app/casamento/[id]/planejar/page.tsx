@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -56,8 +56,8 @@ export default function PlanejarPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -69,25 +69,25 @@ export default function PlanejarPage() {
     {
       href: `${base}/orcamento-inteligente`,
       icon: <CalcIcon />,
-      color: "bg-teal",
+      color: "bg-midnight",
       title: "Simulador de Orcamento",
       desc: "Quiz por fornecedor — descubra quanto vai custar seu casamento com precos reais por regiao",
       tag: "IA",
-      tagColor: "bg-teal/10 text-teal",
+      tagColor: "bg-midnight/10 text-midnight",
     },
     {
       href: `${base}/simulador-convidados`,
       icon: <PeopleIcon />,
-      color: "bg-copper",
+      color: "bg-gold",
       title: "Simulador de Convidados",
       desc: "Importe contatos, detecte a cidade pelo DDD e preveja quantos realmente vao comparecer",
       tag: "DDD",
-      tagColor: "bg-copper/10 text-copper",
+      tagColor: "bg-gold/10 text-gold",
     },
     {
       href: `${base}/fornecedores`,
       icon: <VendorIcon />,
-      color: "bg-verde-noite",
+      color: "bg-midnight",
       title: "Catalogo de Fornecedores",
       desc: "Fornecedores classificados por essencialidade: Essencial, Muito Recomendado, Legal Ter, Adicional",
       tag: null,
@@ -96,14 +96,14 @@ export default function PlanejarPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-off-white pb-24">
+    <div className="min-h-screen bg-ivory pb-24">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-verde-noite via-teal to-verde-noite/90 px-5 pt-12 pb-10 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-midnight via-midnight to-midnight/90 px-5 pt-12 pb-10 relative overflow-hidden">
         {/* Decorative dots */}
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
-            <SparkleIcon className="w-5 h-5 text-copper" />
+            <SparkleIcon className="w-5 h-5 text-gold" />
             <span className="font-body text-xs text-white/60 uppercase tracking-wider">Planejamento Inteligente</span>
           </div>
           <h1 className="font-heading text-3xl text-white mb-2">Planejar</h1>
@@ -120,7 +120,7 @@ export default function PlanejarPage() {
             <Link
               key={tool.href}
               href={tool.href}
-              className="block bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-teal/20 transition-all active:scale-[0.98]"
+              className="block bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-midnight/20 transition-all active:scale-[0.98]"
             >
               <div className="flex items-start gap-4">
                 <div className={`w-12 h-12 rounded-xl ${tool.color} text-white flex items-center justify-center flex-shrink-0`}>
@@ -128,7 +128,7 @@ export default function PlanejarPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-heading text-lg text-verde-noite">{tool.title}</h3>
+                    <h3 className="font-heading text-lg text-midnight">{tool.title}</h3>
                     {tool.tag && (
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-body font-semibold ${tool.tagColor}`}>
                         {tool.tag}
@@ -144,19 +144,19 @@ export default function PlanejarPage() {
         </div>
 
         {/* Insight card */}
-        <div className="mt-6 bg-gradient-to-r from-teal/5 to-copper/5 border border-teal/10 rounded-2xl p-5">
-          <h3 className="font-heading text-base text-verde-noite mb-2">Como funciona?</h3>
+        <div className="mt-6 bg-gradient-to-r from-midnight/5 to-gold/5 border border-midnight/10 rounded-2xl p-5">
+          <h3 className="font-heading text-base text-midnight mb-2">Como funciona?</h3>
           <div className="space-y-3">
             <div className="flex items-start gap-3">
-              <span className="w-6 h-6 rounded-full bg-teal text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
+              <span className="w-6 h-6 rounded-full bg-midnight text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
               <p className="font-body text-sm text-gray-600">Responda o <strong>quiz por fornecedor</strong> — de &ldquo;quero algo simples&rdquo; a &ldquo;quero o que a blogueira teve&rdquo;</p>
             </div>
             <div className="flex items-start gap-3">
-              <span className="w-6 h-6 rounded-full bg-teal text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
+              <span className="w-6 h-6 rounded-full bg-midnight text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
               <p className="font-body text-sm text-gray-600">Importe seus contatos e veja quantos <strong>realmente vao</strong> pelo DDD e distancia</p>
             </div>
             <div className="flex items-start gap-3">
-              <span className="w-6 h-6 rounded-full bg-copper text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
+              <span className="w-6 h-6 rounded-full bg-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
               <p className="font-body text-sm text-gray-600">Receba um <strong>orcamento realista</strong> baseado na sua regiao (SP, RJ, MG, Interior)</p>
             </div>
           </div>

@@ -58,13 +58,13 @@ export default function ActivityFeed({ weddingId }: ActivityFeedProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25, delay: i * 0.06 }}
-            className="flex items-center gap-3 bg-white border-l-2 border-teal rounded-xl px-4 py-2.5 shadow-sm"
+            className="flex items-center gap-3 bg-white border-l-2 border-midnight rounded-xl px-4 py-2.5 shadow-sm"
           >
             <span className="text-base leading-none flex-shrink-0">{item.icon}</span>
-            <p className="font-body text-xs text-verde-noite/70 flex-1 leading-snug">
+            <p className="font-body text-xs text-midnight/70 flex-1 leading-snug">
               {item.message.replace(item.icon, "").trim()}
             </p>
-            <span className="font-body text-[10px] text-verde-noite/35 flex-shrink-0 whitespace-nowrap">
+            <span className="font-body text-[10px] text-midnight/35 flex-shrink-0 whitespace-nowrap">
               {timeAgo(item.time)}
             </span>
           </motion.div>
@@ -74,7 +74,7 @@ export default function ActivityFeed({ weddingId }: ActivityFeedProps) {
       {hasMore && (
         <button
           onClick={() => setExpanded((prev) => !prev)}
-          className="font-body text-xs text-teal hover:text-teal/80 transition-colors px-1"
+          className="font-body text-xs text-midnight hover:text-midnight/80 transition-colors px-1"
         >
           {expanded ? "Ver menos" : `Ver mais ${items.length - 3} atividade${items.length - 3 > 1 ? "s" : ""}`}
         </button>

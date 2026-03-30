@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Badge — componente de badge/chip Laço.
  * Variantes semânticas para status de convidados, fornecedores, pagamentos, etc.
  */
@@ -13,8 +13,7 @@ type BadgeVariant =
   | "error"
   | "info"
   | "neutral"
-  | "teal"
-  | "copper"
+  | "midnight"
   | "gold";
 
 interface BadgeProps {
@@ -26,26 +25,24 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  default: "bg-verde-noite/10 text-verde-noite",
+  default: "bg-midnight/10 text-midnight",
   success: "bg-success/10 text-success",
   warning: "bg-warning/20 text-amber-700",
   error: "bg-error/10 text-error",
   info: "bg-info/10 text-info",
-  neutral: "bg-verde-noite/5 text-verde-noite/60",
-  teal: "bg-teal/10 text-teal",
-  copper: "bg-copper/10 text-copper",
-  gold: "bg-gold/20 text-amber-700",
+  neutral: "bg-midnight/5 text-midnight/60",
+  midnight: "bg-midnight/10 text-midnight",
+  gold: "bg-gold/10 text-gold",
 };
 
 const dotStyles: Record<BadgeVariant, string> = {
-  default: "bg-verde-noite",
+  default: "bg-midnight",
   success: "bg-success",
   warning: "bg-warning",
   error: "bg-error",
   info: "bg-info",
-  neutral: "bg-verde-noite/40",
-  teal: "bg-teal",
-  copper: "bg-copper",
+  neutral: "bg-midnight/40",
+  midnight: "bg-midnight",
   gold: "bg-gold",
 };
 

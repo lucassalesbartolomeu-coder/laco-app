@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -69,7 +69,7 @@ export default function SmartSuggestions({ weddingId }: { weddingId: string }) {
 
   return (
     <div>
-      <p className="font-body text-xs font-medium text-verde-noite/40 uppercase tracking-wider mb-3">
+      <p className="font-body text-xs font-medium text-midnight/40 uppercase tracking-wider mb-3">
         Sugestões
       </p>
 
@@ -80,7 +80,7 @@ export default function SmartSuggestions({ weddingId }: { weddingId: string }) {
             <div
               key={s.id}
               className={`snap-start flex-shrink-0 w-72 bg-white rounded-2xl border border-gray-100 border-l-4 shadow-sm p-4 flex flex-col gap-3 ${
-                s.urgency === "high" ? "border-l-copper" : "border-l-teal"
+                s.urgency === "high" ? "border-l-gold" : "border-l-midnight"
               }`}
             >
               {/* Linha superior: emoji + fechar */}
@@ -88,7 +88,7 @@ export default function SmartSuggestions({ weddingId }: { weddingId: string }) {
                 <span className="text-xl leading-none">{urgencyEmoji[s.urgency]}</span>
                 <button
                   onClick={() => dismiss(s.id)}
-                  className="w-5 h-5 flex items-center justify-center rounded-full text-verde-noite/25 hover:text-verde-noite/60 hover:bg-gray-100 transition flex-shrink-0"
+                  className="w-5 h-5 flex items-center justify-center rounded-full text-midnight/25 hover:text-midnight/60 hover:bg-gray-100 transition flex-shrink-0"
                   title="Dispensar sugestão"
                 >
                   <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -99,10 +99,10 @@ export default function SmartSuggestions({ weddingId }: { weddingId: string }) {
 
               {/* Conteúdo */}
               <div className="flex-1">
-                <p className="font-body text-sm font-semibold text-verde-noite leading-snug">
+                <p className="font-body text-sm font-semibold text-midnight leading-snug">
                   {s.title}
                 </p>
-                <p className="font-body text-xs text-verde-noite/55 mt-1 leading-relaxed">
+                <p className="font-body text-xs text-midnight/55 mt-1 leading-relaxed">
                   {s.description}
                 </p>
               </div>
@@ -112,8 +112,8 @@ export default function SmartSuggestions({ weddingId }: { weddingId: string }) {
                 href={s.ctaHref}
                 className={`inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-body font-medium transition active:scale-[0.97] ${
                   s.urgency === "high"
-                    ? "bg-copper text-white hover:bg-copper/90"
-                    : "bg-teal text-white hover:bg-teal/90"
+                    ? "bg-gold text-white hover:bg-gold/90"
+                    : "bg-midnight text-white hover:bg-midnight/90"
                 }`}
               >
                 {s.ctaLabel}

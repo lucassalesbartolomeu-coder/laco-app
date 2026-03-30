@@ -5,6 +5,7 @@ type ShareWhatsAppProps = {
   variant?: "button" | "icon";
   label?: string;
   className?: string;
+  onShare?: () => void;
 };
 
 function WhatsAppSVG({ size = 20 }: { size?: number }) {
@@ -26,6 +27,7 @@ export default function ShareWhatsApp({
   variant = "button",
   label = "Compartilhar no WhatsApp",
   className = "",
+  onShare,
 }: ShareWhatsAppProps) {
   const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
 
@@ -37,6 +39,7 @@ export default function ShareWhatsApp({
         rel="noopener noreferrer"
         title={label}
         aria-label={label}
+        onClick={onShare}
         className={`inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm hover:shadow-md hover:scale-105 transition-all active:scale-95 ${className}`}
       >
         <WhatsAppSVG size={20} />
@@ -49,6 +52,7 @@ export default function ShareWhatsApp({
       href={url}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={onShare}
       className={`inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-body text-sm font-semibold text-white shadow-md hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all ${className}`}
       style={{ backgroundColor: "#25D366" }}
     >

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -82,8 +82,8 @@ type VariantConfig = {
 
 const VARIANT_STYLES: Record<ToastType, VariantConfig> = {
   success: {
-    // teal #2C6B5E
-    container: "bg-[#2C6B5E] text-white shadow-lg",
+    // midnight #1A1F3A
+    container: "bg-[#1A1F3A] text-white shadow-lg",
     icon: "text-white/90",
     progress: "bg-white/50",
     IconEl: IconSuccess,
@@ -95,15 +95,15 @@ const VARIANT_STYLES: Record<ToastType, VariantConfig> = {
     IconEl: IconError,
   },
   warning: {
-    // copper #C4734F
-    container: "bg-[#C4734F] text-white shadow-lg",
+    // gold #C9A96E
+    container: "bg-[#C9A96E] text-white shadow-lg",
     icon: "text-white/90",
     progress: "bg-white/50",
     IconEl: IconWarning,
   },
   info: {
-    // verde-noite #1A3A33
-    container: "bg-[#1A3A33] text-white shadow-lg",
+    // verde-noite #1A1F3A
+    container: "bg-[#1A1F3A] text-white shadow-lg",
     icon: "text-white/90",
     progress: "bg-white/50",
     IconEl: IconInfo,

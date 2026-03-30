@@ -49,7 +49,7 @@ export default function PortfolioPage() {
   if (authStatus === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -58,15 +58,15 @@ export default function PortfolioPage() {
     <div className="p-6 lg:p-8 max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-heading text-3xl text-verde-noite">Meu Portfolio</h1>
-          <p className="font-body text-verde-noite/50 mt-1">Casamentos realizados</p>
+          <h1 className="font-heading text-3xl text-midnight">Meu Portfolio</h1>
+          <p className="font-body text-midnight/50 mt-1">Casamentos realizados</p>
         </div>
         {plannerSlug && (
           <a
             href={`/cerimonialista/${plannerSlug}/portfolio`}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2 border border-teal text-teal rounded-xl font-body text-sm hover:bg-teal hover:text-white transition"
+            className="px-4 py-2 border border-midnight text-midnight rounded-xl font-body text-sm hover:bg-midnight hover:text-white transition"
           >
             Ver pagina publica
           </a>
@@ -75,7 +75,7 @@ export default function PortfolioPage() {
 
       {weddings.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
-          <p className="font-body text-verde-noite/40">
+          <p className="font-body text-midnight/40">
             Nenhum casamento concluido ainda. Marque casamentos como &quot;concluido&quot; para aparecerem aqui.
           </p>
         </div>
@@ -84,25 +84,25 @@ export default function PortfolioPage() {
           {weddings.map((w) => (
             <div key={w.id} className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition">
               {/* Placeholder image */}
-              <div className="h-48 bg-gradient-to-br from-verde-noite to-teal flex items-center justify-center">
+              <div className="h-48 bg-gradient-to-br from-midnight to-midnight flex items-center justify-center">
                 <span className="font-heading text-4xl text-white/20">
                   {w.partnerName1.charAt(0)}&{w.partnerName2.charAt(0)}
                 </span>
               </div>
               <div className="p-5">
-                <h3 className="font-heading text-lg text-verde-noite mb-1">
+                <h3 className="font-heading text-lg text-midnight mb-1">
                   {w.partnerName1} & {w.partnerName2}
                 </h3>
                 {w.weddingDate && (
-                  <p className="font-body text-sm text-verde-noite/50">{formatDate(w.weddingDate)}</p>
+                  <p className="font-body text-sm text-midnight/50">{formatDate(w.weddingDate)}</p>
                 )}
                 {(w.venue || w.city) && (
-                  <p className="font-body text-sm text-verde-noite/40 mt-1">
+                  <p className="font-body text-sm text-midnight/40 mt-1">
                     {w.venue || ""} {w.city ? `— ${w.city}/${w.state}` : ""}
                   </p>
                 )}
                 {w.style && (
-                  <span className="inline-block mt-2 px-2 py-0.5 bg-cream text-verde-noite/60 text-xs font-body rounded-full capitalize">
+                  <span className="inline-block mt-2 px-2 py-0.5 bg-fog text-midnight/60 text-xs font-body rounded-full capitalize">
                     {w.style}
                   </span>
                 )}

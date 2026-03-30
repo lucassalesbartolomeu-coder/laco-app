@@ -58,7 +58,7 @@ function DonutChart({
   if (total === 0) {
     return (
       <div className="w-36 h-36 rounded-full border-8 border-gray-100 flex items-center justify-center">
-        <span className="font-body text-xs text-verde-noite/30">Sem dados</span>
+        <span className="font-body text-xs text-midnight/30">Sem dados</span>
       </div>
     );
   }
@@ -105,10 +105,10 @@ function DonutChart({
       </svg>
       {/* center label */}
       <div className="absolute inset-0 flex flex-col items-center justify-center rotate-0">
-        <span className="font-heading text-2xl text-verde-noite font-bold">
+        <span className="font-heading text-2xl text-midnight font-bold">
           {total > 0 ? Math.round((confirmed / total) * 100) : 0}%
         </span>
-        <span className="font-body text-xs text-verde-noite/40">confirmados</span>
+        <span className="font-body text-xs text-midnight/40">confirmados</span>
       </div>
     </div>
   );
@@ -140,7 +140,7 @@ function Counter({ value, label, color }: { value: number; label: string; color:
   return (
     <div className="flex flex-col items-center">
       <span className={`font-heading text-4xl font-bold ${color}`}>{display}</span>
-      <span className="font-body text-xs text-verde-noite/50 mt-0.5">{label}</span>
+      <span className="font-body text-xs text-midnight/50 mt-0.5">{label}</span>
     </div>
   );
 }
@@ -180,16 +180,16 @@ function WhatsappSetupPanel() {
           </svg>
         </div>
         <div className="flex-1">
-          <h3 className="font-heading text-lg text-verde-noite mb-1">WhatsApp Business</h3>
-          <p className="font-body text-sm text-verde-noite/60 mb-4">
+          <h3 className="font-heading text-lg text-midnight mb-1">WhatsApp Business</h3>
+          <p className="font-body text-sm text-midnight/60 mb-4">
             Configure as variáveis de ambiente para enviar convites diretamente pelo WhatsApp.
           </p>
           <div className="bg-gray-50 rounded-xl p-4 font-mono text-xs space-y-1.5">
-            <p className="text-verde-noite/70"><span className="text-copper">WHATSAPP_API_URL</span>=https://api.z-api.io/instances/<span className="text-teal">SEU_ID</span>/token/<span className="text-teal">SEU_TOKEN</span></p>
-            <p className="text-verde-noite/70"><span className="text-copper">WHATSAPP_API_TOKEN</span>=<span className="text-teal">seu-client-token</span></p>
-            <p className="text-verde-noite/70"><span className="text-copper">WHATSAPP_INSTANCE_ID</span>=<span className="text-teal">sua-instancia</span></p>
+            <p className="text-midnight/70"><span className="text-gold">WHATSAPP_API_URL</span>=https://api.z-api.io/instances/<span className="text-midnight">SEU_ID</span>/token/<span className="text-midnight">SEU_TOKEN</span></p>
+            <p className="text-midnight/70"><span className="text-gold">WHATSAPP_API_TOKEN</span>=<span className="text-midnight">seu-client-token</span></p>
+            <p className="text-midnight/70"><span className="text-gold">WHATSAPP_INSTANCE_ID</span>=<span className="text-midnight">sua-instancia</span></p>
           </div>
-          <p className="font-body text-xs text-verde-noite/40 mt-3">
+          <p className="font-body text-xs text-midnight/40 mt-3">
             Webhook de resposta: <span className="font-mono">https://seu-dominio/api/webhooks/whatsapp</span>
           </p>
         </div>
@@ -277,8 +277,8 @@ export default function ConfirmacoesPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -329,26 +329,26 @@ export default function ConfirmacoesPage() {
   ).length;
 
   return (
-    <div className="min-h-screen bg-off-white pb-16">
+    <div className="min-h-screen bg-ivory pb-16">
       {/* Header */}
       <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="text-verde-noite/50 hover:text-verde-noite transition">
+            <Link href="/dashboard" className="text-midnight/50 hover:text-midnight transition">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </Link>
             <div>
-              <h1 className="font-heading text-xl text-verde-noite">Confirmações</h1>
+              <h1 className="font-heading text-xl text-midnight">Confirmações</h1>
               {wedding && (
-                <p className="font-body text-xs text-verde-noite/40">{coupleName}</p>
+                <p className="font-body text-xs text-midnight/40">{coupleName}</p>
               )}
             </div>
           </div>
           {/* Live indicator */}
-          <div className="flex items-center gap-1.5 text-xs font-body text-teal">
-            <div className="w-1.5 h-1.5 bg-teal rounded-full animate-pulse" />
+          <div className="flex items-center gap-1.5 text-xs font-body text-midnight">
+            <div className="w-1.5 h-1.5 bg-midnight rounded-full animate-pulse" />
             Ao vivo
           </div>
         </div>
@@ -365,7 +365,7 @@ export default function ConfirmacoesPage() {
               <Counter value={confirmed} label="Confirmados" color="text-green-500" />
               <Counter value={pending} label="Pendentes" color="text-amber-500" />
               <Counter value={declined} label="Recusaram" color="text-red-400" />
-              <Counter value={total} label="Total" color="text-verde-noite" />
+              <Counter value={total} label="Total" color="text-midnight" />
             </div>
           </div>
 
@@ -379,7 +379,7 @@ export default function ConfirmacoesPage() {
             ].map((item) => (
               <div key={item.label} className="flex items-center gap-1.5">
                 <div className={`w-2.5 h-2.5 rounded-full ${item.color}`} />
-                <span className="font-body text-xs text-verde-noite/50">{item.label}</span>
+                <span className="font-body text-xs text-midnight/50">{item.label}</span>
               </div>
             ))}
           </div>
@@ -390,22 +390,22 @@ export default function ConfirmacoesPage() {
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-teal/5 border border-teal/15 rounded-2xl px-5 py-4 flex items-center gap-4"
+            className="bg-midnight/5 border border-midnight/15 rounded-2xl px-5 py-4 flex items-center gap-4"
           >
-            <div className="w-10 h-10 rounded-xl bg-teal/10 flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-10 h-10 rounded-xl bg-midnight/10 flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-midnight" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
               </svg>
             </div>
             <div>
-              <p className="font-body text-sm text-verde-noite">
+              <p className="font-body text-sm text-midnight">
                 Com base nas confirmações, estimamos{" "}
-                <strong className="text-teal">
+                <strong className="text-midnight">
                   {simulation.confidenceRange.min + confirmed}–{simulation.confidenceRange.max + confirmed}
                 </strong>{" "}
                 presentes.
               </p>
-              <p className="font-body text-xs text-verde-noite/40 mt-0.5">
+              <p className="font-body text-xs text-midnight/40 mt-0.5">
                 {confirmed} já confirmados + ~{simulation.totalExpected} dos {pendingGuests.length} pendentes
               </p>
             </div>
@@ -414,7 +414,7 @@ export default function ConfirmacoesPage() {
 
         {/* ── WhatsApp Panel ── */}
         <section>
-          <h2 className="font-heading text-xl text-verde-noite mb-3">Envio por WhatsApp</h2>
+          <h2 className="font-heading text-xl text-midnight mb-3">Envio por WhatsApp</h2>
 
           {waStats?.configured === false ? (
             <WhatsappSetupPanel />
@@ -436,13 +436,13 @@ export default function ConfirmacoesPage() {
               {waStats && (
                 <div className="flex flex-wrap gap-4">
                   {[
-                    { label: "Enviados", value: waStats.stats.sent, color: "text-teal" },
-                    { label: "Responderam", value: waStats.stats.confirmed + waStats.stats.declined + waStats.stats.maybe, color: "text-verde-noite" },
-                    { label: "Sem telefone", value: waStats.stats.total - waStats.stats.withPhone, color: "text-verde-noite/40" },
+                    { label: "Enviados", value: waStats.stats.sent, color: "text-midnight" },
+                    { label: "Responderam", value: waStats.stats.confirmed + waStats.stats.declined + waStats.stats.maybe, color: "text-midnight" },
+                    { label: "Sem telefone", value: waStats.stats.total - waStats.stats.withPhone, color: "text-midnight/40" },
                   ].map((item) => (
                     <div key={item.label} className="text-center">
                       <p className={`font-heading text-2xl font-bold ${item.color}`}>{item.value}</p>
-                      <p className="font-body text-xs text-verde-noite/40">{item.label}</p>
+                      <p className="font-body text-xs text-midnight/40">{item.label}</p>
                     </div>
                   ))}
                 </div>
@@ -481,7 +481,7 @@ export default function ConfirmacoesPage() {
                 </button>
               </div>
 
-              <p className="font-body text-xs text-verde-noite/30">
+              <p className="font-body text-xs text-midnight/30">
                 Envio com intervalo de 1 segundo entre mensagens para evitar bloqueios.
               </p>
             </div>
@@ -491,8 +491,8 @@ export default function ConfirmacoesPage() {
         {/* ── Guest list ── */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-heading text-xl text-verde-noite">Lista de Convidados</h2>
-            <span className="font-body text-xs text-verde-noite/40">
+            <h2 className="font-heading text-xl text-midnight">Lista de Convidados</h2>
+            <span className="font-body text-xs text-midnight/40">
               {filteredGuests.length} de {total}
             </span>
           </div>
@@ -504,12 +504,12 @@ export default function ConfirmacoesPage() {
               placeholder="Buscar por nome..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-xl px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-teal/30"
+              className="flex-1 border border-gray-200 rounded-xl px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-gold/30"
             />
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="border border-gray-200 rounded-xl px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-teal/30"
+              className="border border-gray-200 rounded-xl px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-gold/30"
             >
               <option value="all">Todos os status</option>
               <option value="confirmado">Confirmados</option>
@@ -521,7 +521,7 @@ export default function ConfirmacoesPage() {
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="border border-gray-200 rounded-xl px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-teal/30"
+                className="border border-gray-200 rounded-xl px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-gold/30"
               >
                 <option value="all">Todas as categorias</option>
                 {categories.map((c) => (
@@ -534,7 +534,7 @@ export default function ConfirmacoesPage() {
           {/* Guest rows */}
           <div className="bg-white rounded-2xl shadow-sm divide-y divide-gray-100 overflow-hidden">
             {filteredGuests.length === 0 ? (
-              <div className="py-10 text-center font-body text-sm text-verde-noite/40">
+              <div className="py-10 text-center font-body text-sm text-midnight/40">
                 Nenhum convidado encontrado.
               </div>
             ) : (
@@ -548,15 +548,15 @@ export default function ConfirmacoesPage() {
                   }`} />
 
                   <div className="flex-1 min-w-0">
-                    <p className="font-body text-sm text-verde-noite font-medium truncate">{g.name}</p>
+                    <p className="font-body text-sm text-midnight font-medium truncate">{g.name}</p>
                     <div className="flex items-center gap-2 mt-0.5">
                       {g.category && (
-                        <span className="font-body text-[10px] text-verde-noite/40 capitalize">
+                        <span className="font-body text-[10px] text-midnight/40 capitalize">
                           {g.category.replace(/_/g, " ")}
                         </span>
                       )}
                       {g.phone ? (
-                        <span className="font-body text-[10px] text-verde-noite/30">{g.phone}</span>
+                        <span className="font-body text-[10px] text-midnight/30">{g.phone}</span>
                       ) : (
                         <span className="font-body text-[10px] text-red-400/70">sem telefone</span>
                       )}
@@ -580,22 +580,22 @@ export default function ConfirmacoesPage() {
         {/* ── Estimate detail ── */}
         {simulation && (
           <section className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="font-heading text-xl text-verde-noite mb-4">Estimativa de Presença</h2>
+            <h2 className="font-heading text-xl text-midnight mb-4">Estimativa de Presença</h2>
             <div className="grid grid-cols-3 gap-4 mb-4">
-              <div className="text-center p-3 bg-off-white rounded-xl">
-                <p className="font-heading text-2xl text-verde-noite font-bold">{confirmed}</p>
-                <p className="font-body text-xs text-verde-noite/50">Confirmados</p>
+              <div className="text-center p-3 bg-ivory rounded-xl">
+                <p className="font-heading text-2xl text-midnight font-bold">{confirmed}</p>
+                <p className="font-body text-xs text-midnight/50">Confirmados</p>
               </div>
-              <div className="text-center p-3 bg-off-white rounded-xl">
-                <p className="font-heading text-2xl text-teal font-bold">~{simulation.totalExpected}</p>
-                <p className="font-body text-xs text-verde-noite/50">Pendentes (est.)</p>
+              <div className="text-center p-3 bg-ivory rounded-xl">
+                <p className="font-heading text-2xl text-midnight font-bold">~{simulation.totalExpected}</p>
+                <p className="font-body text-xs text-midnight/50">Pendentes (est.)</p>
               </div>
-              <div className="text-center p-3 bg-copper/10 rounded-xl">
-                <p className="font-heading text-2xl text-copper font-bold">{estimatedTotal}</p>
-                <p className="font-body text-xs text-verde-noite/50">Total estimado</p>
+              <div className="text-center p-3 bg-gold/10 rounded-xl">
+                <p className="font-heading text-2xl text-gold font-bold">{estimatedTotal}</p>
+                <p className="font-body text-xs text-midnight/50">Total estimado</p>
               </div>
             </div>
-            <p className="font-body text-xs text-verde-noite/40">
+            <p className="font-body text-xs text-midnight/40">
               Faixa de confiança: {simulation.confidenceRange.min + confirmed}–{simulation.confidenceRange.max + confirmed} presentes.
               A estimativa considera distância, categoria e dia da semana.
             </p>

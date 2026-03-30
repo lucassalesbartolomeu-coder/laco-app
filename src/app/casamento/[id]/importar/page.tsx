@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useCallback, useRef, useEffect, type DragEvent, type ChangeEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -204,47 +204,47 @@ export default function ImportarContatosPage() {
   /* ---- Render ---- */
 
   return (
-    <main className="min-h-screen bg-off-white py-10 px-4 sm:px-8">
+    <main className="min-h-screen bg-ivory py-10 px-4 sm:px-8">
       <div className="mx-auto max-w-5xl space-y-8">
         {/* Header */}
         <div>
-          <h1 className="font-heading text-3xl font-bold text-verde-noite">
+          <h1 className="font-heading text-3xl font-bold text-midnight">
             Importar Contatos
           </h1>
-          <p className="font-body mt-1 text-verde-noite/70">
+          <p className="font-body mt-1 text-midnight/70">
             Adicione os convidados via arquivo CSV ou manualmente.
           </p>
         </div>
 
         {/* Contact Picker API */}
         <div className="bg-white rounded-2xl shadow-md p-6">
-          <h2 className="font-heading text-lg font-semibold text-verde-noite mb-1">
+          <h2 className="font-heading text-lg font-semibold text-midnight mb-1">
             Importar do celular
           </h2>
-          <p className="font-body text-sm text-verde-noite/60 mb-4">
+          <p className="font-body text-sm text-midnight/60 mb-4">
             Selecione contatos diretamente da agenda do seu dispositivo.
           </p>
           {contactPickerSupported ? (
             <button
               onClick={handleContactPicker}
               disabled={pickingContacts}
-              className="flex items-center gap-3 w-full rounded-xl border-2 border-teal/30 bg-teal/5 hover:bg-teal/10 px-5 py-4 transition-colors disabled:opacity-50"
+              className="flex items-center gap-3 w-full rounded-xl border-2 border-midnight/30 bg-midnight/5 hover:bg-midnight/10 px-5 py-4 transition-colors disabled:opacity-50"
             >
-              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-teal/15 text-teal">
+              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-midnight/15 text-midnight">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </span>
               <div className="text-left">
-                <p className="font-body text-sm font-semibold text-verde-noite">
+                <p className="font-body text-sm font-semibold text-midnight">
                   {pickingContacts ? "Abrindo agenda…" : "Selecionar da agenda"}
                 </p>
-                <p className="font-body text-xs text-verde-noite/50">
+                <p className="font-body text-xs text-midnight/50">
                   Escolha um ou vários contatos de uma vez
                 </p>
               </div>
               {pickingContacts && (
-                <svg className="ml-auto h-4 w-4 animate-spin text-teal" fill="none" viewBox="0 0 24 24">
+                <svg className="ml-auto h-4 w-4 animate-spin text-midnight" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
@@ -258,10 +258,10 @@ export default function ImportarContatosPage() {
                 </svg>
               </span>
               <div className="text-left">
-                <p className="font-body text-sm font-semibold text-verde-noite/50">
+                <p className="font-body text-sm font-semibold text-midnight/50">
                   Selecionar da agenda
                 </p>
-                <p className="font-body text-xs text-verde-noite/40">
+                <p className="font-body text-xs text-midnight/40">
                   Disponível no Chrome para Android
                 </p>
               </div>
@@ -271,7 +271,7 @@ export default function ImportarContatosPage() {
 
         {/* CSV Drop Zone */}
         <div className="bg-white rounded-2xl shadow-md p-6">
-          <h2 className="font-heading text-lg font-semibold text-verde-noite mb-4">
+          <h2 className="font-heading text-lg font-semibold text-midnight mb-4">
             Importar CSV
           </h2>
 
@@ -282,13 +282,13 @@ export default function ImportarContatosPage() {
             onClick={() => fileInputRef.current?.click()}
             className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed cursor-pointer transition-colors py-12 px-6 ${
               dragOver
-                ? "border-teal bg-teal/5"
-                : "border-gray-300 hover:border-teal hover:bg-teal/5"
+                ? "border-midnight bg-midnight/5"
+                : "border-gray-300 hover:border-midnight hover:bg-midnight/5"
             }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-10 w-10 text-teal"
+              className="h-10 w-10 text-midnight"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -300,9 +300,9 @@ export default function ImportarContatosPage() {
                 d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
               />
             </svg>
-            <p className="font-body text-sm text-verde-noite/70 text-center">
+            <p className="font-body text-sm text-midnight/70 text-center">
               Arraste um arquivo CSV aqui ou{" "}
-              <span className="text-teal font-semibold underline">
+              <span className="text-midnight font-semibold underline">
                 clique para selecionar
               </span>
             </p>
@@ -322,7 +322,7 @@ export default function ImportarContatosPage() {
 
         {/* Manual Add */}
         <div className="bg-white rounded-2xl shadow-md p-6">
-          <h2 className="font-heading text-lg font-semibold text-verde-noite mb-4">
+          <h2 className="font-heading text-lg font-semibold text-midnight mb-4">
             Adicionar manualmente
           </h2>
 
@@ -333,7 +333,7 @@ export default function ImportarContatosPage() {
               value={manualName}
               onChange={(e) => setManualName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAddManual()}
-              className="font-body flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-verde-noite placeholder:text-gray-400 focus:border-teal focus:ring-1 focus:ring-teal outline-none"
+              className="font-body flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-midnight placeholder:text-gray-400 focus:border-midnight focus:ring-1 focus:ring-midnight outline-none"
             />
             <input
               type="text"
@@ -341,11 +341,11 @@ export default function ImportarContatosPage() {
               value={manualPhone}
               onChange={(e) => setManualPhone(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAddManual()}
-              className="font-body flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-verde-noite placeholder:text-gray-400 focus:border-teal focus:ring-1 focus:ring-teal outline-none"
+              className="font-body flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-midnight placeholder:text-gray-400 focus:border-midnight focus:ring-1 focus:ring-midnight outline-none"
             />
             <button
               onClick={handleAddManual}
-              className="font-body rounded-lg bg-teal px-6 py-2.5 text-sm font-semibold text-white hover:bg-teal/80 transition-colors"
+              className="font-body rounded-lg bg-midnight px-6 py-2.5 text-sm font-semibold text-white hover:bg-midnight/80 transition-colors"
             >
               Adicionar
             </button>
@@ -355,12 +355,12 @@ export default function ImportarContatosPage() {
         {/* Contact List */}
         {contacts.length > 0 && (
           <div className="bg-white rounded-2xl shadow-md p-6 space-y-4">
-            <h2 className="font-heading text-lg font-semibold text-verde-noite">
+            <h2 className="font-heading text-lg font-semibold text-midnight">
               Contatos ({totalContacts})
             </h2>
 
             {/* Summary bar */}
-            <div className="font-body rounded-lg bg-off-white px-4 py-3 text-sm text-verde-noite/80">
+            <div className="font-body rounded-lg bg-ivory px-4 py-3 text-sm text-midnight/80">
               {totalContacts} contato{totalContacts !== 1 ? "s" : ""} &mdash;{" "}
               {withCity} com cidade identificada ({pct}%)
             </div>
@@ -369,7 +369,7 @@ export default function ImportarContatosPage() {
             <div className="hidden lg:block overflow-x-auto">
               <table className="w-full text-sm font-body">
                 <thead>
-                  <tr className="border-b border-gray-200 text-left text-xs font-semibold uppercase tracking-wide text-verde-noite/50">
+                  <tr className="border-b border-gray-200 text-left text-xs font-semibold uppercase tracking-wide text-midnight/50">
                     <th className="pb-3 pr-3">Nome</th>
                     <th className="pb-3 pr-3">Telefone</th>
                     <th className="pb-3 pr-3">DDD</th>
@@ -385,13 +385,13 @@ export default function ImportarContatosPage() {
                       key={c.id}
                       className="border-b border-gray-100 last:border-0"
                     >
-                      <td className="py-3 pr-3 text-verde-noite">{c.name}</td>
-                      <td className="py-3 pr-3 text-verde-noite">
+                      <td className="py-3 pr-3 text-midnight">{c.name}</td>
+                      <td className="py-3 pr-3 text-midnight">
                         {formatPhone(c.ddd, c.phone)}
                       </td>
                       <td className="py-3 pr-3">
                         {c.ddd && (
-                          <span className="inline-block rounded-full bg-teal/10 text-teal text-xs font-semibold px-2.5 py-0.5">
+                          <span className="inline-block rounded-full bg-midnight/10 text-midnight text-xs font-semibold px-2.5 py-0.5">
                             {c.ddd}
                             {c.city ? ` - ${c.city}` : ""}
                           </span>
@@ -404,7 +404,7 @@ export default function ImportarContatosPage() {
                           onChange={(e) =>
                             updateContact(c.id, { city: e.target.value })
                           }
-                          className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-verde-noite outline-none focus:border-teal"
+                          className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-midnight outline-none focus:border-midnight"
                         />
                       </td>
                       <td className="py-3 pr-3">
@@ -414,7 +414,7 @@ export default function ImportarContatosPage() {
                           onChange={(e) =>
                             updateContact(c.id, { state: e.target.value })
                           }
-                          className="w-24 rounded border border-gray-200 px-2 py-1 text-sm text-verde-noite outline-none focus:border-teal"
+                          className="w-24 rounded border border-gray-200 px-2 py-1 text-sm text-midnight outline-none focus:border-midnight"
                         />
                       </td>
                       <td className="py-3 pr-3">
@@ -423,7 +423,7 @@ export default function ImportarContatosPage() {
                           onChange={(e) =>
                             updateContact(c.id, { category: e.target.value })
                           }
-                          className="rounded border border-gray-200 px-2 py-1 text-sm text-verde-noite outline-none focus:border-teal bg-white"
+                          className="rounded border border-gray-200 px-2 py-1 text-sm text-midnight outline-none focus:border-midnight bg-white"
                         >
                           {CATEGORIES.map((cat) => (
                             <option key={cat} value={cat}>
@@ -465,14 +465,14 @@ export default function ImportarContatosPage() {
               {contacts.map((c) => (
                 <div
                   key={c.id}
-                  className="rounded-xl border border-gray-100 bg-off-white p-4 space-y-3"
+                  className="rounded-xl border border-gray-100 bg-ivory p-4 space-y-3"
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="font-heading font-semibold text-verde-noite">
+                      <p className="font-heading font-semibold text-midnight">
                         {c.name}
                       </p>
-                      <p className="font-body text-sm text-verde-noite/70">
+                      <p className="font-body text-sm text-midnight/70">
                         {formatPhone(c.ddd, c.phone)}
                       </p>
                     </div>
@@ -499,7 +499,7 @@ export default function ImportarContatosPage() {
                   </div>
 
                   {c.ddd && (
-                    <span className="inline-block rounded-full bg-teal/10 text-teal text-xs font-semibold px-2.5 py-0.5">
+                    <span className="inline-block rounded-full bg-midnight/10 text-midnight text-xs font-semibold px-2.5 py-0.5">
                       {c.ddd}
                       {c.city ? ` - ${c.city}` : ""}
                     </span>
@@ -516,7 +516,7 @@ export default function ImportarContatosPage() {
                         onChange={(e) =>
                           updateContact(c.id, { city: e.target.value })
                         }
-                        className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-verde-noite outline-none focus:border-teal"
+                        className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-midnight outline-none focus:border-midnight"
                       />
                     </div>
                     <div>
@@ -529,7 +529,7 @@ export default function ImportarContatosPage() {
                         onChange={(e) =>
                           updateContact(c.id, { state: e.target.value })
                         }
-                        className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-verde-noite outline-none focus:border-teal"
+                        className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-midnight outline-none focus:border-midnight"
                       />
                     </div>
                   </div>
@@ -543,7 +543,7 @@ export default function ImportarContatosPage() {
                       onChange={(e) =>
                         updateContact(c.id, { category: e.target.value })
                       }
-                      className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-verde-noite outline-none focus:border-teal bg-white"
+                      className="w-full rounded border border-gray-200 px-2 py-1 text-sm text-midnight outline-none focus:border-midnight bg-white"
                     >
                       {CATEGORIES.map((cat) => (
                         <option key={cat} value={cat}>
@@ -568,7 +568,7 @@ export default function ImportarContatosPage() {
               <button
                 onClick={handleImport}
                 disabled={loading || contacts.length === 0}
-                className="font-body rounded-lg bg-copper px-8 py-3 text-sm font-semibold text-white hover:bg-copper/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="font-body rounded-lg bg-gold px-8 py-3 text-sm font-semibold text-white hover:bg-gold/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">

@@ -1,10 +1,10 @@
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+﻿import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
 // ─── Paleta Laco ───────────────────────────────────────────────────────────
-const VERDE_NOITE  = "#1A3A33";
-const TEAL         = "#2C6B5E";
-const COPPER       = "#C4734F";
-const COPPER_LIGHT = "#F5E8E1";
+const VERDE_NOITE  = "#1A1F3A";
+const gold       = "#C9A96E";
+const TEAL         = "#1A1F3A";
+const gold_LIGHT = "#F5E8E1";
 const BODY         = "#1A1A1A";
 const SEPARATOR    = "#E5E7EB";
 const GRAY_500     = "#6B7280";
@@ -226,14 +226,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 12,
     paddingVertical: 9,
-    backgroundColor: COPPER_LIGHT,
+    backgroundColor: gold_LIGHT,
     borderRadius: 3,
   },
   serviceTotalDesc: {
     flex: 3,
     fontSize: 10,
     fontFamily: "Helvetica-Bold",
-    color: COPPER,
+    color: gold,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 11,
     fontFamily: "Helvetica-Bold",
-    color: COPPER,
+    color: gold,
     textAlign: "right",
   },
 
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
   },
   footerBrand: {
     fontSize: 8,
-    color: COPPER,
+    color: gold,
     letterSpacing: 0.3,
   },
   footerRight: {

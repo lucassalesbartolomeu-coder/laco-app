@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
@@ -30,32 +30,32 @@ const STAGES = [
 
 const STAGE_BORDER: Record<string, string> = {
   lead: "border-gray-300",
-  qualificado: "border-teal",
-  proposta: "border-copper",
+  qualificado: "border-midnight",
+  proposta: "border-gold",
   fechado: "border-green-500",
   perdido: "border-red-300",
 };
 
 const STAGE_ACCENT: Record<string, string> = {
   lead: "from-gray-300/80 to-gray-300/10",
-  qualificado: "from-teal/60 to-teal/10",
-  proposta: "from-copper/60 to-copper/10",
+  qualificado: "from-midnight/60 to-midnight/10",
+  proposta: "from-gold/60 to-gold/10",
   fechado: "from-green-500/60 to-green-500/10",
   perdido: "from-red-300/80 to-red-300/10",
 };
 
 const STAGE_BADGE: Record<string, string> = {
   lead: "bg-gray-200 text-gray-600",
-  qualificado: "bg-teal/10 text-teal",
-  proposta: "bg-copper/10 text-copper",
+  qualificado: "bg-midnight/10 text-midnight",
+  proposta: "bg-gold/10 text-gold",
   fechado: "bg-green-100 text-green-700",
   perdido: "bg-red-100 text-red-500",
 };
 
 const STAGE_DOT: Record<string, string> = {
   lead: "bg-gray-300",
-  qualificado: "bg-teal",
-  proposta: "bg-copper",
+  qualificado: "bg-midnight",
+  proposta: "bg-gold",
   fechado: "bg-green-500",
   perdido: "bg-red-300",
 };
@@ -100,7 +100,7 @@ function cardBorderColor(opp: Opportunity): string {
   if (opp.weddingDate) {
     const days = daysUntilWedding(opp.weddingDate);
     if (days < 7) return "border-red-500";
-    if (days < 30) return "border-copper";
+    if (days < 30) return "border-gold";
   }
   return STAGE_BORDER[opp.stage] ?? "border-gray-200";
 }
@@ -257,13 +257,13 @@ export default function PipelinePage() {
   if (authStatus === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   const inputClass =
-    "w-full px-4 py-2.5 border border-gray-200 rounded-xl font-body text-verde-noite focus:border-teal focus:ring-1 focus:ring-teal outline-none transition bg-white";
+    "w-full px-4 py-2.5 border border-gray-200 rounded-xl font-body text-midnight focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition bg-white";
 
   const filteredOpps = opps.filter((o) => {
     if (search.trim() && !o.coupleName.toLowerCase().includes(search.trim().toLowerCase())) return false;
@@ -292,9 +292,9 @@ export default function PipelinePage() {
       >
         <button
           onClick={() => setSelectedOpp(opp)}
-          className="w-full text-left px-3 pt-3 pb-2 focus:outline-none focus:ring-2 focus:ring-teal/30 rounded-xl"
+          className="w-full text-left px-3 pt-3 pb-2 focus:outline-none focus:ring-2 focus:ring-midnight/30 rounded-xl"
         >
-          <p className="font-heading text-sm font-semibold text-verde-noite mb-1.5 truncate pr-1">
+          <p className="font-heading text-sm font-semibold text-midnight mb-1.5 truncate pr-1">
             {opp.coupleName}
           </p>
 
@@ -304,8 +304,8 @@ export default function PipelinePage() {
                 isUrgent
                   ? "text-red-500 font-semibold"
                   : isWarning
-                  ? "text-copper font-medium"
-                  : "text-verde-noite/50"
+                  ? "text-gold font-medium"
+                  : "text-midnight/50"
               }`}
             >
               <svg className="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -320,13 +320,13 @@ export default function PipelinePage() {
           )}
 
           {opp.estimatedBudget != null && (
-            <p className="font-body text-xs text-teal font-medium mb-2">
+            <p className="font-body text-xs text-midnight font-medium mb-2">
               {formatCurrency(opp.estimatedBudget)}
             </p>
           )}
 
           <div className="flex items-center justify-between">
-            <span className="inline-block font-body text-[10px] px-2 py-0.5 rounded-full bg-verde-noite/6 text-verde-noite/50 border border-verde-noite/8">
+            <span className="inline-block font-body text-[10px] px-2 py-0.5 rounded-full bg-midnight/6 text-midnight/50 border border-midnight/8">
               {SOURCE_LABEL[opp.source] ?? opp.source}
             </span>
             {opp.contactPhone && (
@@ -347,7 +347,7 @@ export default function PipelinePage() {
 
         <div className="flex items-center justify-end px-3 pb-2.5 pt-0.5 border-t border-gray-100 mt-1 relative">
           {isMoveLoading ? (
-            <div className="w-3.5 h-3.5 border-2 border-teal border-t-transparent rounded-full animate-spin mr-1" />
+            <div className="w-3.5 h-3.5 border-2 border-midnight border-t-transparent rounded-full animate-spin mr-1" />
           ) : (
             <div className="relative" ref={isDropdownOpen ? dropdownRef : null}>
               <button
@@ -355,7 +355,7 @@ export default function PipelinePage() {
                   e.stopPropagation();
                   setOpenDropdownId(isDropdownOpen ? null : opp.id);
                 }}
-                className="flex items-center gap-1 font-body text-[11px] text-verde-noite/50 hover:text-teal transition px-2 py-1 rounded-lg hover:bg-teal/5"
+                className="flex items-center gap-1 font-body text-[11px] text-midnight/50 hover:text-midnight transition px-2 py-1 rounded-lg hover:bg-midnight/5"
                 aria-label="Mover para outra etapa"
               >
                 Mover
@@ -379,7 +379,7 @@ export default function PipelinePage() {
                         e.stopPropagation();
                         moveToStage(opp.id, s.key);
                       }}
-                      className="w-full text-left px-4 py-2 font-body text-xs text-verde-noite hover:bg-cream hover:text-teal transition flex items-center gap-2"
+                      className="w-full text-left px-4 py-2 font-body text-xs text-midnight hover:bg-fog hover:text-midnight transition flex items-center gap-2"
                     >
                       <span className={`inline-block w-2 h-2 rounded-full shrink-0 ${STAGE_DOT[s.key]}`} />
                       {s.label}
@@ -401,19 +401,19 @@ export default function PipelinePage() {
     return (
       <div
         key={stage.key}
-        className="min-w-[280px] max-w-[300px] w-[290px] shrink-0 flex flex-col bg-cream rounded-2xl shadow-sm"
+        className="min-w-[280px] max-w-[300px] w-[290px] shrink-0 flex flex-col bg-fog rounded-2xl shadow-sm"
       >
         <div className="px-4 pt-4 pb-3">
           <div className="flex items-center justify-between mb-1">
-            <h3 className="font-heading text-sm font-semibold text-verde-noite">{stage.label}</h3>
+            <h3 className="font-heading text-sm font-semibold text-midnight">{stage.label}</h3>
             <span className={`font-body text-xs px-2 py-0.5 rounded-full font-medium ${STAGE_BADGE[stage.key]}`}>
               {stageOpps.length}
             </span>
           </div>
-          <p className="font-body text-[11px] text-verde-noite/50">
+          <p className="font-body text-[11px] text-midnight/50">
             {stageOpps.length === 1 ? "1 oportunidade" : `${stageOpps.length} oportunidades`}
             {totalValue > 0 && (
-              <span className="text-teal font-medium">
+              <span className="text-midnight font-medium">
                 {" · "}
                 {formatCurrency(totalValue)}
               </span>
@@ -425,7 +425,7 @@ export default function PipelinePage() {
         <div className="px-3 pb-4 space-y-2.5 min-h-[80px] flex-1 overflow-y-auto max-h-[calc(100vh-260px)]">
           {stageOpps.length === 0 ? (
             <div className="py-6 text-center">
-              <p className="font-body text-xs text-verde-noite/25">Nenhuma oportunidade</p>
+              <p className="font-body text-xs text-midnight/25">Nenhuma oportunidade</p>
             </div>
           ) : (
             stageOpps.map((opp) => renderCard(opp))
@@ -436,15 +436,15 @@ export default function PipelinePage() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-off-white min-h-screen">
+    <div className="flex flex-col h-full bg-ivory min-h-screen">
 
       {/* Cabeçalho */}
       <div className="px-4 pt-5 pb-3 lg:px-8 lg:pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <h1 className="font-heading text-2xl lg:text-3xl text-verde-noite">Pipeline CRM</h1>
+          <h1 className="font-heading text-2xl lg:text-3xl text-midnight">Pipeline CRM</h1>
           <button
             onClick={() => { resetForm(); setModalOpen(true); }}
-            className="shrink-0 px-4 py-2.5 bg-copper text-white rounded-xl font-body text-sm font-medium hover:bg-copper/90 transition"
+            className="shrink-0 px-4 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition"
           >
             + Nova oportunidade
           </button>
@@ -454,7 +454,7 @@ export default function PipelinePage() {
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative min-w-[160px] flex-1 max-w-xs">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-verde-noite/30 pointer-events-none"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-midnight/30 pointer-events-none"
               viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
             >
               <circle cx="11" cy="11" r="8" />
@@ -465,14 +465,14 @@ export default function PipelinePage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar casal…"
-              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl font-body text-sm text-verde-noite focus:border-teal focus:ring-1 focus:ring-teal outline-none transition bg-white"
+              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl font-body text-sm text-midnight focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition bg-white"
             />
           </div>
 
           <select
             value={filterMonth}
             onChange={(e) => setFilterMonth(e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition appearance-none cursor-pointer"
+            className="px-3 py-2 border border-gray-200 rounded-xl font-body text-sm text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition appearance-none cursor-pointer"
           >
             <option value="all">Todos os meses</option>
             {MONTHS.map((m, i) => (
@@ -483,7 +483,7 @@ export default function PipelinePage() {
           <select
             value={filterBudget}
             onChange={(e) => setFilterBudget(e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-xl font-body text-sm text-verde-noite bg-white focus:border-teal focus:ring-1 focus:ring-teal outline-none transition appearance-none cursor-pointer"
+            className="px-3 py-2 border border-gray-200 rounded-xl font-body text-sm text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition appearance-none cursor-pointer"
           >
             <option value="all">Todos os orçamentos</option>
             <option value="lt30">Até R$ 30.000</option>
@@ -505,15 +505,15 @@ export default function PipelinePage() {
                 onClick={() => setActiveTab(stage.key)}
                 className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-t-lg font-body text-xs font-medium transition whitespace-nowrap border-b-2 ${
                   isActive
-                    ? "border-teal text-teal bg-teal/5"
-                    : "border-transparent text-verde-noite/50 hover:text-verde-noite hover:bg-gray-50"
+                    ? "border-midnight text-midnight bg-midnight/5"
+                    : "border-transparent text-midnight/50 hover:text-midnight hover:bg-gray-50"
                 }`}
               >
                 {stage.label}
                 {count > 0 && (
                   <span
                     className={`px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${
-                      isActive ? "bg-teal text-white" : "bg-gray-100 text-gray-500"
+                      isActive ? "bg-midnight text-white" : "bg-gray-100 text-gray-500"
                     }`}
                   >
                     {count}
@@ -539,11 +539,11 @@ export default function PipelinePage() {
             <div key={stage.key}>
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h2 className="font-heading text-lg text-verde-noite">{stage.label}</h2>
-                  <p className="font-body text-xs text-verde-noite/50">
+                  <h2 className="font-heading text-lg text-midnight">{stage.label}</h2>
+                  <p className="font-body text-xs text-midnight/50">
                     {stageOpps.length === 1 ? "1 oportunidade" : `${stageOpps.length} oportunidades`}
                     {totalValue > 0 && (
-                      <span className="text-teal font-medium">
+                      <span className="text-midnight font-medium">
                         {" · "}
                         {formatCurrency(totalValue)}
                       </span>
@@ -557,7 +557,7 @@ export default function PipelinePage() {
 
               {stageOpps.length === 0 ? (
                 <div className="py-12 text-center">
-                  <p className="font-body text-sm text-verde-noite/30">Nenhuma oportunidade nesta etapa</p>
+                  <p className="font-body text-sm text-midnight/30">Nenhuma oportunidade nesta etapa</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -576,18 +576,18 @@ export default function PipelinePage() {
             className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
             onClick={() => setSelectedOpp(null)}
           />
-          <aside className="fixed z-50 bg-cream shadow-float flex flex-col bottom-0 left-0 right-0 max-h-[90vh] rounded-t-2xl overflow-y-auto lg:bottom-auto lg:right-0 lg:top-0 lg:left-auto lg:h-full lg:w-full lg:max-w-sm lg:max-h-none lg:rounded-none lg:rounded-l-2xl animate-slide-up">
+          <aside className="fixed z-50 bg-fog shadow-float flex flex-col bottom-0 left-0 right-0 max-h-[90vh] rounded-t-2xl overflow-y-auto lg:bottom-auto lg:right-0 lg:top-0 lg:left-auto lg:h-full lg:w-full lg:max-w-sm lg:max-h-none lg:rounded-none lg:rounded-l-2xl animate-slide-up">
             <div className="lg:hidden flex justify-center pt-3 pb-1">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
 
             <div className="flex items-center justify-between px-6 pt-4 pb-4 border-b border-gray-200">
-              <h2 className="font-heading text-lg text-verde-noite truncate pr-4">
+              <h2 className="font-heading text-lg text-midnight truncate pr-4">
                 {selectedOpp.coupleName}
               </h2>
               <button
                 onClick={() => setSelectedOpp(null)}
-                className="shrink-0 p-1.5 rounded-lg hover:bg-gray-100 text-verde-noite/40 hover:text-verde-noite transition"
+                className="shrink-0 p-1.5 rounded-lg hover:bg-gray-100 text-midnight/40 hover:text-midnight transition"
                 aria-label="Fechar painel"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -605,15 +605,15 @@ export default function PipelinePage() {
             <div className="px-6 py-4 space-y-3 border-b border-gray-200">
               {selectedOpp.weddingDate && (
                 <div>
-                  <p className="font-body text-[11px] text-verde-noite/40 uppercase tracking-wide mb-0.5">
+                  <p className="font-body text-[11px] text-midnight/40 uppercase tracking-wide mb-0.5">
                     Data do casamento
                   </p>
-                  <p className="font-body text-sm text-verde-noite">
+                  <p className="font-body text-sm text-midnight">
                     {formatWeddingDate(selectedOpp.weddingDate)}
                     {(() => {
                       const d = daysUntilWedding(selectedOpp.weddingDate!);
                       return d >= 0 ? (
-                        <span className={`ml-2 text-xs font-medium ${d < 7 ? "text-red-500" : d < 30 ? "text-copper" : "text-verde-noite/40"}`}>
+                        <span className={`ml-2 text-xs font-medium ${d < 7 ? "text-red-500" : d < 30 ? "text-gold" : "text-midnight/40"}`}>
                           {d === 0 ? "Hoje!" : `em ${d} dias`}
                         </span>
                       ) : null;
@@ -624,10 +624,10 @@ export default function PipelinePage() {
 
               {selectedOpp.estimatedBudget != null && (
                 <div>
-                  <p className="font-body text-[11px] text-verde-noite/40 uppercase tracking-wide mb-0.5">
+                  <p className="font-body text-[11px] text-midnight/40 uppercase tracking-wide mb-0.5">
                     Orçamento estimado
                   </p>
-                  <p className="font-body text-sm font-semibold text-teal">
+                  <p className="font-body text-sm font-semibold text-midnight">
                     {formatCurrency(selectedOpp.estimatedBudget)}
                   </p>
                 </div>
@@ -635,13 +635,13 @@ export default function PipelinePage() {
 
               {selectedOpp.contactPhone && (
                 <div>
-                  <p className="font-body text-[11px] text-verde-noite/40 uppercase tracking-wide mb-0.5">
+                  <p className="font-body text-[11px] text-midnight/40 uppercase tracking-wide mb-0.5">
                     Telefone
                   </p>
                   <div className="flex items-center gap-3">
                     <a
                       href={`tel:${selectedOpp.contactPhone}`}
-                      className="font-body text-sm text-verde-noite hover:text-teal transition"
+                      className="font-body text-sm text-midnight hover:text-midnight transition"
                     >
                       {selectedOpp.contactPhone}
                     </a>
@@ -660,12 +660,12 @@ export default function PipelinePage() {
 
               {selectedOpp.contactEmail && (
                 <div>
-                  <p className="font-body text-[11px] text-verde-noite/40 uppercase tracking-wide mb-0.5">
+                  <p className="font-body text-[11px] text-midnight/40 uppercase tracking-wide mb-0.5">
                     Email
                   </p>
                   <a
                     href={`mailto:${selectedOpp.contactEmail}`}
-                    className="font-body text-sm text-verde-noite hover:text-teal transition truncate block"
+                    className="font-body text-sm text-midnight hover:text-midnight transition truncate block"
                   >
                     {selectedOpp.contactEmail}
                   </a>
@@ -674,19 +674,19 @@ export default function PipelinePage() {
 
               {selectedOpp.venue && (
                 <div>
-                  <p className="font-body text-[11px] text-verde-noite/40 uppercase tracking-wide mb-0.5">
+                  <p className="font-body text-[11px] text-midnight/40 uppercase tracking-wide mb-0.5">
                     Local
                   </p>
-                  <p className="font-body text-sm text-verde-noite">{selectedOpp.venue}</p>
+                  <p className="font-body text-sm text-midnight">{selectedOpp.venue}</p>
                 </div>
               )}
 
               {selectedOpp.source && (
                 <div>
-                  <p className="font-body text-[11px] text-verde-noite/40 uppercase tracking-wide mb-0.5">
+                  <p className="font-body text-[11px] text-midnight/40 uppercase tracking-wide mb-0.5">
                     Origem
                   </p>
-                  <p className="font-body text-sm text-verde-noite">
+                  <p className="font-body text-sm text-midnight">
                     {SOURCE_LABEL[selectedOpp.source] ?? selectedOpp.source}
                   </p>
                 </div>
@@ -694,10 +694,10 @@ export default function PipelinePage() {
 
               {selectedOpp.notes && (
                 <div>
-                  <p className="font-body text-[11px] text-verde-noite/40 uppercase tracking-wide mb-0.5">
+                  <p className="font-body text-[11px] text-midnight/40 uppercase tracking-wide mb-0.5">
                     Notas
                   </p>
-                  <p className="font-body text-sm text-verde-noite/70 leading-relaxed">
+                  <p className="font-body text-sm text-midnight/70 leading-relaxed">
                     {selectedOpp.notes}
                   </p>
                 </div>
@@ -705,7 +705,7 @@ export default function PipelinePage() {
 
               {selectedOpp.stage === "perdido" && selectedOpp.lostReason && (
                 <div>
-                  <p className="font-body text-[11px] text-verde-noite/40 uppercase tracking-wide mb-0.5">
+                  <p className="font-body text-[11px] text-midnight/40 uppercase tracking-wide mb-0.5">
                     Motivo da perda
                   </p>
                   <p className="font-body text-sm text-red-400">{selectedOpp.lostReason}</p>
@@ -714,7 +714,7 @@ export default function PipelinePage() {
             </div>
 
             <div className="px-6 py-5">
-              <p className="font-body text-[11px] text-verde-noite/40 uppercase tracking-wide mb-3">
+              <p className="font-body text-[11px] text-midnight/40 uppercase tracking-wide mb-3">
                 Mover para etapa
               </p>
               <div className="space-y-2">
@@ -728,8 +728,8 @@ export default function PipelinePage() {
                       onClick={() => moveToStage(selectedOpp.id, stage.key)}
                       className={`w-full px-4 py-3 rounded-xl font-body text-sm font-medium text-left transition flex items-center justify-between ${
                         isCurrent
-                          ? "bg-teal text-white cursor-default"
-                          : "bg-white text-verde-noite border border-gray-200 hover:border-teal hover:text-teal"
+                          ? "bg-midnight text-white cursor-default"
+                          : "bg-white text-midnight border border-gray-200 hover:border-midnight hover:text-midnight"
                       } disabled:opacity-60`}
                     >
                       <div className="flex items-center gap-2">
@@ -742,7 +742,7 @@ export default function PipelinePage() {
                         </svg>
                       )}
                       {isLoadingStage && (
-                        <div className="w-4 h-4 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
                       )}
                     </button>
                   );
@@ -766,7 +766,7 @@ export default function PipelinePage() {
             <div className="sm:hidden flex justify-center mb-4">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
-            <h2 className="font-heading text-xl text-verde-noite mb-5">Nova Oportunidade</h2>
+            <h2 className="font-heading text-xl text-midnight mb-5">Nova Oportunidade</h2>
             <div className="space-y-4">
               <input
                 type="text"
@@ -828,14 +828,14 @@ export default function PipelinePage() {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setModalOpen(false)}
-                className="flex-1 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-verde-noite/70 hover:bg-gray-50 transition"
+                className="flex-1 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-midnight/70 hover:bg-gray-50 transition"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleCreate}
                 disabled={submitting || !formCoupleName.trim()}
-                className="flex-1 py-2.5 bg-copper text-white rounded-xl font-body text-sm font-medium hover:bg-copper/90 transition disabled:opacity-50"
+                className="flex-1 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition disabled:opacity-50"
               >
                 {submitting ? "Salvando..." : "Criar"}
               </button>
@@ -851,8 +851,8 @@ export default function PipelinePage() {
             <div className="sm:hidden flex justify-center mb-4">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
-            <h2 className="font-heading text-lg text-verde-noite mb-2">Motivo da perda</h2>
-            <p className="font-body text-sm text-verde-noite/50 mb-4">
+            <h2 className="font-heading text-lg text-midnight mb-2">Motivo da perda</h2>
+            <p className="font-body text-sm text-midnight/50 mb-4">
               Por que {lostModal.coupleName} foi perdido?
             </p>
             <select
@@ -870,7 +870,7 @@ export default function PipelinePage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setLostModal(null)}
-                className="flex-1 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-verde-noite/70 hover:bg-gray-50 transition"
+                className="flex-1 py-2.5 border border-gray-300 rounded-xl font-body text-sm text-midnight/70 hover:bg-gray-50 transition"
               >
                 Cancelar
               </button>

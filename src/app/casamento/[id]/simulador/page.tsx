@@ -228,8 +228,8 @@ export default function SimuladorPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -240,12 +240,12 @@ export default function SimuladorPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-ivory flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-md p-8 max-w-md w-full text-center">
           <p className="font-body text-red-500 mb-4">{error}</p>
           <Link
             href={`/casamento/${id}`}
-            className="font-body text-teal underline"
+            className="font-body text-midnight underline"
           >
             Voltar ao casamento
           </Link>
@@ -259,11 +259,11 @@ export default function SimuladorPage() {
   const ratePercent = Math.round(simulation.overallRate * 100);
 
   return (
-    <div className="min-h-screen bg-off-white py-10 px-4">
+    <div className="min-h-screen bg-ivory py-10 px-4">
       <div className="max-w-3xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="font-heading text-3xl sm:text-4xl text-verde-noite mb-1">
+          <h1 className="font-heading text-3xl sm:text-4xl text-midnight mb-1">
             Simulador Inteligente
           </h1>
           <p className="font-body text-gray-500">
@@ -281,15 +281,15 @@ export default function SimuladorPage() {
           <p className="font-body text-gray-500 mb-2">Estimamos</p>
 
           <div className="flex items-baseline justify-center gap-2 mb-2">
-            <span className="font-heading text-verde-noite text-lg">~</span>
+            <span className="font-heading text-midnight text-lg">~</span>
             <CountUp
               target={simulation.expectedTotal}
               duration={1.5}
-              className="font-heading text-5xl sm:text-6xl text-verde-noite"
+              className="font-heading text-5xl sm:text-6xl text-midnight"
             />
           </div>
 
-          <p className="font-heading text-xl text-verde-noite mb-4">
+          <p className="font-heading text-xl text-midnight mb-4">
             convidados presentes
           </p>
 
@@ -300,11 +300,11 @@ export default function SimuladorPage() {
 
           <p className="font-body text-sm text-gray-400">
             entre{" "}
-            <span className="font-semibold text-teal">
+            <span className="font-semibold text-midnight">
               {simulation.confidenceLow}
             </span>{" "}
             e{" "}
-            <span className="font-semibold text-teal">
+            <span className="font-semibold text-midnight">
               {simulation.confidenceHigh}
             </span>{" "}
             convidados
@@ -318,7 +318,7 @@ export default function SimuladorPage() {
           transition={{ duration: 0.5, delay: 0.15 }}
           className="bg-white rounded-2xl shadow-md p-8 sm:p-10"
         >
-          <h2 className="font-heading text-2xl text-verde-noite mb-6">
+          <h2 className="font-heading text-2xl text-midnight mb-6">
             Presenca por Categoria
           </h2>
 
@@ -328,7 +328,7 @@ export default function SimuladorPage() {
               return (
                 <div key={cat.category}>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-body text-sm text-verde-noite">
+                    <span className="font-body text-sm text-midnight">
                       {cat.label}
                     </span>
                     <span className="font-body text-sm text-gray-500">
@@ -337,7 +337,7 @@ export default function SimuladorPage() {
                   </div>
                   <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
                     <motion.div
-                      className="h-full rounded-full bg-teal"
+                      className="h-full rounded-full bg-midnight"
                       initial={{ width: 0 }}
                       animate={{ width: `${pct}%` }}
                       transition={{
@@ -360,17 +360,17 @@ export default function SimuladorPage() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="bg-white rounded-2xl shadow-md p-8 sm:p-10"
         >
-          <h2 className="font-heading text-2xl text-verde-noite mb-2">
+          <h2 className="font-heading text-2xl text-midnight mb-2">
             Estimativa de Custo
           </h2>
 
           <p className="font-body text-gray-500 mb-6">
             Seu casamento deve custar entre{" "}
-            <span className="font-semibold text-verde-noite">
+            <span className="font-semibold text-midnight">
               {formatBRL(cost.costLow)}
             </span>{" "}
             e{" "}
-            <span className="font-semibold text-verde-noite">
+            <span className="font-semibold text-midnight">
               {formatBRL(cost.costHigh)}
             </span>
           </p>
@@ -380,7 +380,7 @@ export default function SimuladorPage() {
               target={cost.expectedCost}
               duration={1.5}
               formatFn={formatBRL}
-              className="font-heading text-4xl sm:text-5xl text-copper"
+              className="font-heading text-4xl sm:text-5xl text-gold"
             />
             <p className="font-body text-sm text-gray-400 mt-2">
               custo esperado ({formatBRL(cost.costPerGuest)} por convidado)
@@ -393,7 +393,7 @@ export default function SimuladorPage() {
               return (
                 <div key={item.label}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-body text-sm text-verde-noite">
+                    <span className="font-body text-sm text-midnight">
                       {item.label}
                     </span>
                     <span className="font-body text-sm text-gray-500">
@@ -403,7 +403,7 @@ export default function SimuladorPage() {
                   </div>
                   <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
                     <motion.div
-                      className="h-full rounded-full bg-copper"
+                      className="h-full rounded-full bg-gold"
                       initial={{ width: 0 }}
                       animate={{ width: `${pctDisplay}%` }}
                       transition={{
@@ -423,7 +423,7 @@ export default function SimuladorPage() {
         <div className="text-center pb-6">
           <Link
             href={`/casamento/${id}/convidados`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-teal text-white rounded-xl font-body font-medium hover:bg-teal/90 transition-all duration-200"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-midnight text-white rounded-xl font-body font-medium hover:bg-midnight/90 transition-all duration-200"
           >
             Ver lista de convidados
             <svg

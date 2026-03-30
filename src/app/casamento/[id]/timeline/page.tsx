@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
@@ -71,10 +71,10 @@ const TEMPLATES: Record<string, TemplateEvent[]> = {
 /* ─── Cores por categoria ────────────────────────────────────────────── */
 
 const CATEGORY_COLORS: Record<EventCategory, { dot: string; badge: string; border: string }> = {
-  cerimonia:  { dot: "bg-copper",      badge: "bg-copper/10 text-copper",           border: "border-copper/30" },
-  recepcao:   { dot: "bg-teal",        badge: "bg-teal/10 text-teal",               border: "border-teal/30" },
+  cerimonia:  { dot: "bg-gold",      badge: "bg-gold/10 text-gold",           border: "border-gold/30" },
+  recepcao:   { dot: "bg-midnight",        badge: "bg-midnight/10 text-midnight",               border: "border-midnight/30" },
   transicao:  { dot: "bg-gray-400",    badge: "bg-gray-100 text-gray-500",          border: "border-gray-300" },
-  logistica:  { dot: "bg-verde-noite", badge: "bg-verde-noite/10 text-verde-noite", border: "border-verde-noite/30" },
+  logistica:  { dot: "bg-midnight", badge: "bg-midnight/10 text-midnight", border: "border-midnight/30" },
 };
 
 const CATEGORY_LABELS: Record<EventCategory, string> = {
@@ -161,7 +161,7 @@ function EventModal({ initial, onClose, onSave }: ModalProps) {
 
         <div className="p-5 sm:p-6">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-heading text-xl text-verde-noite">
+            <h2 className="font-heading text-xl text-midnight">
               {initial?.id ? "Editar evento" : "Novo evento"}
             </h2>
             <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400">
@@ -178,7 +178,7 @@ function EventModal({ initial, onClose, onSave }: ModalProps) {
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
                   required
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 font-body text-sm text-verde-noite focus:outline-none focus:ring-2 focus:ring-teal/30 focus:border-teal"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 font-body text-sm text-midnight focus:outline-none focus:ring-2 focus:ring-midnight/30 focus:border-midnight"
                 />
               </div>
               <div>
@@ -186,7 +186,7 @@ function EventModal({ initial, onClose, onSave }: ModalProps) {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as EventCategory)}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 font-body text-sm text-verde-noite focus:outline-none focus:ring-2 focus:ring-teal/30 focus:border-teal bg-white"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 font-body text-sm text-midnight focus:outline-none focus:ring-2 focus:ring-midnight/30 focus:border-midnight bg-white"
                 >
                   {(Object.keys(CATEGORY_LABELS) as EventCategory[]).map((cat) => (
                     <option key={cat} value={cat}>{CATEGORY_LABELS[cat]}</option>
@@ -203,7 +203,7 @@ function EventModal({ initial, onClose, onSave }: ModalProps) {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="ex: Entrada da noiva"
                 required
-                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 font-body text-sm text-verde-noite placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-teal/30 focus:border-teal"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 font-body text-sm text-midnight placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-midnight/30 focus:border-midnight"
               />
             </div>
 
@@ -214,7 +214,7 @@ function EventModal({ initial, onClose, onSave }: ModalProps) {
                 value={responsible}
                 onChange={(e) => setResponsible(e.target.value)}
                 placeholder="ex: Cerimonialista"
-                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 font-body text-sm text-verde-noite placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-teal/30 focus:border-teal"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 font-body text-sm text-midnight placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-midnight/30 focus:border-midnight"
               />
             </div>
 
@@ -225,14 +225,14 @@ function EventModal({ initial, onClose, onSave }: ModalProps) {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Detalhes do evento..."
                 rows={3}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 font-body text-sm text-verde-noite placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-teal/30 focus:border-teal resize-none"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 font-body text-sm text-midnight placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-midnight/30 focus:border-midnight resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={saving || !time || !title}
-              className="w-full bg-teal text-white font-body text-sm font-semibold py-3 rounded-xl hover:bg-teal/90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-midnight text-white font-body text-sm font-semibold py-3 rounded-xl hover:bg-midnight/90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {saving ? "Salvando..." : initial?.id ? "Salvar alterações" : "Adicionar evento"}
             </button>
@@ -263,7 +263,7 @@ function EventItem({ event, isNext, isLast, onToggle, onEdit, onDelete }: EventI
     <div className="flex gap-3 group">
       {/* Coluna do horário */}
       <div className="w-12 flex-shrink-0 flex flex-col items-center pt-0.5">
-        <span className={`font-body text-xs font-semibold leading-tight text-center ${isDone ? "text-gray-300" : "text-verde-noite"}`}>
+        <span className={`font-body text-xs font-semibold leading-tight text-center ${isDone ? "text-gray-300" : "text-midnight"}`}>
           {event.time}
         </span>
       </div>
@@ -308,7 +308,7 @@ function EventItem({ event, isNext, isLast, onToggle, onEdit, onDelete }: EventI
                 </span>
               )}
             </div>
-            <p className={`font-body text-sm font-semibold leading-tight ${isDone ? "line-through text-gray-400" : "text-verde-noite"}`}>
+            <p className={`font-body text-sm font-semibold leading-tight ${isDone ? "line-through text-gray-400" : "text-midnight"}`}>
               {event.title}
             </p>
             {event.description && (
@@ -348,8 +348,8 @@ function EventItem({ event, isNext, isLast, onToggle, onEdit, onDelete }: EventI
                   onClick={() => onToggle(event.id, event.status)}
                   className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                     isDone
-                      ? "bg-teal border-teal"
-                      : "border-gray-300 hover:border-teal"
+                      ? "bg-midnight border-midnight"
+                      : "border-gray-300 hover:border-midnight"
                   }`}
                   title={isDone ? "Marcar como pendente" : "Marcar como feito"}
                 >
@@ -522,8 +522,8 @@ export default function TimelinePage() {
 
   if (authStatus === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-off-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -539,9 +539,9 @@ export default function TimelinePage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-off-white">
+    <div className="min-h-screen bg-ivory">
       {/* Header */}
-      <div className="bg-gradient-to-br from-verde-noite via-verde-noite to-teal/80 px-5 pt-12 pb-8 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-midnight via-midnight to-midnight/80 px-5 pt-12 pb-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
@@ -566,16 +566,16 @@ export default function TimelinePage() {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="font-body text-xs text-gray-400">Progresso do dia</span>
-              <span className="font-body text-xs font-semibold text-teal">{done}/{total} concluídos</span>
+              <span className="font-body text-xs font-semibold text-midnight">{done}/{total} concluídos</span>
             </div>
             <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-teal to-green-400 rounded-full transition-all duration-700"
+                className="h-full bg-gradient-to-r from-midnight to-green-400 rounded-full transition-all duration-700"
                 style={{ width: `${pct}%` }}
               />
             </div>
             {pct === 100 && (
-              <p className="font-body text-xs text-teal mt-2 text-center font-semibold">
+              <p className="font-body text-xs text-midnight mt-2 text-center font-semibold">
                 🎊 Parabéns! Todos os momentos foram concluídos!
               </p>
             )}
@@ -587,7 +587,7 @@ export default function TimelinePage() {
       {events.length === 0 && (
         <div className="px-4 mt-4 mb-2">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-            <p className="font-body text-sm font-semibold text-verde-noite mb-1">Usar um template</p>
+            <p className="font-body text-sm font-semibold text-midnight mb-1">Usar um template</p>
             <p className="font-body text-xs text-gray-400 mb-3">
               Comece rapidamente com eventos pré-definidos para o seu estilo de casamento.
             </p>
@@ -601,7 +601,7 @@ export default function TimelinePage() {
                   key={t.key}
                   onClick={() => handleUseTemplate(t.key)}
                   disabled={templateLoading !== null}
-                  className="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-200 hover:border-teal/40 hover:bg-teal/5 transition-all active:scale-[0.97] disabled:opacity-50"
+                  className="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-200 hover:border-midnight/40 hover:bg-midnight/5 transition-all active:scale-[0.97] disabled:opacity-50"
                 >
                   <span className="text-xl">{t.emoji}</span>
                   <span className="font-body text-[11px] text-center text-gray-600 leading-tight whitespace-pre-line">
@@ -636,7 +636,7 @@ export default function TimelinePage() {
                   key={t.key}
                   onClick={() => handleUseTemplate(t.key)}
                   disabled={templateLoading !== null}
-                  className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl border border-gray-200 hover:border-teal/40 hover:bg-teal/5 transition-all text-left disabled:opacity-50"
+                  className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl border border-gray-200 hover:border-midnight/40 hover:bg-midnight/5 transition-all text-left disabled:opacity-50"
                 >
                   <span className="text-base">{t.emoji}</span>
                   <span className="font-body text-xs text-gray-600">{t.label}</span>
@@ -651,7 +651,7 @@ export default function TimelinePage() {
       <div className="px-4 pt-4 pb-28">
         {events.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-16 h-16 rounded-full bg-verde-noite/5 flex items-center justify-center mb-4">
+            <div className="w-16 h-16 rounded-full bg-midnight/5 flex items-center justify-center mb-4">
               <CalendarIcon />
             </div>
             <p className="font-body text-sm text-gray-400 mb-1">Nenhum evento ainda</p>
@@ -692,7 +692,7 @@ export default function TimelinePage() {
       {/* FAB — botão "+" flutuante */}
       <button
         onClick={() => setModalOpen(true)}
-        className="fixed bottom-24 right-5 z-40 w-14 h-14 bg-teal text-white rounded-full shadow-lg hover:bg-teal/90 active:scale-95 transition-all flex items-center justify-center"
+        className="fixed bottom-24 right-5 z-40 w-14 h-14 bg-midnight text-white rounded-full shadow-lg hover:bg-midnight/90 active:scale-95 transition-all flex items-center justify-center"
         title="Adicionar evento"
       >
         <PlusIcon />

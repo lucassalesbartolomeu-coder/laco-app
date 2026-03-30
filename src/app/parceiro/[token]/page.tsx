@@ -70,7 +70,7 @@ export default function PartnerInvitePage() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center p-6">
+    <div className="min-h-screen bg-fog flex items-center justify-center p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -78,14 +78,14 @@ export default function PartnerInvitePage() {
       >
         {loading ? (
           <div className="flex justify-center py-8">
-            <div className="w-8 h-8 border-2 border-teal border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
           </div>
         ) : error ? (
           <>
             <div className="text-5xl mb-4">🔒</div>
-            <h1 className="font-heading text-2xl text-verde-noite mb-2">Convite inválido</h1>
-            <p className="font-body text-verde-noite/60 mb-6">{error}</p>
-            <Link href="/dashboard" className="font-body text-sm text-teal hover:underline">
+            <h1 className="font-heading text-2xl text-midnight mb-2">Convite inválido</h1>
+            <p className="font-body text-midnight/60 mb-6">{error}</p>
+            <Link href="/dashboard" className="font-body text-sm text-midnight hover:underline">
               Ir para o painel →
             </Link>
           </>
@@ -99,21 +99,21 @@ export default function PartnerInvitePage() {
             >
               🎉
             </motion.div>
-            <h1 className="font-heading text-2xl text-verde-noite mb-2">Vinculado com sucesso!</h1>
-            <p className="font-body text-verde-noite/60">Redirecionando para o painel…</p>
+            <h1 className="font-heading text-2xl text-midnight mb-2">Vinculado com sucesso!</h1>
+            <p className="font-body text-midnight/60">Redirecionando para o painel…</p>
           </>
         ) : (
           <>
             <div className="text-5xl mb-4">💍</div>
-            <p className="font-body text-sm text-verde-noite/40 mb-1 uppercase tracking-wide">
+            <p className="font-body text-sm text-midnight/40 mb-1 uppercase tracking-wide">
               Você foi convidado para
             </p>
-            <h1 className="font-heading text-3xl text-verde-noite mb-3">
+            <h1 className="font-heading text-3xl text-midnight mb-3">
               {invite?.couple}
             </h1>
 
             {(invite?.weddingDate || invite?.city) && (
-              <div className="flex items-center justify-center gap-4 mb-6 text-sm font-body text-verde-noite/60">
+              <div className="flex items-center justify-center gap-4 mb-6 text-sm font-body text-midnight/60">
                 {invite.weddingDate && (
                   <span>📅 {formatDate(invite.weddingDate)}</span>
                 )}
@@ -121,14 +121,14 @@ export default function PartnerInvitePage() {
               </div>
             )}
 
-            <div className="p-4 bg-cream rounded-xl mb-6 text-left">
-              <p className="font-body text-sm text-verde-noite/70">
+            <div className="p-4 bg-fog rounded-xl mb-6 text-left">
+              <p className="font-body text-sm text-midnight/70">
                 Ao aceitar, você terá acesso completo ao painel do casamento — convidados, presentes, orçamentos e tudo mais.
               </p>
             </div>
 
             {status === "unauthenticated" && (
-              <p className="font-body text-xs text-verde-noite/40 mb-4">
+              <p className="font-body text-xs text-midnight/40 mb-4">
                 Você precisará entrar ou criar uma conta para aceitar o convite.
               </p>
             )}
@@ -136,7 +136,7 @@ export default function PartnerInvitePage() {
             <button
               onClick={handleAccept}
               disabled={accepting}
-              className="w-full py-3 rounded-xl bg-copper text-white font-body font-medium hover:bg-copper/90 transition disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-gold text-white font-body font-medium hover:bg-gold/90 transition disabled:opacity-50"
             >
               {accepting
                 ? "Aceitando…"
@@ -146,7 +146,7 @@ export default function PartnerInvitePage() {
             </button>
 
             {status === "authenticated" && (
-              <p className="font-body text-xs text-verde-noite/40 mt-3">
+              <p className="font-body text-xs text-midnight/40 mt-3">
                 Conectado como {session?.user?.email}
               </p>
             )}

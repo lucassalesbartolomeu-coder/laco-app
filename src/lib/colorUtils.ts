@@ -29,9 +29,9 @@ export interface WeddingPalette {
 // Paletas por estilo de casamento
 const STYLE_PALETTES: Record<string, WeddingPalette> = {
   classico: {
-    primary: "#1A3A33",
-    secondary: "#C4734F",
-    accent: "#D4AF6A",
+    primary: "#1A1F3A",
+    secondary: "#C9A96E",
+    accent: "#C9A96E",
     background: "#FAF8F4",
     text: "#1A1A1A",
     muted: "#6B7280",
@@ -54,7 +54,7 @@ const STYLE_PALETTES: Record<string, WeddingPalette> = {
   },
   romantico: {
     primary: "#9D4E6E",
-    secondary: "#C4734F",
+    secondary: "#C9A96E",
     accent: "#E8A0B4",
     background: "#FDF4F7",
     text: "#2D1320",
@@ -71,7 +71,7 @@ const STYLE_PALETTES: Record<string, WeddingPalette> = {
   boho: {
     primary: "#7C5C3E",
     secondary: "#BF8D6B",
-    accent: "#D4AF6A",
+    accent: "#C9A96E",
     background: "#FBF6EE",
     text: "#3D2B1F",
     muted: "#9C8472",
@@ -123,12 +123,12 @@ export function getPaletteCSSVars(style?: WeddingStyle | null): Record<string, s
 export function getGradientClass(style?: WeddingStyle | null): string {
   const normalized = normalizeStyle(style ?? "");
   const gradients: Record<string, string> = {
-    classico: "from-[#1A3A33] to-[#C4734F]",
+    classico: "from-[#1A1F3A] to-[#C9A96E]",
     rustico: "from-[#5C3D2E] to-[#A67C5B]",
     moderno: "from-[#111827] to-[#374151]",
     romantico: "from-[#9D4E6E] to-[#E8A0B4]",
     minimalista: "from-[#1C1C1C] to-[#A0A0A0]",
-    boho: "from-[#7C5C3E] to-[#D4AF6A]",
+    boho: "from-[#7C5C3E] to-[#C9A96E]",
   };
   return gradients[normalized] ?? gradients.classico;
 }

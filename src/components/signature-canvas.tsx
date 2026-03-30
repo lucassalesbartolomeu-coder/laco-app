@@ -25,7 +25,7 @@ export default function SignatureCanvas({ onSign, disabled }: SignatureCanvasPro
       canvas.height = canvas.offsetHeight;
       if (ctx) {
         ctx.lineWidth = 2;
-        ctx.strokeStyle = "#1A3A33";
+        ctx.strokeStyle = "#1A1F3A";
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         if (imageData) ctx.putImageData(imageData, 0, 0);
@@ -58,7 +58,7 @@ export default function SignatureCanvas({ onSign, disabled }: SignatureCanvasPro
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
     ctx.lineWidth = 2;
-    ctx.strokeStyle = "#1A3A33";
+    ctx.strokeStyle = "#1A1F3A";
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.beginPath();
@@ -104,7 +104,7 @@ export default function SignatureCanvas({ onSign, disabled }: SignatureCanvasPro
             disabled
               ? "border-gray-200 cursor-not-allowed opacity-60"
               : hasSignature
-              ? "border-teal"
+              ? "border-midnight"
               : "border-gray-300 cursor-crosshair"
           }`}
           style={{ touchAction: "none" }}
@@ -127,7 +127,7 @@ export default function SignatureCanvas({ onSign, disabled }: SignatureCanvasPro
           type="button"
           onClick={clearCanvas}
           disabled={disabled || !hasSignature}
-          className="font-body text-xs text-verde-noite/50 hover:text-verde-noite disabled:opacity-30 disabled:cursor-not-allowed transition underline"
+          className="font-body text-xs text-midnight/50 hover:text-midnight disabled:opacity-30 disabled:cursor-not-allowed transition underline"
         >
           Limpar
         </button>
