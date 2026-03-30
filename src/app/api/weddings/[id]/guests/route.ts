@@ -36,6 +36,24 @@ export async function GET(request: NextRequest, { params }: Params) {
     const guests = await prisma.guest.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        city: true,
+        state: true,
+        ddd: true,
+        category: true,
+        guestList: true,
+        rsvpStatus: true,
+        plusOne: true,
+        dietaryRestriction: true,
+        accommodation: true,
+        needsTransport: true,
+        notes: true,
+        createdAt: true,
+      },
     });
 
     return NextResponse.json(guests);

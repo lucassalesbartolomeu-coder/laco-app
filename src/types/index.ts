@@ -133,3 +133,62 @@ export interface WeddingWithRelations extends Wedding {
   budgetItems: BudgetItem[];
   gifts: Gift[];
 }
+
+// ─── Frontend / API Response Types ───────────────────────
+
+export interface GuestStats {
+  total: number;
+  confirmed: number;
+  pending: number;
+  declined: number;
+}
+
+export interface WeddingListItem {
+  id: string;
+  userId: string;
+  partnerUserId: string | null;
+  partnerInviteToken: string | null;
+  partnerName1: string;
+  partnerName2: string;
+  weddingDate: string | null;
+  venue: string | null;
+  city: string | null;
+  state: string | null;
+  style: string | null;
+  estimatedGuests: number | null;
+  estimatedBudget: number | null;
+}
+
+export interface PlannerAssignment {
+  assignmentId: string;
+  role: string;
+  status: string;
+  commissionAmount: number | null;
+  wedding: {
+    id: string;
+    partnerName1: string;
+    partnerName2: string;
+    weddingDate: string | null;
+    venue: string | null;
+    city: string | null;
+    state: string | null;
+    estimatedBudget: number | null;
+  };
+}
+
+export interface VendorItem {
+  id: string;
+  name: string;
+  category: string;
+  status: string;
+  budget: number | null;
+}
+
+export interface BudgetItemDetail {
+  id: string;
+  category: string;
+  description: string;
+  estimatedCost: number;
+  actualCost: number | null;
+  status: string;
+}

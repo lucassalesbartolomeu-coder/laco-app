@@ -34,6 +34,19 @@ export async function GET(request: NextRequest, { params }: Params) {
     const items = await prisma.budgetItem.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        category: true,
+        description: true,
+        estimatedCost: true,
+        actualCost: true,
+        paidAmount: true,
+        paidBy: true,
+        dueDate: true,
+        status: true,
+        notes: true,
+        createdAt: true,
+      },
     });
 
     return NextResponse.json(items);

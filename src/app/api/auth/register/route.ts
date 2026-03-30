@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rateLimit";
+import { headers } from "next/headers";
 
 export async function POST(request: Request) {
   try {
@@ -10,6 +12,18 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Email e senha são obrigatórios" },
         { status: 400 }
+      );
+    }
+
+    const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    const [byEmail, byIp] = await Promise.all([
+      rateLimit(`register:email:${email}`, 5, 60 * 60 * 1000),
+      rateLimit(`register:ip:${ip}`, 20, 60 * 60 * 1000),
+    ]);
+    if (!byEmail || !byIp) {
+      return NextResponse.json(
+        { error: "Muitas tentativas de cadastro. Tente novamente em 1 hora." },
+        { status: 429 }
       );
     }
 

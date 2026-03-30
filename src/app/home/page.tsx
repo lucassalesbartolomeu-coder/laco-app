@@ -1,15 +1,5 @@
-﻿"use client";
-
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-
-const fadeUp = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  transition: { duration: 0.55, ease: "easeOut" },
-  viewport: { once: true, margin: "-40px" },
-};
+import AnimatedCounter from "./animated-counter";
 
 const FEATURES = [
   {
@@ -107,57 +97,6 @@ const TESTIMONIALS = [
   },
 ];
 
-/* ── Animated counter — triggers on scroll into view ────────────────── */
-function AnimatedCounter({
-  target,
-  prefix = "",
-  suffix = "",
-  duration = 2.2,
-}: {
-  target: number;
-  prefix?: string;
-  suffix?: string;
-  duration?: number;
-}) {
-  const [displayValue, setDisplayValue] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    if (started) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setStarted(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.5 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [started]);
-
-  useEffect(() => {
-    if (!started) return;
-    const start = performance.now();
-    const end = start + duration * 1000;
-    const tick = (now: number) => {
-      const progress = Math.min(1, (now - start) / (end - start));
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplayValue(Math.round(target * eased));
-      if (progress < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }, [started, target, duration]);
-
-  return (
-    <span ref={ref}>
-      {prefix}{displayValue.toLocaleString("pt-BR")}{suffix}
-    </span>
-  );
-}
-
 export default function HomePage() {
   return (
     <main className="font-body text-midnight antialiased">
@@ -185,36 +124,24 @@ export default function HomePage() {
       {/* ─── HERO ─── */}
       <section
         className="relative min-h-screen flex items-center overflow-hidden pt-14"
-        style={{
-          background:
-            "linear-gradient(135deg, #1A1F3A 0%, #1A1F3A 55%, #1A1F3A 100%)",
-        }}
+        style={{ background: "linear-gradient(135deg, #1A1F3A 0%, #1A1F3A 55%, #1A1F3A 100%)" }}
       >
         {/* Dot pattern overlay */}
         <div
           className="absolute inset-0 opacity-[0.06]"
           style={{
-            backgroundImage:
-              "radial-gradient(circle, #ffffff 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(circle, #ffffff 1px, transparent 1px)",
             backgroundSize: "28px 28px",
           }}
         />
-
-        {/* Gradient orbs */}
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-midnight/20 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-gold/10 rounded-full blur-3xl" />
 
         <div className="relative z-10 max-w-6xl mx-auto px-5 py-20 w-full">
           <div className="flex flex-col md:flex-row items-center gap-12 md:gap-8">
-            {/* ── Left column: text & CTA ── */}
+            {/* ── Left column ── */}
             <div className="flex-1 min-w-0">
-              {/* Social proof pill */}
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-8"
-              >
+              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-8">
                 <span className="flex -space-x-1">
                   {["AB", "CR", "JM"].map((i) => (
                     <span
@@ -228,54 +155,29 @@ export default function HomePage() {
                 <span className="font-body text-xs text-white/80">
                   +2.400 casamentos organizados no Laço
                 </span>
-              </motion.div>
+              </div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="font-heading text-5xl md:text-6xl text-white leading-[1.05] mb-6"
-              >
+              <h1 className="font-heading text-5xl md:text-6xl text-white leading-[1.05] mb-6">
                 O casamento
                 <br />
                 dos seus sonhos,
                 <br />
                 <span className="text-gold">organizado.</span>
-              </motion.h1>
+              </h1>
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="font-body text-lg text-white/65 mb-10 max-w-xl leading-relaxed"
-              >
+              <p className="font-body text-lg text-white/65 mb-10 max-w-xl leading-relaxed">
                 Convidados, presentes, site, orçamento e RSVP — tudo em um só
                 lugar. Gratuito para começar.
-              </motion.p>
+              </p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex flex-col sm:flex-row gap-3"
-              >
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Link
                   href="/registro"
                   className="inline-flex items-center justify-center gap-2 bg-gold text-white font-body font-semibold text-base px-8 py-4 rounded-xl hover:bg-gold/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Criar meu casamento grátis
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </Link>
                 <Link
@@ -284,268 +186,129 @@ export default function HomePage() {
                 >
                   Sou cerimonialista
                 </Link>
-              </motion.div>
+              </div>
 
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="font-body text-xs text-white/35 mt-4"
-              >
+              <p className="font-body text-xs text-white/35 mt-4">
                 Sem cartão de crédito · Cancele quando quiser
-              </motion.p>
+              </p>
             </div>
 
             {/* ── Right column: iPhone mockup ── */}
-            <motion.div
-              initial={{ opacity: 0, x: 60 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.35, ease: "easeOut" }}
+            <div
               className="hidden md:flex flex-shrink-0 relative items-center justify-center"
               style={{ width: 300 }}
             >
-              {/* Floating badge — confirmados (teal) */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8, x: 10 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                transition={{ delay: 0.75, duration: 0.4 }}
-                className="absolute -top-3 -right-8 z-20"
-              >
-                <motion.div
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{
-                    duration: 2.8,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 0.4,
-                  }}
-                  className="flex items-center gap-1.5 bg-midnight text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
-                >
+              {/* Floating badges */}
+              <div className="absolute -top-3 -right-8 z-20">
+                <div className="flex items-center gap-1.5 bg-midnight text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap">
                   ✓ 248 confirmados
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
 
-              {/* Floating badge — presentes (gold) */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8, x: 10 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                transition={{ delay: 0.9, duration: 0.4 }}
-                className="absolute top-1/2 -right-10 z-20 -translate-y-1/2"
-              >
-                <motion.div
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{
-                    duration: 3.2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 0.7,
-                  }}
-                  className="flex items-center gap-1.5 bg-gold text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
-                >
+              <div className="absolute top-1/2 -right-10 z-20 -translate-y-1/2">
+                <div className="flex items-center gap-1.5 bg-gold text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap">
                   🎁 12 presentes
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
 
-              {/* Floating badge — dias (verde-noite) */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8, x: -10 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                transition={{ delay: 1.05, duration: 0.4 }}
-                className="absolute -bottom-3 -left-8 z-20"
-              >
-                <motion.div
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{
-                    duration: 3.0,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1.0,
-                  }}
+              <div className="absolute -bottom-3 -left-8 z-20">
+                <div
                   className="flex items-center gap-1.5 text-white font-body text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
-                  style={{
-                    backgroundColor: "#1A1F3A",
-                    border: "1px solid rgba(255,255,255,0.2)",
-                  }}
+                  style={{ backgroundColor: "#1A1F3A", border: "1px solid rgba(255,255,255,0.2)" }}
                 >
                   📅 186 dias
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
 
               {/* iPhone frame */}
               <div
                 className="relative bg-[#1a1a1a] rounded-[2.8rem] shadow-2xl overflow-hidden border-2 border-white/10"
                 style={{ width: 280, height: 560 }}
               >
-                {/* Notch */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-[#1a1a1a] rounded-b-2xl z-10" />
-
-                {/* Screen content */}
                 <div className="absolute inset-[3px] bg-[#f5f3ef] rounded-[2.4rem] overflow-hidden flex flex-col">
-                  {/* Status bar */}
                   <div className="h-8 bg-[#1a2e26] flex items-end justify-between px-5 pb-1 pt-6 shrink-0">
-                    <span className="text-white/60 text-[9px] font-body">
-                      9:41
-                    </span>
+                    <span className="text-white/60 text-[9px] font-body">9:41</span>
                     <div className="flex gap-1 items-center">
                       <div className="w-3 h-1.5 border border-white/40 rounded-sm">
                         <div className="w-2/3 h-full bg-white/60 rounded-sm" />
                       </div>
                     </div>
                   </div>
-
-                  {/* App header */}
                   <div className="bg-[#1a2e26] px-5 pb-5 pt-2 shrink-0">
-                    <p className="font-display text-white text-lg tracking-tight">
-                      Laço
-                    </p>
+                    <p className="font-display text-white text-lg tracking-tight">Laço</p>
                   </div>
-
-                  {/* Dashboard cards */}
                   <div className="flex-1 overflow-hidden px-3 pt-3 space-y-2.5">
-                    {/* Couple card */}
                     <div className="bg-white rounded-2xl p-4 shadow-sm">
                       <div className="flex items-center gap-2 mb-3">
                         <div className="w-7 h-7 rounded-full bg-gradient-to-br from-midnight to-gold flex items-center justify-center">
-                          <span className="text-white text-[9px] font-bold">
-                            A&B
-                          </span>
+                          <span className="text-white text-[9px] font-bold">A&B</span>
                         </div>
                         <div>
-                          <p className="font-body text-[11px] font-semibold text-[#1a2e26]">
-                            Ana & Bruno
-                          </p>
-                          <p className="font-body text-[9px] text-[#1a2e26]/50">
-                            12 de outubro, 2026
-                          </p>
+                          <p className="font-body text-[11px] font-semibold text-[#1a2e26]">Ana & Bruno</p>
+                          <p className="font-body text-[9px] text-[#1a2e26]/50">12 de outubro, 2026</p>
                         </div>
                       </div>
-                      {/* Countdown */}
                       <div className="bg-[#f5f3ef] rounded-xl p-2.5 text-center mb-2.5">
-                        <p className="font-heading text-2xl text-[#1a2e26] leading-none">
-                          248
-                        </p>
-                        <p className="font-body text-[9px] text-[#1a2e26]/50">
-                          dias restantes
-                        </p>
+                        <p className="font-heading text-2xl text-[#1a2e26] leading-none">248</p>
+                        <p className="font-body text-[9px] text-[#1a2e26]/50">dias restantes</p>
                       </div>
-                      {/* RSVP stats */}
                       <div className="grid grid-cols-3 gap-1.5">
                         {[
-                          {
-                            label: "Confirmados",
-                            value: "87",
-                            color: "bg-emerald-100 text-emerald-700",
-                          },
-                          {
-                            label: "Pendentes",
-                            value: "43",
-                            color: "bg-amber-100 text-amber-700",
-                          },
-                          {
-                            label: "Total",
-                            value: "130",
-                            color: "bg-[#e8f4f2] text-midnight",
-                          },
+                          { label: "Confirmados", value: "87", color: "bg-emerald-100 text-emerald-700" },
+                          { label: "Pendentes", value: "43", color: "bg-amber-100 text-amber-700" },
+                          { label: "Total", value: "130", color: "bg-[#e8f4f2] text-midnight" },
                         ].map((s) => (
-                          <div
-                            key={s.label}
-                            className={`${s.color} rounded-lg p-1.5 text-center`}
-                          >
-                            <p className="font-body text-sm font-bold leading-none">
-                              {s.value}
-                            </p>
-                            <p className="font-body text-[7px] mt-0.5 opacity-80">
-                              {s.label}
-                            </p>
+                          <div key={s.label} className={`${s.color} rounded-lg p-1.5 text-center`}>
+                            <p className="font-body text-sm font-bold leading-none">{s.value}</p>
+                            <p className="font-body text-[7px] mt-0.5 opacity-80">{s.label}</p>
                           </div>
                         ))}
                       </div>
                     </div>
-
-                    {/* Quick actions */}
                     <div className="grid grid-cols-2 gap-2">
                       {[
                         { icon: "🎁", label: "Presentes", sub: "12 itens" },
-                        {
-                          icon: "📋",
-                          label: "Fornecedores",
-                          sub: "5 contratados",
-                        },
+                        { icon: "📋", label: "Fornecedores", sub: "5 contratados" },
                       ].map((a) => (
-                        <div
-                          key={a.label}
-                          className="bg-white rounded-xl p-3 shadow-sm"
-                        >
+                        <div key={a.label} className="bg-white rounded-xl p-3 shadow-sm">
                           <p className="text-base mb-1">{a.icon}</p>
-                          <p className="font-body text-[10px] font-semibold text-[#1a2e26]">
-                            {a.label}
-                          </p>
-                          <p className="font-body text-[8px] text-[#1a2e26]/40">
-                            {a.sub}
-                          </p>
+                          <p className="font-body text-[10px] font-semibold text-[#1a2e26]">{a.label}</p>
+                          <p className="font-body text-[8px] text-[#1a2e26]/40">{a.sub}</p>
                         </div>
                       ))}
                     </div>
-
-                    {/* Budget bar */}
                     <div className="bg-white rounded-xl p-3 shadow-sm">
                       <div className="flex justify-between items-center mb-1.5">
-                        <p className="font-body text-[10px] font-semibold text-[#1a2e26]">
-                          Orçamento
-                        </p>
-                        <p className="font-body text-[9px] text-[#1a2e26]/50">
-                          68%
-                        </p>
+                        <p className="font-body text-[10px] font-semibold text-[#1a2e26]">Orçamento</p>
+                        <p className="font-body text-[9px] text-[#1a2e26]/50">68%</p>
                       </div>
                       <div className="h-1.5 bg-[#f5f3ef] rounded-full overflow-hidden">
                         <div className="h-full w-[68%] bg-gradient-to-r from-midnight to-gold rounded-full" />
                       </div>
                     </div>
                   </div>
-
-                  {/* Bottom nav */}
                   <div className="bg-white border-t border-gray-100 flex justify-around py-2 px-3 shrink-0">
                     {["🏠", "👥", "🎁", "📊"].map((icon) => (
-                      <div
-                        key={icon}
-                        className="flex flex-col items-center gap-0.5"
-                      >
+                      <div key={icon} className="flex flex-col items-center gap-0.5">
                         <span className="text-sm">{icon}</span>
-                        <div
-                          className={`w-1 h-1 rounded-full ${icon === "🏠" ? "bg-midnight" : "bg-transparent"}`}
-                        />
+                        <div className={`w-1 h-1 rounded-full ${icon === "🏠" ? "bg-midnight" : "bg-transparent"}`} />
                       </div>
                     ))}
                   </div>
                 </div>
-
-                {/* Home indicator */}
                 <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-20 h-1 bg-white/30 rounded-full" />
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
 
         {/* Scroll indicator */}
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/30"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M19 9l-7 7-7-7"
-            />
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/30">
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
-        </motion.div>
+        </div>
       </section>
 
       {/* ─── SOCIAL PROOF STRIP ─── */}
@@ -581,33 +344,22 @@ export default function HomePage() {
       {/* ─── COMO FUNCIONA ─── */}
       <section className="bg-ivory py-24 px-5">
         <div className="max-w-4xl mx-auto">
-          <motion.div {...fadeUp} className="text-center mb-16">
+          <div className="text-center mb-16">
             <p className="font-body text-xs text-gold uppercase tracking-widest mb-3">Como funciona</p>
-            <h2 className="font-heading text-4xl md:text-5xl text-midnight">
-              Pronto em 3 passos
-            </h2>
-          </motion.div>
-
+            <h2 className="font-heading text-4xl md:text-5xl text-midnight">Pronto em 3 passos</h2>
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
             {STEPS.map((s, i) => (
-              <motion.div
-                key={s.n}
-                {...fadeUp}
-                transition={{ duration: 0.55, delay: i * 0.12, ease: "easeOut" }}
-                viewport={{ once: true, margin: "-40px" }}
-                className="relative"
-              >
+              <div key={s.n} className="relative">
                 {i < STEPS.length - 1 && (
                   <div className="hidden md:block absolute top-6 left-full w-full h-px bg-gradient-to-r from-midnight/20 to-transparent -translate-x-8 z-0" />
                 )}
                 <div className="relative z-10">
-                  <span className="font-heading text-6xl text-midnight/10 leading-none block mb-4">
-                    {s.n}
-                  </span>
+                  <span className="font-heading text-6xl text-midnight/10 leading-none block mb-4">{s.n}</span>
                   <h3 className="font-heading text-xl text-midnight mb-2">{s.title}</h3>
                   <p className="font-body text-sm text-midnight/60 leading-relaxed">{s.desc}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -616,20 +368,14 @@ export default function HomePage() {
       {/* ─── FEATURES ─── */}
       <section className="bg-white py-24 px-5">
         <div className="max-w-5xl mx-auto">
-          <motion.div {...fadeUp} className="text-center mb-16">
+          <div className="text-center mb-16">
             <p className="font-body text-xs text-gold uppercase tracking-widest mb-3">Funcionalidades</p>
-            <h2 className="font-heading text-4xl md:text-5xl text-midnight">
-              Tudo que você precisa
-            </h2>
-          </motion.div>
-
+            <h2 className="font-heading text-4xl md:text-5xl text-midnight">Tudo que você precisa</h2>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {FEATURES.map((f, i) => (
-              <motion.div
+            {FEATURES.map((f) => (
+              <div
                 key={f.title}
-                {...fadeUp}
-                transition={{ duration: 0.55, delay: i * 0.07, ease: "easeOut" }}
-                viewport={{ once: true, margin: "-40px" }}
                 className="group bg-fog rounded-2xl p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
               >
                 <div className="w-10 h-10 bg-midnight/8 text-midnight rounded-xl flex items-center justify-center mb-4 group-hover:bg-midnight group-hover:text-white transition-all">
@@ -637,7 +383,7 @@ export default function HomePage() {
                 </div>
                 <h3 className="font-heading text-lg text-midnight mb-1">{f.title}</h3>
                 <p className="font-body text-sm text-midnight/60 leading-relaxed">{f.desc}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -646,12 +392,11 @@ export default function HomePage() {
       {/* ─── PARA QUEM ─── */}
       <section className="bg-midnight py-24 px-5">
         <div className="max-w-4xl mx-auto">
-          <motion.div {...fadeUp} className="text-center mb-16">
+          <div className="text-center mb-16">
             <h2 className="font-heading text-4xl md:text-5xl text-white">Para quem é o Laço?</h2>
-          </motion.div>
-
+          </div>
           <div className="grid md:grid-cols-2 gap-6">
-            <motion.div {...fadeUp} className="bg-white/5 border border-white/10 rounded-2xl p-8">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
               <div className="w-10 h-10 bg-gold/20 text-gold rounded-xl flex items-center justify-center mb-5">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -678,9 +423,9 @@ export default function HomePage() {
               >
                 Criar conta de casal
               </Link>
-            </motion.div>
+            </div>
 
-            <motion.div {...fadeUp} transition={{ duration: 0.55, delay: 0.1 }} viewport={{ once: true }} className="bg-white/5 border border-white/10 rounded-2xl p-8">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
               <div className="w-10 h-10 bg-midnight/30 text-midnight rounded-xl flex items-center justify-center mb-5">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -707,7 +452,7 @@ export default function HomePage() {
               >
                 Criar conta profissional
               </Link>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -715,26 +460,19 @@ export default function HomePage() {
       {/* ─── PLANOS ─── */}
       <section className="bg-fog py-24 px-5">
         <div className="max-w-4xl mx-auto">
-          <motion.div {...fadeUp} className="text-center mb-16">
+          <div className="text-center mb-16">
             <p className="font-body text-xs text-gold uppercase tracking-widest mb-3">Planos</p>
             <h2 className="font-heading text-4xl md:text-5xl text-midnight">Simples e transparente</h2>
             <p className="font-body text-midnight/50 mt-3">Comece grátis. Upgrade quando precisar.</p>
-          </motion.div>
-
+          </div>
           <div className="grid md:grid-cols-2 gap-6">
             {/* Free */}
-            <motion.div {...fadeUp} className="bg-white rounded-2xl p-8 border border-midnight/10">
+            <div className="bg-white rounded-2xl p-8 border border-midnight/10">
               <p className="font-body text-xs text-midnight/40 uppercase tracking-widest mb-2">Gratuito</p>
               <p className="font-heading text-4xl text-midnight mb-1">R$ 0</p>
               <p className="font-body text-sm text-midnight/50 mb-6">Para sempre</p>
               <ul className="space-y-3 mb-8">
-                {[
-                  "Até 50 convidados",
-                  "1 casamento",
-                  "Site com RSVP",
-                  "Lista de presentes básica",
-                  "Controle de orçamento",
-                ].map((f) => (
+                {["Até 50 convidados", "1 casamento", "Site com RSVP", "Lista de presentes básica", "Controle de orçamento"].map((f) => (
                   <li key={f} className="flex items-center gap-2 font-body text-sm text-midnight/70">
                     <span className="text-midnight">✓</span> {f}
                   </li>
@@ -746,10 +484,10 @@ export default function HomePage() {
               >
                 Começar grátis
               </Link>
-            </motion.div>
+            </div>
 
             {/* Premium */}
-            <motion.div {...fadeUp} transition={{ duration: 0.55, delay: 0.1 }} viewport={{ once: true }} className="bg-midnight rounded-2xl p-8 relative overflow-hidden">
+            <div className="bg-midnight rounded-2xl p-8 relative overflow-hidden">
               <div className="absolute top-4 right-4 bg-gold text-white text-xs font-body font-medium px-2.5 py-1 rounded-full">
                 Mais popular
               </div>
@@ -778,7 +516,7 @@ export default function HomePage() {
               >
                 Começar trial grátis
               </Link>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -786,20 +524,13 @@ export default function HomePage() {
       {/* ─── DEPOIMENTOS ─── */}
       <section className="bg-white py-24 px-5">
         <div className="max-w-5xl mx-auto">
-          <motion.div {...fadeUp} className="text-center mb-16">
+          <div className="text-center mb-16">
             <p className="font-body text-xs text-gold uppercase tracking-widest mb-3">Depoimentos</p>
             <h2 className="font-heading text-4xl md:text-5xl text-midnight">O que dizem nossos casais</h2>
-          </motion.div>
-
+          </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((t, i) => (
-              <motion.div
-                key={t.name}
-                {...fadeUp}
-                transition={{ duration: 0.55, delay: i * 0.1, ease: "easeOut" }}
-                viewport={{ once: true }}
-                className="bg-fog rounded-2xl p-6"
-              >
+            {TESTIMONIALS.map((t) => (
+              <div key={t.name} className="bg-fog rounded-2xl p-6">
                 <div className="flex gap-1 mb-4">
                   {[...Array(5)].map((_, j) => (
                     <svg key={j} className="w-3.5 h-3.5 text-gold" fill="currentColor" viewBox="0 0 20 20">
@@ -819,7 +550,7 @@ export default function HomePage() {
                     <p className="font-body text-xs text-midnight/40">{t.city}</p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -827,7 +558,7 @@ export default function HomePage() {
 
       {/* ─── CTA FINAL ─── */}
       <section className="bg-midnight py-24 px-5 text-center">
-        <motion.div {...fadeUp} className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <h2 className="font-heading text-4xl md:text-5xl text-white mb-4">
             Comece a planejar hoje
           </h2>
@@ -844,7 +575,7 @@ export default function HomePage() {
             </svg>
           </Link>
           <p className="font-body text-xs text-white/25 mt-4">Sem cartão de crédito · Cancele quando quiser</p>
-        </motion.div>
+        </div>
       </section>
 
       {/* ─── FOOTER ─── */}
@@ -853,9 +584,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
             <div>
               <span className="font-display text-2xl text-white">Laço</span>
-              <p className="font-body text-xs text-white/30 mt-1">
-                Planejamento de casamentos — Brasil
-              </p>
+              <p className="font-body text-xs text-white/30 mt-1">Planejamento de casamentos — Brasil</p>
             </div>
             <div className="flex flex-wrap gap-6">
               {[

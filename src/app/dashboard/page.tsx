@@ -6,9 +6,11 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import BottomNav from "@/components/bottom-nav";
-import ActivityFeed from "@/components/activity-feed";
-import ActivationChecklist from "@/components/activation-checklist";
-import SmartSuggestions from "@/components/smart-suggestions";
+import dynamic from "next/dynamic";
+
+const ActivityFeed = dynamic(() => import("@/components/activity-feed"), { ssr: false });
+const ActivationChecklist = dynamic(() => import("@/components/activation-checklist"), { ssr: false });
+const SmartSuggestions = dynamic(() => import("@/components/smart-suggestions"), { ssr: false });
 
 interface Wedding {
   id: string;
@@ -350,11 +352,6 @@ export default function DashboardPage() {
 
   useEffect(() => { loadWeddings(); }, [loadWeddings]);
 
-  useEffect(() => {
-    if (status !== "authenticated") return;
-    const interval = setInterval(loadWeddings, 30000);
-    return () => clearInterval(interval);
-  }, [status, loadWeddings]);
 
   if (status === "loading" || loading) {
     return (
