@@ -556,7 +556,7 @@ export default function DashboardPage() {
                   }
                 />
                 <ActionTile
-                  href={`/casamento/${w.id}/confirmacoes`}
+                  href={`/casamento/${w.id}/convidados`}
                   label="Confirmações"
                   badge={guestStats?.pending ?? null}
                   icon={

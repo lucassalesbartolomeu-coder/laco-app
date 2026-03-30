@@ -45,7 +45,7 @@ export default function MaisPage() {
     {
       category: "Cerimonialista / Assessor(a)",
       items: [
-        { icon: "👩‍💼", label: "Painel da Cerimonialista", desc: "Conecte sua cerimonialista — ela acompanha lista, fornecedores e timeline", href: "/cerimonialista/dashboard", available: true },
+        { icon: "👩‍💼", label: "Conectar Cerimonialista", desc: "Vincule seu(a) assessor(a) para que acompanhe lista, fornecedores e timeline", href: `${base}/cerimonialista`, available: true },
         { icon: "📋", label: "Questionarios", desc: "Responda questionarios de preferencias da sua cerimonialista", href: `${base}/questionarios`, available: true },
         { icon: "💬", label: "Confirmacao via WhatsApp", desc: "Servico de confirmacao 100% dos convidados via WhatsApp", href: `${base}/whatsapp-confirmacao`, available: true },
       ],
