@@ -16,7 +16,11 @@ jobs:
       DIRECT_URL: ${{ secrets.DIRECT_URL }}
       NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
       NEXTAUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
       NEXT_PUBLIC_SENTRY_DSN: ""
+      OPENAI_API_KEY: "sk-placeholder"
+      RESEND_API_KEY: "re_placeholder"
+      SENTRY_DSN: ""
 
     steps:
       - uses: actions/checkout@v4
@@ -31,8 +35,6 @@ jobs:
       - run: npx playwright install --with-deps chromium
 
       - run: npx prisma generate
-
-      - run: npx next build
 
       - run: npx playwright test
         env:
