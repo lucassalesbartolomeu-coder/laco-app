@@ -46,6 +46,14 @@ const EMPTY: FormState = {
 const fmt = (v: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 
+// Input display helpers — store digits only, display with BR dots
+const numDisplay = (v: string) => {
+  if (!v) return "";
+  const digits = v.replace(/\D/g, "");
+  return digits ? Number(digits).toLocaleString("pt-BR") : "";
+};
+const numChange = (raw: string) => raw.replace(/\D/g, "");
+
 const STATUS_CONFIG: Record<string, { label: string; dot: string }> = {
   pendente:   { label: "Pendente",  dot: "bg-amber-400" },
   pago:       { label: "Pago",      dot: "bg-green-400" },
@@ -106,9 +114,9 @@ export default function OrcamentoPage() {
     setForm({
       category: item.category,
       description: item.description,
-      estimatedCost: String(item.estimatedCost),
-      actualCost: item.actualCost != null ? String(item.actualCost) : "",
-      paidAmount: String(item.paidAmount),
+      estimatedCost: String(Math.round(item.estimatedCost)),
+      actualCost: item.actualCost != null ? String(Math.round(item.actualCost)) : "",
+      paidAmount: String(Math.round(item.paidAmount)),
       paidBy: item.paidBy ?? "",
       dueDate: item.dueDate ? item.dueDate.slice(0, 10) : "",
       status: item.status,
@@ -448,13 +456,15 @@ export default function OrcamentoPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor estimado *</label>
-                    <input type="number" value={form.estimatedCost} onChange={e => setForm(f => ({ ...f, estimatedCost: e.target.value }))}
+                    <input type="text" inputMode="numeric" value={numDisplay(form.estimatedCost)}
+                      onChange={e => setForm(f => ({ ...f, estimatedCost: numChange(e.target.value) }))}
                       placeholder="0"
                       className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                   <div>
                     <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor real</label>
-                    <input type="number" value={form.actualCost} onChange={e => setForm(f => ({ ...f, actualCost: e.target.value }))}
+                    <input type="text" inputMode="numeric" value={numDisplay(form.actualCost)}
+                      onChange={e => setForm(f => ({ ...f, actualCost: numChange(e.target.value) }))}
                       placeholder="0"
                       className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
@@ -463,7 +473,8 @@ export default function OrcamentoPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor pago</label>
-                    <input type="number" value={form.paidAmount} onChange={e => setForm(f => ({ ...f, paidAmount: e.target.value }))}
+                    <input type="text" inputMode="numeric" value={numDisplay(form.paidAmount)}
+                      onChange={e => setForm(f => ({ ...f, paidAmount: numChange(e.target.value) }))}
                       placeholder="0"
                       className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
