@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const CATEGORIES = [
@@ -40,13 +40,12 @@ interface FormState {
 
 const EMPTY: FormState = {
   category: CATEGORIES[0], description: "", estimatedCost: "",
-  actualCost: "", paidAmount: "0", paidBy: "", dueDate: "", status: "pendente", notes: "",
+  actualCost: "", paidAmount: "", paidBy: "", dueDate: "", status: "pendente", notes: "",
 };
 
 const fmt = (v: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 
-// Input display helpers — store digits only, display with BR dots
 const numDisplay = (v: string) => {
   if (!v) return "";
   const digits = v.replace(/\D/g, "");
@@ -72,8 +71,11 @@ export default function OrcamentoPage() {
   const [saving, setSaving] = useState(false);
   const [filterCat, setFilterCat] = useState("todas");
   const [loadingTemplate, setLoadingTemplate] = useState(false);
+  const [coupleName1, setCoupleName1] = useState("");
+  const [coupleName2, setCoupleName2] = useState("");
+  const autoLoadedRef = useRef(false);
 
-  async function loadTemplate() {
+  async function loadTemplate(silent = false) {
     setLoadingTemplate(true);
     try {
       await Promise.all(
@@ -85,22 +87,40 @@ export default function OrcamentoPage() {
           })
         )
       );
-      await load();
-      toast.success("Todos os itens base adicionados! Edite os valores.");
+      const [iRes, sRes] = await Promise.all([
+        fetch(`/api/weddings/${id}/budget`),
+        fetch(`/api/weddings/${id}/budget/summary`),
+      ]);
+      if (iRes.ok) setItems(await iRes.json());
+      if (sRes.ok) setSummary(await sRes.json());
+      if (!silent) toast.success("Todos os itens base adicionados! Edite os valores.");
     } catch {
-      toast.error("Erro ao carregar itens base.");
+      if (!silent) toast.error("Erro ao carregar itens base.");
     }
     setLoadingTemplate(false);
   }
 
   async function load() {
-    const [iRes, sRes] = await Promise.all([
+    const [iRes, sRes, wRes] = await Promise.all([
       fetch(`/api/weddings/${id}/budget`),
       fetch(`/api/weddings/${id}/budget/summary`),
+      fetch(`/api/weddings/${id}`),
     ]);
-    if (iRes.ok) setItems(await iRes.json());
+    let fetchedItems: BudgetItem[] = [];
+    if (iRes.ok) { fetchedItems = await iRes.json(); setItems(fetchedItems); }
     if (sRes.ok) setSummary(await sRes.json());
+    if (wRes.ok) {
+      const w = await wRes.json();
+      setCoupleName1(w.partnerName1 ?? "");
+      setCoupleName2(w.partnerName2 ?? "");
+    }
     setLoading(false);
+
+    // Auto-load template on first visit if no items exist
+    if (fetchedItems.length === 0 && !autoLoadedRef.current) {
+      autoLoadedRef.current = true;
+      await loadTemplate(true);
+    }
   }
 
   useEffect(() => { load(); }, [id]);
@@ -116,7 +136,7 @@ export default function OrcamentoPage() {
       description: item.description,
       estimatedCost: String(Math.round(item.estimatedCost)),
       actualCost: item.actualCost != null ? String(Math.round(item.actualCost)) : "",
-      paidAmount: String(Math.round(item.paidAmount)),
+      paidAmount: item.paidAmount > 0 ? String(Math.round(item.paidAmount)) : "",
       paidBy: item.paidBy ?? "",
       dueDate: item.dueDate ? item.dueDate.slice(0, 10) : "",
       status: item.status,
@@ -138,16 +158,21 @@ export default function OrcamentoPage() {
         ...form,
         estimatedCost: Number(form.estimatedCost),
         actualCost: form.actualCost ? Number(form.actualCost) : null,
-        paidAmount: Number(form.paidAmount) || 0,
+        paidAmount: form.paidAmount ? Number(form.paidAmount) : 0,
         dueDate: form.dueDate || null,
       }),
     });
     if (res.ok) {
-      await load();
+      const [iRes, sRes] = await Promise.all([
+        fetch(`/api/weddings/${id}/budget`),
+        fetch(`/api/weddings/${id}/budget/summary`),
+      ]);
+      if (iRes.ok) setItems(await iRes.json());
+      if (sRes.ok) setSummary(await sRes.json());
       setShowForm(false);
-      toast.success(editing ? "Item atualizado com sucesso!" : "Item adicionado ao orçamento!");
+      toast.success(editing ? "Item atualizado!" : "Item adicionado ao orçamento!");
     } else {
-      toast.error("Erro ao salvar item. Tente novamente.");
+      toast.error("Erro ao salvar item.");
     }
     setSaving(false);
   }
@@ -155,43 +180,52 @@ export default function OrcamentoPage() {
   async function remove(itemId: string) {
     const res = await fetch(`/api/weddings/${id}/budget/${itemId}`, { method: "DELETE" });
     if (res.ok) {
-      await load();
-      toast.success("Item removido do orçamento.");
-    } else {
-      toast.error("Erro ao remover item.");
+      setItems(prev => prev.filter(i => i.id !== itemId));
+      const sRes = await fetch(`/api/weddings/${id}/budget/summary`);
+      if (sRes.ok) setSummary(await sRes.json());
+      toast.success("Item removido.");
     }
   }
 
   async function togglePaid(item: BudgetItem) {
     const newStatus = item.status === "pago" ? "pendente" : "pago";
     const newPaid = newStatus === "pago" ? (item.actualCost ?? item.estimatedCost) : 0;
+    setItems(prev => prev.map(i => i.id === item.id ? { ...i, status: newStatus, paidAmount: newPaid } : i));
     await fetch(`/api/weddings/${id}/budget/${item.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...item, status: newStatus, paidAmount: newPaid }),
     });
-    await load();
+    const sRes = await fetch(`/api/weddings/${id}/budget/summary`);
+    if (sRes.ok) setSummary(await sRes.json());
   }
 
   const cats = [...new Set(items.map(i => i.category))].filter(c => CATEGORIES.includes(c));
   const otherCats = [...new Set(items.map(i => i.category))].filter(c => !CATEGORIES.includes(c));
   const orderedCats = [...CATEGORIES.filter(c => cats.includes(c)), ...otherCats];
-
   const filtered = filterCat === "todas" ? items : items.filter(i => i.category === filterCat);
-
   const groups: Record<string, BudgetItem[]> = {};
   for (const item of filtered) {
     if (!groups[item.category]) groups[item.category] = [];
     groups[item.category].push(item);
   }
-
   const progressPct = summary && summary.totalEstimated > 0
     ? Math.min(100, Math.round((summary.totalPaid / summary.totalEstimated) * 100))
     : 0;
 
-  if (loading) return (
-    <div className="min-h-screen bg-fog flex items-center justify-center">
+  // Payer chips — couple names + common options
+  const payerChips = [
+    ...(coupleName1 ? [coupleName1] : []),
+    ...(coupleName2 ? [coupleName2] : []),
+    "Juntos", "Família",
+  ];
+
+  if (loading || loadingTemplate) return (
+    <div className="min-h-screen bg-fog flex flex-col items-center justify-center gap-3">
       <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+      {loadingTemplate && (
+        <p className="font-body text-sm text-midnight/50">Preparando seu orçamento...</p>
+      )}
     </div>
   );
 
@@ -239,17 +273,14 @@ export default function OrcamentoPage() {
                 <p className="font-body text-lg font-bold text-gold">{fmt(summary.totalPending)}</p>
               </div>
             </div>
-            {/* Progress bar */}
             <div>
               <div className="flex justify-between mb-1.5">
                 <span className="font-body text-xs text-midnight/50">Pago do estimado</span>
                 <span className="font-body text-xs font-semibold text-midnight">{progressPct}%</span>
               </div>
               <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-midnight to-midnight/70 rounded-full transition-all duration-700"
-                  style={{ width: `${progressPct}%` }}
-                />
+                <div className="h-full bg-gradient-to-r from-midnight to-midnight/70 rounded-full transition-all duration-700"
+                  style={{ width: `${progressPct}%` }} />
               </div>
             </div>
           </div>
@@ -258,51 +289,24 @@ export default function OrcamentoPage() {
         {/* Category filter */}
         {orderedCats.length > 1 && (
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            <button
-              onClick={() => setFilterCat("todas")}
+            <button onClick={() => setFilterCat("todas")}
               className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-body font-medium transition ${
                 filterCat === "todas" ? "bg-midnight text-white" : "bg-white border border-gray-200 text-midnight/60"
-              }`}
-            >
+              }`}>
               Todas
             </button>
             {orderedCats.map(c => (
-              <button key={c}
-                onClick={() => setFilterCat(c)}
+              <button key={c} onClick={() => setFilterCat(c)}
                 className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-body font-medium transition ${
                   filterCat === c ? "bg-midnight text-white" : "bg-white border border-gray-200 text-midnight/60"
-                }`}
-              >
+                }`}>
                 {c}
               </button>
             ))}
           </div>
         )}
 
-        {/* Empty state */}
-        {items.length === 0 && (
-          <div className="bg-white rounded-3xl border border-gray-100 p-8 text-center">
-            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-midnight/10 flex items-center justify-center">
-              <svg className="w-7 h-7 text-midnight" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <p className="font-body text-midnight/50 mb-2">Nenhum item no orçamento ainda</p>
-            <p className="font-body text-xs text-midnight/30 mb-6">Comece do zero ou carregue todos os {CATEGORIES.length} itens de casamento de uma vez</p>
-            <div className="flex flex-col gap-3">
-              <button onClick={() => loadTemplate()} disabled={loadingTemplate}
-                className="px-6 py-3 bg-midnight text-white rounded-xl font-body text-sm hover:bg-midnight/90 transition disabled:opacity-50">
-                {loadingTemplate ? "Carregando..." : `✦ Carregar ${CATEGORIES.length} itens base`}
-              </button>
-              <button onClick={openNew}
-                className="px-6 py-2.5 border border-gray-200 text-midnight rounded-xl font-body text-sm hover:bg-gray-50 transition">
-                Adicionar item manualmente
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Add more button — always visible when items exist */}
+        {/* Add more button */}
         {items.length > 0 && (
           <div className="flex gap-3">
             <button onClick={openNew}
@@ -312,7 +316,7 @@ export default function OrcamentoPage() {
               </svg>
               Adicionar item
             </button>
-            <button onClick={openNew}
+            <button onClick={() => { setForm({ ...EMPTY, category: "Outros" }); setEditing(null); setShowForm(true); }}
               className="flex items-center gap-1.5 px-4 py-3 bg-white border border-gray-200 rounded-2xl font-body text-sm text-midnight/60 hover:border-midnight/30 transition">
               + Outros custos
             </button>
@@ -336,15 +340,10 @@ export default function OrcamentoPage() {
                 return (
                   <div key={item.id} className="bg-white rounded-2xl border border-gray-100 p-4">
                     <div className="flex items-start gap-3">
-                      {/* Paid toggle */}
-                      <button
-                        onClick={() => togglePaid(item)}
+                      <button onClick={() => togglePaid(item)}
                         className={`mt-0.5 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition ${
-                          item.status === "pago"
-                            ? "bg-green-400 border-green-400"
-                            : "border-gray-300 hover:border-midnight"
-                        }`}
-                      >
+                          item.status === "pago" ? "bg-green-400 border-green-400" : "border-gray-300 hover:border-midnight"
+                        }`}>
                         {item.status === "pago" && (
                           <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -375,6 +374,7 @@ export default function OrcamentoPage() {
                           {item.paidAmount > 0 && (
                             <span className="font-body text-xs text-green-600">
                               Pago: <span className="font-semibold">{fmt(item.paidAmount)}</span>
+                              {item.paidBy ? ` (${item.paidBy})` : ""}
                             </span>
                           )}
                           {item.dueDate && (
@@ -384,7 +384,6 @@ export default function OrcamentoPage() {
                           )}
                         </div>
 
-                        {/* Mini progress for partially paid */}
                         {paidPct > 0 && paidPct < 100 && (
                           <div className="mt-2 h-1 bg-gray-100 rounded-full overflow-hidden">
                             <div className="h-full bg-midnight rounded-full" style={{ width: `${paidPct}%` }} />
@@ -443,6 +442,7 @@ export default function OrcamentoPage() {
                   <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
                     className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    <option value="Outros">Outros</option>
                   </select>
                 </div>
 
@@ -470,28 +470,48 @@ export default function OrcamentoPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor pago</label>
-                    <input type="text" inputMode="numeric" value={numDisplay(form.paidAmount)}
-                      onChange={e => setForm(f => ({ ...f, paidAmount: numChange(e.target.value) }))}
-                      placeholder="0"
-                      className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                {/* Paid section */}
+                <div className="bg-green-50/60 rounded-2xl p-3.5 space-y-3">
+                  <p className="font-body text-xs font-semibold text-green-700">Pagamento</p>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor pago</label>
+                      <input type="text" inputMode="numeric" value={numDisplay(form.paidAmount)}
+                        onChange={e => setForm(f => ({ ...f, paidAmount: numChange(e.target.value) }))}
+                        placeholder="0"
+                        className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight bg-white" />
+                    </div>
+                    <div>
+                      <label className="block font-body text-xs text-midnight/60 mb-1.5">Vencimento</label>
+                      <input type="date" value={form.dueDate} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))}
+                        className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight bg-white" />
+                    </div>
                   </div>
+
                   <div>
-                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Vencimento</label>
-                    <input type="date" value={form.dueDate} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))}
-                      className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Quem pagou</label>
+                    {/* Name chips */}
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {payerChips.map(name => (
+                        <button key={name} type="button"
+                          onClick={() => setForm(f => ({ ...f, paidBy: f.paidBy === name ? "" : name }))}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-body transition ${
+                            form.paidBy === name
+                              ? "bg-midnight text-white"
+                              : "bg-white border border-gray-200 text-midnight/60 hover:border-midnight/40"
+                          }`}>
+                          {name}
+                        </button>
+                      ))}
+                    </div>
+                    <input value={form.paidBy} onChange={e => setForm(f => ({ ...f, paidBy: e.target.value }))}
+                      placeholder="Ou digite: cartão Itaú, ambos..."
+                      className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight bg-white" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Quem pagou</label>
-                    <input value={form.paidBy} onChange={e => setForm(f => ({ ...f, paidBy: e.target.value }))}
-                      placeholder="Ex: noiva, cartão Itaú"
-                      className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
-                  </div>
                   <div>
                     <label className="block font-body text-xs text-midnight/60 mb-1.5">Status</label>
                     <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
@@ -501,13 +521,22 @@ export default function OrcamentoPage() {
                       <option value="cancelado">Cancelado</option>
                     </select>
                   </div>
+                  <div className="flex items-end">
+                    {form.paidAmount && Number(form.paidAmount) > 0 && (
+                      <button type="button"
+                        onClick={() => setForm(f => ({ ...f, status: "pago" }))}
+                        className="w-full px-3 py-2.5 text-xs font-body border border-green-200 text-green-700 rounded-xl hover:bg-green-50 transition">
+                        Marcar como pago
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div>
                   <label className="block font-body text-xs text-midnight/60 mb-1.5">Observações</label>
                   <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-                    rows={2} placeholder="Parcelas, condições..."
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight resize-none" />
+                    rows={2} placeholder="Parcelas, condições, notas..."
+                    className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight resize-none" />
                 </div>
               </div>
 

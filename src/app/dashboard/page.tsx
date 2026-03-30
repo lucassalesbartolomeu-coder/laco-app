@@ -742,17 +742,17 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {/* ── Add new wedding (single) ── */}
+            {/* ── Add more events ── */}
             {weddings.length === 1 && (
               <div className="flex justify-center">
                 <Link
-                  href="/casamento/novo"
+                  href={`/casamento/${weddings[0].id}/conta-casamento`}
                   className="flex items-center gap-1.5 font-body text-xs text-midnight/40 hover:text-midnight/60 transition"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                   </svg>
-                  Adicionar outro casamento
+                  Adicionar outros eventos
                 </Link>
               </div>
             )}
