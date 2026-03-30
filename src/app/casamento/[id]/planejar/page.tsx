@@ -70,8 +70,8 @@ export default function PlanejarPage() {
       href: `${base}/orcamento-inteligente`,
       icon: <CalcIcon />,
       color: "bg-midnight",
-      title: "Simulador de Orcamento",
-      desc: "Quiz por fornecedor — descubra quanto vai custar seu casamento com precos reais por regiao",
+      title: "Simulador de Orçamento",
+      desc: "Quiz por fornecedor — descubra quanto vai custar seu casamento com preços reais por região",
       tag: "IA",
       tagColor: "bg-midnight/10 text-midnight",
     },
@@ -157,7 +157,7 @@ export default function PlanejarPage() {
             </div>
             <div className="flex items-start gap-3">
               <span className="w-6 h-6 rounded-full bg-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
-              <p className="font-body text-sm text-gray-600">Receba um <strong>orcamento realista</strong> baseado na sua regiao (SP, RJ, MG, Interior)</p>
+              <p className="font-body text-sm text-gray-600">Receba um <strong>orçamento realista</strong> baseado na sua região (SP, RJ, MG, Interior)</p>
             </div>
           </div>
         </div>

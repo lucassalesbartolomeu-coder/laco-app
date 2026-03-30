@@ -71,7 +71,7 @@ export default function CerimonialistaWeddingDetail() {
   const TABS: { key: Tab; label: string }[] = [
     { key: "convidados", label: `Convidados (${totalGuests})` },
     { key: "fornecedores", label: `Fornecedores (${wedding.vendors?.length || 0})` },
-    { key: "orcamento", label: "Orcamento" },
+    { key: "orcamento", label: "Orçamento" },
   ];
 
   return (
@@ -206,12 +206,12 @@ export default function CerimonialistaWeddingDetail() {
         {tab === "orcamento" && (
           <div className="space-y-2">
             {wedding.budgetItems?.length === 0 ? (
-              <p className="font-body text-midnight/40 text-center py-8">Nenhum item no orcamento</p>
+              <p className="font-body text-midnight/40 text-center py-8">Nenhum item no orçamento</p>
             ) : (
               <table className="w-full font-body text-sm">
                 <thead>
                   <tr className="border-b text-left text-xs text-midnight/40 uppercase">
-                    <th className="pb-2">Descricao</th>
+                    <th className="pb-2">Descrição</th>
                     <th className="pb-2">Categoria</th>
                     <th className="pb-2">Estimado</th>
                     <th className="pb-2">Real</th>

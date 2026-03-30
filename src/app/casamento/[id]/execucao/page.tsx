@@ -81,7 +81,7 @@ export default function ExecucaoPage() {
       category: "Financeiro",
       color: "bg-gold",
       items: [
-        { href: `${base}/orcamento`, icon: "💰", label: "Orcamento Real", desc: "Custos reais vs estimados, parcelas, pagamentos", badge: null },
+        { href: `${base}/orcamento`, icon: "💰", label: "Orçamento Real", desc: "Custos reais vs estimados, parcelas, pagamentos", badge: null },
         { href: `${base}/presentes`, icon: "🎁", label: "Lista de Presentes", desc: "Presentes recebidos, valores, agradecimentos", badge: null },
       ],
     },
@@ -89,7 +89,7 @@ export default function ExecucaoPage() {
       category: "Fornecedores e Contratos",
       color: "bg-midnight",
       items: [
-        { href: `${base}/fornecedores`, icon: "🏢", label: "Meus Fornecedores", desc: "Contratos, orcamentos, status de cada fornecedor", badge: null },
+        { href: `${base}/fornecedores`, icon: "🏢", label: "Meus Fornecedores", desc: "Contratos, orçamentos, status de cada fornecedor", badge: null },
         { href: `${base}/contratos`, icon: "📝", label: "Contratos", desc: "Contratos digitais com assinatura dupla", badge: null },
       ],
     },
@@ -117,11 +117,11 @@ export default function ExecucaoPage() {
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
             <CheckIcon className="w-5 h-5 text-white/80" />
-            <span className="font-body text-xs text-white/60 uppercase tracking-wider">Gestao e Acompanhamento</span>
+            <span className="font-body text-xs text-white/60 uppercase tracking-wider">Gestão e Acompanhamento</span>
           </div>
           <h1 className="font-heading text-3xl text-white mb-2">Organizar</h1>
           <p className="font-body text-sm text-white/70 max-w-md">
-            Gerencie convidados, orcamento, fornecedores, contratos e o cronograma do grande dia.
+            Gerencie convidados, orçamento, fornecedores, contratos e o cronograma do grande dia.
           </p>
         </div>
       </div>
@@ -131,7 +131,7 @@ export default function ExecucaoPage() {
         <div className="px-4 -mt-5 relative z-10 mb-4">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-body text-xs text-gray-400">Confirmacao de presenca</span>
+              <span className="font-body text-xs text-gray-400">Confirmação de presença</span>
               <span className="font-body text-xs font-semibold text-midnight">{pctConfirmed}%</span>
             </div>
             <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">

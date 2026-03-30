@@ -46,12 +46,12 @@ export default function MaisPage() {
       category: "Cerimonialista / Assessor(a)",
       items: [
         { icon: "👩‍💼", label: "Conectar Cerimonialista", desc: "Vincule seu(a) assessor(a) para que acompanhe lista, fornecedores e timeline", href: `${base}/cerimonialista`, available: true },
-        { icon: "📋", label: "Questionarios", desc: "Responda questionarios de preferencias da sua cerimonialista", href: `${base}/questionarios`, available: true },
-        { icon: "💬", label: "Confirmacao via WhatsApp", desc: "Servico de confirmacao 100% dos convidados via WhatsApp", href: `${base}/whatsapp-confirmacao`, available: true },
+        { icon: "📋", label: "Questionários", desc: "Responda questionários de preferências da sua cerimonialista", href: `${base}/questionarios`, available: true },
+        { icon: "💬", label: "Confirmação via WhatsApp", desc: "Serviço de confirmação 100% dos convidados via WhatsApp", href: `${base}/whatsapp-confirmacao`, available: true },
       ],
     },
     {
-      category: "Conta Digital Laco",
+      category: "Conta Digital Laço",
       items: [
         { icon: "💳", label: "Conta do Casamento", desc: "Conta digital compartilhada entre os noivos para gerenciar gastos", href: `${base}/conta-casamento`, available: true },
         { icon: "📊", label: "Extrato de Gastos", desc: "Categorizado automaticamente — quanto gastou com cada fornecedor", href: `${base}/orcamento`, available: true },
@@ -59,7 +59,7 @@ export default function MaisPage() {
       ],
     },
     {
-      category: "Servicos Premium",
+      category: "Serviços Premium",
       items: [
         { icon: "💳", label: "Maquininha de Casamento", desc: "Receba presentes e pagamentos com maquininha personalizada no dia", href: `${base}/maquininha`, available: true },
         { icon: "👔", label: "Gravata Premium", desc: "Identity Kit exclusivo — convite digital animado, menu, save the date", href: `${base}/identity-kit`, available: true },
@@ -68,7 +68,7 @@ export default function MaisPage() {
     {
       category: "Sua Conta",
       items: [
-        { icon: "👤", label: "Perfil", desc: "Dados pessoais, notificacoes, preferencias", href: "/perfil", available: true },
+        { icon: "👤", label: "Perfil", desc: "Dados pessoais, notificações, preferências", href: "/perfil", available: true },
         { icon: "💍", label: "Dados do Casamento", desc: "Editar data, local, nomes, estilo", href: `${base}/conta-casamento`, available: true },
         { icon: "🤝", label: "Planejar Juntos", desc: "Convide o noivo/noiva para planejar juntos", href: "/dashboard", available: true },
       ],
@@ -80,7 +80,7 @@ export default function MaisPage() {
       {/* Header */}
       <div className="bg-midnight px-5 pt-12 pb-8">
         <h1 className="font-heading text-3xl text-white mb-1">Mais</h1>
-        <p className="font-body text-sm text-white/60">Servicos, cerimonialista, conta e configuracoes</p>
+        <p className="font-body text-sm text-white/60">Serviços, cerimonialista, conta e configurações</p>
       </div>
 
       {/* Sections */}
