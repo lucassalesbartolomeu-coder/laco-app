@@ -58,6 +58,8 @@ export default function CerimonialDashboard() {
   const [filterStatus, setFilterStatus] = useState("todos");
   const [referral, setReferral] = useState<ReferralData | null>(null);
 
+  const [sendingReport, setSendingReport] = useState(false);
+
   // Link wedding modal
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [linkWeddingId, setLinkWeddingId] = useState("");
@@ -200,7 +202,34 @@ export default function CerimonialDashboard() {
 
       {/* Weddings Section */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-        <h2 className="font-heading text-2xl text-midnight">Meus Casamentos</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="font-heading text-2xl text-midnight">Meus Casamentos</h2>
+          <button
+            onClick={async () => {
+              setSendingReport(true);
+              try {
+                const res = await fetch("/api/planner/report", { method: "POST" });
+                if (res.ok) {
+                  const d = await res.json();
+                  toast.success(`Relatório enviado para ${d.sentTo}`);
+                } else {
+                  toast.error("Erro ao enviar relatório");
+                }
+              } catch {
+                toast.error("Erro ao enviar relatório");
+              } finally {
+                setSendingReport(false);
+              }
+            }}
+            disabled={sendingReport}
+            className="hidden sm:flex items-center gap-1.5 font-body text-xs text-midnight/50 border border-gray-200 rounded-xl px-3 py-1.5 hover:bg-gray-50 transition disabled:opacity-40"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            {sendingReport ? "Enviando..." : "Relatório mensal"}
+          </button>
+        </div>
         <button
           onClick={() => setLinkModalOpen(true)}
           className="px-5 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition"

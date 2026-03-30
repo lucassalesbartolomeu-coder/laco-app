@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { CoupleEngagementScore } from "@/components/couple-engagement-score";
 
 interface WeddingDetail {
   id: string;
@@ -116,6 +117,20 @@ export default function CerimonialistaWeddingDetail() {
             <p className="font-body text-xs text-midnight/50">Pago</p>
           </div>
         </div>
+      </div>
+
+      {/* Engagement Score */}
+      <div className="mb-6">
+        <CoupleEngagementScore
+          data={{
+            estimatedGuests: wedding.estimatedGuests,
+            guests: wedding.guests ?? [],
+            vendors: wedding.vendors ?? [],
+            budgetItems: wedding.budgetItems ?? [],
+            weddingDate: wedding.weddingDate,
+            venue: wedding.venue,
+          }}
+        />
       </div>
 
       {/* Tabs */}

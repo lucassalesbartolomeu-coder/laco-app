@@ -28,7 +28,32 @@ interface Contract {
 
 interface Assignment {
   assignmentId: string;
-  wedding: { id: string; partnerName1: string; partnerName2: string };
+  wedding: { id: string; partnerName1: string; partnerName2: string; weddingDate: string | null; venue: string | null; city: string | null };
+}
+
+const TEMPLATE_VARIABLES = [
+  { key: "{{casal}}", label: "Nome do Casal" },
+  { key: "{{data_casamento}}", label: "Data" },
+  { key: "{{local}}", label: "Local" },
+  { key: "{{cidade}}", label: "Cidade" },
+  { key: "{{valor}}", label: "Valor" },
+];
+
+function fillVariables(
+  text: string,
+  wedding: Assignment["wedding"] | undefined,
+  value: string
+) {
+  if (!wedding) return text;
+  const date = wedding.weddingDate
+    ? new Date(wedding.weddingDate).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })
+    : "___/___/______";
+  return text
+    .replace(/{{casal}}/g, `${wedding.partnerName1} e ${wedding.partnerName2}`)
+    .replace(/{{data_casamento}}/g, date)
+    .replace(/{{local}}/g, wedding.venue || "_______________")
+    .replace(/{{cidade}}/g, wedding.city || "_______________")
+    .replace(/{{valor}}/g, value ? `R$ ${Number(value).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : "_______________");
 }
 
 const CONTRACT_TEMPLATES = [
@@ -131,6 +156,7 @@ export default function ContratosPage() {
   const [newValue, setNewValue] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
 
   // Sign modal
   const [signModalContract, setSignModalContract] = useState<Contract | null>(null);
@@ -159,10 +185,12 @@ export default function ContratosPage() {
     setCreating(true);
     setCreateError("");
     try {
+      const selectedWedding = weddings.find((w) => w.wedding.id === newWeddingId)?.wedding;
+      const filledTerms = fillVariables(newTerms, selectedWedding, newValue);
       const res = await fetch("/api/planner/contracts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ weddingId: newWeddingId, terms: newTerms, value: newValue || null }),
+        body: JSON.stringify({ weddingId: newWeddingId, terms: filledTerms, value: newValue || null }),
       });
       if (!res.ok) {
         const d = await res.json();
@@ -378,13 +406,48 @@ export default function ContratosPage() {
                     ))}
                   </div>
                 </div>
-                <textarea
-                  value={newTerms}
-                  onChange={(e) => setNewTerms(e.target.value)}
-                  rows={12}
-                  placeholder="Cole ou edite os termos do contrato..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl font-body text-sm text-midnight bg-white focus:border-midnight outline-none resize-none"
-                />
+
+                {/* Variable palette */}
+                <div className="mb-2 flex flex-wrap gap-1.5">
+                  {TEMPLATE_VARIABLES.map((v) => (
+                    <button
+                      key={v.key}
+                      type="button"
+                      title={v.label}
+                      onClick={() => setNewTerms((prev) => prev + v.key)}
+                      className="px-2 py-0.5 text-[10px] font-body text-gold border border-gold/30 bg-gold/5 rounded-md hover:bg-gold/10 transition font-mono"
+                    >
+                      {v.key}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Edit / Preview toggle */}
+                <div className="flex gap-2 mb-1.5">
+                  <button type="button" onClick={() => setShowPreview(false)}
+                    className={`text-xs font-body px-3 py-1 rounded-lg transition ${!showPreview ? "bg-midnight text-white" : "text-midnight/50 hover:bg-gray-100"}`}>
+                    Editar
+                  </button>
+                  <button type="button" onClick={() => setShowPreview(true)}
+                    className={`text-xs font-body px-3 py-1 rounded-lg transition ${showPreview ? "bg-midnight text-white" : "text-midnight/50 hover:bg-gray-100"}`}>
+                    Pré-visualizar
+                  </button>
+                </div>
+
+                {showPreview ? (
+                  <div className="w-full px-4 py-3 border border-gray-200 rounded-xl font-body text-sm text-midnight bg-gray-50 whitespace-pre-wrap min-h-[200px] max-h-[300px] overflow-y-auto">
+                    {fillVariables(newTerms, weddings.find((w) => w.wedding.id === newWeddingId)?.wedding, newValue)
+                      || <span className="text-midnight/30">Nenhum conteúdo</span>}
+                  </div>
+                ) : (
+                  <textarea
+                    value={newTerms}
+                    onChange={(e) => setNewTerms(e.target.value)}
+                    rows={12}
+                    placeholder="Cole ou edite os termos... Use {{casal}}, {{data_casamento}}, etc."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl font-body text-sm text-midnight bg-white focus:border-midnight outline-none resize-none"
+                  />
+                )}
               </div>
 
               {createError && (
