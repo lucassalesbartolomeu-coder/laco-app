@@ -25,6 +25,20 @@
   .pb-bottom-nav {
     padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }
+
+  /* Modal safe-area — use on modal bottom action rows */
+  .pb-safe {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
+  }
+
+  /* Scrollbar hide */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer base {

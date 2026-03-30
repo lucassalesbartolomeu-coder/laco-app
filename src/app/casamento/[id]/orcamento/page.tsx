@@ -370,7 +370,7 @@ export default function OrcamentoPage() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
           onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-3xl w-full max-w-md max-h-[92vh] overflow-y-auto"
+          <div className="bg-white rounded-3xl w-full max-w-md max-h-[92vh] overflow-y-auto pb-safe"
             onClick={e => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-5">
@@ -388,7 +388,7 @@ export default function OrcamentoPage() {
                 <div>
                   <label className="block font-body text-xs text-midnight/60 mb-1.5">Categoria *</label>
                   <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
+                    className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
@@ -397,7 +397,7 @@ export default function OrcamentoPage() {
                   <label className="block font-body text-xs text-midnight/60 mb-1.5">Descrição *</label>
                   <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                     placeholder="Ex: Buffet para 200 pessoas"
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                    className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -405,13 +405,13 @@ export default function OrcamentoPage() {
                     <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor estimado *</label>
                     <input type="number" value={form.estimatedCost} onChange={e => setForm(f => ({ ...f, estimatedCost: e.target.value }))}
                       placeholder="0"
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                      className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                   <div>
                     <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor real</label>
                     <input type="number" value={form.actualCost} onChange={e => setForm(f => ({ ...f, actualCost: e.target.value }))}
                       placeholder="0"
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                      className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                 </div>
 
@@ -420,12 +420,12 @@ export default function OrcamentoPage() {
                     <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor pago</label>
                     <input type="number" value={form.paidAmount} onChange={e => setForm(f => ({ ...f, paidAmount: e.target.value }))}
                       placeholder="0"
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                      className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                   <div>
                     <label className="block font-body text-xs text-midnight/60 mb-1.5">Vencimento</label>
                     <input type="date" value={form.dueDate} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))}
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                      className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                 </div>
 
@@ -434,12 +434,12 @@ export default function OrcamentoPage() {
                     <label className="block font-body text-xs text-midnight/60 mb-1.5">Pago por</label>
                     <input value={form.paidBy} onChange={e => setForm(f => ({ ...f, paidBy: e.target.value }))}
                       placeholder="Nome ou banco"
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                      className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
                   </div>
                   <div>
                     <label className="block font-body text-xs text-midnight/60 mb-1.5">Status</label>
                     <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
+                      className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
                       <option value="pendente">Pendente</option>
                       <option value="pago">Pago</option>
                       <option value="cancelado">Cancelado</option>

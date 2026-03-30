@@ -82,7 +82,7 @@ export default function MeuSitePage() {
             <GlobeIcon className="w-5 h-5 text-gold" />
             <span className="font-body text-xs text-white/60 uppercase tracking-wider">Site + Identidade</span>
           </div>
-          <h1 className="font-heading text-3xl text-white mb-2">Meu Site</h1>
+          <h1 className="font-heading text-3xl text-white mb-2">Design</h1>
           <p className="font-body text-sm text-white/70 max-w-md">
             Crie um site de casamento no nivel dos melhores designers do Brasil, e uma identidade visual completa com aquarelas, convites e papelaria.
           </p>

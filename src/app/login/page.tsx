@@ -107,7 +107,7 @@ function LoginForm() {
   const isRegister = mode === "register";
 
   return (
-    <div className="min-h-screen bg-fog flex flex-col">
+    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${isPlanner ? "bg-midnight" : "bg-fog"}`}>
       {/* Banner sutil quando vem via indicação */}
       {refCode && isRegister && (
         <div className="w-full bg-[#1A1F3A]/10 border-b border-[#1A1F3A]/20 py-2.5 px-4 text-center">
@@ -119,9 +119,12 @@ function LoginForm() {
 
       {/* Minimal nav */}
       <nav className="px-6 py-5">
-        <Link href="/" className="font-display text-2xl font-semibold text-midnight tracking-wide">
+        <Link href="/" className={`font-display text-2xl font-semibold tracking-wide ${isPlanner ? "text-ivory" : "text-midnight"}`}>
           Laço
         </Link>
+        {isPlanner && (
+          <p className="font-body text-xs text-stone mt-0.5">Área profissional</p>
+        )}
       </nav>
 
       <div className="flex-1 flex items-center justify-center px-4 py-12">
@@ -129,13 +132,15 @@ function LoginForm() {
 
           {/* Header */}
           <div className="text-center mb-10">
-            <h1 className="font-heading text-4xl font-semibold text-midnight mb-2">
-              {mode === "login" ? "Bem-vindo de volta" : "Comece agora"}
+            <h1 className={`font-heading text-4xl font-semibold mb-2 ${isPlanner ? "text-ivory" : "text-midnight"}`}>
+              {isPlanner
+                ? (mode === "login" ? "Bem-vinda, profissional" : "Crie seu perfil")
+                : (mode === "login" ? "Bem-vindo de volta" : "Comece agora")}
             </h1>
-            <p className="font-body text-midnight/55 text-base">
-              {mode === "login"
-                ? "Entre na sua conta para continuar"
-                : "Crie sua conta gratuitamente"}
+            <p className={`font-body text-base ${isPlanner ? "text-stone" : "text-midnight/55"}`}>
+              {isPlanner
+                ? (mode === "login" ? "Acesse sua área de cerimonialista" : "Gerencie seus casamentos com elegância")
+                : (mode === "login" ? "Entre na sua conta para continuar" : "Crie sua conta gratuitamente")}
             </p>
           </div>
 
