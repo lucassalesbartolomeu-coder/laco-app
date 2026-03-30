@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -73,9 +73,8 @@ export default function ExecucaoPage() {
       category: "Convidados",
       color: "bg-midnight",
       items: [
-        { href: `${base}/convidados`, icon: "👥", label: "Lista de Convidados", desc: "Lista A/B/C, categorias, status RSVP", badge: guestStats.total > 0 ? `${guestStats.total}` : null },
+        { href: `${base}/convidados`, icon: "👥", label: "Lista de Convidados", desc: "Lista A/B/C, categorias, status RSVP e confirmacoes", badge: guestStats.total > 0 ? `${guestStats.total}` : null },
         { href: `${base}/importar`, icon: "📲", label: "Importar Contatos", desc: "Da agenda, CSV, ou manual", badge: null },
-        { href: `${base}/confirmacoes`, icon: "✅", label: "Confirmacoes", desc: "Acompanhe quem ja confirmou", badge: guestStats.pending > 0 ? `${guestStats.pending} pendentes` : null },
       ],
     },
     {
@@ -87,10 +86,11 @@ export default function ExecucaoPage() {
       ],
     },
     {
-      category: "Fornecedores",
+      category: "Fornecedores e Contratos",
       color: "bg-midnight",
       items: [
         { href: `${base}/fornecedores`, icon: "🏢", label: "Meus Fornecedores", desc: "Contratos, orcamentos, status de cada fornecedor", badge: null },
+        { href: `${base}/contratos`, icon: "📝", label: "Contratos", desc: "Contratos digitais com assinatura dupla", badge: null },
       ],
     },
     {
@@ -98,6 +98,13 @@ export default function ExecucaoPage() {
       color: "bg-midnight",
       items: [
         { href: `${base}/timeline`, icon: "🗓️", label: "Timeline do Dia", desc: "Cronograma completo do grande dia, passo a passo", badge: null },
+      ],
+    },
+    {
+      category: "Lua de Mel",
+      color: "bg-gold",
+      items: [
+        { href: `${base}/lua-de-mel`, icon: "✈️", label: "Planejar Lua de Mel", desc: "Destinos, pacotes e dicas para a viagem dos sonhos", badge: null },
       ],
     },
   ];
@@ -110,11 +117,11 @@ export default function ExecucaoPage() {
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
             <CheckIcon className="w-5 h-5 text-white/80" />
-            <span className="font-body text-xs text-white/60 uppercase tracking-wider">Acompanhamento</span>
+            <span className="font-body text-xs text-white/60 uppercase tracking-wider">Gestao e Acompanhamento</span>
           </div>
-          <h1 className="font-heading text-3xl text-white mb-2">Execucao</h1>
+          <h1 className="font-heading text-3xl text-white mb-2">Organizar</h1>
           <p className="font-body text-sm text-white/70 max-w-md">
-            Acompanhe convidados, orcamento real, fornecedores e presentes. Tudo sobre o grande dia.
+            Gerencie convidados, orcamento, fornecedores, contratos e o cronograma do grande dia.
           </p>
         </div>
       </div>

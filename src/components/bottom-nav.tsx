@@ -104,7 +104,9 @@ export default function BottomNav({ weddingId }: BottomNavProps) {
         isActive("/orcamento") ||
         isActive("/presentes") ||
         isActive("/contratos") ||
-        isActive("/timeline"),
+        isActive("/timeline") ||
+        isActive("/lua-de-mel") ||
+        isActive("/fornecedores"),
       disabled: !weddingBase,
     },
     {

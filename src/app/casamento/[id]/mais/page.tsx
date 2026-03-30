@@ -39,38 +39,38 @@ export default function MaisPage() {
   }
   if (!session) return null;
 
+  const base = `/casamento/${weddingId}`;
+
   const services = [
     {
       category: "Sua Cerimonialista",
       items: [
-        { icon: "👩‍💼", label: "Painel da Cerimonialista", desc: "Conecte sua cerimonialista ao casamento — ela acompanha lista, fornecedores e timeline", href: "/cerimonialista/dashboard", available: true },
-        { icon: "📋", label: "Questionarios", desc: "Cerimonialista envia questionarios de preferencias pro casal", href: "#", available: false },
-        { icon: "💬", label: "Confirmacao via WhatsApp", desc: "Servico de confirmacao 100% dos convidados via WhatsApp + cerimonialista", href: "#", available: false },
+        { icon: "👩‍💼", label: "Painel da Cerimonialista", desc: "Conecte sua cerimonialista — ela acompanha lista, fornecedores e timeline", href: "/cerimonialista/dashboard", available: true },
+        { icon: "📋", label: "Questionarios", desc: "Responda questionarios de preferencias da sua cerimonialista", href: `${base}/questionarios`, available: true },
+        { icon: "💬", label: "Confirmacao via WhatsApp", desc: "Servico de confirmacao 100% dos convidados via WhatsApp", href: `${base}/whatsapp-confirmacao`, available: true },
       ],
     },
     {
       category: "Conta Digital Laco",
       items: [
-        { icon: "💳", label: "Conta do Casamento", desc: "Conta digital compartilhada entre os noivos para gerenciar gastos do casamento", href: "#", available: false },
-        { icon: "📊", label: "Extrato de Gastos", desc: "Categorizado automaticamente — quanto gastou com cada fornecedor", href: "#", available: false },
-        { icon: "💸", label: "Pix dos Presentes", desc: "Receba presentes em dinheiro direto na conta do casamento", href: "#", available: false },
+        { icon: "💳", label: "Conta do Casamento", desc: "Conta digital compartilhada entre os noivos para gerenciar gastos", href: `${base}/conta-casamento`, available: true },
+        { icon: "📊", label: "Extrato de Gastos", desc: "Categorizado automaticamente — quanto gastou com cada fornecedor", href: `${base}/orcamento`, available: true },
+        { icon: "💸", label: "Pix dos Presentes", desc: "Receba presentes em dinheiro direto na conta do casamento", href: `${base}/presentes`, available: true },
       ],
     },
     {
       category: "Servicos Premium",
       items: [
-        { icon: "💳", label: "Maquininha de Casamento", desc: "Maquininha Stone personalizada para receber presentes e pagamentos no dia", href: "#", available: false },
-        { icon: "👔", label: "Gravata Premium", desc: "Gravata exclusiva para o noivo — selecao curada por estilistas", href: "#", available: false },
-        { icon: "📷", label: "Album Digital IA", desc: "Album organizado automaticamente com IA a partir das fotos dos convidados", href: "#", available: false },
-        { icon: "🎵", label: "Playlist Personalizada", desc: "IA gera playlist baseada no estilo do casal para a festa", href: "#", available: false },
+        { icon: "💳", label: "Maquininha de Casamento", desc: "Receba presentes e pagamentos com maquininha personalizada no dia", href: `${base}/maquininha`, available: true },
+        { icon: "👔", label: "Gravata Premium", desc: "Identity Kit exclusivo — convite digital animado, menu, save the date", href: `${base}/identity-kit`, available: true },
       ],
     },
     {
       category: "Sua Conta",
       items: [
         { icon: "👤", label: "Perfil", desc: "Dados pessoais, notificacoes, preferencias", href: "/perfil", available: true },
-        { icon: "💍", label: "Dados do Casamento", desc: "Editar data, local, nomes, estilo", href: `/casamento/${weddingId}/simulador`, available: true },
-        { icon: "🤝", label: "Convidar Parceiro(a)", desc: "Conecte o noivo/noiva para planejar juntos", href: "/dashboard", available: true },
+        { icon: "💍", label: "Dados do Casamento", desc: "Editar data, local, nomes, estilo", href: `${base}/conta-casamento`, available: true },
+        { icon: "🤝", label: "Planejar Juntos", desc: "Convide o noivo/noiva para planejar juntos", href: "/dashboard", available: true },
       ],
     },
   ];
