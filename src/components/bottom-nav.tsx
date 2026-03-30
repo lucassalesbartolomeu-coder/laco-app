@@ -121,7 +121,7 @@ export default function BottomNav({ weddingId }: BottomNavProps) {
   return (
     <>
       {/* Spacer — reserves exact height so page content never hides behind nav */}
-      <div className="h-[72px]" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }} />
+      <div className="h-[88px]" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }} />
 
       {/* Fixed nav bar */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-midnight/[0.06] safe-area-pb">
@@ -129,7 +129,7 @@ export default function BottomNav({ weddingId }: BottomNavProps) {
           {tabs.map((tab) => {
             const content = (
               <span
-                className={`flex flex-col items-center gap-0.5 py-2.5 px-1 text-[10px] font-display tracking-wide transition-colors duration-150 ${
+                className={`flex flex-col items-center gap-0.5 py-4 px-1 text-[10px] font-display tracking-wide transition-colors duration-150 ${
                   tab.active
                     ? "text-midnight"
                     : tab.disabled
