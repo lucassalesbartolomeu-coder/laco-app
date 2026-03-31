@@ -113,19 +113,19 @@ export default function ExecucaoPage() {
   return (
     <div className="min-h-screen bg-ivory pb-24">
       {/* Header with gradient */}
-      <div className="bg-gradient-to-br from-gold via-champagne to-gold/90 px-5 pt-12 pb-10 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-midnight via-midnight to-midnight/95 px-5 pt-12 pb-10 relative overflow-hidden">
         {/* Decorative gold blur accent */}
-        <div className="absolute top-6 right-0 w-48 h-48 bg-gold/20 rounded-full blur-3xl" />
+        <div className="absolute top-8 right-0 w-40 h-40 bg-gold/10 rounded-full blur-3xl" />
         {/* Dot pattern */}
-        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
 
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-3">
-            <CheckCircleIcon className="w-5 h-5 text-midnight" />
-            <span className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-midnight">Gestão e Acompanhamento</span>
+            <CheckCircleIcon className="w-5 h-5 text-gold" />
+            <span className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold">Gestão e Acompanhamento</span>
           </div>
-          <h1 className="font-heading text-3xl font-bold text-midnight mb-2">Organizar</h1>
-          <p className="font-body text-sm text-midnight/70 max-w-md leading-relaxed">
+          <h1 className="font-heading text-3xl font-bold text-white mb-2">Organizar</h1>
+          <p className="font-body text-sm text-white/70 max-w-md leading-relaxed">
             Gerencie convidados, orçamento, fornecedores, contratos e o cronograma do grande dia.
           </p>
         </div>
