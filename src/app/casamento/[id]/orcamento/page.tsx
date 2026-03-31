@@ -4,13 +4,29 @@ import { useParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 
-const CATEGORIES = [
-  "Local / Espaço", "Buffet", "Bebidas", "Decoração", "Floricultura",
-  "Fotografia", "Cinematografia", "DJ / Música / Banda", "Iluminação / Som",
-  "Bolo / Doces", "Vestido", "Traje", "Cerimonial / Assessoria",
-  "Convites / Papelaria", "Maquiagem / Hair", "Transporte",
-  "Lua de mel", "Outros",
+// Categorias com preços sugeridos para casamento médio ~150 pessoas no Brasil
+const TEMPLATE: { category: string; estimatedCost: number }[] = [
+  { category: "Local / Espaço",       estimatedCost: 15000 },
+  { category: "Buffet",               estimatedCost: 30000 },
+  { category: "Bebidas",              estimatedCost: 8000  },
+  { category: "Decoração",            estimatedCost: 12000 },
+  { category: "Floricultura",         estimatedCost: 7000  },
+  { category: "Fotografia",           estimatedCost: 8000  },
+  { category: "Cinematografia",       estimatedCost: 6000  },
+  { category: "DJ / Música / Banda",  estimatedCost: 5000  },
+  { category: "Iluminação / Som",     estimatedCost: 4000  },
+  { category: "Bolo / Doces",         estimatedCost: 3500  },
+  { category: "Vestido",              estimatedCost: 5000  },
+  { category: "Traje",                estimatedCost: 1500  },
+  { category: "Cerimonial / Assessoria", estimatedCost: 8000 },
+  { category: "Convites / Papelaria", estimatedCost: 2000  },
+  { category: "Maquiagem / Hair",     estimatedCost: 1500  },
+  { category: "Transporte",           estimatedCost: 2500  },
+  { category: "Lua de mel",           estimatedCost: 10000 },
+  { category: "Outros",               estimatedCost: 3000  },
 ];
+
+const CATEGORIES = TEMPLATE.map(t => t.category);
 
 interface BudgetItem {
   id: string;
@@ -46,6 +62,9 @@ const EMPTY: FormState = {
 const fmt = (v: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 
+const fmtShort = (v: number) =>
+  new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(v);
+
 const numDisplay = (v: string) => {
   if (!v) return "";
   const digits = v.replace(/\D/g, "");
@@ -75,25 +94,43 @@ export default function OrcamentoPage() {
   const [coupleName2, setCoupleName2] = useState("");
   const autoLoadedRef = useRef(false);
 
+  // Inline editing state: { id, value }
+  const [inlineId, setInlineId] = useState<string | null>(null);
+  const [inlineVal, setInlineVal] = useState("");
+
+  async function loadSummary() {
+    const sRes = await fetch(`/api/weddings/${id}/budget/summary`);
+    if (sRes.ok) setSummary(await sRes.json());
+  }
+
+  async function loadItems() {
+    const iRes = await fetch(`/api/weddings/${id}/budget`);
+    if (iRes.ok) return await iRes.json() as BudgetItem[];
+    return [] as BudgetItem[];
+  }
+
   async function loadTemplate(silent = false) {
     setLoadingTemplate(true);
     try {
       await Promise.all(
-        CATEGORIES.map(cat =>
+        TEMPLATE.map(t =>
           fetch(`/api/weddings/${id}/budget`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ category: cat, description: cat, estimatedCost: 0, paidAmount: 0, status: "pendente" }),
+            body: JSON.stringify({
+              category: t.category,
+              description: t.category,
+              estimatedCost: t.estimatedCost,
+              paidAmount: 0,
+              status: "pendente",
+            }),
           })
         )
       );
-      const [iRes, sRes] = await Promise.all([
-        fetch(`/api/weddings/${id}/budget`),
-        fetch(`/api/weddings/${id}/budget/summary`),
-      ]);
-      if (iRes.ok) setItems(await iRes.json());
-      if (sRes.ok) setSummary(await sRes.json());
-      if (!silent) toast.success("Todos os itens base adicionados! Edite os valores.");
+      const fetched = await loadItems();
+      setItems(fetched);
+      await loadSummary();
+      if (!silent) toast.success("Itens base carregados com preços sugeridos!");
     } catch {
       if (!silent) toast.error("Erro ao carregar itens base.");
     }
@@ -101,29 +138,41 @@ export default function OrcamentoPage() {
   }
 
   async function load() {
-    const [iRes, sRes, wRes] = await Promise.all([
-      fetch(`/api/weddings/${id}/budget`),
-      fetch(`/api/weddings/${id}/budget/summary`),
-      fetch(`/api/weddings/${id}`),
-    ]);
-    let fetchedItems: BudgetItem[] = [];
-    if (iRes.ok) { fetchedItems = await iRes.json(); setItems(fetchedItems); }
-    if (sRes.ok) setSummary(await sRes.json());
+    const [wRes] = await Promise.all([fetch(`/api/weddings/${id}`)]);
+    const fetched = await loadItems();
+    setItems(fetched);
+    await loadSummary();
     if (wRes.ok) {
       const w = await wRes.json();
       setCoupleName1(w.partnerName1 ?? "");
       setCoupleName2(w.partnerName2 ?? "");
     }
     setLoading(false);
-
-    // Auto-load template on first visit if no items exist
-    if (fetchedItems.length === 0 && !autoLoadedRef.current) {
+    if (fetched.length === 0 && !autoLoadedRef.current) {
       autoLoadedRef.current = true;
       await loadTemplate(true);
     }
   }
 
   useEffect(() => { load(); }, [id]);
+
+  // Inline save — just estimatedCost for now (most-needed field)
+  async function saveInline(item: BudgetItem) {
+    const val = Number(inlineVal) || 0;
+    setItems(prev => prev.map(i => i.id === item.id ? { ...i, estimatedCost: val } : i));
+    setInlineId(null);
+    await fetch(`/api/weddings/${id}/budget/${item.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...item, estimatedCost: val }),
+    });
+    await loadSummary();
+  }
+
+  function openInline(item: BudgetItem) {
+    setInlineId(item.id);
+    setInlineVal(String(Math.round(item.estimatedCost)));
+  }
 
   function openNew() {
     setEditing(null); setForm(EMPTY); setShowForm(true);
@@ -163,14 +212,11 @@ export default function OrcamentoPage() {
       }),
     });
     if (res.ok) {
-      const [iRes, sRes] = await Promise.all([
-        fetch(`/api/weddings/${id}/budget`),
-        fetch(`/api/weddings/${id}/budget/summary`),
-      ]);
-      if (iRes.ok) setItems(await iRes.json());
-      if (sRes.ok) setSummary(await sRes.json());
+      const fetched = await loadItems();
+      setItems(fetched);
+      await loadSummary();
       setShowForm(false);
-      toast.success(editing ? "Item atualizado!" : "Item adicionado ao orçamento!");
+      toast.success(editing ? "Item atualizado!" : "Item adicionado!");
     } else {
       toast.error("Erro ao salvar item.");
     }
@@ -181,9 +227,7 @@ export default function OrcamentoPage() {
     const res = await fetch(`/api/weddings/${id}/budget/${itemId}`, { method: "DELETE" });
     if (res.ok) {
       setItems(prev => prev.filter(i => i.id !== itemId));
-      const sRes = await fetch(`/api/weddings/${id}/budget/summary`);
-      if (sRes.ok) setSummary(await sRes.json());
-      toast.success("Item removido.");
+      await loadSummary();
     }
   }
 
@@ -196,8 +240,7 @@ export default function OrcamentoPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...item, status: newStatus, paidAmount: newPaid }),
     });
-    const sRes = await fetch(`/api/weddings/${id}/budget/summary`);
-    if (sRes.ok) setSummary(await sRes.json());
+    await loadSummary();
   }
 
   const cats = [...new Set(items.map(i => i.category))].filter(c => CATEGORIES.includes(c));
@@ -213,7 +256,6 @@ export default function OrcamentoPage() {
     ? Math.min(100, Math.round((summary.totalPaid / summary.totalEstimated) * 100))
     : 0;
 
-  // Payer chips — couple names + common options
   const payerChips = [
     ...(coupleName1 ? [coupleName1] : []),
     ...(coupleName2 ? [coupleName2] : []),
@@ -238,6 +280,7 @@ export default function OrcamentoPage() {
             <h1 className="font-heading text-xl font-semibold text-midnight">Orçamento</h1>
             <p className="font-body text-xs text-midnight/50 mt-0.5">
               {items.length} {items.length === 1 ? "item" : "itens"}
+              {summary && summary.totalEstimated > 0 && ` · ${fmt(summary.totalEstimated)}`}
             </p>
           </div>
           <button onClick={openNew}
@@ -250,7 +293,7 @@ export default function OrcamentoPage() {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto px-4 py-6 space-y-5">
+      <div className="max-w-3xl mx-auto px-4 py-5 space-y-5 pb-28">
 
         {/* Summary */}
         {summary && items.length > 0 && (
@@ -288,7 +331,7 @@ export default function OrcamentoPage() {
 
         {/* Category filter */}
         {orderedCats.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4">
             <button onClick={() => setFilterCat("todas")}
               className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-body font-medium transition ${
                 filterCat === "todas" ? "bg-midnight text-white" : "bg-white border border-gray-200 text-midnight/60"
@@ -306,7 +349,121 @@ export default function OrcamentoPage() {
           </div>
         )}
 
-        {/* Add more button */}
+        {/* Inline edit hint */}
+        {items.length > 0 && (
+          <p className="font-body text-xs text-midnight/35 text-center">
+            Toque em qualquer valor para editar · Toque no ✓ para marcar como pago
+          </p>
+        )}
+
+        {/* Items grouped by category */}
+        {Object.entries(groups).map(([cat, catItems]) => {
+          const catTotal = catItems.reduce((s, i) => s + i.estimatedCost, 0);
+          return (
+            <div key={cat}>
+              <div className="flex items-center justify-between mb-2 px-1">
+                <p className="font-body text-xs font-semibold text-midnight/40 uppercase tracking-widest">{cat}</p>
+                <p className="font-body text-xs text-midnight/40">{fmt(catTotal)}</p>
+              </div>
+              <div className="space-y-2">
+                {catItems.map(item => {
+                  const sc = STATUS_CONFIG[item.status] ?? { label: item.status, dot: "bg-gray-400" };
+                  const cost = item.actualCost ?? item.estimatedCost;
+                  const paidPct = cost > 0 ? Math.min(100, Math.round((item.paidAmount / cost) * 100)) : 0;
+                  const isEditing = inlineId === item.id;
+
+                  return (
+                    <div key={item.id} className="bg-white rounded-2xl border border-gray-100 p-4">
+                      <div className="flex items-center gap-3">
+                        {/* Paid toggle */}
+                        <button onClick={() => togglePaid(item)}
+                          className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition ${
+                            item.status === "pago" ? "bg-green-400 border-green-400" : "border-gray-300 hover:border-midnight"
+                          }`}>
+                          {item.status === "pago" && (
+                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </button>
+
+                        {/* Description */}
+                        <div className="flex-1 min-w-0">
+                          <p className={`font-body text-sm font-medium leading-tight ${item.status === "pago" ? "text-midnight/40 line-through" : "text-midnight"}`}>
+                            {item.description !== item.category ? item.description : item.category}
+                          </p>
+                          {item.paidAmount > 0 && (
+                            <p className="font-body text-xs text-green-600 mt-0.5">
+                              Pago: {fmt(item.paidAmount)}{item.paidBy ? ` · ${item.paidBy}` : ""}
+                            </p>
+                          )}
+                          {item.dueDate && (
+                            <p className="font-body text-xs text-midnight/35 mt-0.5">
+                              Vence {new Date(item.dueDate).toLocaleDateString("pt-BR")}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Inline editable price */}
+                        <div className="flex-shrink-0 text-right">
+                          {isEditing ? (
+                            <div className="flex items-center gap-1">
+                              <span className="font-body text-xs text-midnight/40">R$</span>
+                              <input
+                                autoFocus
+                                type="text"
+                                inputMode="numeric"
+                                value={numDisplay(inlineVal)}
+                                onChange={e => setInlineVal(numChange(e.target.value))}
+                                onBlur={() => saveInline(item)}
+                                onKeyDown={e => {
+                                  if (e.key === "Enter") saveInline(item);
+                                  if (e.key === "Escape") setInlineId(null);
+                                }}
+                                className="w-24 text-right text-base font-bold text-midnight border-b-2 border-midnight focus:outline-none bg-transparent"
+                              />
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => openInline(item)}
+                              className="group text-right"
+                            >
+                              <p className={`font-body text-base font-bold group-hover:text-gold transition-colors ${item.status === "pago" ? "text-midnight/30" : "text-midnight"}`}>
+                                {item.estimatedCost > 0 ? `R$ ${fmtShort(item.estimatedCost)}` : (
+                                  <span className="text-midnight/25 text-sm font-normal">toque p/ definir</span>
+                                )}
+                              </p>
+                              {item.actualCost != null && item.actualCost !== item.estimatedCost && (
+                                <p className="font-body text-xs text-midnight/40">real: {fmt(item.actualCost)}</p>
+                              )}
+                            </button>
+                          )}
+                        </div>
+
+                        {/* More / edit button */}
+                        <button onClick={() => openEdit(item)}
+                          className="flex-shrink-0 p-1.5 rounded-lg text-midnight/20 hover:text-midnight hover:bg-midnight/5 transition">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </button>
+                      </div>
+
+                      {/* Progress bar */}
+                      {paidPct > 0 && paidPct < 100 && (
+                        <div className="mt-3 h-1 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-green-400 rounded-full" style={{ width: `${paidPct}%` }} />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Add buttons */}
         {items.length > 0 && (
           <div className="flex gap-3">
             <button onClick={openNew}
@@ -322,100 +479,6 @@ export default function OrcamentoPage() {
             </button>
           </div>
         )}
-
-        {/* Items grouped by category */}
-        {Object.entries(groups).map(([cat, catItems]) => (
-          <div key={cat}>
-            <div className="flex items-center justify-between mb-2 px-1">
-              <p className="font-body text-xs font-semibold text-midnight/40 uppercase tracking-widest">{cat}</p>
-              <p className="font-body text-xs text-midnight/40">
-                {fmt(catItems.reduce((s, i) => s + i.estimatedCost, 0))}
-              </p>
-            </div>
-            <div className="space-y-2">
-              {catItems.map(item => {
-                const sc = STATUS_CONFIG[item.status] ?? { label: item.status, dot: "bg-gray-400" };
-                const cost = item.actualCost ?? item.estimatedCost;
-                const paidPct = cost > 0 ? Math.min(100, Math.round((item.paidAmount / cost) * 100)) : 0;
-                return (
-                  <div key={item.id} className="bg-white rounded-2xl border border-gray-100 p-4">
-                    <div className="flex items-start gap-3">
-                      <button onClick={() => togglePaid(item)}
-                        className={`mt-0.5 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition ${
-                          item.status === "pago" ? "bg-green-400 border-green-400" : "border-gray-300 hover:border-midnight"
-                        }`}>
-                        {item.status === "pago" && (
-                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </button>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <span className={`font-body text-sm font-medium ${item.status === "pago" ? "text-midnight/40 line-through" : "text-midnight"}`}>
-                            {item.description}
-                          </span>
-                          <div className="flex items-center gap-1">
-                            <div className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
-                            <span className="font-body text-[11px] text-midnight/50">{sc.label}</span>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-wrap gap-x-4 gap-y-0.5">
-                          <span className="font-body text-xs text-midnight/60">
-                            Estimado: <span className="font-semibold">{fmt(item.estimatedCost)}</span>
-                          </span>
-                          {item.actualCost != null && item.actualCost !== item.estimatedCost && (
-                            <span className="font-body text-xs text-midnight/60">
-                              Real: <span className="font-semibold">{fmt(item.actualCost)}</span>
-                            </span>
-                          )}
-                          {item.paidAmount > 0 && (
-                            <span className="font-body text-xs text-green-600">
-                              Pago: <span className="font-semibold">{fmt(item.paidAmount)}</span>
-                              {item.paidBy ? ` (${item.paidBy})` : ""}
-                            </span>
-                          )}
-                          {item.dueDate && (
-                            <span className="font-body text-xs text-midnight/40">
-                              Vence: {new Date(item.dueDate).toLocaleDateString("pt-BR")}
-                            </span>
-                          )}
-                        </div>
-
-                        {paidPct > 0 && paidPct < 100 && (
-                          <div className="mt-2 h-1 bg-gray-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-midnight rounded-full" style={{ width: `${paidPct}%` }} />
-                          </div>
-                        )}
-
-                        {item.notes && (
-                          <p className="font-body text-xs text-midnight/40 mt-1.5 line-clamp-1">{item.notes}</p>
-                        )}
-                      </div>
-
-                      <div className="flex gap-1 flex-shrink-0">
-                        <button onClick={() => openEdit(item)}
-                          className="p-1.5 rounded-lg text-midnight/30 hover:text-midnight hover:bg-midnight/5 transition">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                        </button>
-                        <button onClick={() => remove(item.id)}
-                          className="p-1.5 rounded-lg text-midnight/30 hover:text-red-400 hover:bg-red-50 transition">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
       </div>
 
       {/* Modal */}
@@ -470,10 +533,9 @@ export default function OrcamentoPage() {
                   </div>
                 </div>
 
-                {/* Paid section */}
+                {/* Pagamento */}
                 <div className="bg-green-50/60 rounded-2xl p-3.5 space-y-3">
                   <p className="font-body text-xs font-semibold text-green-700">Pagamento</p>
-
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor pago</label>
@@ -488,18 +550,14 @@ export default function OrcamentoPage() {
                         className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight bg-white" />
                     </div>
                   </div>
-
                   <div>
                     <label className="block font-body text-xs text-midnight/60 mb-1.5">Quem pagou</label>
-                    {/* Name chips */}
                     <div className="flex flex-wrap gap-1.5 mb-2">
                       {payerChips.map(name => (
                         <button key={name} type="button"
                           onClick={() => setForm(f => ({ ...f, paidBy: f.paidBy === name ? "" : name }))}
                           className={`px-2.5 py-1 rounded-lg text-xs font-body transition ${
-                            form.paidBy === name
-                              ? "bg-midnight text-white"
-                              : "bg-white border border-gray-200 text-midnight/60 hover:border-midnight/40"
+                            form.paidBy === name ? "bg-midnight text-white" : "bg-white border border-gray-200 text-midnight/60 hover:border-midnight/40"
                           }`}>
                           {name}
                         </button>
@@ -550,6 +608,14 @@ export default function OrcamentoPage() {
                   {saving ? "Salvando..." : editing ? "Salvar" : "Adicionar"}
                 </button>
               </div>
+
+              {/* Delete option when editing */}
+              {editing && (
+                <button onClick={() => { remove(editing.id); setShowForm(false); }}
+                  className="w-full mt-3 py-2 font-body text-xs text-red-400 hover:text-red-600 transition">
+                  Remover item
+                </button>
+              )}
             </div>
           </div>
         </div>
