@@ -1,53 +1,71 @@
 import { dddMap, type DDDInfo } from "./ddd-map";
 
 export interface ParsedPhone {
-  ddd: string;
-  phone: string;
+  ddi: string;   // country code (e.g. "55")
+  ddd: string;   // area code (e.g. "11")
+  phone: string; // local digits without ddd
   city: string | null;
   state: string | null;
 }
 
-export function parsePhone(raw: string): ParsedPhone {
+/**
+ * Parses a raw phone string into its components.
+ * Accepts: +55 11 99999-9999, 5511999999999, (11) 99999-9999, 11999999999, etc.
+ *
+ * @param raw    - the raw phone string
+ * @param ddi    - override DDI if already known (e.g. from CSV column). Defaults to "55".
+ */
+export function parsePhone(raw: string, ddi = "55"): ParsedPhone {
   // Remove everything except digits
   const digits = raw.replace(/\D/g, "");
 
-  let numberPart = digits;
+  let local = digits;
 
-  // Remove country code +55
-  if (numberPart.startsWith("55") && numberPart.length >= 12) {
-    numberPart = numberPart.slice(2);
+  // Strip provided DDI prefix from number string (handles +55, 55, +1, 1 etc.)
+  if (local.startsWith(ddi) && local.length > ddi.length + 8) {
+    local = local.slice(ddi.length);
+  }
+  // Fallback: strip +55 if caller didn't provide a different DDI
+  if (ddi === "55" && local.startsWith("55") && local.length >= 12) {
+    local = local.slice(2);
   }
 
-  // Extract DDD (first 2 digits) and phone number
-  if (numberPart.length >= 10) {
-    const ddd = numberPart.slice(0, 2);
-    const phone = numberPart.slice(2);
-    const info: DDDInfo | undefined = dddMap[ddd];
+  // Extract DDD (first 2 digits) and phone number for BR numbers
+  if (ddi === "55" && local.length >= 10) {
+    const dddCode = local.slice(0, 2);
+    const phonePart = local.slice(2);
+    const info: DDDInfo | undefined = dddMap[dddCode];
 
     return {
-      ddd,
-      phone,
+      ddi,
+      ddd: dddCode,
+      phone: phonePart,
       city: info?.city ?? null,
       state: info?.state ?? null,
     };
   }
 
-  // No DDD detected
+  // Non-BR or no DDD detected — store full number in phone
   return {
+    ddi,
     ddd: "",
-    phone: numberPart,
+    phone: local,
     city: null,
     state: null,
   };
 }
 
-export function formatPhone(ddd: string, phone: string): string {
-  if (!ddd) return phone;
+/**
+ * Formats a phone for display: +DDI (DDD) XXXXX-XXXX
+ */
+export function formatPhone(ddd: string, phone: string, ddi = "55"): string {
+  const prefix = `+${ddi}`;
+  if (!ddd) return `${prefix} ${phone}`;
   if (phone.length === 9) {
-    return `(${ddd}) ${phone.slice(0, 5)}-${phone.slice(5)}`;
+    return `${prefix} (${ddd}) ${phone.slice(0, 5)}-${phone.slice(5)}`;
   }
   if (phone.length === 8) {
-    return `(${ddd}) ${phone.slice(0, 4)}-${phone.slice(4)}`;
+    return `${prefix} (${ddd}) ${phone.slice(0, 4)}-${phone.slice(4)}`;
   }
-  return `(${ddd}) ${phone}`;
+  return `${prefix} (${ddd}) ${phone}`;
 }

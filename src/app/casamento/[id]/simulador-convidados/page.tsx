@@ -132,7 +132,11 @@ function CountUp({
 // ─── Extract DDD from Phone ─────────────────────────────────────
 
 function extractDDDFromPhone(phone: string): string | null {
-  const cleaned = phone.replace(/\D/g, "");
+  let cleaned = phone.replace(/\D/g, "");
+  // Strip Brazil country code (+55) if present
+  if (cleaned.startsWith("55") && cleaned.length >= 12) {
+    cleaned = cleaned.slice(2);
+  }
   if (cleaned.length >= 2) {
     return cleaned.slice(0, 2);
   }
@@ -455,34 +459,23 @@ function AttendancePrediction({
     let farState = 0;
 
     guests.forEach((guest) => {
-      if (guest.phone) {
-        const ddd = extractDDDFromPhone(guest.phone);
-        if (ddd && dddMap[ddd]) {
-          const guestState = dddMap[ddd].state;
+      // Determine guest state: from phone DDD or fallback to wedding state (no phone = local guest)
+      const ddd = guest.phone ? extractDDDFromPhone(guest.phone) : null;
+      const guestState = (ddd && dddMap[ddd]) ? dddMap[ddd].state : weddingState;
 
-          if (guestState === weddingState) {
-            expected += 0.88;
-            samState++;
-          } else {
-            // Simple distance approximation: adjacent = neighboring states
-            const isAdjacent = [
-              "SP",
-              "RJ",
-              "MG",
-              "PR",
-              "SC",
-              "RS",
-              "BA",
-              "ES",
-            ].includes(weddingState);
-            if (isAdjacent) {
-              expected += 0.72;
-              adjacentState++;
-            } else {
-              expected += 0.55;
-              farState++;
-            }
-          }
+      if (guestState === weddingState) {
+        expected += 0.88;
+        samState++;
+      } else {
+        const isAdjacent = [
+          "SP", "RJ", "MG", "PR", "SC", "RS", "BA", "ES",
+        ].includes(weddingState);
+        if (isAdjacent) {
+          expected += 0.72;
+          adjacentState++;
+        } else {
+          expected += 0.55;
+          farState++;
         }
       }
     });
@@ -655,6 +648,8 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
         const ddd = extractDDDFromPhone(g.phone);
         if (ddd && dddMap[ddd]) state = dddMap[ddd].state;
       }
+      // Guests with no phone or unrecognised DDD → assume wedding city (same state, ~88% attendance)
+      if (!state && weddingState) state = weddingState;
       return { city: g.city ?? undefined, state, category: normaliseCat(g.category) };
     });
 
@@ -906,82 +901,236 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
   );
 }
 
-// ─── Empty State Component ──────────────────────────────────
+// ─── Empty State / DDD Simulator ──────────────────────────────
+
+interface DddGroup {
+  id: string;
+  ddd: string;
+  count: number;
+  city: string;
+  state: string;
+}
 
 interface EmptyStateProps {
   id: string;
+  weddingState: string;
 }
 
-function EmptyState({ id }: EmptyStateProps) {
-  const [showManual, setShowManual] = useState(false);
-  const [guestCount, setGuestCount] = useState(50);
+function EmptyState({ id, weddingState }: EmptyStateProps) {
+  const [groups, setGroups] = useState<DddGroup[]>([]);
+  const [dddInput, setDddInput] = useState("");
+  const [countInput, setCountInput] = useState("");
+  const [inputError, setInputError] = useState("");
+  const [simResult, setSimResult] = useState<ReturnType<typeof simulateAttendance> | null>(null);
+
+  const dddInfo = dddInput.length === 2 ? dddMap[dddInput] : null;
+  const totalGuests = groups.reduce((s, g) => s + g.count, 0);
+
+  function addGroup() {
+    const count = parseInt(countInput, 10);
+    if (!dddInfo) { setInputError("DDD inválido (ex: 11, 21, 31)"); return; }
+    if (!count || count < 1) { setInputError("Número de pessoas inválido"); return; }
+    setInputError("");
+    setSimResult(null);
+    setGroups((prev) => [
+      ...prev,
+      { id: `${dddInput}-${Date.now()}`, ddd: dddInput, count, city: dddInfo.city, state: dddInfo.state },
+    ]);
+    setDddInput("");
+    setCountInput("");
+  }
+
+  function removeGroup(groupId: string) {
+    setGroups((prev) => prev.filter((g) => g.id !== groupId));
+    setSimResult(null);
+  }
+
+  function simulate() {
+    if (groups.length === 0) return;
+    const guestInputs = groups.flatMap(({ ddd, count, state }) =>
+      Array.from({ length: count }, () => ({ state, city: dddMap[ddd]?.city, category: undefined }))
+    );
+    setSimResult(
+      simulateAttendance(guestInputs, { city: "", state: weddingState, weddingDate: new Date().toISOString() })
+    );
+  }
+
+  const byRegion = groups.reduce<Record<string, number>>((acc, g) => {
+    const region = STATE_REGIONS[g.state] || "Outro";
+    acc[region] = (acc[region] || 0) + g.count;
+    return acc;
+  }, {});
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
-      className="bg-gradient-to-br from-cream to-cream/50 rounded-2xl shadow-md p-8 sm:p-10 border border-gold/20 text-center"
+      className="space-y-4"
     >
-      <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-4">
-        <AlertCircle className="w-8 h-8 text-gold" />
-      </div>
+      {/* Simulator card */}
+      <div className="bg-white rounded-2xl shadow-md p-6 border border-gold/15">
+        <div className="flex items-center gap-2 mb-1">
+          <TrendingUp className="w-5 h-5 text-gold" />
+          <h2 className="font-heading text-xl text-midnight">Simule sem importar</h2>
+        </div>
+        <p className="font-body text-sm text-gray-600 mb-5">
+          Adicione grupos por DDD e veja a previsão de comparecimento antes de ter a lista real.
+        </p>
 
-      <h2 className="font-heading text-2xl text-midnight mb-2">
-        Ainda não tem convidados?
-      </h2>
-
-      <p className="font-body text-gray-600 mb-8 max-w-sm mx-auto">
-        Importe sua lista de convidados para ver a análise completa de origem e
-        previsão de presença.
-      </p>
-
-      <div className="space-y-3 mb-6">
-        <Link
-          href={`/casamento/${id}/importar`}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-midnight text-white rounded-xl font-body font-medium hover:bg-midnight/90 transition-all duration-200 justify-center"
-        >
-          <span>Importar lista de convidados</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
-      </div>
-
-      <div className="border-t border-gold/10 pt-6">
-        <button
-          onClick={() => setShowManual(!showManual)}
-          className="font-body text-sm text-gold hover:text-gold/80 transition-colors underline"
-        >
-          Ou simular com dados aleatórios
-        </button>
-
-        <AnimatePresence>
-          {showManual && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mt-4 p-4 bg-white rounded-xl border border-gold/20"
-            >
-              <label className="block font-body text-sm text-midnight mb-2">
-                Quantos convidados?
-              </label>
+        {/* DDD + Count input */}
+        <div className="flex gap-2 mb-2">
+          <div className="flex-shrink-0 w-24">
+            <label className="font-body text-[10px] uppercase tracking-wider text-gray-500 mb-1 block">DDD</label>
+            <div className="relative">
               <input
-                type="range"
-                min="10"
-                max="300"
-                value={guestCount}
-                onChange={(e) => setGuestCount(Number(e.target.value))}
-                className="w-full mb-2"
+                type="text"
+                placeholder="11"
+                value={dddInput}
+                onChange={(e) => { setDddInput(e.target.value.replace(/\D/g, "").slice(0, 2)); setInputError(""); }}
+                onKeyDown={(e) => e.key === "Enter" && addGroup()}
+                maxLength={2}
+                className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl font-mono text-center text-midnight focus:outline-none focus:border-midnight transition"
               />
-              <p className="font-body text-center text-lg text-midnight font-semibold">
-                {guestCount} convidados
-              </p>
-              <p className="font-body text-xs text-gray-500 mt-2">
-                Simulação virá em breve
-              </p>
+            </div>
+          </div>
+          <div className="flex-1">
+            <label className="font-body text-[10px] uppercase tracking-wider text-gray-500 mb-1 block">Pessoas</label>
+            <input
+              type="number"
+              placeholder="50"
+              min={1}
+              value={countInput}
+              onChange={(e) => { setCountInput(e.target.value); setInputError(""); }}
+              onKeyDown={(e) => e.key === "Enter" && addGroup()}
+              className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl font-body text-midnight focus:outline-none focus:border-midnight transition"
+            />
+          </div>
+          <div className="flex-shrink-0 self-end">
+            <button
+              onClick={addGroup}
+              className="h-[42px] px-4 bg-midnight text-white rounded-xl font-body text-sm font-medium hover:bg-midnight/85 transition flex items-center gap-1"
+            >
+              <span className="text-lg leading-none">+</span>
+            </button>
+          </div>
+        </div>
+
+        {/* DDD preview */}
+        <AnimatePresence>
+          {dddInfo && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              className="mb-3 flex items-center gap-2 text-xs font-body text-midnight/60"
+            >
+              <MapPin className="w-3.5 h-3.5 text-gold" />
+              <span>{dddInfo.city}, {dddInfo.state} — {STATE_REGIONS[dddInfo.state] || "Outro"}</span>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {inputError && <p className="mb-3 text-xs font-body text-red-500">{inputError}</p>}
+
+        {/* Groups list */}
+        <AnimatePresence>
+          {groups.length > 0 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 space-y-1.5">
+              {groups.map((g) => {
+                const region = STATE_REGIONS[g.state] || "Outro";
+                const barColor = REGION_COLORS[region] || "bg-gray-400";
+                return (
+                  <div key={g.id} className="flex items-center gap-3 bg-fog rounded-xl px-3 py-2">
+                    <div className={`w-2 h-6 rounded-full flex-shrink-0 ${barColor}`} />
+                    <div className="flex-1 min-w-0">
+                      <span className="font-mono text-xs font-semibold text-midnight">{g.ddd}</span>
+                      <span className="font-body text-xs text-midnight/60 ml-2">{g.city}, {g.state}</span>
+                    </div>
+                    <span className="font-body text-xs font-semibold text-midnight">{g.count} pessoas</span>
+                    <button onClick={() => removeGroup(g.id)} className="text-gray-400 hover:text-red-400 transition">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                );
+              })}
+
+              {/* Totals row */}
+              <div className="flex items-center justify-between px-3 py-2 border-t border-gray-200 mt-1">
+                <span className="font-body text-xs text-gray-500">Total</span>
+                <span className="font-body text-sm font-bold text-midnight">{totalGuests} convidados</span>
+              </div>
+
+              {/* Regional breakdown */}
+              {Object.entries(byRegion).length > 1 && (
+                <div className="flex flex-wrap gap-1.5 px-1">
+                  {Object.entries(byRegion).map(([region, cnt]) => (
+                    <span key={region} className="text-[10px] font-body px-2 py-0.5 rounded-full bg-white border border-gray-200 text-gray-600">
+                      {region}: {cnt}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {groups.length > 0 && (
+          <button
+            onClick={simulate}
+            className="w-full py-3 bg-gradient-to-r from-midnight to-midnight/90 text-white rounded-xl font-body text-sm font-semibold hover:opacity-90 transition flex items-center justify-center gap-2"
+          >
+            <TrendingUp className="w-4 h-4" />
+            Simular presença
+          </button>
+        )}
+
+        {/* Simulation result */}
+        <AnimatePresence>
+          {simResult && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              className="mt-4 p-4 bg-gradient-to-br from-midnight/5 to-midnight/2 rounded-xl border border-midnight/15"
+            >
+              <p className="font-body text-[10px] uppercase tracking-wider text-gold mb-3">Resultado da simulação</p>
+              <div className="grid grid-cols-3 gap-3 mb-3">
+                <div className="text-center">
+                  <p className="font-heading text-2xl text-midnight">{simResult.totalExpected}</p>
+                  <p className="font-body text-[10px] text-gray-500">Esperados</p>
+                </div>
+                <div className="text-center">
+                  <p className="font-heading text-2xl text-midnight">{simResult.confidenceRange.min}–{simResult.confidenceRange.max}</p>
+                  <p className="font-body text-[10px] text-gray-500">Intervalo</p>
+                </div>
+                <div className="text-center">
+                  <p className="font-heading text-2xl text-midnight">{Math.round(simResult.attendanceRate * 100)}%</p>
+                  <p className="font-body text-[10px] text-gray-500">Taxa</p>
+                </div>
+              </div>
+              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-midnight to-gold rounded-full transition-all duration-700"
+                  style={{ width: `${Math.round(simResult.attendanceRate * 100)}%` }}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Import CTA */}
+      <div className="bg-fog rounded-2xl border border-gold/15 p-5 text-center">
+        <AlertCircle className="w-6 h-6 text-gold mx-auto mb-2" />
+        <p className="font-body text-sm text-midnight mb-3">
+          Importe a lista real para uma análise completa e precisa
+        </p>
+        <Link
+          href={`/casamento/${id}/importar`}
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-midnight text-white rounded-xl font-body text-sm font-medium hover:bg-midnight/90 transition"
+        >
+          Importar lista de convidados
+          <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
     </motion.div>
   );
@@ -1053,9 +1202,8 @@ export default function SimuladorConvidadosPage() {
   if (!wedding) return null;
 
   const hasGuests = wedding.guests && wedding.guests.length > 0;
-  const guestPhones =
-    wedding.guests?.filter((g) => g.phone && extractDDDFromPhone(g.phone)) ||
-    [];
+  // Include ALL guests; those without phone default to wedding state in all components
+  const allGuests = wedding.guests ?? [];
 
   return (
     <div className="min-h-screen bg-ivory py-10 px-4 pb-20">
@@ -1082,17 +1230,17 @@ export default function SimuladorConvidadosPage() {
         <DDDDemo />
 
         {/* Conditional: Guests or Empty State */}
-        {hasGuests && guestPhones.length > 0 ? (
+        {hasGuests ? (
           <>
-            <GuestOriginMap guests={guestPhones} weddingState={wedding.state ?? ""} />
+            <GuestOriginMap guests={allGuests} weddingState={wedding.state ?? ""} />
             <AttendancePrediction
-              guests={guestPhones}
+              guests={allGuests}
               weddingState={wedding.state ?? ""}
             />
 
             {/* Gráfico de barras por categoria */}
             <GuestAttendanceChart
-              guests={guestPhones}
+              guests={allGuests}
               weddingState={wedding.state ?? ""}
             />
 
@@ -1112,7 +1260,7 @@ export default function SimuladorConvidadosPage() {
             </motion.div>
           </>
         ) : (
-          <EmptyState id={id} />
+          <EmptyState id={id} weddingState={wedding.state ?? ""} />
         )}
 
         {/* Navigation Links */}

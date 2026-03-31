@@ -207,6 +207,7 @@ export default function ConvidadosPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [formName, setFormName] = useState("");
   const [formPhone, setFormPhone] = useState("");
+  const [formDdi, setFormDdi] = useState("55");
   const [formEmail, setFormEmail] = useState("");
   const [formCategory, setFormCategory] = useState<Category>("familia_noivo");
   const [formList, setFormList] = useState<GuestListType>("A");
@@ -376,7 +377,9 @@ export default function ConvidadosPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formName.trim(),
-          phone: formPhone.trim(),
+          phone: formPhone.trim()
+            ? `+${formDdi}${formPhone.trim().replace(/\D/g, "")}`
+            : "",
           email: formEmail.trim(),
           category: formCategory,
           guestList: formList,
@@ -399,6 +402,7 @@ export default function ConvidadosPage() {
   function resetForm() {
     setFormName("");
     setFormPhone("");
+    setFormDdi("55");
     setFormEmail("");
     setFormCategory("familia_noivo");
     setFormList(activeList);
@@ -1088,15 +1092,33 @@ export default function ConvidadosPage() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="guest-phone" className="block font-body text-sm text-gray-500 mb-1">Telefone</label>
-                    <input
-                      id="guest-phone"
-                      type="tel"
-                      value={formPhone}
-                      onChange={(e) => setFormPhone(e.target.value)}
-                      placeholder="(11) 99999-9999"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200"
-                    />
+                    <label className="block font-body text-sm text-gray-500 mb-1">Telefone</label>
+                    <div className="flex gap-2">
+                      {/* DDI selector */}
+                      <select
+                        value={formDdi}
+                        onChange={(e) => setFormDdi(e.target.value)}
+                        className="font-body rounded-xl border border-gray-300 px-2 py-2.5 text-sm text-midnight bg-white focus:border-midnight outline-none"
+                      >
+                        <option value="55">🇧🇷 +55</option>
+                        <option value="1">🇺🇸 +1</option>
+                        <option value="351">🇵🇹 +351</option>
+                        <option value="54">🇦🇷 +54</option>
+                        <option value="598">🇺🇾 +598</option>
+                        <option value="56">🇨🇱 +56</option>
+                        <option value="34">🇪🇸 +34</option>
+                        <option value="44">🇬🇧 +44</option>
+                      </select>
+                      {/* Phone number */}
+                      <input
+                        id="guest-phone"
+                        type="tel"
+                        value={formPhone}
+                        onChange={(e) => setFormPhone(e.target.value)}
+                        placeholder={formDdi === "55" ? "(11) 99999-9999" : "número"}
+                        className="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition-all duration-200"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label htmlFor="guest-email" className="block font-body text-sm text-gray-500 mb-1">Email</label>
