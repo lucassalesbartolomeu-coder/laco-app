@@ -441,28 +441,16 @@ export default function OrcamentoPage() {
                           )}
                         </button>
 
-                        {/* Description */}
+                        {/* Description + inline estimated */}
                         <div className="flex-1 min-w-0">
                           <p className={`font-body text-sm font-medium leading-tight ${item.status === "pago" ? "text-midnight/40 line-through" : "text-midnight"}`}>
                             {item.description !== item.category ? item.description : item.category}
                           </p>
-                          {item.paidAmount > 0 && (
-                            <p className="font-body text-xs text-green-600 mt-0.5">
-                              Pago: {fmt(item.paidAmount)}{item.paidBy ? ` · ${item.paidBy}` : ""}
-                            </p>
-                          )}
-                          {item.dueDate && (
-                            <p className="font-body text-xs text-midnight/35 mt-0.5">
-                              Vence {new Date(item.dueDate).toLocaleDateString("pt-BR")}
-                            </p>
-                          )}
-                        </div>
 
-                        {/* Inline editable price */}
-                        <div className="flex-shrink-0 text-right">
+                          {/* Inline editable estimated cost */}
                           {isEditing ? (
-                            <div className="flex items-center gap-1">
-                              <span className="font-body text-xs text-midnight/40">R$</span>
+                            <div className="flex items-center gap-1 mt-1">
+                              <span className="font-body text-xs text-midnight/50">Estimado: R$</span>
                               <input
                                 autoFocus
                                 type="text"
@@ -474,27 +462,42 @@ export default function OrcamentoPage() {
                                   if (e.key === "Enter") saveInline(item);
                                   if (e.key === "Escape") setInlineId(null);
                                 }}
-                                className="w-24 text-right text-base font-bold text-midnight border-b-2 border-midnight focus:outline-none bg-transparent"
+                                className="w-28 text-sm font-bold text-midnight border-b border-midnight/40 focus:border-midnight focus:outline-none bg-transparent"
                               />
                             </div>
                           ) : (
                             <button
                               onClick={() => openInline(item)}
-                              className="group text-right"
+                              className="mt-1 flex items-center gap-1 group"
                             >
-                              <p className={`font-body text-base font-bold group-hover:text-gold transition-colors ${item.status === "pago" ? "text-midnight/30" : "text-midnight"}`}>
-                                {item.estimatedCost > 0 ? `R$ ${fmtShort(item.estimatedCost)}` : (
-                                  <span className="text-midnight/25 text-sm font-normal">toque p/ definir</span>
-                                )}
-                              </p>
-                              {item.actualCost != null && item.actualCost !== item.estimatedCost && (
-                                <p className="font-body text-xs text-midnight/40">real: {fmt(item.actualCost)}</p>
-                              )}
+                              <span className="font-body text-xs text-midnight/50">Estimado:</span>
+                              <span className={`font-body text-xs font-semibold group-hover:text-gold transition-colors ${
+                                item.estimatedCost > 0 ? "text-midnight/70" : "text-midnight/30"
+                              }`}>
+                                {item.estimatedCost > 0 ? `R$ ${fmtShort(item.estimatedCost)}` : "tocar para definir"}
+                              </span>
+                              <svg className="w-3 h-3 text-midnight/20 group-hover:text-gold transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                              </svg>
                             </button>
+                          )}
+
+                          {item.paidAmount > 0 && (
+                            <p className="font-body text-xs text-green-600 mt-0.5">
+                              Pago: {fmt(item.paidAmount)}{item.paidBy ? ` · ${item.paidBy}` : ""}
+                            </p>
+                          )}
+                          {item.dueDate && (
+                            <p className="font-body text-xs text-midnight/35 mt-0.5">
+                              Vence {new Date(item.dueDate).toLocaleDateString("pt-BR")}
+                            </p>
+                          )}
+                          {item.actualCost != null && item.actualCost !== item.estimatedCost && (
+                            <p className="font-body text-xs text-midnight/40 mt-0.5">Real: {fmt(item.actualCost)}</p>
                           )}
                         </div>
 
-                        {/* More / edit button */}
+                        {/* Edit button */}
                         <button onClick={() => openEdit(item)}
                           className="flex-shrink-0 p-1.5 rounded-lg text-midnight/20 hover:text-midnight hover:bg-midnight/5 transition">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

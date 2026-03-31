@@ -23,13 +23,6 @@ function PeopleIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
-function VendorIcon({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-    </svg>
-  );
-}
 
 function SparkleIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
@@ -67,6 +60,15 @@ export default function PlanejarPage() {
 
   const tools = [
     {
+      href: `${base}/simulador-convidados`,
+      icon: <PeopleIcon />,
+      color: "bg-gold",
+      title: "Simulador de Convidados",
+      desc: "Importe contatos, detecte a cidade pelo DDD e preveja quantos realmente vão comparecer",
+      tag: "DDD",
+      tagColor: "bg-gold/10 text-gold",
+    },
+    {
       href: `${base}/orcamento-inteligente`,
       icon: <CalcIcon />,
       color: "bg-midnight",
@@ -74,24 +76,6 @@ export default function PlanejarPage() {
       desc: "Quiz por fornecedor — descubra quanto vai custar seu casamento com preços reais por região",
       tag: "IA",
       tagColor: "bg-midnight/10 text-midnight",
-    },
-    {
-      href: `${base}/simulador-convidados`,
-      icon: <PeopleIcon />,
-      color: "bg-gold",
-      title: "Simulador de Convidados",
-      desc: "Importe contatos, detecte a cidade pelo DDD e preveja quantos realmente vao comparecer",
-      tag: "DDD",
-      tagColor: "bg-gold/10 text-gold",
-    },
-    {
-      href: `${base}/fornecedores`,
-      icon: <VendorIcon />,
-      color: "bg-midnight",
-      title: "Catalogo de Fornecedores",
-      desc: "Fornecedores classificados por essencialidade: Essencial, Muito Recomendado, Legal Ter, Adicional",
-      tag: null,
-      tagColor: "",
     },
   ];
 
