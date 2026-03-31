@@ -15,7 +15,7 @@ import { MapPin, TrendingUp, AlertCircle, ArrowRight, Printer, Globe } from "luc
 import BottomNav from "@/components/bottom-nav";
 import { useToast } from "@/hooks/use-toast";
 import { dddMap } from "@/lib/ddd-map";
-import { DDD_COORDS, STATE_CENTROID, haversineKm, dddToWeddingKm } from "@/lib/ddd-coords";
+import { DDD_COORDS, haversineKm, dddToWeddingKm, weddingLocationCoords } from "@/lib/ddd-coords";
 import type { Guest, WeddingWithRelations } from "@/types";
 import { simulateAttendance } from "@/lib/attendance-simulator";
 import type { GuestInput } from "@/lib/attendance-simulator";
@@ -253,11 +253,12 @@ function GuestOriginMap({ guests }: GuestOriginMapProps) {
 
 interface AttendancePredictionProps {
   guests: Guest[];
+  weddingCity: string;
   weddingState: string;
   isDestinationWedding: boolean;
 }
 
-function AttendancePrediction({ guests, weddingState, isDestinationWedding }: AttendancePredictionProps) {
+function AttendancePrediction({ guests, weddingCity, weddingState, isDestinationWedding }: AttendancePredictionProps) {
   const [prediction, setPrediction] = useState<{
     expected: number;
     groups: { label: string; count: number; rate: string }[];
@@ -286,7 +287,7 @@ function AttendancePrediction({ guests, weddingState, isDestinationWedding }: At
       }
 
       const ddd = guest.phone ? extractDDDFromPhone(guest.phone) : null;
-      if (ddd) distanceKm = dddToWeddingKm(ddd, weddingState);
+      if (ddd) distanceKm = dddToWeddingKm(ddd, weddingCity, weddingState);
 
       if (distanceKm !== null) {
         const group = groups.find((g) => distanceKm! >= g.min && distanceKm! < g.max);
@@ -306,7 +307,7 @@ function AttendancePrediction({ guests, weddingState, isDestinationWedding }: At
       groups: groups.map((g) => ({ label: g.label, count: g.count, rate: `~${g.rate}%` })),
       intlCount,
     });
-  }, [guests, weddingState, isDestinationWedding]);
+  }, [guests, weddingCity, weddingState, isDestinationWedding]);
 
   if (!prediction) return null;
 
@@ -417,11 +418,12 @@ function normaliseCat(cat: string | null | undefined): string | undefined {
 
 interface GuestAttendanceChartProps {
   guests: Guest[];
+  weddingCity: string;
   weddingState: string;
   isDestinationWedding: boolean;
 }
 
-function GuestAttendanceChart({ guests, weddingState, isDestinationWedding }: GuestAttendanceChartProps) {
+function GuestAttendanceChart({ guests, weddingCity, weddingState, isDestinationWedding }: GuestAttendanceChartProps) {
   const [result, setResult] = useState<ReturnType<typeof simulateAttendance> | null>(null);
 
   useEffect(() => {
@@ -446,7 +448,7 @@ function GuestAttendanceChart({ guests, weddingState, isDestinationWedding }: Gu
       if (g.phone) {
         const ddd = extractDDDFromPhone(g.phone);
         if (ddd) {
-          const km = dddToWeddingKm(ddd, weddingState);
+          const km = dddToWeddingKm(ddd, weddingCity, weddingState);
           if (km !== null) distanceKm = km;
         }
       }
@@ -462,13 +464,13 @@ function GuestAttendanceChart({ guests, weddingState, isDestinationWedding }: Gu
 
     setResult(
       simulateAttendance(guestInputs, {
-        city:                 "",
+        city:                 weddingCity,
         state:                weddingState,
         weddingDate:          new Date().toISOString(),
         isDestinationWedding,
       }),
     );
-  }, [guests, weddingState, isDestinationWedding]);
+  }, [guests, weddingCity, weddingState, isDestinationWedding]);
 
   if (!result) return null;
 
@@ -620,11 +622,12 @@ type AnyGroup = DddGroup | IntlGroup;
 
 interface EmptyStateProps {
   id: string;
+  weddingCity: string;
   weddingState: string;
   isDestinationWedding: boolean;
 }
 
-function EmptyState({ id, weddingState, isDestinationWedding }: EmptyStateProps) {
+function EmptyState({ id, weddingCity, weddingState, isDestinationWedding }: EmptyStateProps) {
   const [groups, setGroups] = useState<AnyGroup[]>([]);
   const [dddInput, setDddInput] = useState("");
   const [countInput, setCountInput] = useState("");
@@ -683,7 +686,7 @@ function EmptyState({ id, weddingState, isDestinationWedding }: EmptyStateProps)
   function simulate() {
     if (groups.length === 0) return;
 
-    const wCoords = STATE_CENTROID[weddingState.toUpperCase()];
+    const wCoords = weddingLocationCoords(weddingCity, weddingState);
 
     const guestInputs: GuestInput[] = groups.flatMap((grp): GuestInput[] => {
       if (grp.isInternational) {
@@ -709,7 +712,7 @@ function EmptyState({ id, weddingState, isDestinationWedding }: EmptyStateProps)
 
     setSimResult(
       simulateAttendance(guestInputs, {
-        city: "",
+        city: weddingCity,
         state: weddingState,
         weddingDate: new Date().toISOString(),
         isDestinationWedding,
@@ -805,7 +808,7 @@ function EmptyState({ id, weddingState, isDestinationWedding }: EmptyStateProps)
                 <MapPin className="w-3.5 h-3.5 text-gold" />
                 <span>{dddInfo.city}, {dddInfo.state} — {STATE_REGIONS[dddInfo.state] || "Outro"}</span>
                 {(() => {
-                  const wCoords = STATE_CENTROID[weddingState.toUpperCase()];
+                  const wCoords = weddingLocationCoords(weddingCity, weddingState);
                   const gCoords = DDD_COORDS[dddInput];
                   if (gCoords && wCoords) {
                     const km = Math.round(haversineKm(gCoords[0], gCoords[1], wCoords[0], wCoords[1]));
@@ -873,7 +876,7 @@ function EmptyState({ id, weddingState, isDestinationWedding }: EmptyStateProps)
                 const dg = g as DddGroup;
                 const region = STATE_REGIONS[dg.state] || "Outro";
                 const barColor = REGION_COLORS[region] || "bg-gray-400";
-                const wCoords = STATE_CENTROID[weddingState.toUpperCase()];
+                const wCoords = weddingLocationCoords(weddingCity, weddingState);
                 const gCoords = DDD_COORDS[dg.ddd];
                 const km = gCoords && wCoords ? Math.round(haversineKm(gCoords[0], gCoords[1], wCoords[0], wCoords[1])) : null;
                 const catLabel = CATEGORY_OPTIONS.find((o) => o.value === dg.category)?.label ?? "Misto";
@@ -1108,11 +1111,13 @@ export default function SimuladorConvidadosPage() {
             <GuestOriginMap guests={allGuests} weddingState={wedding.state ?? ""} />
             <AttendancePrediction
               guests={allGuests}
+              weddingCity={wedding.city ?? ""}
               weddingState={wedding.state ?? ""}
               isDestinationWedding={isDestinationWedding}
             />
             <GuestAttendanceChart
               guests={allGuests}
+              weddingCity={wedding.city ?? ""}
               weddingState={wedding.state ?? ""}
               isDestinationWedding={isDestinationWedding}
             />
@@ -1132,6 +1137,7 @@ export default function SimuladorConvidadosPage() {
         ) : (
           <EmptyState
             id={id}
+            weddingCity={wedding.city ?? ""}
             weddingState={wedding.state ?? ""}
             isDestinationWedding={isDestinationWedding}
           />

@@ -1,3 +1,5 @@
+import { cityToDDD } from "./city-ddd-map";
+
 /**
  * Approximate geographic center (lat, lon) for each Brazilian DDD area.
  * Used to compute km-based travel distances for attendance simulation.
@@ -136,15 +138,35 @@ export function haversineKm(
 }
 
 /**
- * Returns the km distance from a DDD area to a wedding location (state centroid).
+ * Returns the best available coordinates for a wedding location.
+ * Uses city → DDD → DDD_COORDS if the city is recognised; falls back to STATE_CENTROID.
+ */
+export function weddingLocationCoords(
+  city: string | null | undefined,
+  state: string,
+): [number, number] | null {
+  if (city) {
+    const ddd = cityToDDD(city);
+    if (ddd) {
+      const coords = DDD_COORDS[ddd];
+      if (coords) return coords;
+    }
+  }
+  return STATE_CENTROID[state.toUpperCase()] ?? null;
+}
+
+/**
+ * Returns the km distance from a DDD area to a wedding location.
+ * Uses city → DDD coords when available; falls back to state centroid.
  * Returns null if either lookup fails.
  */
 export function dddToWeddingKm(
   guestDdd: string,
+  weddingCity: string | null | undefined,
   weddingState: string,
 ): number | null {
   const gCoords = DDD_COORDS[guestDdd];
-  const wCoords = STATE_CENTROID[weddingState.toUpperCase()];
+  const wCoords = weddingLocationCoords(weddingCity, weddingState);
   if (!gCoords || !wCoords) return null;
   return haversineKm(gCoords[0], gCoords[1], wCoords[0], wCoords[1]);
 }
