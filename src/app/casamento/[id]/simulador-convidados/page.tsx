@@ -267,10 +267,10 @@ function AttendancePrediction({ guests, weddingState, isDestinationWedding }: At
   useEffect(() => {
     let expected = 0;
     const groups = [
-      { label: "Menos de 150 km",  min: 0,    max: 150,  rate: isDestinationWedding ? 87 : 85, count: 0 },
-      { label: "150 – 300 km",     min: 150,  max: 300,  rate: isDestinationWedding ? 80 : 76, count: 0 },
-      { label: "300 – 600 km",     min: 300,  max: 600,  rate: isDestinationWedding ? 71 : 63, count: 0 },
-      { label: "Mais de 600 km",   min: 600,  max: Infinity, rate: isDestinationWedding ? 58 : 45, count: 0 },
+      { label: "Menos de 150 km",  min: 0,    max: 150,  rate: isDestinationWedding ? 92 : 89, count: 0 },
+      { label: "150 – 300 km",     min: 150,  max: 300,  rate: isDestinationWedding ? 86 : 83, count: 0 },
+      { label: "300 – 600 km",     min: 300,  max: 600,  rate: isDestinationWedding ? 83 : 75, count: 0 },
+      { label: "Mais de 600 km",   min: 600,  max: Infinity, rate: isDestinationWedding ? 66 : 58, count: 0 },
     ];
     let intlCount = 0;
 
@@ -343,7 +343,7 @@ function AttendancePrediction({ guests, weddingState, isDestinationWedding }: At
             </p>
             <p className="font-heading text-xl text-midnight">{prediction.intlCount}</p>
             <p className="font-body text-xs text-purple-600">
-              ~{isDestinationWedding ? 40 : 28}% presença
+              ~{isDestinationWedding ? 48 : 35}% presença
             </p>
           </div>
         )}
@@ -845,7 +845,7 @@ function EmptyState({ id, weddingState, isDestinationWedding }: EmptyStateProps)
             </button>
           </div>
           <p className="font-body text-[10px] text-purple-500 mt-1">
-            Taxa base: ~{isDestinationWedding ? "40" : "28"}% de presença
+            Taxa base: ~{isDestinationWedding ? "48" : "35"}% de presença
           </p>
         </div>
 

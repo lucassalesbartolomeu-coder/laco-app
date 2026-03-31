@@ -97,13 +97,15 @@ function getProbabilityByKm(
   distanceKm: number,
   isDestination: boolean,
 ): number {
+  // Calibrated on Brazilian wedding data: culture of traveling for family events
+  // means medium distances (300-600 km) still have strong attendance.
   let base: number;
-  if      (distanceKm < 50)   base = 92; // same metro area
-  else if (distanceKm < 150)  base = 85; // day-trip distance
-  else if (distanceKm < 300)  base = 76; // short road trip
-  else if (distanceKm < 600)  base = 63; // long drive / cheap flight
-  else if (distanceKm < 1200) base = 50; // usually requires flight
-  else                        base = 40; // very far, definitely flies
+  if      (distanceKm < 50)   base = 93; // same metro area
+  else if (distanceKm < 150)  base = 89; // day-trip distance
+  else if (distanceKm < 300)  base = 83; // short road trip
+  else if (distanceKm < 600)  base = 75; // long drive or cheap flight — very common in BR
+  else if (distanceKm < 1200) base = 58; // usually requires flight
+  else                        base = 45; // very far, definitely flies
 
   // Destination wedding: guests who already decided to travel commit more
   if (isDestination && distanceKm > 300) base += 8;
@@ -145,7 +147,7 @@ function getDistanceProbabilityByState(
  * Destination weddings significantly improve international attendance.
  */
 function getInternationalProbability(isDestination: boolean): number {
-  return isDestination ? 40 : 28;
+  return isDestination ? 48 : 35;
 }
 
 /**
