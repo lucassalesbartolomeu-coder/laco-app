@@ -89,60 +89,38 @@ export default function MeuSitePage() {
         </div>
       </div>
 
-      <div className="px-4 -mt-5 relative z-10 space-y-6">
+      <div className="px-4 -mt-5 relative z-10 space-y-4 pb-6">
 
-        {/* ── Site do Casamento ─────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-5 border-b border-gray-50">
-            <div className="flex items-center justify-between">
+        {/* ── 1. Identidade Visual com IA ───────────────────────────── */}
+        <Link
+          href={`${base}/identity-kit`}
+          className="block bg-white rounded-2xl shadow-sm border border-gold/20 overflow-hidden hover:shadow-md hover:border-gold/40 transition-all active:scale-[0.98]"
+        >
+          <div className="bg-gradient-to-r from-gold/10 to-champagne/30 px-5 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gold flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+              </div>
               <div>
-                <h2 className="font-heading text-xl text-midnight">Site do Casamento</h2>
-                <p className="font-body text-xs text-gray-400 mt-0.5">Nivel antoniaebruno.com — gerado pelo Laco</p>
-              </div>
-              <span className="px-2.5 py-1 rounded-full text-[10px] font-body font-semibold bg-amber-100 text-amber-700">Em breve</span>
-            </div>
-          </div>
-
-          {/* Preview mockup */}
-          <div className="p-5 bg-gradient-to-b from-[#F5F0E8] to-[#EDE6DA]">
-            <div className="bg-white/80 rounded-xl p-6 text-center border border-[#D4C5A9]/30">
-              <p className="font-body text-[10px] text-[#B8860B] uppercase tracking-[0.3em] mb-3">08 de Agosto de 2026</p>
-              <h3 className="font-heading text-2xl text-[#8B7355] mb-1" style={{ letterSpacing: "0.15em" }}>
-                ANToNIA & BRUNO
-              </h3>
-              <div className="w-12 h-[1px] bg-[#D4C5A9] mx-auto my-3" />
-              <p className="font-body text-xs text-[#A0936E]">Vale dos Desejos &middot; Areal, RJ</p>
-              <div className="mt-4 inline-flex px-4 py-2 border border-[#B8860B]/30 rounded-lg">
-                <span className="font-body text-xs text-[#B8860B] uppercase tracking-wider">RSVP</span>
+                <p className="font-body text-sm font-semibold text-midnight">Identidade Visual com IA</p>
+                <p className="font-body text-xs text-midnight/50">Paleta, tipografia e imagens geradas pela IA</p>
               </div>
             </div>
+            <ArrowIcon className="w-5 h-5 text-gold flex-shrink-0" />
           </div>
-
-          {/* Site sections */}
-          <div className="p-5 pt-3">
-            <p className="font-body text-xs text-gray-400 mb-3">Secoes incluidas:</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {siteFeatures.map((f) => (
-                <div key={f.label} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2.5">
-                  <span className="text-base">{f.icon}</span>
-                  <div>
-                    <p className="font-body text-xs font-medium text-midnight">{f.label}</p>
-                    <p className="font-body text-[10px] text-gray-400">{f.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="px-5 py-3 flex items-center gap-4 border-t border-gold/10">
+            <span className="font-body text-xs text-midnight/50">Alimenta automaticamente →</span>
+            <span className="px-2 py-0.5 rounded-full bg-midnight/8 text-midnight text-[10px] font-body font-medium">Convite digital</span>
+            <span className="px-2 py-0.5 rounded-full bg-midnight/8 text-midnight text-[10px] font-body font-medium">Site</span>
           </div>
-        </div>
+        </Link>
 
-        {/* ── Identidade Visual (Papelaria) ────────────────────────── */}
+        {/* ── 2. Papelaria ──────────────────────────────────────────── */}
         <div>
-          <div className="flex items-center justify-between mb-3 px-1">
-            <h2 className="font-heading text-xl text-midnight">Identidade Visual</h2>
-            <span className="font-body text-xs text-gray-400">Kit completo de papelaria</span>
-          </div>
-
-          <div className="space-y-3">
+          <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3 px-1">Papelaria</p>
+          <div className="space-y-2">
             {identityItems.map((item) => (
               <div key={item.label}>
                 {item.available ? (
@@ -173,14 +151,46 @@ export default function MeuSitePage() {
               </div>
             ))}
           </div>
+        </div>
 
-          {/* Reference note */}
-          <div className="mt-4 bg-gold/5 border border-gold/10 rounded-2xl p-4">
-            <p className="font-body text-xs text-gold/80">
-              <strong>Inspiracao:</strong> Cada item gera uma peca visual no estilo de atelies premium como
-              Atelie Digitale — aquarelas feitas a mao, nanquim, monogramas. So que gerado automaticamente
-              com IA a partir das informacoes do seu casamento.
-            </p>
+        {/* ── 3. Site do Casamento ──────────────────────────────────── */}
+        <div>
+          <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3 px-1">Site do Casal</p>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-5 border-b border-gray-50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-heading text-xl text-midnight">Site do Casamento</h2>
+                  <p className="font-body text-xs text-gray-400 mt-0.5">Nível antoniaebruno.com — gerado pelo Laço</p>
+                </div>
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-body font-semibold bg-amber-100 text-amber-700">Em breve</span>
+              </div>
+            </div>
+            <div className="p-5 bg-gradient-to-b from-[#F5F0E8] to-[#EDE6DA]">
+              <div className="bg-white/80 rounded-xl p-6 text-center border border-[#D4C5A9]/30">
+                <p className="font-body text-[10px] text-[#B8860B] uppercase tracking-[0.3em] mb-3">08 de Agosto de 2026</p>
+                <h3 className="font-heading text-2xl text-[#8B7355] mb-1" style={{ letterSpacing: "0.15em" }}>ANToNIA & BRUNO</h3>
+                <div className="w-12 h-[1px] bg-[#D4C5A9] mx-auto my-3" />
+                <p className="font-body text-xs text-[#A0936E]">Vale dos Desejos &middot; Areal, RJ</p>
+                <div className="mt-4 inline-flex px-4 py-2 border border-[#B8860B]/30 rounded-lg">
+                  <span className="font-body text-xs text-[#B8860B] uppercase tracking-wider">RSVP</span>
+                </div>
+              </div>
+            </div>
+            <div className="p-5 pt-3">
+              <p className="font-body text-xs text-gray-400 mb-3">Seções incluídas:</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {siteFeatures.map((f) => (
+                  <div key={f.label} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2.5">
+                    <span className="text-base">{f.icon}</span>
+                    <div>
+                      <p className="font-body text-xs font-medium text-midnight">{f.label}</p>
+                      <p className="font-body text-[10px] text-gray-400">{f.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
