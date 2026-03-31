@@ -138,6 +138,60 @@ export async function POST(request: Request, { params }: Params) {
     const body = await request.json();
     const { style, paletteChoice, mood, tone, referenceUrls = [], venuePhotoBase64 } = body;
 
+    // ── Preset (arte pronta) — skip OpenAI ──
+    if (body.preset && body.presetId) {
+      const { TEMPLATES } = await import("@/lib/identity-kit-templates");
+      const template = TEMPLATES[body.presetId as string];
+      if (!template) return validationError("presetId inválido");
+
+      const aiResponse = {
+        palette: {
+          primary:    { hex: template.colors.primary,    name: "Principal"   },
+          secondary:  { hex: template.colors.secondary,  name: "Secundária"  },
+          accent:     { hex: template.colors.accent,     name: "Destaque"    },
+          background: { hex: template.colors.background, name: "Fundo"       },
+          text:       { hex: template.colors.text,       name: "Texto"       },
+          muted:      { hex: template.colors.muted,      name: "Suave"       },
+        },
+        typography: {
+          heading: { family: template.fonts.heading, style: "Para títulos e destaque" },
+          body:    { family: template.fonts.body || template.fonts.heading, style: "Para texto corrido" },
+        },
+        invite: {
+          description: template.description,
+          layout: "vertical-centered",
+          tagline: "Com amor, celebramos esse momento especial.",
+        },
+        siteTheme: { templateId: template.id, reason: `Tema ${template.name} selecionado como arte pronta.` },
+        menu: {
+          entrada:    "Bruschetta / Carpaccio",
+          principal:  "Filé ao molho / Salmão grelhado",
+          sobremesa:  "Petit gâteau / Mousse de maracujá",
+        },
+        decoration: [
+          "Flores sazonais nas mesas",
+          "Velas aromáticas",
+          "Tule e fitas na paleta do tema",
+          "Centro de mesa floral",
+          "Painel de flores na entrada",
+        ],
+      };
+
+      const kit = await prisma.identityKit.create({
+        data: {
+          weddingId: id,
+          style:        template.style,
+          paletteChoice: template.id,
+          mood:         template.description,
+          tone:         "tradicional",
+          referenceUrls: [],
+          aiResponse,
+        },
+      });
+      const totalCount = await prisma.identityKit.count({ where: { weddingId: id } });
+      return NextResponse.json({ kit, generationCount: totalCount });
+    }
+
     if (!style || !paletteChoice || !mood || !tone) {
       return validationError("style, paletteChoice, mood e tone são obrigatórios");
     }

@@ -443,9 +443,6 @@ export default function DashboardPage() {
           </div>
         ) : (
           <>
-            {/* ── Activation Checklist ── */}
-            <ActivationChecklist weddingId={w.id} />
-
             {/* ── Hero countdown ── */}
             <div className="bg-gradient-to-br from-midnight to-midnight/95 rounded-3xl p-6 shadow-lg overflow-hidden relative animate-fade-in">
               {/* subtle gold blur circles */}
@@ -538,6 +535,9 @@ export default function DashboardPage() {
                 {days != null && days >= 0 && <CountdownRing days={days} />}
               </div>
             </div>
+
+            {/* ── Activation Checklist ── */}
+            <ActivationChecklist weddingId={w.id} />
 
             {/* ── Stats row ── */}
             {guestStats && guestStats.total > 0 && (

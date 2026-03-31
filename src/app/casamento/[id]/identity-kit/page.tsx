@@ -5,7 +5,8 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { PRESET_PALETTES } from "@/lib/identity-kit-templates";
+import { PRESET_PALETTES, TEMPLATES } from "@/lib/identity-kit-templates";
+import type { TemplateConfig } from "@/lib/identity-kit-templates";
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -234,7 +235,8 @@ export default function IdentityKitPage() {
   const params = useParams();
   const weddingId = params.id as string;
 
-  const [screen, setScreen] = useState<"quiz" | "loading" | "result">("quiz");
+  const [screen, setScreen] = useState<"mode-select" | "quiz" | "preset" | "loading" | "result">("mode-select");
+  const [selectedPreset, setSelectedPreset] = useState<TemplateConfig | null>(null);
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
   const [answers, setAnswers] = useState<QuizAnswers>({
@@ -390,6 +392,33 @@ export default function IdentityKitPage() {
     }
   }
 
+  // ── Apply preset (arte pronta) ──
+  async function applyPreset(template: TemplateConfig) {
+    setScreen("loading");
+    setError("");
+    try {
+      const res = await fetch(`/api/weddings/${weddingId}/identity-kit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preset: true, presetId: template.id }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error ?? "Erro ao aplicar arte");
+        setScreen("preset");
+        return;
+      }
+      const data = await res.json();
+      setKit(data.kit);
+      setGenerationCount(data.generationCount);
+      setApplied(false);
+      setScreen("result");
+    } catch {
+      setError("Erro de conexão. Tente novamente.");
+      setScreen("preset");
+    }
+  }
+
   function editAnswers() {
     setScreen("quiz");
     setStep(1);
@@ -413,6 +442,156 @@ export default function IdentityKitPage() {
   }
 
   const ai = kit?.aiResponse;
+
+  // ─── Mode Select Screen ───────────────────────────────────────
+  if (screen === "mode-select") {
+    return (
+      <div className="min-h-screen bg-ivory pb-10">
+        <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
+          <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
+            <Link href="/dashboard" className="text-midnight/50 hover:text-midnight transition">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </Link>
+            <h1 className="font-heading text-xl text-midnight">Identidade Visual</h1>
+          </div>
+        </header>
+        <div className="max-w-lg mx-auto px-4 pt-8 space-y-4">
+          <p className="font-body text-sm text-midnight/60 text-center mb-6">
+            Como você quer criar sua identidade visual?
+          </p>
+
+          {/* IA Option */}
+          <button
+            onClick={() => { setScreen("quiz"); setStep(1); }}
+            className="w-full text-left bg-white rounded-2xl border-2 border-midnight/10 p-5 hover:border-gold/50 hover:shadow-md transition-all active:scale-[0.98] group"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-midnight flex items-center justify-center flex-shrink-0">
+                <svg className="w-6 h-6 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="font-body font-semibold text-midnight">Criar com IA</p>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-body font-medium bg-gold/10 text-gold">Recomendado</span>
+                </div>
+                <p className="font-body text-xs text-midnight/50 leading-relaxed">
+                  Responda 5 perguntas e a IA gera uma identidade visual única: paleta, tipografia, convite e site.
+                </p>
+              </div>
+              <svg className="w-5 h-5 text-midnight/20 group-hover:text-gold transition-colors flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+
+          {/* Preset Option */}
+          <button
+            onClick={() => setScreen("preset")}
+            className="w-full text-left bg-white rounded-2xl border-2 border-midnight/10 p-5 hover:border-gold/50 hover:shadow-md transition-all active:scale-[0.98] group"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gold flex items-center justify-center flex-shrink-0">
+                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="font-body font-semibold text-midnight mb-1">Arte pronta</p>
+                <p className="font-body text-xs text-midnight/50 leading-relaxed">
+                  Escolha um dos 6 temas pré-criados e aplique com 1 clique — sem quiz.
+                </p>
+              </div>
+              <svg className="w-5 h-5 text-midnight/20 group-hover:text-gold transition-colors flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Preset Browser Screen ────────────────────────────────
+  if (screen === "preset") {
+    const presets = Object.values(TEMPLATES);
+    return (
+      <div className="min-h-screen bg-ivory pb-10">
+        <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
+          <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
+            <button onClick={() => setScreen("mode-select")} className="text-midnight/50 hover:text-midnight transition">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h1 className="font-heading text-xl text-midnight">Escolher Arte Pronta</h1>
+          </div>
+        </header>
+
+        <div className="max-w-lg mx-auto px-4 pt-6 space-y-3">
+          <p className="font-body text-xs text-midnight/50 text-center mb-4">
+            Toque em um tema para pré-visualizar e aplicar
+          </p>
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-3">
+              <p className="font-body text-xs text-red-600">{error}</p>
+            </div>
+          )}
+
+          {presets.map((template) => (
+            <button
+              key={template.id}
+              onClick={() => setSelectedPreset(selectedPreset?.id === template.id ? null : template)}
+              className={`w-full text-left rounded-2xl border-2 overflow-hidden transition-all active:scale-[0.98] ${
+                selectedPreset?.id === template.id
+                  ? "border-gold shadow-md"
+                  : "border-midnight/8 bg-white hover:border-midnight/20"
+              }`}
+            >
+              {/* Color swatches */}
+              <div className="flex h-8">
+                {[template.colors.hero, template.colors.secondary, template.colors.accent, template.colors.background].map((c, i) => (
+                  <div key={i} className="flex-1" style={{ backgroundColor: c }} />
+                ))}
+              </div>
+              {/* Info */}
+              <div className="p-4 bg-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-body font-semibold text-midnight text-sm">{template.name}</p>
+                    <p className="font-body text-xs text-midnight/50 mt-0.5">{template.fonts.heading} · {template.fonts.body || template.fonts.heading}</p>
+                    <p className="font-body text-xs text-midnight/40 mt-0.5 leading-snug">{template.description}</p>
+                  </div>
+                  {selectedPreset?.id === template.id && (
+                    <div className="w-6 h-6 rounded-full bg-gold flex items-center justify-center flex-shrink-0 ml-3">
+                      <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </button>
+          ))}
+
+          {selectedPreset && (
+            <div className="sticky bottom-6 pt-4">
+              <button
+                onClick={() => applyPreset(selectedPreset)}
+                className="w-full py-4 bg-gold text-white rounded-2xl font-body font-semibold text-sm shadow-lg hover:bg-gold/90 transition active:scale-[0.98]"
+              >
+                {`Aplicar "${selectedPreset.name}" como identidade visual`}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   // ─── Loading Screen ───────────────────────────────────────
   if (screen === "loading") {
