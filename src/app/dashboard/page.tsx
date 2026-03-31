@@ -381,13 +381,13 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-ivory pb-24">
       {/* Header */}
       <header className="bg-white border-b border-midnight/8 sticky top-0 z-20 shadow-sm">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center hover:opacity-80 transition">
             <Image
-              src="/brand/logo-dark.svg"
+              src="/brand/logo-light.svg"
               alt="Laço"
-              width={80}
-              height={24}
+              width={240}
+              height={51}
               priority
             />
           </Link>
