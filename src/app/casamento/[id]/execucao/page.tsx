@@ -74,8 +74,8 @@ export default function ExecucaoPage() {
       category: "Convidados",
       color: "bg-midnight",
       items: [
-        { href: `${base}/convidados`, icon: "👥", label: "Lista de Convidados", desc: "Lista A/B/C, categorias, status RSVP e confirmacoes", badge: guestStats.total > 0 ? `${guestStats.total}` : null },
-        { href: `${base}/importar`, icon: "📲", label: "Importar Contatos", desc: "Da agenda, CSV, ou manual", badge: null },
+        { href: `${base}/convidados`, icon: "👥", label: "Lista de Convidados", desc: "Lista A/B/C, categorias, status RSVP e confirmações", badge: guestStats.total > 0 ? `${guestStats.total}` : null },
+        { href: `${base}/whatsapp-confirmacao`, icon: "💌", label: "Enviar Convite / Save the Date", desc: "Disparo com 1 clique para os grupos que você definir", badge: null },
       ],
     },
     {

@@ -82,8 +82,15 @@ const TEMPLATE: { category: string; description: string }[] = [
 
 const CATEGORIES = [...new Set(TEMPLATE.map(t => t.category))];
 
+interface WeddingEvent {
+  id: string;
+  name: string;
+  date?: string | null;
+}
+
 interface BudgetItem {
   id: string;
+  eventId: string | null;
   category: string;
   description: string;
   estimatedCost: number;
@@ -126,11 +133,6 @@ const numDisplay = (v: string) => {
 };
 const numChange = (raw: string) => raw.replace(/\D/g, "");
 
-const STATUS_CONFIG: Record<string, { label: string; dot: string }> = {
-  pendente:   { label: "Pendente",  dot: "bg-amber-400" },
-  pago:       { label: "Pago",      dot: "bg-green-400" },
-  cancelado:  { label: "Cancelado", dot: "bg-red-400" },
-};
 
 export default function OrcamentoPage() {
   const { id } = useParams<{ id: string }>();
@@ -147,6 +149,8 @@ export default function OrcamentoPage() {
   const [coupleName1, setCoupleName1] = useState("");
   const [coupleName2, setCoupleName2] = useState("");
   const autoLoadedRef = useRef(false);
+  const [events, setEvents] = useState<WeddingEvent[]>([]);
+  const [formEventId, setFormEventId] = useState<string | null>(null);
 
   // Inline editing state: { id, value }
   const [inlineId, setInlineId] = useState<string | null>(null);
@@ -192,7 +196,14 @@ export default function OrcamentoPage() {
   }
 
   async function load() {
-    const [wRes] = await Promise.all([fetch(`/api/weddings/${id}`)]);
+    const [wRes, evRes] = await Promise.all([
+      fetch(`/api/weddings/${id}`),
+      fetch(`/api/weddings/${id}/events`),
+    ]);
+    if (evRes.ok) {
+      const evData = await evRes.json();
+      setEvents(evData);
+    }
     const fetched = await loadItems();
     setItems(fetched);
     await loadSummary();
@@ -229,11 +240,12 @@ export default function OrcamentoPage() {
   }
 
   function openNew() {
-    setEditing(null); setForm(EMPTY); setShowForm(true);
+    setEditing(null); setForm(EMPTY); setFormEventId(null); setShowForm(true);
   }
 
   function openEdit(item: BudgetItem) {
     setEditing(item);
+    setFormEventId(item.eventId ?? null);
     setForm({
       category: item.category,
       description: item.description,
@@ -259,6 +271,7 @@ export default function OrcamentoPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...form,
+        eventId: formEventId,
         estimatedCost: Number(form.estimatedCost),
         actualCost: form.actualCost ? Number(form.actualCost) : null,
         paidAmount: form.paidAmount ? Number(form.paidAmount) : 0,
@@ -297,15 +310,25 @@ export default function OrcamentoPage() {
     await loadSummary();
   }
 
-  const cats = [...new Set(items.map(i => i.category))].filter(c => CATEGORIES.includes(c));
-  const otherCats = [...new Set(items.map(i => i.category))].filter(c => !CATEGORIES.includes(c));
+  const allCats = [...new Set(items.map(i => i.category))];
+  const cats = allCats.filter(c => CATEGORIES.includes(c));
+  const otherCats = allCats.filter(c => !CATEGORIES.includes(c));
   const orderedCats = [...CATEGORIES.filter(c => cats.includes(c)), ...otherCats];
   const filtered = filterCat === "todas" ? items : items.filter(i => i.category === filterCat);
-  const groups: Record<string, BudgetItem[]> = {};
+
+  const WEDDING_KEY = "__wedding__";
+
+  // Group items by event, then by category
+  const byEvent: Record<string, BudgetItem[]> = {};
   for (const item of filtered) {
-    if (!groups[item.category]) groups[item.category] = [];
-    groups[item.category].push(item);
+    const key = item.eventId ?? WEDDING_KEY;
+    if (!byEvent[key]) byEvent[key] = [];
+    byEvent[key].push(item);
   }
+  const orderedEventKeys = [
+    ...(byEvent[WEDDING_KEY] ? [WEDDING_KEY] : []),
+    ...events.filter(e => byEvent[e.id]).map(e => e.id),
+  ];
   const progressPct = summary && summary.totalEstimated > 0
     ? Math.min(100, Math.round((summary.totalPaid / summary.totalEstimated) * 100))
     : 0;
@@ -410,112 +433,144 @@ export default function OrcamentoPage() {
           </p>
         )}
 
-        {/* Items grouped by category */}
-        {Object.entries(groups).map(([cat, catItems]) => {
-          const catTotal = catItems.reduce((s, i) => s + i.estimatedCost, 0);
+        {/* Items grouped by event, then by category */}
+        {orderedEventKeys.map((evKey) => {
+          const eventItems = byEvent[evKey] ?? [];
+          const eventName = evKey === WEDDING_KEY ? "Casamento" : (events.find(e => e.id === evKey)?.name ?? "Evento");
+          const eventTotal = eventItems.reduce((s, i) => s + i.estimatedCost, 0);
+
+          // group by category within this event
+          const catGroups: Record<string, BudgetItem[]> = {};
+          for (const item of eventItems) {
+            if (!catGroups[item.category]) catGroups[item.category] = [];
+            catGroups[item.category].push(item);
+          }
+          const evCats = orderedCats.filter(c => catGroups[c]);
+          const evOtherCats = Object.keys(catGroups).filter(c => !orderedCats.includes(c));
+          const allEvCats = [...evCats, ...evOtherCats];
+
           return (
-            <div key={cat}>
-              <div className="flex items-center justify-between mb-2 px-1">
-                <p className="font-body text-xs font-semibold text-midnight/40 uppercase tracking-widest">{cat}</p>
-                <p className="font-body text-xs text-midnight/40">{fmt(catTotal)}</p>
-              </div>
-              <div className="space-y-2">
-                {catItems.map(item => {
-                  const sc = STATUS_CONFIG[item.status] ?? { label: item.status, dot: "bg-gray-400" };
-                  const cost = item.actualCost ?? item.estimatedCost;
-                  const paidPct = cost > 0 ? Math.min(100, Math.round((item.paidAmount / cost) * 100)) : 0;
-                  const isEditing = inlineId === item.id;
+            <div key={evKey}>
+              {/* Event header — only show if there are multiple events */}
+              {orderedEventKeys.length > 1 && (
+                <div className="flex items-center gap-3 mb-3 mt-2">
+                  <div className="flex-1 h-px bg-midnight/10" />
+                  <span className="font-body text-xs font-bold text-midnight uppercase tracking-widest px-2">
+                    {eventName}
+                  </span>
+                  <span className="font-body text-xs text-midnight/40">{fmt(eventTotal)}</span>
+                  <div className="flex-1 h-px bg-midnight/10" />
+                </div>
+              )}
 
-                  return (
-                    <div key={item.id} className="bg-white rounded-2xl border border-gray-100 p-4">
-                      <div className="flex items-center gap-3">
-                        {/* Paid toggle */}
-                        <button onClick={() => togglePaid(item)}
-                          className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition ${
-                            item.status === "pago" ? "bg-green-400 border-green-400" : "border-gray-300 hover:border-midnight"
-                          }`}>
-                          {item.status === "pago" && (
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          )}
-                        </button>
-
-                        {/* Description + inline estimated */}
-                        <div className="flex-1 min-w-0">
-                          <p className={`font-body text-sm font-medium leading-tight ${item.status === "pago" ? "text-midnight/40 line-through" : "text-midnight"}`}>
-                            {item.description !== item.category ? item.description : item.category}
-                          </p>
-
-                          {/* Inline editable estimated cost */}
-                          {isEditing ? (
-                            <div className="flex items-center gap-1 mt-1">
-                              <span className="font-body text-xs text-midnight/50">Estimado: R$</span>
-                              <input
-                                autoFocus
-                                type="text"
-                                inputMode="numeric"
-                                value={numDisplay(inlineVal)}
-                                onChange={e => setInlineVal(numChange(e.target.value))}
-                                onBlur={() => saveInline(item)}
-                                onKeyDown={e => {
-                                  if (e.key === "Enter") saveInline(item);
-                                  if (e.key === "Escape") setInlineId(null);
-                                }}
-                                className="w-28 text-sm font-bold text-midnight border-b border-midnight/40 focus:border-midnight focus:outline-none bg-transparent"
-                              />
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => openInline(item)}
-                              className="mt-1 flex items-center gap-1 group"
-                            >
-                              <span className="font-body text-xs text-midnight/50">Estimado:</span>
-                              <span className={`font-body text-xs font-semibold group-hover:text-gold transition-colors ${
-                                item.estimatedCost > 0 ? "text-midnight/70" : "text-midnight/30"
-                              }`}>
-                                {item.estimatedCost > 0 ? `R$ ${fmtShort(item.estimatedCost)}` : "tocar para definir"}
-                              </span>
-                              <svg className="w-3 h-3 text-midnight/20 group-hover:text-gold transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                              </svg>
-                            </button>
-                          )}
-
-                          {item.paidAmount > 0 && (
-                            <p className="font-body text-xs text-green-600 mt-0.5">
-                              Pago: {fmt(item.paidAmount)}{item.paidBy ? ` · ${item.paidBy}` : ""}
-                            </p>
-                          )}
-                          {item.dueDate && (
-                            <p className="font-body text-xs text-midnight/35 mt-0.5">
-                              Vence {new Date(item.dueDate).toLocaleDateString("pt-BR")}
-                            </p>
-                          )}
-                          {item.actualCost != null && item.actualCost !== item.estimatedCost && (
-                            <p className="font-body text-xs text-midnight/40 mt-0.5">Real: {fmt(item.actualCost)}</p>
-                          )}
-                        </div>
-
-                        {/* Edit button */}
-                        <button onClick={() => openEdit(item)}
-                          className="flex-shrink-0 p-1.5 rounded-lg text-midnight/20 hover:text-midnight hover:bg-midnight/5 transition">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                        </button>
-                      </div>
-
-                      {/* Progress bar */}
-                      {paidPct > 0 && paidPct < 100 && (
-                        <div className="mt-3 h-1 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-green-400 rounded-full" style={{ width: `${paidPct}%` }} />
-                        </div>
-                      )}
+              {allEvCats.map(cat => {
+                const catItems = catGroups[cat] ?? [];
+                const catTotal = catItems.reduce((s, i) => s + i.estimatedCost, 0);
+                return (
+                  <div key={cat} className="mb-4">
+                    <div className="flex items-center justify-between mb-2 px-1">
+                      <p className="font-body text-xs font-semibold text-midnight/40 uppercase tracking-widest">{cat}</p>
+                      <p className="font-body text-xs text-midnight/40">{fmt(catTotal)}</p>
                     </div>
-                  );
-                })}
-              </div>
+                    <div className="space-y-2">
+                      {catItems.map(item => {
+                        const cost = item.actualCost ?? item.estimatedCost;
+                        const paidPct = cost > 0 ? Math.min(100, Math.round((item.paidAmount / cost) * 100)) : 0;
+                        const isEditing = inlineId === item.id;
+
+                        return (
+                          <div key={item.id} className="bg-white rounded-2xl border border-gray-100 p-4">
+                            <div className="flex items-center gap-3">
+                              {/* Paid toggle */}
+                              <button onClick={() => togglePaid(item)}
+                                className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition ${
+                                  item.status === "pago" ? "bg-green-400 border-green-400" : "border-gray-300 hover:border-midnight"
+                                }`}>
+                                {item.status === "pago" && (
+                                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                              </button>
+
+                              {/* Description + inline estimated */}
+                              <div className="flex-1 min-w-0">
+                                <p className={`font-body text-sm font-medium leading-tight ${item.status === "pago" ? "text-midnight/40 line-through" : "text-midnight"}`}>
+                                  {item.description !== item.category ? item.description : item.category}
+                                </p>
+
+                                {/* Inline editable estimated cost */}
+                                {isEditing ? (
+                                  <div className="flex items-center gap-1 mt-1">
+                                    <span className="font-body text-xs text-midnight/50">Estimado: R$</span>
+                                    <input
+                                      autoFocus
+                                      type="text"
+                                      inputMode="numeric"
+                                      value={numDisplay(inlineVal)}
+                                      onChange={e => setInlineVal(numChange(e.target.value))}
+                                      onBlur={() => saveInline(item)}
+                                      onKeyDown={e => {
+                                        if (e.key === "Enter") saveInline(item);
+                                        if (e.key === "Escape") setInlineId(null);
+                                      }}
+                                      className="w-28 text-sm font-bold text-midnight border-b border-midnight/40 focus:border-midnight focus:outline-none bg-transparent"
+                                    />
+                                  </div>
+                                ) : (
+                                  <button
+                                    onClick={() => openInline(item)}
+                                    className="mt-1 flex items-center gap-1 group"
+                                  >
+                                    <span className="font-body text-xs text-midnight/50">Estimado:</span>
+                                    <span className={`font-body text-xs font-semibold group-hover:text-gold transition-colors ${
+                                      item.estimatedCost > 0 ? "text-midnight/70" : "text-midnight/30"
+                                    }`}>
+                                      {item.estimatedCost > 0 ? `R$ ${fmtShort(item.estimatedCost)}` : "tocar para definir"}
+                                    </span>
+                                    <svg className="w-3 h-3 text-midnight/20 group-hover:text-gold transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                  </button>
+                                )}
+
+                                {item.paidAmount > 0 && (
+                                  <p className="font-body text-xs text-green-600 mt-0.5">
+                                    Pago: {fmt(item.paidAmount)}{item.paidBy ? ` · ${item.paidBy}` : ""}
+                                  </p>
+                                )}
+                                {item.dueDate && (
+                                  <p className="font-body text-xs text-midnight/35 mt-0.5">
+                                    Vence {new Date(item.dueDate).toLocaleDateString("pt-BR")}
+                                  </p>
+                                )}
+                                {item.actualCost != null && item.actualCost !== item.estimatedCost && (
+                                  <p className="font-body text-xs text-midnight/40 mt-0.5">Real: {fmt(item.actualCost)}</p>
+                                )}
+                              </div>
+
+                              {/* Edit button */}
+                              <button onClick={() => openEdit(item)}
+                                className="flex-shrink-0 p-1.5 rounded-lg text-midnight/20 hover:text-midnight hover:bg-midnight/5 transition">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
+                            </div>
+
+                            {/* Progress bar */}
+                            {paidPct > 0 && paidPct < 100 && (
+                              <div className="mt-3 h-1 bg-gray-100 rounded-full overflow-hidden">
+                                <div className="h-full bg-green-400 rounded-full" style={{ width: `${paidPct}%` }} />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           );
         })}
@@ -557,6 +612,21 @@ export default function OrcamentoPage() {
               </div>
 
               <div className="space-y-4">
+                {events.length > 0 && (
+                  <div>
+                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Evento</label>
+                    <select
+                      value={formEventId ?? ""}
+                      onChange={e => setFormEventId(e.target.value || null)}
+                      className="w-full px-3 py-2.5 text-base font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
+                      <option value="">Casamento (geral)</option>
+                      {events.map(ev => (
+                        <option key={ev.id} value={ev.id}>{ev.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <div>
                   <label className="block font-body text-xs text-midnight/60 mb-1.5">Categoria *</label>
                   <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}

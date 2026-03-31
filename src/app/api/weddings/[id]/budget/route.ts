@@ -36,6 +36,7 @@ export async function GET(request: NextRequest, { params }: Params) {
       orderBy: { createdAt: "desc" },
       select: {
         id: true,
+        eventId: true,
         category: true,
         description: true,
         estimatedCost: true,
@@ -76,6 +77,7 @@ export async function POST(request: Request, { params }: Params) {
     const item = await prisma.budgetItem.create({
       data: {
         weddingId: id,
+        eventId: body.eventId || null,
         category: body.category,
         description: body.description,
         estimatedCost: Number(body.estimatedCost),

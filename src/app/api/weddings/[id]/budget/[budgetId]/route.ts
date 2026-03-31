@@ -56,6 +56,7 @@ export async function PUT(request: Request, { params }: Params) {
       where: { id: budgetId },
       data: {
         category: body.category,
+        eventId: body.eventId !== undefined ? (body.eventId || null) : undefined,
         description: body.description,
         estimatedCost: body.estimatedCost !== undefined ? Number(body.estimatedCost) : undefined,
         actualCost: body.actualCost !== undefined ? Number(body.actualCost) : undefined,
