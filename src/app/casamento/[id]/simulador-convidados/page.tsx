@@ -409,9 +409,10 @@ interface GuestAttendanceChartProps {
   guests: Guest[];
   weddingCity: string;
   weddingState: string;
+  weddingDate: string;
 }
 
-function GuestAttendanceChart({ guests, weddingCity, weddingState }: GuestAttendanceChartProps) {
+function GuestAttendanceChart({ guests, weddingCity, weddingState, weddingDate }: GuestAttendanceChartProps) {
   const [result, setResult] = useState<ReturnType<typeof simulateAttendance> | null>(null);
 
   useEffect(() => {
@@ -454,10 +455,10 @@ function GuestAttendanceChart({ guests, weddingCity, weddingState }: GuestAttend
       simulateAttendance(guestInputs, {
         city:        weddingCity,
         state:       weddingState,
-        weddingDate: new Date().toISOString(),
+        weddingDate,
       }),
     );
-  }, [guests, weddingCity, weddingState]);
+  }, [guests, weddingCity, weddingState, weddingDate]);
 
   if (!result) return null;
 
@@ -1073,6 +1074,7 @@ export default function SimuladorConvidadosPage() {
               guests={allGuests}
               weddingCity={wedding.city ?? ""}
               weddingState={wedding.state ?? ""}
+              weddingDate={wedding.weddingDate ? String(wedding.weddingDate) : "2026-01-03"}
             />
             <motion.div
               initial={{ opacity: 0, y: 24 }}
