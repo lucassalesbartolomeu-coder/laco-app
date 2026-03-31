@@ -18,6 +18,7 @@ import { dddMap } from "@/lib/ddd-map";
 import { DDD_COORDS, STATE_CENTROID, haversineKm, dddToWeddingKm } from "@/lib/ddd-coords";
 import type { Guest, WeddingWithRelations } from "@/types";
 import { simulateAttendance } from "@/lib/attendance-simulator";
+import type { GuestInput } from "@/lib/attendance-simulator";
 
 // ─── Types ──────────────────────────────────────────────────────
 
@@ -684,10 +685,10 @@ function EmptyState({ id, weddingState, isDestinationWedding }: EmptyStateProps)
 
     const wCoords = STATE_CENTROID[weddingState.toUpperCase()];
 
-    const guestInputs = groups.flatMap((grp) => {
+    const guestInputs: GuestInput[] = groups.flatMap((grp): GuestInput[] => {
       if (grp.isInternational) {
         return Array.from({ length: grp.count }, () => ({
-          isInternational: true as const,
+          isInternational: true,
           category: undefined,
         }));
       }
@@ -702,7 +703,7 @@ function EmptyState({ id, weddingState, isDestinationWedding }: EmptyStateProps)
         city: dg.city,
         category: dg.category || undefined,
         distanceKm,
-        isInternational: false as const,
+        isInternational: false,
       }));
     });
 
