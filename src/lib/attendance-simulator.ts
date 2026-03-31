@@ -18,11 +18,6 @@ export interface WeddingInput {
   state: string;
   weddingDate: string; // ISO date string
   style?: string;
-  /**
-   * Destination weddings draw guests who already budgeted for travel,
-   * so remote attendees have a slightly higher conversion rate.
-   */
-  isDestinationWedding?: boolean;
 }
 
 interface CategoryStats {
@@ -93,24 +88,15 @@ const feriadosFixos = [
  * Distance-based attendance probability using km buckets.
  * More granular and accurate than state adjacency.
  */
-function getProbabilityByKm(
-  distanceKm: number,
-  isDestination: boolean,
-): number {
+function getProbabilityByKm(distanceKm: number): number {
   // Calibrated on Brazilian wedding data: culture of traveling for family events
   // means medium distances (300-600 km) still have strong attendance.
-  let base: number;
-  if      (distanceKm < 50)   base = 93; // same metro area
-  else if (distanceKm < 150)  base = 89; // day-trip distance
-  else if (distanceKm < 300)  base = 83; // short road trip
-  else if (distanceKm < 600)  base = 75; // long drive or cheap flight — very common in BR
-  else if (distanceKm < 1200) base = 58; // usually requires flight
-  else                        base = 45; // very far, definitely flies
-
-  // Destination wedding: guests who already decided to travel commit more
-  if (isDestination && distanceKm > 300) base += 8;
-
-  return base;
+  if      (distanceKm < 50)   return 93; // same metro area
+  else if (distanceKm < 150)  return 89; // day-trip distance
+  else if (distanceKm < 300)  return 83; // short road trip
+  else if (distanceKm < 600)  return 75; // long drive or cheap flight — very common in BR
+  else if (distanceKm < 1200) return 58; // usually requires flight
+  else                        return 45; // very far, definitely flies
 }
 
 /**
@@ -119,7 +105,6 @@ function getProbabilityByKm(
 function getDistanceProbabilityByState(
   guestState: string | undefined,
   weddingState: string,
-  isDestination: boolean,
 ): number {
   if (!guestState) return 70;
 
@@ -129,25 +114,20 @@ function getDistanceProbabilityByState(
   if (gs === ws) return 85;
 
   const neighbors = neighborStates[ws] ?? [];
-  if (neighbors.includes(gs)) {
-    return isDestination ? 74 : 70;
-  }
+  if (neighbors.includes(gs)) return 70;
 
   const planeOrigins = needsPlaneFrom[ws] ?? [];
   const planeOriginsGuest = needsPlaneFrom[gs] ?? [];
-  if (planeOrigins.includes(gs) || planeOriginsGuest.includes(ws)) {
-    return isDestination ? 50 : 45;
-  }
+  if (planeOrigins.includes(gs) || planeOriginsGuest.includes(ws)) return 45;
 
-  return isDestination ? 62 : 55;
+  return 55;
 }
 
 /**
  * International guests have lower base attendance.
- * Destination weddings significantly improve international attendance.
  */
-function getInternationalProbability(isDestination: boolean): number {
-  return isDestination ? 48 : 35;
+function getInternationalProbability(): number {
+  return 35;
 }
 
 /**
@@ -205,7 +185,6 @@ export function simulateAttendance(
   const weddingDate = new Date(wedding.weddingDate);
   const dayMod = getDayOfWeekModifier(weddingDate);
   const holidayBonus = isNearHoliday(weddingDate) ? 5 : 0;
-  const isDestination = wedding.isDestinationWedding ?? false;
 
   const categoryMap: Record<string, { invited: number; expectedSum: number }> = {};
   let totalExpectedSum = 0;
@@ -214,11 +193,11 @@ export function simulateAttendance(
     let distProb: number;
 
     if (guest.isInternational) {
-      distProb = getInternationalProbability(isDestination);
+      distProb = getInternationalProbability();
     } else if (guest.distanceKm !== undefined) {
-      distProb = getProbabilityByKm(guest.distanceKm, isDestination);
+      distProb = getProbabilityByKm(guest.distanceKm);
     } else {
-      distProb = getDistanceProbabilityByState(guest.state, wedding.state, isDestination);
+      distProb = getDistanceProbabilityByState(guest.state, wedding.state);
     }
 
     const catMod = getCategoryModifier(guest.category);

@@ -255,10 +255,9 @@ interface AttendancePredictionProps {
   guests: Guest[];
   weddingCity: string;
   weddingState: string;
-  isDestinationWedding: boolean;
 }
 
-function AttendancePrediction({ guests, weddingCity, weddingState, isDestinationWedding }: AttendancePredictionProps) {
+function AttendancePrediction({ guests, weddingCity, weddingState }: AttendancePredictionProps) {
   const [prediction, setPrediction] = useState<{
     expected: number;
     groups: { label: string; count: number; rate: string }[];
@@ -268,10 +267,10 @@ function AttendancePrediction({ guests, weddingCity, weddingState, isDestination
   useEffect(() => {
     let expected = 0;
     const groups = [
-      { label: "Menos de 150 km",  min: 0,    max: 150,  rate: isDestinationWedding ? 92 : 89, count: 0 },
-      { label: "150 – 300 km",     min: 150,  max: 300,  rate: isDestinationWedding ? 86 : 83, count: 0 },
-      { label: "300 – 600 km",     min: 300,  max: 600,  rate: isDestinationWedding ? 83 : 75, count: 0 },
-      { label: "Mais de 600 km",   min: 600,  max: Infinity, rate: isDestinationWedding ? 66 : 58, count: 0 },
+      { label: "Menos de 150 km",  min: 0,    max: 150,  rate: 89, count: 0 },
+      { label: "150 – 300 km",     min: 150,  max: 300,  rate: 83, count: 0 },
+      { label: "300 – 600 km",     min: 300,  max: 600,  rate: 75, count: 0 },
+      { label: "Mais de 600 km",   min: 600,  max: Infinity, rate: 58, count: 0 },
     ];
     let intlCount = 0;
 
@@ -281,7 +280,7 @@ function AttendancePrediction({ guests, weddingCity, weddingState, isDestination
 
       if (guest.phone && isInternationalPhone(guest.phone)) {
         intlCount++;
-        rate = isDestinationWedding ? 40 : 28;
+        rate = 28;
         expected += rate / 100;
         return;
       }
@@ -296,7 +295,7 @@ function AttendancePrediction({ guests, weddingCity, weddingState, isDestination
       } else {
         // No phone or unrecognised DDD → same state fallback
         groups[0].count++;
-        rate = isDestinationWedding ? 87 : 85;
+        rate = 85;
       }
 
       expected += rate / 100;
@@ -307,7 +306,7 @@ function AttendancePrediction({ guests, weddingCity, weddingState, isDestination
       groups: groups.map((g) => ({ label: g.label, count: g.count, rate: `~${g.rate}%` })),
       intlCount,
     });
-  }, [guests, weddingCity, weddingState, isDestinationWedding]);
+  }, [guests, weddingCity, weddingState]);
 
   if (!prediction) return null;
 
@@ -343,9 +342,7 @@ function AttendancePrediction({ guests, weddingCity, weddingState, isDestination
               <Globe className="w-3 h-3 text-purple-500" /> Internacional
             </p>
             <p className="font-heading text-xl text-midnight">{prediction.intlCount}</p>
-            <p className="font-body text-xs text-purple-600">
-              ~{isDestinationWedding ? 48 : 35}% presença
-            </p>
+            <p className="font-body text-xs text-purple-600">~35% presença</p>
           </div>
         )}
       </div>
@@ -376,14 +373,6 @@ function AttendancePrediction({ guests, weddingCity, weddingState, isDestination
         </div>
       </div>
 
-      {isDestinationWedding && (
-        <div className="mt-4 p-3 bg-gold/10 border border-gold/25 rounded-xl">
-          <p className="font-body text-xs text-midnight/80">
-            ✈️ <strong>Destination wedding:</strong> convidados de longe que confirmam já decidiram ir —
-            taxa de presença ajustada para cima.
-          </p>
-        </div>
-      )}
     </motion.div>
   );
 }
@@ -420,10 +409,9 @@ interface GuestAttendanceChartProps {
   guests: Guest[];
   weddingCity: string;
   weddingState: string;
-  isDestinationWedding: boolean;
 }
 
-function GuestAttendanceChart({ guests, weddingCity, weddingState, isDestinationWedding }: GuestAttendanceChartProps) {
+function GuestAttendanceChart({ guests, weddingCity, weddingState }: GuestAttendanceChartProps) {
   const [result, setResult] = useState<ReturnType<typeof simulateAttendance> | null>(null);
 
   useEffect(() => {
@@ -464,13 +452,12 @@ function GuestAttendanceChart({ guests, weddingCity, weddingState, isDestination
 
     setResult(
       simulateAttendance(guestInputs, {
-        city:                 weddingCity,
-        state:                weddingState,
-        weddingDate:          new Date().toISOString(),
-        isDestinationWedding,
+        city:        weddingCity,
+        state:       weddingState,
+        weddingDate: new Date().toISOString(),
       }),
     );
-  }, [guests, weddingCity, weddingState, isDestinationWedding]);
+  }, [guests, weddingCity, weddingState]);
 
   if (!result) return null;
 
@@ -624,10 +611,9 @@ interface EmptyStateProps {
   id: string;
   weddingCity: string;
   weddingState: string;
-  isDestinationWedding: boolean;
 }
 
-function EmptyState({ id, weddingCity, weddingState, isDestinationWedding }: EmptyStateProps) {
+function EmptyState({ id, weddingCity, weddingState }: EmptyStateProps) {
   const [groups, setGroups] = useState<AnyGroup[]>([]);
   const [dddInput, setDddInput] = useState("");
   const [countInput, setCountInput] = useState("");
@@ -712,10 +698,9 @@ function EmptyState({ id, weddingCity, weddingState, isDestinationWedding }: Emp
 
     setSimResult(
       simulateAttendance(guestInputs, {
-        city: weddingCity,
-        state: weddingState,
+        city:        weddingCity,
+        state:       weddingState,
         weddingDate: new Date().toISOString(),
-        isDestinationWedding,
       })
     );
   }
@@ -848,7 +833,7 @@ function EmptyState({ id, weddingCity, weddingState, isDestinationWedding }: Emp
             </button>
           </div>
           <p className="font-body text-[10px] text-purple-500 mt-1">
-            Taxa base: ~{isDestinationWedding ? "48" : "35"}% de presença
+            Taxa base: ~35% de presença
           </p>
         </div>
 
@@ -1007,8 +992,6 @@ export default function SimuladorConvidadosPage() {
   const [wedding, setWedding] = useState<WeddingWithRelations | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isDestinationWedding, setIsDestinationWedding] = useState(false);
-
   useEffect(() => {
     if (status !== "authenticated") return;
 
@@ -1078,34 +1061,6 @@ export default function SimuladorConvidadosPage() {
           </p>
         </motion.div>
 
-        {/* Destination wedding toggle */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="bg-white rounded-2xl shadow-sm border border-midnight/10 p-4 flex items-start justify-between gap-4"
-        >
-          <div>
-            <p className="font-body font-semibold text-sm text-midnight">Destination Wedding</p>
-            <p className="font-body text-xs text-gray-500 mt-0.5">
-              Local diferente da cidade dos noivos ou em resort/pousada. Convidados que confirmam já decidiram viajar —
-              isso aumenta a taxa de comparecimento de quem está longe.
-            </p>
-          </div>
-          <button
-            onClick={() => setIsDestinationWedding((v) => !v)}
-            className={`relative flex-shrink-0 w-12 h-6 rounded-full transition-colors duration-200 ${
-              isDestinationWedding ? "bg-gold" : "bg-gray-200"
-            }`}
-          >
-            <span
-              className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
-                isDestinationWedding ? "translate-x-6" : "translate-x-0"
-              }`}
-            />
-          </button>
-        </motion.div>
-
         {hasGuests ? (
           <>
             <GuestOriginMap guests={allGuests} weddingState={wedding.state ?? ""} />
@@ -1113,13 +1068,11 @@ export default function SimuladorConvidadosPage() {
               guests={allGuests}
               weddingCity={wedding.city ?? ""}
               weddingState={wedding.state ?? ""}
-              isDestinationWedding={isDestinationWedding}
             />
             <GuestAttendanceChart
               guests={allGuests}
               weddingCity={wedding.city ?? ""}
               weddingState={wedding.state ?? ""}
-              isDestinationWedding={isDestinationWedding}
             />
             <motion.div
               initial={{ opacity: 0, y: 24 }}
@@ -1139,7 +1092,6 @@ export default function SimuladorConvidadosPage() {
             id={id}
             weddingCity={wedding.city ?? ""}
             weddingState={wedding.state ?? ""}
-            isDestinationWedding={isDestinationWedding}
           />
         )}
 
