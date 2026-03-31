@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+export const maxDuration = 60; // extend Vercel function timeout to 60s
 
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
@@ -214,14 +215,14 @@ export async function POST(request: Request, { params }: Params) {
 
     // Gera identidade via GPT-4o (com vision se foto fornecida)
     const response = await client.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { role: "user", content: userContent as any },
       ],
       response_format: { type: "json_object" },
-      max_tokens: 2500,
+      max_tokens: 1500,
       temperature: 0.85,
     });
 

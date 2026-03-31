@@ -4,11 +4,8 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 import WhatsAppBlast from "@/components/whatsapp-blast";
-
-declare global {
-  interface Window { ContactsManager: unknown; }
-}
 
 /* ─── Types ─────────────────────────────────────────────────────────── */
 
@@ -200,14 +197,11 @@ export default function ConvidadosPage() {
   const [filterCategory, setFilterCategory] = useState("todos");
   const [filterStatus, setFilterStatus] = useState("todos");
 
-  // Contact Picker
-  const [contactPickerSupported, setContactPickerSupported] = useState(false);
-  const [pickingContacts, setPickingContacts] = useState(false);
+  // Contact Picker (result review modal — populated by import page)
   const [pickedContacts, setPickedContacts] = useState<{ name: string; phone: string; suggested?: string }[]>([]);
   const [pickedCategory, setPickedCategory] = useState<Category>("familia_noivo");
   const [pickedList, setPickedList] = useState<GuestListType>("A");
   const [importingContacts, setImportingContacts] = useState(false);
-  const [cleaningNames, setCleaningNames] = useState(false);
 
   // Modal (add guest)
   const [modalOpen, setModalOpen] = useState(false);
@@ -256,12 +250,6 @@ export default function ConvidadosPage() {
     if (authStatus === "authenticated") fetchGuests();
   }, [authStatus, fetchGuests]);
 
-  useEffect(() => {
-    setContactPickerSupported(
-      typeof navigator !== "undefined" && "contacts" in navigator && "ContactsManager" in window
-    );
-  }, []);
-
   /* ── Computed ─────────────────────────────────────────────────── */
 
   const guestsByList = useMemo(() => ({
@@ -291,53 +279,6 @@ export default function ConvidadosPage() {
   const totalA = guestsByList.A.length;
 
   /* ── Actions ───────────────────────────────────────────────────── */
-
-  async function handleContactPicker() {
-    if (!contactPickerSupported) return;
-    setPickingContacts(true);
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const raw = await (navigator as any).contacts.select(["name", "tel"], { multiple: true });
-      const parsed: { name: string; phone: string; suggested?: string }[] = [];
-      for (const entry of raw) {
-        const name = (entry.name?.[0] ?? "").trim();
-        const phone = (entry.tel?.[0] ?? "").trim();
-        if (name) parsed.push({ name, phone });
-      }
-      if (parsed.length === 0) return;
-
-      setPickedContacts(parsed);
-      setPickedCategory("familia_noivo");
-      setPickedList(activeList);
-
-      // Clean names via AI in background
-      setCleaningNames(true);
-      try {
-        const res = await fetch("/api/ai/clean-names", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ contacts: parsed }),
-        });
-        if (res.ok) {
-          const { cleaned } = await res.json() as { cleaned: string[] };
-          setPickedContacts((prev) =>
-            prev.map((c, i) => ({
-              ...c,
-              suggested: cleaned[i] && cleaned[i] !== c.name ? cleaned[i] : undefined,
-            }))
-          );
-        }
-      } catch {
-        // AI failed — silently ignore
-      } finally {
-        setCleaningNames(false);
-      }
-    } catch {
-      // cancelled or permission denied
-    } finally {
-      setPickingContacts(false);
-    }
-  }
 
   async function confirmImportContacts() {
     if (pickedContacts.length === 0) return;
@@ -500,26 +441,13 @@ export default function ConvidadosPage() {
               <WhatsAppIcon className="w-4 h-4" />
               <span className="hidden sm:inline">Confirmar</span>
             </button>
-            <button
-              onClick={contactPickerSupported ? handleContactPicker : undefined}
-              disabled={pickingContacts}
-              className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-body font-medium transition flex-shrink-0 ${
-                contactPickerSupported
-                  ? "bg-midnight text-white hover:bg-midnight/90 shadow-sm"
-                  : "bg-gray-100 text-gray-400 cursor-default"
-              }`}
-              title={contactPickerSupported ? "Importar contatos da agenda" : "Disponível no Chrome para Android"}
+            <Link
+              href={`/casamento/${weddingId}/importar`}
+              className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-body font-medium bg-midnight text-white hover:bg-midnight/90 shadow-sm transition flex-shrink-0"
             >
-              {pickingContacts ? (
-                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                </svg>
-              ) : (
-                <PeopleIcon className="w-4 h-4" />
-              )}
+              <PeopleIcon className="w-4 h-4" />
               Importar
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -1044,16 +972,6 @@ export default function ConvidadosPage() {
                       Convidados importados para a <strong>{LIST_META[pickedList].label}</strong> nao serao vistos pela cerimonialista.
                       Voce pode move-los para a Lista Oficial depois.
                     </p>
-                  </div>
-                )}
-
-                {cleaningNames && (
-                  <div className="flex items-center gap-2 mb-3 text-xs font-body text-midnight">
-                    <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                    </svg>
-                    IA verificando os nomes...
                   </div>
                 )}
 

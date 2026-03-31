@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import BottomNav from "@/components/bottom-nav";
+import { TEMPLATES } from "@/lib/identity-kit-templates";
 
 /* ─── Icons ─────────────────────────────────────────────────────────── */
 
@@ -48,22 +49,50 @@ function PencilIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
+function CheckIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
+
 /* ─── Page ──────────────────────────────────────────────────────────── */
 
 export default function MeuSitePage() {
   const params = useParams();
   const weddingId = params.id as string;
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [hasKit, setHasKit] = useState<boolean | null>(null);
+  const [applyingPreset, setApplyingPreset] = useState<string | null>(null);
+  const [appliedPreset, setAppliedPreset] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "authenticated") {
       fetch(`/api/weddings/${weddingId}/identity-kit`)
         .then(r => r.ok ? r.json() : null)
-        .then(d => setHasKit(!!(d?.palette)))
+        .then(d => setHasKit(!!(d?.kit?.aiResponse)))
         .catch(() => setHasKit(false));
     }
   }, [status, weddingId]);
+
+  async function applyPreset(presetId: string) {
+    setApplyingPreset(presetId);
+    try {
+      const res = await fetch(`/api/weddings/${weddingId}/identity-kit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preset: true, presetId }),
+      });
+      if (res.ok) {
+        setAppliedPreset(presetId);
+        setTimeout(() => router.push(`/casamento/${weddingId}/identity-kit`), 800);
+      }
+    } finally {
+      setApplyingPreset(null);
+    }
+  }
 
   if (status === "loading") {
     return (
@@ -75,6 +104,7 @@ export default function MeuSitePage() {
   if (!session) return null;
 
   const base = `/casamento/${weddingId}`;
+  const templateList = Object.values(TEMPLATES);
 
   const papelaria = [
     { icon: "🎨", label: "Brasão / Monograma", desc: "Iniciais do casal em selo circular", available: true },
@@ -99,7 +129,7 @@ export default function MeuSitePage() {
           </div>
           <h1 className="font-heading text-3xl text-white mb-2">Design</h1>
           <p className="font-body text-sm text-white/70 max-w-md">
-            Crie a identidade visual do casal com IA e monte o site dos noivos — tudo integrado.
+            Crie a identidade visual do casal com IA ou escolha uma arte pronta — tudo integrado ao site.
           </p>
         </div>
       </div>
@@ -108,7 +138,7 @@ export default function MeuSitePage() {
 
         {/* ── 1. Identidade Visual com IA ───────────────────────────── */}
         <div>
-          <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3 px-1">Passo 1</p>
+          <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3 px-1">Identidade Visual</p>
           <Link
             href={`${base}/identity-kit`}
             className="block bg-white rounded-2xl border border-gold/25 shadow-sm hover:shadow-md hover:border-gold/50 transition-all active:scale-[0.98] overflow-hidden"
@@ -120,14 +150,14 @@ export default function MeuSitePage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h2 className="font-body text-base font-semibold text-midnight">Identidade Visual</h2>
+                    <h2 className="font-body text-base font-semibold text-midnight">Criar com IA</h2>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-body font-medium bg-gold/10 text-gold">IA</span>
                     {hasKit && (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-body font-medium bg-green-100 text-green-700">Criada</span>
                     )}
                   </div>
                   <p className="font-body text-xs text-midnight/50 leading-relaxed">
-                    Gere paleta de cores, tipografia e imagens personalizadas. Alimenta automaticamente o convite digital e o site.
+                    Quiz de 5 passos — gere paleta, tipografia e identidade completa personalizada para o seu casamento.
                   </p>
                 </div>
                 <div className="flex-shrink-0 mt-0.5">
@@ -148,7 +178,61 @@ export default function MeuSitePage() {
           </Link>
         </div>
 
-        {/* ── 2. Site do Casamento ──────────────────────────────────── */}
+        {/* ── 2. Arte Pronta ────────────────────────────────────────── */}
+        <div>
+          <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3 px-1">Arte Pronta</p>
+          <div className="bg-white rounded-2xl border border-midnight/8 shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-midnight/6">
+              <p className="font-body text-sm font-semibold text-midnight">Escolha um tema pronto</p>
+              <p className="font-body text-xs text-stone mt-0.5">Toque para aplicar instantaneamente — sem quiz</p>
+            </div>
+            <div className="p-3 grid grid-cols-2 gap-2.5">
+              {templateList.map((t) => {
+                const isApplied = appliedPreset === t.id;
+                const isApplying = applyingPreset === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => !isApplying && !appliedPreset && applyPreset(t.id)}
+                    disabled={!!applyingPreset || !!appliedPreset}
+                    className={`relative text-left rounded-xl border-2 overflow-hidden transition-all active:scale-[0.97] ${
+                      isApplied
+                        ? "border-green-500"
+                        : "border-transparent hover:border-gold/40"
+                    }`}
+                  >
+                    {/* Color swatch strip */}
+                    <div className="h-10 flex">
+                      <div className="flex-1" style={{ backgroundColor: t.colors.primary }} />
+                      <div className="flex-1" style={{ backgroundColor: t.colors.secondary }} />
+                      <div className="flex-1" style={{ backgroundColor: t.colors.accent }} />
+                      <div className="flex-1" style={{ backgroundColor: t.colors.background }} />
+                    </div>
+                    {/* Template info */}
+                    <div className="p-2.5" style={{ backgroundColor: t.colors.background }}>
+                      <p className="font-body text-xs font-semibold" style={{ color: t.colors.text }}>{t.name}</p>
+                      <p className="font-body text-[10px] leading-snug mt-0.5" style={{ color: t.colors.muted }}>{t.description}</p>
+                    </div>
+                    {/* Loading/Applied overlay */}
+                    {(isApplying || isApplied) && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-xl">
+                        {isApplying ? (
+                          <div className="w-5 h-5 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <div className="w-7 h-7 bg-green-500 rounded-full flex items-center justify-center">
+                            <CheckIcon className="w-4 h-4 text-white" />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* ── 3. Site do Casamento ──────────────────────────────────── */}
         <div>
           <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3 px-1">Passo 2</p>
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden opacity-70">
@@ -178,7 +262,7 @@ export default function MeuSitePage() {
           </div>
         </div>
 
-        {/* ── 3. Papelaria ──────────────────────────────────────────── */}
+        {/* ── 4. Papelaria ──────────────────────────────────────────── */}
         <div>
           <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3 px-1">Papelaria</p>
           <div className="space-y-2">
