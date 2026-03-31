@@ -23,6 +23,14 @@ function LockIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
+function MoreIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+    </svg>
+  );
+}
+
 /* ─── Page ──────────────────────────────────────────────────────────── */
 
 export default function MaisPage() {
@@ -77,43 +85,58 @@ export default function MaisPage() {
 
   return (
     <div className="min-h-screen bg-ivory pb-24">
-      {/* Header */}
-      <div className="bg-midnight px-5 pt-12 pb-8">
-        <h1 className="font-heading text-3xl text-white mb-1">Mais</h1>
-        <p className="font-body text-sm text-white/60">Serviços, cerimonialista, conta e configurações</p>
+      {/* Header with gradient */}
+      <div className="bg-gradient-to-br from-midnight via-midnight to-midnight/95 px-5 pt-12 pb-10 relative overflow-hidden">
+        {/* Decorative gold blur accent */}
+        <div className="absolute top-8 right-0 w-40 h-40 bg-gold/10 rounded-full blur-3xl" />
+        {/* Dot pattern */}
+        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
+
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-3">
+            <MoreIcon className="w-5 h-5 text-gold" />
+            <span className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold">Configurações e Serviços</span>
+          </div>
+          <h1 className="font-heading text-3xl font-bold text-white mb-1">Mais</h1>
+          <p className="font-body text-sm text-white/70">Serviços, cerimonialista, conta e configurações</p>
+        </div>
       </div>
 
       {/* Sections */}
-      <div className="px-4 -mt-3 relative z-10 space-y-6">
+      <div className="px-4 -mt-5 relative z-10 space-y-6 pb-4">
         {services.map((section) => (
           <div key={section.category}>
-            <h2 className="font-heading text-sm text-midnight/60 uppercase tracking-wider mb-2 px-1">
+            <h2 className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3 px-1">
               {section.category}
             </h2>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
+            <div className="bg-white rounded-2xl border border-midnight/8 shadow-card overflow-hidden divide-y divide-midnight/5">
               {section.items.map((item) => {
                 const inner = (
-                  <div className="flex items-center gap-3.5 px-4 py-3.5">
+                  <div className="flex items-center gap-4 px-4 py-3.5">
                     <span className={`text-xl flex-shrink-0 ${!item.available ? "grayscale opacity-50" : ""}`}>{item.icon}</span>
                     <div className="flex-1 min-w-0">
-                      <p className={`font-body text-sm font-medium ${item.available ? "text-midnight" : "text-gray-400"}`}>
+                      <p className={`font-body text-sm font-semibold leading-tight ${item.available ? "text-midnight" : "text-stone/50"}`}>
                         {item.label}
                       </p>
-                      <p className="font-body text-[11px] text-gray-400 leading-snug">{item.desc}</p>
+                      <p className={`font-body text-xs leading-snug ${item.available ? "text-stone" : "text-stone/40"}`}>{item.desc}</p>
                     </div>
                     {item.available ? (
-                      <ArrowIcon className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                      <ArrowIcon className="w-5 h-5 text-midnight/15 flex-shrink-0" />
                     ) : (
                       <div className="flex items-center gap-1 flex-shrink-0">
-                        <LockIcon className="w-3 h-3 text-gray-300" />
-                        <span className="font-body text-[9px] text-gray-300">Breve</span>
+                        <LockIcon className="w-4 h-4 text-stone/30" />
+                        <span className="font-body text-[10px] text-stone/40">Breve</span>
                       </div>
                     )}
                   </div>
                 );
 
                 return item.available ? (
-                  <Link key={item.label} href={item.href} className="block hover:bg-gray-50/50 transition-colors active:bg-gray-100">
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="block hover:bg-midnight/2 transition-colors duration-150 active:bg-midnight/5"
+                  >
                     {inner}
                   </Link>
                 ) : (
@@ -126,11 +149,11 @@ export default function MaisPage() {
           </div>
         ))}
 
-        {/* Logout */}
-        <div className="pt-2 pb-4">
+        {/* Logout button */}
+        <div className="pt-4">
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="w-full py-3 border-2 border-red-200 text-red-400 rounded-2xl font-body text-sm font-medium hover:bg-red-50 transition-colors"
+            className="w-full py-3 border border-red-200/50 text-red-500 rounded-2xl font-body text-sm font-semibold hover:bg-red-50/50 transition-all duration-150 active:scale-[0.98]"
           >
             Sair da conta
           </button>

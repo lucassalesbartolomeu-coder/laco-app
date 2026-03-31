@@ -36,8 +36,10 @@ const config: Config = {
       },
       fontFamily: {
         display: ["var(--font-raleway)", "Raleway", "sans-serif"],
-        heading: ["var(--font-cormorant)", "Cormorant Garamond", "Georgia", "serif"],
+        heading: ["var(--font-dm-sans)", "DM Sans", "system-ui", "sans-serif"],
         body:    ["var(--font-dm-sans)", "DM Sans", "system-ui", "sans-serif"],
+        /* Editorial — uso raro, quotes e splash */
+        editorial: ["var(--font-cormorant)", "Cormorant Garamond", "Georgia", "serif"],
         /* Legacy alias */
         logo:    ["var(--font-raleway)", "Raleway", "sans-serif"],
       },

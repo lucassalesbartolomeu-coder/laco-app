@@ -33,6 +33,14 @@ function CheckIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
+function CheckCircleIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  );
+}
+
 /* ─── Page ──────────────────────────────────────────────────────────── */
 
 export default function ExecucaoPage() {
@@ -111,16 +119,20 @@ export default function ExecucaoPage() {
 
   return (
     <div className="min-h-screen bg-ivory pb-24">
-      {/* Hero */}
-      <div className="bg-gradient-to-br from-gold/90 via-gold to-gold/80 px-5 pt-12 pb-10 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+      {/* Header with gradient */}
+      <div className="bg-gradient-to-br from-gold via-champagne to-gold/90 px-5 pt-12 pb-10 relative overflow-hidden">
+        {/* Decorative gold blur accent */}
+        <div className="absolute top-6 right-0 w-48 h-48 bg-gold/20 rounded-full blur-3xl" />
+        {/* Dot pattern */}
+        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+
         <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-2">
-            <CheckIcon className="w-5 h-5 text-white/80" />
-            <span className="font-body text-xs text-white/60 uppercase tracking-wider">Gestão e Acompanhamento</span>
+          <div className="flex items-center gap-2 mb-3">
+            <CheckCircleIcon className="w-5 h-5 text-midnight" />
+            <span className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-midnight">Gestão e Acompanhamento</span>
           </div>
-          <h1 className="font-heading text-3xl text-white mb-2">Organizar</h1>
-          <p className="font-body text-sm text-white/70 max-w-md">
+          <h1 className="font-heading text-3xl font-bold text-midnight mb-2">Organizar</h1>
+          <p className="font-body text-sm text-midnight/70 max-w-md leading-relaxed">
             Gerencie convidados, orçamento, fornecedores, contratos e o cronograma do grande dia.
           </p>
         </div>
@@ -128,46 +140,45 @@ export default function ExecucaoPage() {
 
       {/* Quick stats bar */}
       {guestStats.total > 0 && (
-        <div className="px-4 -mt-5 relative z-10 mb-4">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-body text-xs text-gray-400">Confirmação de presença</span>
-              <span className="font-body text-xs font-semibold text-midnight">{pctConfirmed}%</span>
+        <div className="px-4 -mt-5 relative z-10 mb-6">
+          <div className="bg-white rounded-2xl border border-midnight/8 shadow-card p-4">
+            <div className="flex items-center justify-between mb-3">
+              <span className="font-body text-[10px] font-medium tracking-[0.1em] uppercase text-gold">Confirmação de presença</span>
+              <span className="font-body text-sm font-semibold text-midnight">{pctConfirmed}%</span>
             </div>
-            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="w-full h-3 bg-fog rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-midnight to-green-400 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-gold to-champagne rounded-full transition-all duration-500"
                 style={{ width: `${pctConfirmed}%` }}
               />
             </div>
-            <div className="flex items-center justify-between mt-2">
-              <span className="font-body text-[10px] text-gray-400">{guestStats.confirmed} confirmados</span>
-              <span className="font-body text-[10px] text-gray-400">{guestStats.pending} pendentes</span>
-              <span className="font-body text-[10px] text-gray-400">{guestStats.declined} recusados</span>
+            <div className="flex items-center justify-between mt-3">
+              <span className="font-body text-[10px] text-stone">{guestStats.confirmed} confirmados</span>
+              <span className="font-body text-[10px] text-stone">{guestStats.pending} pendentes</span>
+              <span className="font-body text-[10px] text-stone">{guestStats.declined} recusados</span>
             </div>
           </div>
         </div>
       )}
 
       {/* Sections */}
-      <div className="px-4 space-y-6" style={{ marginTop: guestStats.total > 0 ? undefined : "-1.25rem" }}>
+      <div className="px-4 space-y-7 pb-4" style={{ marginTop: guestStats.total > 0 ? undefined : "-1.25rem" }}>
         {sections.map((section) => (
           <div key={section.category}>
-            <div className="flex items-center gap-2 mb-3 px-1">
-              <div className={`w-2 h-2 rounded-full ${section.color}`} />
-              <h2 className="font-heading text-base text-midnight">{section.category}</h2>
-            </div>
+            <h2 className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3 px-1">
+              {section.category}
+            </h2>
             <div className="space-y-2">
               {section.items.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-midnight/20 transition-all active:scale-[0.98]"
+                  className="flex items-center gap-4 bg-white rounded-2xl border border-midnight/8 shadow-card p-4 hover:shadow-md hover:border-midnight/15 transition-all duration-150 active:scale-[0.98]"
                 >
                   <span className="text-2xl flex-shrink-0">{item.icon}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-body text-sm font-medium text-midnight">{item.label}</p>
-                    <p className="font-body text-xs text-gray-400">{item.desc}</p>
+                    <p className="font-body text-sm font-semibold text-midnight">{item.label}</p>
+                    <p className="font-body text-xs text-stone leading-snug">{item.desc}</p>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {item.badge && (
@@ -175,7 +186,7 @@ export default function ExecucaoPage() {
                         {item.badge}
                       </span>
                     )}
-                    <ArrowIcon className="w-4 h-4 text-gray-300" />
+                    <ArrowIcon className="w-5 h-5 text-midnight/20" />
                   </div>
                 </Link>
               ))}

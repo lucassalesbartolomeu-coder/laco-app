@@ -20,3 +20,5 @@ export {
   FinanceSkeleton,
   Spinner,
 } from "./skeleton";
+export { PageHeader, HeaderStat } from "./page-header";
+export { Input } from "./input";

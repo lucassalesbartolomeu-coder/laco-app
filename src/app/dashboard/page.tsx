@@ -53,7 +53,7 @@ function CountdownRing({ days }: { days: number }) {
   const dash = circ * pct;
 
   return (
-    <div className="relative w-24 h-24 flex-shrink-0">
+    <div className="relative w-24 h-24 flex-shrink-0 animate-fade-in">
       <svg viewBox="0 0 88 88" className="w-24 h-24 -rotate-90">
         <circle cx="44" cy="44" r={r} fill="none" stroke="currentColor" strokeWidth="6" className="text-white/20" />
         <circle
@@ -61,11 +61,11 @@ function CountdownRing({ days }: { days: number }) {
           stroke="currentColor" strokeWidth="6"
           strokeDasharray={`${dash} ${circ}`}
           strokeLinecap="round"
-          className="text-white"
+          className="text-gold"
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-heading text-2xl font-bold text-white leading-none">{days}</span>
+        <span className="font-body text-2xl font-bold text-white leading-none">{days}</span>
         <span className="font-body text-[10px] text-white/70 leading-none mt-0.5">dias</span>
       </div>
     </div>
@@ -92,12 +92,12 @@ function StatTile({
     green: "bg-green-50 text-green-600",
   };
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex flex-col gap-2">
+    <div className="bg-white rounded-2xl border border-midnight/8 shadow-card p-4 flex flex-col gap-2 animate-fade-in">
       <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${colors[color]}`}>
         {icon}
       </div>
       <div>
-        <p className="font-heading text-2xl font-semibold text-midnight leading-none">{value}</p>
+        <p className="font-body text-2xl font-semibold text-midnight leading-none">{value}</p>
         {sub && <p className="font-body text-[10px] text-midnight/40 mt-0.5">{sub}</p>}
         <p className="font-body text-xs text-midnight/50 mt-1">{label}</p>
       </div>
@@ -122,10 +122,10 @@ function ActionTile({
   return (
     <Link
       href={href}
-      className={`relative flex flex-col items-center justify-center gap-2 rounded-2xl border py-5 transition-all active:scale-[0.97] ${
+      className={`relative flex flex-col items-center justify-center gap-2 rounded-2xl border py-5 transition-all active:scale-[0.97] animate-fade-in ${
         highlight
-          ? "bg-gold text-white border-transparent shadow-sm hover:bg-gold/90"
-          : "bg-white border-gray-100 shadow-sm hover:border-midnight/40 hover:shadow-md"
+          ? "bg-gold text-white border-gold shadow-card hover:bg-gold/90"
+          : "bg-white border-midnight/8 shadow-card hover:border-midnight/20 hover:shadow-md"
       }`}
     >
       <div className={highlight ? "text-white" : "text-midnight"}>{icon}</div>
@@ -202,14 +202,14 @@ function PartnerInvitePanel({
 
   if (!isOwner) {
     return (
-      <div className="flex items-center gap-1.5 text-xs font-body text-midnight bg-midnight/10 px-2.5 py-1 rounded-full w-fit">
+      <div className="flex items-center gap-1.5 text-[10px] font-body text-gold bg-gold/10 px-2.5 py-1 rounded-full w-fit uppercase tracking-[0.2em] font-medium">
         Casamento compartilhado
       </div>
     );
   }
 
   return (
-    <div className="mt-3 pt-3 border-t border-gray-100">
+    <div className="mt-3 pt-3 border-t border-midnight/8">
       {hasPartner ? (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
@@ -355,9 +355,9 @@ export default function DashboardPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-fog flex items-center justify-center">
+      <div className="min-h-screen bg-ivory flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
           <p className="font-body text-sm text-midnight/40">Carregando…</p>
         </div>
       </div>
@@ -378,11 +378,11 @@ export default function DashboardPage() {
   const days = w ? daysUntil(w.weddingDate) : null;
 
   return (
-    <div className="min-h-screen bg-fog pb-24">
+    <div className="min-h-screen bg-ivory pb-24">
       {/* Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
+      <header className="bg-white border-b border-midnight/8 sticky top-0 z-20 shadow-sm">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center hover:opacity-80 transition">
             <Image
               src="/brand/logo-dark.svg"
               alt="Laço"
@@ -391,7 +391,7 @@ export default function DashboardPage() {
               priority
             />
           </Link>
-          <Link href="/perfil" className="w-8 h-8 rounded-full bg-midnight/10 flex items-center justify-center text-midnight hover:bg-midnight/20 transition">
+          <Link href="/perfil" className="w-8 h-8 rounded-full bg-midnight/10 flex items-center justify-center text-midnight hover:bg-midnight/15 transition">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
@@ -399,11 +399,11 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-3xl mx-auto px-4 py-8 space-y-6">
 
         {/* ── Greeting ── */}
-        <div>
-          <h2 className="font-heading text-2xl font-semibold text-midnight">
+        <div className="animate-fade-in">
+          <h2 className="font-body text-2xl font-semibold text-midnight">
             {firstName ? `Olá, ${firstName}!` : "Olá!"}
           </h2>
           <p className="font-body text-sm text-midnight/50 mt-0.5">
@@ -413,15 +413,15 @@ export default function DashboardPage() {
 
         {!w ? (
           /* ── Empty state ── */
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="h-1.5 bg-gradient-to-r from-midnight via-gold to-midnight/40" />
+          <div className="bg-white rounded-3xl border border-midnight/8 shadow-card overflow-hidden animate-fade-in">
+            <div className="h-1.5 bg-gradient-to-r from-midnight via-gold to-gold/60" />
             <div className="px-8 py-14 text-center">
               <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gold/10 flex items-center justify-center">
                 <svg className="w-8 h-8 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               </div>
-              <h3 className="font-heading text-2xl font-semibold text-midnight mb-2">
+              <h3 className="font-body text-2xl font-semibold text-midnight mb-2">
                 Seu casamento começa aqui
               </h3>
               <p className="font-body text-midnight/55 text-sm max-w-sm mx-auto mb-8 leading-relaxed">
@@ -429,7 +429,7 @@ export default function DashboardPage() {
               </p>
               <Link
                 href="/casamento/novo"
-                className="inline-flex items-center gap-2 px-8 py-3.5 bg-gold text-white rounded-xl font-body font-medium hover:bg-gold/90 transition-all active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-8 py-3.5 bg-gold text-midnight rounded-xl font-body font-medium hover:bg-gold/90 transition-all active:scale-[0.98]"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -447,19 +447,18 @@ export default function DashboardPage() {
             <ActivationChecklist weddingId={w.id} />
 
             {/* ── Hero countdown ── */}
-            <div className="bg-gradient-to-br from-midnight via-midnight to-midnight/90 rounded-3xl p-6 shadow-lg overflow-hidden relative">
-              {/* dot pattern overlay */}
-              <div className="absolute inset-0 opacity-20" style={{backgroundImage:"radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px)", backgroundSize:"20px 20px"}} />
-              {/* gold accent blur */}
-              <div className="absolute top-4 right-10 w-24 h-24 bg-gold/30 rounded-full blur-2xl" />
-              {/* decorative circle */}
-              <div className="absolute -top-8 -right-8 w-40 h-40 bg-white/5 rounded-full" />
-              <div className="absolute -bottom-12 -left-6 w-32 h-32 bg-white/5 rounded-full" />
+            <div className="bg-gradient-to-br from-midnight to-midnight/95 rounded-3xl p-6 shadow-lg overflow-hidden relative animate-fade-in">
+              {/* subtle gold blur circles */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gold/20 rounded-full blur-3xl" />
+              <div className="absolute bottom-6 left-12 w-28 h-28 bg-gold/10 rounded-full blur-3xl" />
+              {/* decorative circles */}
+              <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/5 rounded-full" />
+              <div className="absolute -bottom-16 -left-8 w-40 h-40 bg-white/5 rounded-full" />
 
               <div className="relative flex items-center justify-between gap-4">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <p className="font-body text-xs text-white/60 uppercase tracking-widest">
+                    <p className="font-body text-[10px] text-white/60 uppercase tracking-[0.2em] font-medium">
                       {days != null && days >= 0 ? "Contagem regressiva" : "Casamento realizado"}
                     </p>
                     {w.userId === userId && (
@@ -492,7 +491,7 @@ export default function DashboardPage() {
                       )
                     )}
                   </div>
-                  <h3 className="font-heading text-xl font-semibold text-white truncate">
+                  <h3 className="font-body text-xl font-semibold text-white truncate">
                     {w.partnerName1} &amp; {w.partnerName2}
                   </h3>
                   {w.weddingDate && (
@@ -542,7 +541,7 @@ export default function DashboardPage() {
 
             {/* ── Stats row ── */}
             {guestStats && guestStats.total > 0 && (
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-3 animate-slide-up">
                 <StatTile
                   label="Confirmados"
                   value={guestStats.confirmed}
@@ -582,7 +581,7 @@ export default function DashboardPage() {
 
             {/* ── Atividade Recente ── */}
             <div>
-              <p className="font-heading text-lg font-semibold text-midnight mb-3">
+              <p className="font-body text-lg font-semibold text-midnight mb-3">
                 Atividade Recente
               </p>
               <ActivityFeed weddingId={w.id} />
@@ -590,7 +589,7 @@ export default function DashboardPage() {
 
             {/* ── Quick actions ── */}
             <div>
-              <p className="font-body text-xs font-medium text-midnight/40 uppercase tracking-wider mb-3">
+              <p className="font-body text-[10px] font-medium text-gold uppercase tracking-[0.2em] mb-3">
                 Acesso rápido
               </p>
               <div className="grid grid-cols-3 gap-3">
@@ -655,8 +654,8 @@ export default function DashboardPage() {
             </div>
 
             {/* ── Partner section ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-              <p className="font-body text-xs font-medium text-midnight/40 uppercase tracking-wider mb-3">
+            <div className="bg-white rounded-2xl border border-midnight/8 shadow-card p-4 animate-fade-in">
+              <p className="font-body text-[10px] font-medium text-gold uppercase tracking-[0.2em] mb-3">
                 Parceiro(a)
               </p>
               <PartnerInvitePanel
@@ -668,9 +667,9 @@ export default function DashboardPage() {
 
             {/* ── Multiple weddings ── */}
             {weddings.length > 1 && (
-              <div>
+              <div className="animate-fade-in">
                 <div className="flex items-center justify-between mb-3">
-                  <p className="font-body text-xs font-medium text-midnight/40 uppercase tracking-wider">
+                  <p className="font-body text-[10px] font-medium text-gold uppercase tracking-[0.2em]">
                     Outros casamentos
                   </p>
                   <Link
@@ -685,9 +684,9 @@ export default function DashboardPage() {
                 </div>
                 <div className="space-y-2">
                   {weddings.slice(1).map((ww) => (
-                    <div key={ww.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center justify-between gap-3">
+                    <div key={ww.id} className="bg-white rounded-2xl border border-midnight/8 shadow-card p-4 flex items-center justify-between gap-3">
                       <div>
-                        <p className="font-heading text-sm font-semibold text-midnight">
+                        <p className="font-body text-sm font-semibold text-midnight">
                           {ww.partnerName1} &amp; {ww.partnerName2}
                         </p>
                         {ww.weddingDate && (

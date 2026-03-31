@@ -9,7 +9,7 @@ const FEATURES = [
       </svg>
     ),
     title: "Gestão de Convidados",
-    desc: "Importe, organize e acompanhe confirmações em tempo real.",
+    desc: "Importe, organize e acompanhe confirmações em tempo real",
   },
   {
     icon: (
@@ -17,8 +17,8 @@ const FEATURES = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
       </svg>
     ),
-    title: "Lista de Presentes",
-    desc: "Lista com Pix integrado. Convidados presenteiam pelo celular.",
+    title: "Lista de Presentes com Pix",
+    desc: "Convidados presenteiam pelo celular — tudo centralizado",
   },
   {
     icon: (
@@ -26,8 +26,8 @@ const FEATURES = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
       </svg>
     ),
-    title: "Site do Casamento",
-    desc: "Página personalizada com RSVP, contagem regressiva e fotos.",
+    title: "Site Personalizado",
+    desc: "Página com RSVP, contagem regressiva e fotos do grande dia",
   },
   {
     icon: (
@@ -36,7 +36,7 @@ const FEATURES = [
       </svg>
     ),
     title: "Simulador de Presença",
-    desc: "Estime quantos convidados vão comparecer com dados reais.",
+    desc: "Estime presença com dados reais — evite surpresas no orçamento",
   },
   {
     icon: (
@@ -45,7 +45,7 @@ const FEATURES = [
       </svg>
     ),
     title: "Controle de Orçamento",
-    desc: "Acompanhe gastos por categoria, fornecedores e pagamentos.",
+    desc: "Acompanhe cada despesa — por categoria, fornecedor e pagamento",
   },
   {
     icon: (
@@ -53,8 +53,8 @@ const FEATURES = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
       </svg>
     ),
-    title: "Painel Cerimonialista",
-    desc: "Gerencie múltiplos casamentos, equipe e comissões.",
+    title: "Painel para Cerimonialistas",
+    desc: "Gerencie múltiplos casamentos, equipe, comissões e contratos",
   },
 ];
 
@@ -103,7 +103,7 @@ export default function HomePage() {
       {/* ─── NAV ─── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-midnight/95 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
-          <span className="font-display text-2xl text-white tracking-tight">Laço</span>
+          <span className="font-display text-2xl text-white tracking-[0.3em] uppercase">Laço</span>
           <div className="flex items-center gap-3">
             <Link
               href="/login"
@@ -113,7 +113,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/registro"
-              className="font-body text-sm bg-gold text-white px-4 py-2 rounded-lg hover:bg-gold/90 transition font-medium"
+              className="font-body text-sm font-medium bg-gold text-white px-4 py-2 rounded-xl hover:bg-gold/90 transition"
             >
               Criar conta grátis
             </Link>
@@ -157,32 +157,26 @@ export default function HomePage() {
                 </span>
               </div>
 
-              <h1 className="font-heading text-5xl md:text-6xl text-white leading-[1.05] mb-6">
-                O casamento
+              <h1 className="font-body font-light text-5xl md:text-6xl text-white leading-[1.05] mb-6">
+                Planeje seu casamento
                 <br />
-                dos seus sonhos,
-                <br />
-                <span className="text-gold">organizado.</span>
+                <span className="text-gold">com elegância</span>
               </h1>
 
-              <p className="font-body text-lg text-white/65 mb-10 max-w-xl leading-relaxed">
-                Convidados, presentes, site, orçamento e RSVP — tudo em um só
-                lugar. Gratuito para começar.
+              <p className="font-body text-lg text-white/70 mb-10 max-w-xl leading-relaxed">
+                Convidados, presentes, site, orçamento e RSVP — tudo em um só lugar. Gratuito para começar.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
                   href="/registro"
-                  className="inline-flex items-center justify-center gap-2 bg-gold text-white font-body font-semibold text-base px-8 py-4 rounded-xl hover:bg-gold/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-2 bg-gold text-white font-body font-medium text-base h-12 px-8 rounded-xl hover:bg-gold/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  Criar meu casamento grátis
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
+                  Começar grátis
                 </Link>
                 <Link
                   href="/cerimonialista/dashboard"
-                  className="inline-flex items-center justify-center gap-2 border border-white/25 text-white font-body text-base px-8 py-4 rounded-xl hover:bg-white/5 transition-all"
+                  className="inline-flex items-center justify-center gap-2 border border-midnight/20 text-white font-body text-base h-12 px-8 rounded-xl bg-transparent hover:bg-white/5 transition-all"
                 >
                   Sou cerimonialista
                 </Link>
@@ -345,8 +339,8 @@ export default function HomePage() {
       <section className="bg-ivory py-24 px-5">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <p className="font-body text-xs text-gold uppercase tracking-widest mb-3">Como funciona</p>
-            <h2 className="font-heading text-4xl md:text-5xl text-midnight">Pronto em 3 passos</h2>
+            <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3">Como funciona</p>
+            <h2 className="font-body font-light text-4xl md:text-5xl text-midnight">Pronto em 3 passos</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {STEPS.map((s, i) => (
@@ -355,8 +349,8 @@ export default function HomePage() {
                   <div className="hidden md:block absolute top-6 left-full w-full h-px bg-gradient-to-r from-midnight/20 to-transparent -translate-x-8 z-0" />
                 )}
                 <div className="relative z-10">
-                  <span className="font-heading text-6xl text-midnight/10 leading-none block mb-4">{s.n}</span>
-                  <h3 className="font-heading text-xl text-midnight mb-2">{s.title}</h3>
+                  <span className="font-body font-light text-6xl text-midnight/10 leading-none block mb-4">{s.n}</span>
+                  <h3 className="font-body font-medium text-xl text-midnight mb-2">{s.title}</h3>
                   <p className="font-body text-sm text-midnight/60 leading-relaxed">{s.desc}</p>
                 </div>
               </div>
@@ -369,19 +363,19 @@ export default function HomePage() {
       <section className="bg-white py-24 px-5">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <p className="font-body text-xs text-gold uppercase tracking-widest mb-3">Funcionalidades</p>
-            <h2 className="font-heading text-4xl md:text-5xl text-midnight">Tudo que você precisa</h2>
+            <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3">Funcionalidades</p>
+            <h2 className="font-body font-light text-4xl md:text-5xl text-midnight">Tudo que você precisa</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="group bg-fog rounded-2xl p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+                className="group bg-white border border-midnight/8 rounded-2xl p-6 hover:shadow-card transition-all duration-300 hover:-translate-y-0.5"
               >
                 <div className="w-10 h-10 bg-midnight/8 text-midnight rounded-xl flex items-center justify-center mb-4 group-hover:bg-midnight group-hover:text-white transition-all">
                   {f.icon}
                 </div>
-                <h3 className="font-heading text-lg text-midnight mb-1">{f.title}</h3>
+                <h3 className="font-body font-medium text-lg text-midnight mb-2">{f.title}</h3>
                 <p className="font-body text-sm text-midnight/60 leading-relaxed">{f.desc}</p>
               </div>
             ))}
@@ -393,16 +387,16 @@ export default function HomePage() {
       <section className="bg-midnight py-24 px-5">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-heading text-4xl md:text-5xl text-white">Para quem é o Laço?</h2>
+            <h2 className="font-body font-light text-4xl md:text-5xl text-white">Para quem é o Laço?</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+            <div className="bg-white rounded-2xl p-8 border border-midnight/8">
               <div className="w-10 h-10 bg-gold/20 text-gold rounded-xl flex items-center justify-center mb-5">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               </div>
-              <h3 className="font-heading text-2xl text-white mb-5">Para Casais</h3>
+              <h3 className="font-body font-medium text-2xl text-midnight mb-5">Para Casais</h3>
               <ul className="space-y-3">
                 {[
                   "Site de casamento com RSVP em minutos",
@@ -413,25 +407,25 @@ export default function HomePage() {
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <span className="mt-0.5 w-4 h-4 rounded-full bg-gold/30 text-gold flex items-center justify-center text-xs shrink-0">✓</span>
-                    <span className="font-body text-sm text-white/70">{item}</span>
+                    <span className="font-body text-sm text-midnight/70">{item}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 href="/registro"
-                className="mt-8 inline-flex items-center gap-2 bg-gold text-white font-body text-sm font-medium px-6 py-3 rounded-xl hover:bg-gold/90 transition"
+                className="mt-8 inline-flex items-center gap-2 bg-midnight text-ivory font-body text-sm font-medium h-10 px-6 rounded-xl hover:bg-midnight/90 transition"
               >
                 Criar conta de casal
               </Link>
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+            <div className="bg-white rounded-2xl p-8 border border-midnight/8">
               <div className="w-10 h-10 bg-midnight/30 text-midnight rounded-xl flex items-center justify-center mb-5">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
-              <h3 className="font-heading text-2xl text-white mb-5">Para Cerimonialistas</h3>
+              <h3 className="font-body font-medium text-2xl text-midnight mb-5">Para Cerimonialistas</h3>
               <ul className="space-y-3">
                 {[
                   "Pipeline CRM de oportunidades e leads",
@@ -442,13 +436,13 @@ export default function HomePage() {
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <span className="mt-0.5 w-4 h-4 rounded-full bg-midnight/40 text-midnight flex items-center justify-center text-xs shrink-0">✓</span>
-                    <span className="font-body text-sm text-white/70">{item}</span>
+                    <span className="font-body text-sm text-midnight/70">{item}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 href="/registro/cerimonialista"
-                className="mt-8 inline-flex items-center gap-2 bg-midnight text-white font-body text-sm font-medium px-6 py-3 rounded-xl hover:bg-midnight/90 transition"
+                className="mt-8 inline-flex items-center gap-2 bg-midnight text-ivory font-body text-sm font-medium h-10 px-6 rounded-xl hover:bg-midnight/90 transition"
               >
                 Criar conta profissional
               </Link>
@@ -461,38 +455,38 @@ export default function HomePage() {
       <section className="bg-fog py-24 px-5">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <p className="font-body text-xs text-gold uppercase tracking-widest mb-3">Planos</p>
-            <h2 className="font-heading text-4xl md:text-5xl text-midnight">Simples e transparente</h2>
+            <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3">Planos</p>
+            <h2 className="font-body font-light text-4xl md:text-5xl text-midnight">Simples e transparente</h2>
             <p className="font-body text-midnight/50 mt-3">Comece grátis. Upgrade quando precisar.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             {/* Free */}
-            <div className="bg-white rounded-2xl p-8 border border-midnight/10">
-              <p className="font-body text-xs text-midnight/40 uppercase tracking-widest mb-2">Gratuito</p>
-              <p className="font-heading text-4xl text-midnight mb-1">R$ 0</p>
+            <div className="bg-white rounded-2xl p-8 border border-midnight/8">
+              <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3">Gratuito</p>
+              <p className="font-body font-light text-4xl text-midnight mb-1">R$ 0</p>
               <p className="font-body text-sm text-midnight/50 mb-6">Para sempre</p>
               <ul className="space-y-3 mb-8">
                 {["Até 50 convidados", "1 casamento", "Site com RSVP", "Lista de presentes básica", "Controle de orçamento"].map((f) => (
                   <li key={f} className="flex items-center gap-2 font-body text-sm text-midnight/70">
-                    <span className="text-midnight">✓</span> {f}
+                    <span className="text-gold">✓</span> {f}
                   </li>
                 ))}
               </ul>
               <Link
                 href="/registro"
-                className="block text-center py-3 rounded-xl border border-midnight/20 font-body text-sm text-midnight hover:bg-midnight/5 transition"
+                className="block text-center h-12 py-3 rounded-xl border border-midnight/20 font-body font-medium text-sm text-midnight hover:bg-midnight/5 transition"
               >
                 Começar grátis
               </Link>
             </div>
 
             {/* Premium */}
-            <div className="bg-midnight rounded-2xl p-8 relative overflow-hidden">
+            <div className="bg-midnight rounded-2xl p-8 relative overflow-hidden border border-gold/20">
               <div className="absolute top-4 right-4 bg-gold text-white text-xs font-body font-medium px-2.5 py-1 rounded-full">
                 Mais popular
               </div>
-              <p className="font-body text-xs text-white/40 uppercase tracking-widest mb-2">Premium</p>
-              <p className="font-heading text-4xl text-white mb-1">
+              <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3">Premium</p>
+              <p className="font-body font-light text-4xl text-white mb-1">
                 R$ 99<span className="text-white/40 text-lg font-body">/mês</span>
               </p>
               <p className="font-body text-sm text-white/40 mb-6">Trial gratuito de 14 dias</p>
@@ -512,7 +506,7 @@ export default function HomePage() {
               </ul>
               <Link
                 href="/registro"
-                className="block text-center py-3 rounded-xl bg-gold text-white font-body font-semibold text-sm hover:bg-gold/90 transition"
+                className="block text-center h-12 py-3 rounded-xl bg-gold text-white font-body font-medium text-sm hover:bg-gold/90 transition"
               >
                 Começar trial grátis
               </Link>
@@ -525,12 +519,12 @@ export default function HomePage() {
       <section className="bg-white py-24 px-5">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <p className="font-body text-xs text-gold uppercase tracking-widest mb-3">Depoimentos</p>
-            <h2 className="font-heading text-4xl md:text-5xl text-midnight">O que dizem nossos casais</h2>
+            <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3">Depoimentos</p>
+            <h2 className="font-body font-light text-4xl md:text-5xl text-midnight">O que dizem nossos casais</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {TESTIMONIALS.map((t) => (
-              <div key={t.name} className="bg-fog rounded-2xl p-6">
+              <div key={t.name} className="bg-white rounded-2xl p-6 border border-midnight/8">
                 <div className="flex gap-1 mb-4">
                   {[...Array(5)].map((_, j) => (
                     <svg key={j} className="w-3.5 h-3.5 text-gold" fill="currentColor" viewBox="0 0 20 20">
@@ -542,7 +536,7 @@ export default function HomePage() {
                   &ldquo;{t.text}&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-midnight text-white text-xs font-heading flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-midnight text-white text-xs font-body font-medium flex items-center justify-center">
                     {t.initials}
                   </div>
                   <div>
@@ -559,7 +553,7 @@ export default function HomePage() {
       {/* ─── CTA FINAL ─── */}
       <section className="bg-midnight py-24 px-5 text-center">
         <div className="max-w-2xl mx-auto">
-          <h2 className="font-heading text-4xl md:text-5xl text-white mb-4">
+          <h2 className="font-body font-light text-4xl md:text-5xl text-white mb-4">
             Comece a planejar hoje
           </h2>
           <p className="font-body text-white/50 mb-8 text-lg">
@@ -567,12 +561,9 @@ export default function HomePage() {
           </p>
           <Link
             href="/registro"
-            className="inline-flex items-center gap-2 bg-gold text-white font-body font-semibold text-lg px-10 py-4 rounded-xl hover:bg-gold/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center justify-center gap-2 bg-gold text-white font-body font-medium h-12 text-base px-10 rounded-xl hover:bg-gold/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
-            Criar conta gratuita
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
+            Começar grátis
           </Link>
           <p className="font-body text-xs text-white/25 mt-4">Sem cartão de crédito · Cancele quando quiser</p>
         </div>
@@ -583,7 +574,7 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
             <div>
-              <span className="font-display text-2xl text-white">Laço</span>
+              <span className="font-display text-2xl text-white tracking-[0.3em] uppercase">Laço</span>
               <p className="font-body text-xs text-white/30 mt-1">Planejamento de casamentos — Brasil</p>
             </div>
             <div className="flex flex-wrap gap-6">
@@ -602,10 +593,22 @@ export default function HomePage() {
           </div>
           <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-2 text-white/25 text-xs font-body">
             <span>© 2026 Laço. Todos os direitos reservados.</span>
-            <span>Feito com amor em São Paulo 🌿</span>
+            <span>Feito com amor em São Paulo</span>
           </div>
         </div>
       </footer>
+      {/* ─── STICKY MOBILE CTA ─── */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-midnight border-t border-white/10 px-5 py-3">
+        <Link
+          href="/registro"
+          className="block w-full bg-gold text-white font-body font-medium text-base h-12 rounded-xl hover:bg-gold/90 transition flex items-center justify-center"
+        >
+          Começar grátis
+        </Link>
+      </div>
+
+      {/* Mobile CTA spacing */}
+      <div className="h-20 md:hidden" />
     </main>
   );
 }

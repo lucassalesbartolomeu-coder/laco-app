@@ -107,86 +107,113 @@ function LoginForm() {
   const isRegister = mode === "register";
 
   return (
-    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${isPlanner ? "bg-midnight" : "bg-fog"}`}>
-      {/* Banner sutil quando vem via indicação */}
-      {refCode && isRegister && (
-        <div className="w-full bg-[#1A1F3A]/10 border-b border-[#1A1F3A]/20 py-2.5 px-4 text-center">
-          <p className="font-body text-sm text-[#1A1F3A]">
-            Você foi indicado para o Laço! Crie sua conta gratuita abaixo.
+    <div className="min-h-screen flex flex-col lg:flex-row bg-ivory">
+      {/* LEFT SIDE: Dark hero section with logo & tagline (desktop only) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-midnight flex-col justify-between p-12">
+        {/* Logo */}
+        <Link href="/" className="font-display text-3xl tracking-[0.3em] uppercase text-ivory hover:opacity-80 transition">
+          LAÇO
+        </Link>
+
+        {/* Tagline */}
+        <div>
+          <h2 className="font-body text-xl font-medium text-ivory mb-3">
+            {isPlanner ? "Gerencie seus casamentos com elegância" : "Seu casamento em um só lugar"}
+          </h2>
+          <p className="font-body text-sm text-champagne/80 leading-relaxed max-w-sm">
+            {isPlanner
+              ? "Painel completo para cerimonialistas. Gerencie fornecedores, orçamentos, cronogramas e comunicação."
+              : "Organize os detalhes do seu grande dia. Planejar nunca foi tão fácil."}
           </p>
         </div>
-      )}
 
-      {/* Minimal nav */}
-      <nav className="px-6 py-5">
-        <Link href="/" className={`font-display text-2xl font-semibold tracking-wide ${isPlanner ? "text-ivory" : "text-midnight"}`}>
-          Laço
+        {/* Trust badges */}
+        <div className="space-y-3 text-sm text-champagne/70 font-body">
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 flex-shrink-0 text-gold" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M5.293 9.707a1 1 0 010-1.414L10 3.586l4.707 4.707a1 1 0 01-1.414 1.414L10 6.414l-3.293 3.293a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            </svg>
+            Completamente criptografado
+          </div>
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 flex-shrink-0 text-gold" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M5.293 9.707a1 1 0 010-1.414L10 3.586l4.707 4.707a1 1 0 01-1.414 1.414L10 6.414l-3.293 3.293a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            </svg>
+            Compatível com LGPD
+          </div>
+        </div>
+      </div>
+
+      {/* RIGHT SIDE: Form (full width on mobile, half on desktop) */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-8 lg:py-12 lg:px-8">
+        {/* Mobile logo — visible only on small screens */}
+        <Link href="/" className="lg:hidden font-display text-2xl tracking-[0.3em] uppercase text-midnight mb-8 hover:opacity-70 transition">
+          LAÇO
         </Link>
-        {isPlanner && (
-          <p className="font-body text-xs text-stone mt-0.5">Área profissional</p>
-        )}
-      </nav>
 
-      <div className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md">
-
-          {/* Header */}
-          <div className="text-center mb-10">
-            <h1 className={`font-heading text-4xl font-semibold mb-2 ${isPlanner ? "text-ivory" : "text-midnight"}`}>
-              {isPlanner
-                ? (mode === "login" ? "Bem-vinda, profissional" : "Crie seu perfil")
-                : (mode === "login" ? "Bem-vindo de volta" : "Comece agora")}
-            </h1>
-            <p className={`font-body text-base ${isPlanner ? "text-stone" : "text-midnight/55"}`}>
-              {isPlanner
-                ? (mode === "login" ? "Acesse sua área de cerimonialista" : "Gerencie seus casamentos com elegância")
-                : (mode === "login" ? "Entre na sua conta para continuar" : "Crie sua conta gratuitamente")}
+        {/* Referral banner */}
+        {refCode && isRegister && (
+          <div className="w-full max-w-md mb-6 bg-gold/10 border border-gold/20 rounded-xl p-4 text-center">
+            <p className="font-body text-sm text-midnight">
+              Você foi indicado para o Laço! Crie sua conta gratuita abaixo.
             </p>
           </div>
+        )}
 
-          {/* User type pills */}
-          <div className="flex gap-2 mb-8 bg-white border border-gray-200 rounded-2xl p-1.5 shadow-sm">
+        {/* User type selector */}
+        <div className="w-full max-w-md mb-8">
+          <div className="flex gap-2 bg-fog rounded-xl p-1">
             <button
               type="button"
               onClick={() => setUserType("couple")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-body text-sm font-medium transition-all ${
+              className={`flex-1 py-3 rounded-lg font-body font-medium text-sm transition-all ${
                 userType === "couple"
-                  ? "bg-midnight text-white shadow-sm"
-                  : "text-midnight/50 hover:text-midnight"
+                  ? "bg-midnight text-ivory shadow-sm"
+                  : "bg-transparent text-midnight/60 hover:text-midnight"
               }`}
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-              Sou casal
+              Casal
             </button>
             <button
               type="button"
               onClick={() => setUserType("planner")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-body text-sm font-medium transition-all ${
+              className={`flex-1 py-3 rounded-lg font-body font-medium text-sm transition-all ${
                 userType === "planner"
-                  ? "bg-midnight text-white shadow-sm"
-                  : "text-midnight/50 hover:text-midnight"
+                  ? "bg-midnight text-ivory shadow-sm"
+                  : "bg-transparent text-midnight/60 hover:text-midnight"
               }`}
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              Sou cerimonialista
+              Cerimonialista
             </button>
           </div>
+        </div>
 
-          {/* Form card */}
-          <div className="bg-white rounded-3xl shadow-md border border-gray-100 p-8">
-            {/* Mode tabs */}
-            <div className="flex border-b border-gray-100 mb-7 -mx-8 px-8">
+        {/* Form container */}
+        <div className="w-full max-w-md">
+          {/* Heading */}
+          <div className="mb-8">
+            <h1 className="font-body text-2xl font-medium text-midnight mb-2">
+              {isRegister
+                ? isPlanner ? "Crie sua conta profissional" : "Crie sua conta"
+                : "Entre na sua conta"}
+            </h1>
+            <p className="font-body text-sm text-stone">
+              {isRegister
+                ? mode === "register" && !isPlanner ? "Crie sua conta gratuitamente, sem cartão de crédito" : "Cadastre-se para começar"
+                : "Bem-vindo de volta ao Laço"}
+            </p>
+          </div>
+
+          {/* Mode toggle for register/login */}
+          {!refCode && (
+            <div className="flex gap-1 bg-fog rounded-lg p-1 mb-8">
               <button
                 type="button"
                 onClick={() => { setMode("login"); setError(""); }}
-                className={`pb-3 mr-6 font-body text-sm font-medium border-b-2 transition-all -mb-px ${
+                className={`flex-1 py-2.5 rounded-md font-body text-sm font-medium transition-all ${
                   mode === "login"
-                    ? "border-midnight text-midnight"
-                    : "border-transparent text-midnight/40 hover:text-midnight/60"
+                    ? "bg-ivory text-midnight shadow-sm"
+                    : "bg-transparent text-stone hover:text-midnight"
                 }`}
               >
                 Entrar
@@ -194,162 +221,170 @@ function LoginForm() {
               <button
                 type="button"
                 onClick={() => { setMode("register"); setError(""); }}
-                className={`pb-3 font-body text-sm font-medium border-b-2 transition-all -mb-px ${
+                className={`flex-1 py-2.5 rounded-md font-body text-sm font-medium transition-all ${
                   mode === "register"
-                    ? "border-midnight text-midnight"
-                    : "border-transparent text-midnight/40 hover:text-midnight/60"
+                    ? "bg-ivory text-midnight shadow-sm"
+                    : "bg-transparent text-stone hover:text-midnight"
                 }`}
               >
                 Criar conta
               </button>
             </div>
+          )}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Name field — register only */}
-              {isRegister && (
-                <div>
-                  <label className="block font-body text-sm font-medium text-midnight/70 mb-1.5">
-                    Seu nome
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    minLength={2}
-                    maxLength={50}
-                    autoComplete="name"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-midnight placeholder-stone/30 focus:border-midnight focus:ring-2 focus:ring-midnight/10 outline-none transition"
-                    placeholder={isPlanner ? "Ex: Mariana Silva" : "Ex: Ana"}
-                  />
-                </div>
-              )}
-
-              {/* Company name — planner + register only */}
-              {isRegister && isPlanner && (
-                <div>
-                  <label className="block font-body text-sm font-medium text-midnight/70 mb-1.5">
-                    Nome da empresa
-                  </label>
-                  <input
-                    type="text"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    autoComplete="organization"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-midnight placeholder-stone/30 focus:border-midnight focus:ring-2 focus:ring-midnight/10 outline-none transition"
-                    placeholder="Nome do seu escritório ou empresa"
-                  />
-                </div>
-              )}
-
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name field — register only */}
+            {isRegister && (
               <div>
-                <label className="block font-body text-sm font-medium text-midnight/70 mb-1.5">
-                  Email
+                <label className="block font-body text-xs font-medium text-midnight/70 mb-1.5 uppercase tracking-wide">
+                  Seu nome
                 </label>
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
-                  autoComplete="email"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-midnight placeholder-stone/30 focus:border-midnight focus:ring-2 focus:ring-midnight/10 outline-none transition"
-                  placeholder="seu@email.com"
+                  minLength={2}
+                  maxLength={50}
+                  autoComplete="name"
+                  className="w-full px-4 py-3 rounded-xl border border-midnight/10 font-body text-sm text-midnight placeholder-stone/60 focus:ring-2 focus:ring-gold/30 focus:border-gold outline-none transition bg-ivory"
+                  placeholder={isPlanner ? "Mariana Silva" : "Ana Santos"}
                 />
               </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block font-body text-sm font-medium text-midnight/70">
-                    Senha
-                  </label>
-                  {mode === "login" && (
-                    <Link href="/recuperar-senha" className="font-body text-xs text-midnight hover:underline">
-                      Esqueci minha senha
-                    </Link>
-                  )}
-                </div>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  autoComplete={mode === "login" ? "current-password" : "new-password"}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 font-body text-midnight placeholder-stone/30 focus:border-midnight focus:ring-2 focus:ring-midnight/10 outline-none transition"
-                  placeholder={mode === "register" ? "Mínimo 6 caracteres" : "••••••••"}
-                />
-              </div>
-
-              {error && (
-                <div className="flex items-start gap-2.5 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
-                  <svg className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <p className="font-body text-sm text-red-600">{error}</p>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3.5 bg-gold text-white rounded-xl font-body font-medium hover:bg-gold/90 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-1"
-              >
-                {loading
-                  ? "Aguarde..."
-                  : mode === "register"
-                    ? isPlanner ? "Criar conta profissional" : "Criar conta gratuita"
-                    : "Entrar"}
-              </button>
-
-              {/* Divider */}
-              <div className="relative flex items-center gap-3 py-1">
-                <div className="flex-1 h-px bg-gray-100" />
-                <span className="font-body text-xs text-midnight/30 flex-shrink-0">ou continue com</span>
-                <div className="flex-1 h-px bg-gray-100" />
-              </div>
-
-              <button
-                type="button"
-                onClick={() => signIn("google", { callbackUrl: "/" })}
-                className="w-full flex items-center justify-center gap-3 py-3 rounded-xl border border-gray-200 bg-white font-body text-sm font-medium text-midnight hover:bg-gray-50 transition"
-              >
-                <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                </svg>
-                Continuar com Google
-              </button>
-            </form>
-
-            {/* Planner full register notice */}
-            {isPlanner && isRegister && (
-              <p className="font-body text-xs text-midnight/40 text-center mt-4 leading-relaxed">
-                Para cadastro profissional completo com perfil público,{" "}
-                <Link href="/registro/cerimonialista" className="text-midnight hover:underline">
-                  use este formulário
-                </Link>
-              </p>
             )}
-          </div>
 
-          {/* Switch mode link */}
-          <p className="text-center font-body text-sm text-midnight/50 mt-6">
-            {mode === "login" ? "Não tem conta?" : "Já tem conta?"}{" "}
+            {/* Company name — planner + register only */}
+            {isRegister && isPlanner && (
+              <div>
+                <label className="block font-body text-xs font-medium text-midnight/70 mb-1.5 uppercase tracking-wide">
+                  Nome da empresa
+                </label>
+                <input
+                  type="text"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  autoComplete="organization"
+                  className="w-full px-4 py-3 rounded-xl border border-midnight/10 font-body text-sm text-midnight placeholder-stone/60 focus:ring-2 focus:ring-gold/30 focus:border-gold outline-none transition bg-ivory"
+                  placeholder="Seu escritório ou empresa"
+                />
+              </div>
+            )}
+
+            {/* Email */}
+            <div>
+              <label className="block font-body text-xs font-medium text-midnight/70 mb-1.5 uppercase tracking-wide">
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+                className="w-full px-4 py-3 rounded-xl border border-midnight/10 font-body text-sm text-midnight placeholder-stone/60 focus:ring-2 focus:ring-gold/30 focus:border-gold outline-none transition bg-ivory"
+                placeholder="seu@email.com"
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block font-body text-xs font-medium text-midnight/70 uppercase tracking-wide">
+                  Senha
+                </label>
+                {mode === "login" && (
+                  <Link href="/recuperar-senha" className="font-body text-xs text-gold hover:text-gold/80 transition">
+                    Esqueci
+                  </Link>
+                )}
+              </div>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
+                className="w-full px-4 py-3 rounded-xl border border-midnight/10 font-body text-sm text-midnight placeholder-stone/60 focus:ring-2 focus:ring-gold/30 focus:border-gold outline-none transition bg-ivory"
+                placeholder={mode === "register" ? "Mínimo 6 caracteres" : "••••••••"}
+              />
+            </div>
+
+            {/* Error state */}
+            {error && (
+              <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4 mt-4">
+                <svg className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <p className="font-body text-sm text-red-700">{error}</p>
+              </div>
+            )}
+
+            {/* Primary button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-12 mt-6 bg-midnight text-ivory rounded-xl font-body font-medium hover:bg-midnight/90 active:scale-[0.99] focus:ring-2 focus:ring-gold/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading
+                ? "Carregando..."
+                : mode === "register"
+                  ? isPlanner ? "Criar conta profissional" : "Criar minha conta"
+                  : "Entrar"}
+            </button>
+
+            {/* Divider */}
+            <div className="relative flex items-center gap-3 py-2 my-6">
+              <div className="flex-1 h-px bg-midnight/10" />
+              <span className="font-body text-xs text-stone/70">ou</span>
+              <div className="flex-1 h-px bg-midnight/10" />
+            </div>
+
+            {/* Google button */}
             <button
               type="button"
-              onClick={switchMode}
-              className="text-midnight hover:underline font-medium"
+              onClick={() => signIn("google", { callbackUrl: "/" })}
+              className="w-full flex items-center justify-center gap-3 h-12 bg-white border border-midnight/10 text-midnight rounded-xl font-body font-medium hover:bg-fog transition-all"
             >
-              {mode === "login" ? "Criar agora, é grátis" : "Entrar"}
+              <svg className="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+              </svg>
+              Continuar com Google
             </button>
-          </p>
+          </form>
 
-          {/* Trust note */}
-          {isRegister && (
-            <p className="text-center font-body text-xs text-midnight/35 mt-4">
-              Sem cartão de crédito · Cancele quando quiser
+          {/* Planner upgrade notice */}
+          {isPlanner && isRegister && (
+            <p className="font-body text-xs text-stone text-center mt-6">
+              Precisa de cadastro completo com perfil público?{" "}
+              <Link href="/registro/cerimonialista" className="text-gold hover:text-gold/80 transition font-medium">
+                Acesse aqui
+              </Link>
+            </p>
+          )}
+
+          {/* Switch mode link */}
+          {!refCode && (
+            <p className="text-center font-body text-sm text-stone mt-6">
+              {mode === "login" ? "Não tem conta?" : "Já tem conta?"}{" "}
+              <button
+                type="button"
+                onClick={switchMode}
+                className="text-midnight font-medium hover:text-gold transition"
+              >
+                {mode === "login" ? "Criar agora" : "Entrar"}
+              </button>
+            </p>
+          )}
+
+          {/* Trust footer — register only */}
+          {isRegister && !isPlanner && (
+            <p className="text-center font-body text-xs text-stone/60 mt-4">
+              Sem cartão de crédito · Cancele a qualquer momento
             </p>
           )}
         </div>
@@ -362,7 +397,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-fog flex items-center justify-center">
+        <div className="min-h-screen bg-ivory flex items-center justify-center">
           <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
         </div>
       }
