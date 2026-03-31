@@ -60,15 +60,6 @@ export default function PlanejarPage() {
 
   const tools = [
     {
-      href: `${base}/identity-kit`,
-      icon: <SparkleIcon />,
-      color: "bg-gold",
-      title: "Identidade Visual com IA",
-      desc: "Gere sua paleta, tipografia e imagens — alimenta o convite digital e o site do casal",
-      tag: "IA",
-      tagColor: "bg-gold/10 text-gold",
-    },
-    {
       href: `${base}/simulador-convidados`,
       icon: <PeopleIcon />,
       color: "bg-midnight",
