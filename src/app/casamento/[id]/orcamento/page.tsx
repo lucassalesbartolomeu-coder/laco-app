@@ -4,29 +4,83 @@ import { useParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 
-// Categorias com preços sugeridos para casamento médio ~150 pessoas no Brasil
-const TEMPLATE: { category: string; estimatedCost: number }[] = [
-  { category: "Local / Espaço",         estimatedCost: 15000 },
-  { category: "Buffet",                 estimatedCost: 30000 },
-  { category: "Bebidas",                estimatedCost: 8000  },
-  { category: "Decoração",              estimatedCost: 12000 },
-  { category: "Floricultura",           estimatedCost: 7000  },
-  { category: "Fotografia",             estimatedCost: 8000  },
-  { category: "Cinematografia",         estimatedCost: 6000  },
-  { category: "DJ / Música / Banda",    estimatedCost: 5000  },
-  { category: "Iluminação / Som",       estimatedCost: 4000  },
-  { category: "Bolo / Doces",           estimatedCost: 3500  },
-  { category: "Vestido",                estimatedCost: 5000  },
-  { category: "Traje",                  estimatedCost: 1500  },
-  { category: "Cerimonial / Assessoria", estimatedCost: 8000 },
-  { category: "Convites / Papelaria",   estimatedCost: 2000  },
-  { category: "Maquiagem / Hair",       estimatedCost: 1500  },
-  { category: "Transporte",             estimatedCost: 2500  },
-  { category: "Lua de mel",             estimatedCost: 10000 },
-  { category: "Outros",                 estimatedCost: 3000  },
+// Template: múltiplos itens por categoria, sem preço — noivo só preenche os valores
+const TEMPLATE: { category: string; description: string }[] = [
+  // Local / Espaço
+  { category: "Local / Espaço",         description: "Aluguel do espaço" },
+  { category: "Local / Espaço",         description: "Taxa de serviço" },
+  { category: "Local / Espaço",         description: "Gerador" },
+  // Buffet
+  { category: "Buffet",                 description: "Jantar" },
+  { category: "Buffet",                 description: "Coquetel / Entrada" },
+  { category: "Buffet",                 description: "Mesa de frios" },
+  { category: "Buffet",                 description: "Serviço de garçons" },
+  // Bebidas
+  { category: "Bebidas",                description: "Bebidas alcoólicas" },
+  { category: "Bebidas",                description: "Bebidas não alcoólicas" },
+  { category: "Bebidas",                description: "Open bar" },
+  // Decoração
+  { category: "Decoração",              description: "Decoração da cerimônia" },
+  { category: "Decoração",              description: "Decoração da festa" },
+  { category: "Decoração",              description: "Arranjos de mesa" },
+  { category: "Decoração",              description: "Mesa do bolo" },
+  // Floricultura
+  { category: "Floricultura",           description: "Buquê da noiva" },
+  { category: "Floricultura",           description: "Flores da cerimônia" },
+  { category: "Floricultura",           description: "Arranjos florais" },
+  { category: "Floricultura",           description: "Lapela do noivo" },
+  // Fotografia
+  { category: "Fotografia",             description: "Fotógrafo" },
+  { category: "Fotografia",             description: "Álbum de fotos" },
+  { category: "Fotografia",             description: "Making of" },
+  // Cinematografia
+  { category: "Cinematografia",         description: "Filmagem" },
+  { category: "Cinematografia",         description: "Edição / Trailer" },
+  { category: "Cinematografia",         description: "Drone" },
+  // DJ / Música / Banda
+  { category: "DJ / Música / Banda",    description: "DJ" },
+  { category: "DJ / Música / Banda",    description: "Banda / Músico" },
+  { category: "DJ / Música / Banda",    description: "Cerimônia (música ao vivo)" },
+  // Iluminação / Som
+  { category: "Iluminação / Som",       description: "Som" },
+  { category: "Iluminação / Som",       description: "Iluminação" },
+  { category: "Iluminação / Som",       description: "Painel de LED" },
+  // Bolo / Doces
+  { category: "Bolo / Doces",           description: "Bolo" },
+  { category: "Bolo / Doces",           description: "Mesa de doces" },
+  { category: "Bolo / Doces",           description: "Bem-casados" },
+  // Vestido
+  { category: "Vestido",                description: "Vestido de noiva" },
+  { category: "Vestido",                description: "Véu e acessórios" },
+  { category: "Vestido",                description: "Sapatos da noiva" },
+  // Traje
+  { category: "Traje",                  description: "Terno / Smoking" },
+  { category: "Traje",                  description: "Gravata" },
+  { category: "Traje",                  description: "Sapatos do noivo" },
+  // Cerimonial / Assessoria
+  { category: "Cerimonial / Assessoria", description: "Assessoria completa" },
+  { category: "Cerimonial / Assessoria", description: "Dia da noiva" },
+  // Convites / Papelaria
+  { category: "Convites / Papelaria",   description: "Convites" },
+  { category: "Convites / Papelaria",   description: "Save the date" },
+  { category: "Convites / Papelaria",   description: "Cardápios / Seating chart" },
+  // Maquiagem / Hair
+  { category: "Maquiagem / Hair",       description: "Maquiagem da noiva" },
+  { category: "Maquiagem / Hair",       description: "Cabelo da noiva" },
+  { category: "Maquiagem / Hair",       description: "Madrinhas" },
+  // Transporte
+  { category: "Transporte",             description: "Carro dos noivos" },
+  { category: "Transporte",             description: "Transfer dos convidados" },
+  { category: "Transporte",             description: "Estacionamento" },
+  // Lua de mel
+  { category: "Lua de mel",             description: "Passagens aéreas" },
+  { category: "Lua de mel",             description: "Hospedagem" },
+  { category: "Lua de mel",             description: "Passeios / Experiências" },
+  // Outros
+  { category: "Outros",                 description: "Extras / Imprevistos" },
 ];
 
-const CATEGORIES = TEMPLATE.map(t => t.category);
+const CATEGORIES = [...new Set(TEMPLATE.map(t => t.category))];
 
 interface BudgetItem {
   id: string;
@@ -119,8 +173,8 @@ export default function OrcamentoPage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               category: t.category,
-              description: t.category,
-              estimatedCost: t.estimatedCost,
+              description: t.description,
+              estimatedCost: 0,
               paidAmount: 0,
               status: "pendente",
             }),
