@@ -31,7 +31,7 @@ export async function GET() {
         },
         opportunities: {
           where: { stage: { not: "perdido" } },
-          select: { id: true, stage: true }, // Only fetch needed fields
+          select: { id: true, stage: true, estimatedBudget: true },
         },
       },
     });
@@ -60,7 +60,14 @@ export async function GET() {
       .filter((a) => a.wedding.weddingDate && new Date(a.wedding.weddingDate) > now)
       .sort((a, b) => new Date(a.wedding.weddingDate!).getTime() - new Date(b.wedding.weddingDate!).getTime())[0];
 
-    const pipelineCount = planner.opportunities.filter((o) => o.stage !== "fechado").length;
+    const openOpps = planner.opportunities.filter((o) => o.stage !== "fechado");
+    const pipelineCount = openOpps.length;
+    const pipelineValue = openOpps.reduce((sum, o) => sum + (o.estimatedBudget ?? 0), 0);
+
+    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+    const weddingsSoon = planner.assignments.filter(
+      (a) => a.wedding.weddingDate && new Date(a.wedding.weddingDate) > now && new Date(a.wedding.weddingDate) <= thirtyDaysFromNow
+    ).length;
 
     return NextResponse.json({
       planner: {
@@ -70,6 +77,7 @@ export async function GET() {
       },
       kpis: {
         activeWeddings,
+        weddingsSoon,
         nextEvent: nextEvent
           ? {
               date: nextEvent.wedding.weddingDate,
@@ -79,6 +87,7 @@ export async function GET() {
         totalCommissions: commissions._sum.commissionAmount || 0,
         pendingCommissions: pendingCommissions._sum.commissionAmount || 0,
         pipelineCount,
+        pipelineValue,
       },
       weddings: planner.assignments.map((a) => ({
         assignmentId: a.id,

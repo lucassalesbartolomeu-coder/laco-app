@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 
 interface Opportunity {
   id: string;
@@ -254,6 +255,15 @@ export default function PipelinePage() {
     }
   }
 
+  async function handleDragEnd(result: DropResult) {
+    const { draggableId, source, destination } = result;
+    if (!destination || destination.droppableId === source.droppableId) return;
+    const newStage = destination.droppableId;
+    // Optimistic update
+    setOpps((prev) => prev.map((o) => (o.id === draggableId ? { ...o, stage: newStage } : o)));
+    await moveToStage(draggableId, newStage);
+  }
+
   if (authStatus === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -277,7 +287,7 @@ export default function PipelinePage() {
     return true;
   });
 
-  function renderCard(opp: Opportunity) {
+  function renderCard(opp: Opportunity, index: number) {
     const borderColor = cardBorderColor(opp);
     const daysLeft = opp.weddingDate ? daysUntilWedding(opp.weddingDate) : null;
     const isUrgent = daysLeft !== null && daysLeft < 7;
@@ -286,9 +296,13 @@ export default function PipelinePage() {
     const isMoveLoading = movingTo?.startsWith(opp.id + ":");
 
     return (
+      <Draggable key={opp.id} draggableId={opp.id} index={index}>
+        {(provided, snapshot) => (
       <div
-        key={opp.id}
-        className={`relative bg-white rounded-xl shadow-card border-l-4 ${borderColor} hover:shadow-card-hover transition-all duration-150`}
+        ref={provided.innerRef}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+        className={`relative bg-white rounded-xl shadow-card border-l-4 ${borderColor} hover:shadow-card-hover transition-all duration-150 ${snapshot.isDragging ? "shadow-float rotate-1" : ""}`}
       >
         <button
           onClick={() => setSelectedOpp(opp)}
@@ -391,6 +405,8 @@ export default function PipelinePage() {
           )}
         </div>
       </div>
+        )}
+      </Draggable>
     );
   }
 
@@ -422,15 +438,24 @@ export default function PipelinePage() {
           <div className={`mt-2 h-0.5 bg-gradient-to-r ${STAGE_ACCENT[stage.key]} rounded-full`} />
         </div>
 
-        <div className="px-3 pb-4 space-y-2.5 min-h-[80px] flex-1 overflow-y-auto max-h-[calc(100vh-260px)]">
-          {stageOpps.length === 0 ? (
-            <div className="py-6 text-center">
-              <p className="font-body text-xs text-midnight/25">Nenhuma oportunidade</p>
+        <Droppable droppableId={stage.key}>
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className={`px-3 pb-4 space-y-2.5 min-h-[80px] flex-1 overflow-y-auto max-h-[calc(100vh-260px)] transition-colors ${snapshot.isDraggingOver ? "bg-midnight/5 rounded-xl" : ""}`}
+            >
+              {stageOpps.length === 0 && !snapshot.isDraggingOver ? (
+                <div className="py-6 text-center">
+                  <p className="font-body text-xs text-midnight/25">Nenhuma oportunidade</p>
+                </div>
+              ) : (
+                stageOpps.map((opp, i) => renderCard(opp, i))
+              )}
+              {provided.placeholder}
             </div>
-          ) : (
-            stageOpps.map((opp) => renderCard(opp))
           )}
-        </div>
+        </Droppable>
       </div>
     );
   }
@@ -526,9 +551,31 @@ export default function PipelinePage() {
       </div>
 
       {/* Desktop: colunas lado a lado */}
-      <div className="hidden lg:flex gap-4 overflow-x-auto px-8 pb-8 flex-1 items-start pt-4">
-        {STAGES.map((stage) => renderColumn(stage))}
-      </div>
+      {opps.length === 0 && !loading ? (
+        <div className="hidden lg:flex flex-col items-center justify-center flex-1 py-20 px-8 text-center">
+          <div className="w-16 h-16 bg-midnight/5 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-midnight/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+            </svg>
+          </div>
+          <p className="font-heading text-xl text-midnight mb-1">Seu pipeline está vazio</p>
+          <p className="font-body text-sm text-midnight/40 mb-5 max-w-sm">
+            Adicione seu primeiro lead e comece a organizar seu funil de vendas. Cada oportunidade é um casamento em potencial.
+          </p>
+          <button
+            onClick={() => { resetForm(); setModalOpen(true); }}
+            className="px-5 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition"
+          >
+            Adicionar primeiro lead
+          </button>
+        </div>
+      ) : (
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="hidden lg:flex gap-4 overflow-x-auto px-8 pb-8 flex-1 items-start pt-4">
+            {STAGES.map((stage) => renderColumn(stage))}
+          </div>
+        </DragDropContext>
+      )}
 
       {/* Mobile: coluna da tab ativa */}
       <div className="lg:hidden px-4 pb-8 pt-4 flex-1">
@@ -561,7 +608,7 @@ export default function PipelinePage() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {stageOpps.map((opp) => renderCard(opp))}
+                  {stageOpps.map((opp, i) => renderCard(opp, i))}
                 </div>
               )}
             </div>

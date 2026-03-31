@@ -466,6 +466,76 @@ export default function CompararOrcamentosPage() {
         )}
       </AnimatePresence>
 
+      {/* Insights panel */}
+      <AnimatePresence>
+        {comparing.length >= 2 && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4"
+          >
+            {/* Cheapest */}
+            {minTotal !== maxTotal && (() => {
+              const cheapest = comparing.find((q) => q.totalValue === minTotal);
+              return cheapest ? (
+                <div className="bg-green-50 border border-green-200 rounded-2xl p-4">
+                  <p className="font-body text-xs text-green-600 uppercase tracking-wider mb-1">Mais barato</p>
+                  <p className="font-heading text-lg text-green-700">{cheapest.vendor.name}</p>
+                  <p className="font-heading text-2xl text-green-700 mt-1">{formatCurrency(cheapest.totalValue)}</p>
+                  <p className="font-body text-xs text-green-600 mt-1">
+                    {(((maxTotal - minTotal) / maxTotal) * 100).toFixed(0)}% abaixo do mais caro
+                  </p>
+                </div>
+              ) : null;
+            })()}
+
+            {/* Best payment terms */}
+            {(() => {
+              const withTerms = comparing.filter((q) => q.paymentTerms);
+              if (withTerms.length === 0) return (
+                <div className="bg-fog border border-gray-200 rounded-2xl p-4">
+                  <p className="font-body text-xs text-midnight/40 uppercase tracking-wider mb-1">Condições</p>
+                  <p className="font-body text-sm text-midnight/40 italic mt-2">Sem informação de condições</p>
+                </div>
+              );
+              return (
+                <div className="bg-midnight/5 border border-midnight/10 rounded-2xl p-4">
+                  <p className="font-body text-xs text-midnight/50 uppercase tracking-wider mb-2">Condições de pagamento</p>
+                  {withTerms.map((q) => (
+                    <div key={q.id} className="mb-2">
+                      <p className="font-body text-xs font-medium text-midnight">{q.vendor.name}</p>
+                      <p className="font-body text-xs text-midnight/60">{q.paymentTerms}</p>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+
+            {/* Difference summary */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-4">
+              <p className="font-body text-xs text-midnight/50 uppercase tracking-wider mb-2">Resumo da comparação</p>
+              <p className="font-body text-sm text-midnight mb-1">
+                <span className="font-medium">{comparing.length}</span> orçamentos comparados
+              </p>
+              {minTotal !== maxTotal && (
+                <>
+                  <p className="font-body text-sm text-midnight mb-0.5">
+                    Variação: <span className="font-medium text-gold">{(((maxTotal - minTotal) / minTotal) * 100).toFixed(1)}%</span>
+                  </p>
+                  <p className="font-body text-xs text-midnight/40">
+                    {formatCurrency(minTotal)} — {formatCurrency(maxTotal)}
+                  </p>
+                </>
+              )}
+              {minTotal === maxTotal && (
+                <p className="font-body text-sm text-midnight/50 italic">Todos com mesmo valor</p>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {comparing.length === 1 && (
         <div className="mt-4 p-4 bg-midnight/5 border border-midnight/20 rounded-xl text-center">
           <p className="font-body text-sm text-midnight">

@@ -7,10 +7,12 @@ import { useToast } from "@/hooks/use-toast";
 
 interface KPIs {
   activeWeddings: number;
+  weddingsSoon: number;
   nextEvent: { date: string; couple: string } | null;
   totalCommissions: number;
   pendingCommissions: number;
   pipelineCount: number;
+  pipelineValue: number;
 }
 
 interface WeddingAssignment {
@@ -36,7 +38,7 @@ interface ReferralData {
 }
 
 interface DashboardData {
-  planner: { id: string; companyName: string };
+  planner: { id: string; companyName: string; slug: string };
   kpis: KPIs;
   weddings: WeddingAssignment[];
 }
@@ -62,9 +64,11 @@ export default function CerimonialDashboard() {
 
   // Link wedding modal
   const [linkModalOpen, setLinkModalOpen] = useState(false);
-  const [linkWeddingId, setLinkWeddingId] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
   const [linking, setLinking] = useState(false);
   const [linkError, setLinkError] = useState("");
+  const [codePreview, setCodePreview] = useState<{ partnerName1: string; partnerName2: string } | null>(null);
+  const [validatingCode, setValidatingCode] = useState(false);
 
   useEffect(() => {
     if (authStatus !== "authenticated") return;
@@ -80,23 +84,43 @@ export default function CerimonialDashboard() {
       .finally(() => setLoading(false));
   }, [authStatus]);
 
+  async function validateCode(code: string) {
+    if (code.length !== 6) { setCodePreview(null); return; }
+    setValidatingCode(true);
+    try {
+      const res = await fetch(`/api/invite/${code}`);
+      if (res.ok) {
+        const d = await res.json();
+        setCodePreview(d.wedding ?? d);
+        setLinkError("");
+      } else {
+        setCodePreview(null);
+        setLinkError("Código inválido ou expirado");
+      }
+    } catch {
+      setCodePreview(null);
+    } finally {
+      setValidatingCode(false);
+    }
+  }
+
   async function handleLinkWedding() {
-    if (!linkWeddingId.trim()) return;
+    if (inviteCode.length !== 6 || !codePreview) return;
     setLinking(true);
     setLinkError("");
     try {
-      const res = await fetch(`/api/weddings/${linkWeddingId.trim()}/planner`, {
+      const res = await fetch("/api/cerimonialista/aceitar-convite", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "accept", role: "principal" }),
+        body: JSON.stringify({ code: inviteCode }),
       });
       if (!res.ok) {
         const d = await res.json();
         setLinkError(d.error || "Erro ao vincular");
       } else {
         setLinkModalOpen(false);
-        setLinkWeddingId("");
-        // Refresh
+        setInviteCode("");
+        setCodePreview(null);
         const r = await fetch("/api/planner/dashboard");
         setData(await r.json());
       }
@@ -146,7 +170,14 @@ export default function CerimonialDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-2xl shadow-sm p-5">
           <p className="font-body text-sm text-midnight/50 mb-1">Casamentos Ativos</p>
-          <p className="font-heading text-3xl text-midnight">{kpis.activeWeddings}</p>
+          <div className="flex items-end gap-2">
+            <p className="font-heading text-3xl text-midnight">{kpis.activeWeddings}</p>
+            {kpis.weddingsSoon > 0 && (
+              <span className="mb-1 inline-flex items-center px-2 py-0.5 bg-gold/10 text-gold text-xs font-body font-medium rounded-full">
+                {kpis.weddingsSoon} em 30d
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm p-5">
@@ -172,10 +203,8 @@ export default function CerimonialDashboard() {
         <div className="bg-white rounded-2xl shadow-sm p-5">
           <p className="font-body text-sm text-midnight/50 mb-1">Pipeline</p>
           <p className="font-heading text-3xl text-midnight">{kpis.pipelineCount}</p>
-          {kpis.pipelineCount > 5 && (
-            <span className="inline-block mt-1 px-2 py-0.5 bg-gold/10 text-gold text-xs font-body font-medium rounded-full">
-              Atencao
-            </span>
+          {kpis.pipelineValue > 0 && (
+            <p className="font-body text-xs text-midnight/50 mt-0.5">{formatCurrency(kpis.pipelineValue)}</p>
           )}
         </div>
       </div>
@@ -261,8 +290,26 @@ export default function CerimonialDashboard() {
 
       {/* Wedding Cards Grid */}
       {filtered.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
-          <p className="font-body text-midnight/40">Nenhum casamento vinculado ainda</p>
+        <div className="text-center py-16 bg-white rounded-2xl shadow-sm px-6">
+          <div className="w-16 h-16 bg-midnight/5 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-midnight/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </div>
+          {search || filterStatus !== "todos" ? (
+            <p className="font-body text-midnight/40">Nenhum casamento encontrado com esses filtros</p>
+          ) : (
+            <>
+              <p className="font-heading text-lg text-midnight mb-1">Nenhum casamento ainda</p>
+              <p className="font-body text-sm text-midnight/40 mb-4">Vincule-se ao primeiro casamento e comece a organizar tudo em um lugar só.</p>
+              <button
+                onClick={() => setLinkModalOpen(true)}
+                className="inline-flex px-5 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition"
+              >
+                Vincular primeiro casamento
+              </button>
+            </>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -316,6 +363,36 @@ export default function CerimonialDashboard() {
         </div>
       )}
 
+      {/* Portfolio Card */}
+      {data.planner.slug && (
+        <div className="mt-8 bg-white rounded-2xl shadow-sm p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="font-heading text-lg text-midnight mb-1">Seu portfólio público</h3>
+            <p className="font-body text-sm text-midnight/50">
+              Compartilhe seu portfólio com casais para receber mais leads.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={() => {
+                const url = `${window.location.origin}/cerimonialista/${data.planner.slug}/portfolio`;
+                navigator.clipboard.writeText(url);
+                toast.success("Link copiado!");
+              }}
+              className="px-4 py-2 border border-gray-200 text-midnight rounded-xl font-body text-sm hover:bg-fog transition"
+            >
+              Copiar link
+            </button>
+            <Link
+              href="/cerimonialista/portfolio"
+              className="px-4 py-2 bg-midnight text-white rounded-xl font-body text-sm font-medium hover:bg-midnight/90 transition"
+            >
+              Gerenciar
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Referral Banner */}
       {referral && (
         <div className="mt-10 bg-midnight rounded-2xl p-6 text-white">
@@ -356,30 +433,53 @@ export default function CerimonialDashboard() {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h2 className="font-heading text-xl text-midnight mb-2">Vincular a casamento</h2>
             <p className="font-body text-sm text-midnight/60 mb-5">
-              Insira o ID ou codigo do casamento para se vincular.
+              Insira o código de 6 caracteres que o casal gerou no app.
             </p>
 
-            <input
-              type="text"
-              value={linkWeddingId}
-              onChange={(e) => setLinkWeddingId(e.target.value)}
-              placeholder="ID do casamento"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl font-body text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition mb-3"
-              onKeyDown={(e) => e.key === "Enter" && handleLinkWedding()}
-            />
+            <div className="relative mb-3">
+              <input
+                type="text"
+                value={inviteCode}
+                onChange={(e) => {
+                  const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
+                  setInviteCode(val);
+                  setLinkError("");
+                  setCodePreview(null);
+                  if (val.length === 6) validateCode(val);
+                }}
+                placeholder="ABC123"
+                maxLength={6}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl font-display text-2xl tracking-[0.3em] text-midnight bg-white focus:border-midnight focus:ring-1 focus:ring-midnight outline-none transition uppercase text-center"
+                onKeyDown={(e) => e.key === "Enter" && handleLinkWedding()}
+              />
+              {validatingCode && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+              )}
+            </div>
+
+            {codePreview && (
+              <div className="flex items-center gap-2 mb-3 px-4 py-3 bg-green-50 border border-green-200 rounded-xl">
+                <svg className="w-4 h-4 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <p className="font-body text-sm text-green-700 font-medium">
+                  {codePreview.partnerName1} & {codePreview.partnerName2}
+                </p>
+              </div>
+            )}
 
             {linkError && <p className="font-body text-sm text-red-600 mb-3">{linkError}</p>}
 
             <div className="flex gap-3">
               <button
-                onClick={() => { setLinkModalOpen(false); setLinkError(""); }}
+                onClick={() => { setLinkModalOpen(false); setLinkError(""); setInviteCode(""); setCodePreview(null); }}
                 className="flex-1 py-2.5 border border-gray-300 text-midnight/70 rounded-xl font-body text-sm hover:bg-gray-50 transition"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleLinkWedding}
-                disabled={linking}
+                disabled={linking || !codePreview}
                 className="flex-1 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition disabled:opacity-50"
               >
                 {linking ? "Vinculando..." : "Vincular"}

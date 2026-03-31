@@ -63,6 +63,7 @@ export default function ImportarOrcamentoPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   useEffect(() => {
     if (authStatus !== "authenticated") return;
@@ -116,6 +117,19 @@ export default function ImportarOrcamentoPage() {
     if (!file) return;
     setProcessing(true);
     setError(null);
+    const messages = [
+      "Lendo o documento...",
+      "Identificando itens e valores...",
+      "Extraindo condições de pagamento...",
+      "Organizando os dados...",
+      "Quase pronto!",
+    ];
+    let msgIdx = 0;
+    setLoadingMessage(messages[0]);
+    const msgInterval = setInterval(() => {
+      msgIdx = Math.min(msgIdx + 1, messages.length - 1);
+      setLoadingMessage(messages[msgIdx]);
+    }, 2000);
     try {
       const fd = new FormData();
       fd.append("file", file);
@@ -141,7 +155,9 @@ export default function ImportarOrcamentoPage() {
     } catch (err) {
       setError((err as Error).message);
     } finally {
+      clearInterval(msgInterval);
       setProcessing(false);
+      setLoadingMessage("");
     }
   }
 
@@ -208,11 +224,26 @@ export default function ImportarOrcamentoPage() {
 
   return (
     <div className="p-6 lg:p-8 max-w-5xl mx-auto">
+      {/* Hero */}
       <motion.div {...fadeUp} className="mb-8">
-        <h1 className="font-heading text-3xl text-midnight">Importar Orçamento</h1>
-        <p className="font-body text-sm text-midnight/50 mt-1">
-          Envie uma foto ou PDF do orçamento e a AI extrai os itens automaticamente
-        </p>
+        <div className="bg-gradient-to-br from-midnight to-midnight/90 rounded-2xl px-6 py-8 mb-2">
+          <h1 className="font-heading text-3xl text-white mb-2">Importe qualquer orçamento em segundos</h1>
+          <p className="font-body text-sm text-white/65 max-w-lg">
+            Tire uma foto ou envie um PDF — a IA extrai todos os itens, valores e condições de pagamento automaticamente.
+          </p>
+          <div className="flex flex-wrap gap-4 mt-5">
+            {[
+              { icon: "📄", text: "PDF ou foto" },
+              { icon: "⚡", text: "Extração em segundos" },
+              { icon: "✏️", text: "Edição completa" },
+            ].map((f) => (
+              <div key={f.text} className="flex items-center gap-2 text-white/80">
+                <span className="text-sm">{f.icon}</span>
+                <span className="font-body text-xs">{f.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </motion.div>
 
       {/* Saved success */}
@@ -353,8 +384,8 @@ export default function ImportarOrcamentoPage() {
             >
               {processing ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Processando com AI…
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
+                  <span className="transition-all">{loadingMessage || "Processando…"}</span>
                 </>
               ) : (
                 <>

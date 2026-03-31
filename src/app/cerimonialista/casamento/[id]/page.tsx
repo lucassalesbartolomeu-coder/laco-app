@@ -37,7 +37,11 @@ export default function CerimonialistaWeddingDetail() {
   const { status: authStatus } = useSession();
   const [wedding, setWedding] = useState<WeddingDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<Tab>("convidados");
+  const [openSections, setOpenSections] = useState({ convidados: true, fornecedores: true, orcamento: true });
+
+  function toggleSection(key: Tab) {
+    setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
 
   useEffect(() => {
     if (authStatus !== "authenticated") return;
@@ -69,9 +73,9 @@ export default function CerimonialistaWeddingDetail() {
   const totalBudget = wedding.budgetItems?.reduce((s, b) => s + b.estimatedCost, 0) || 0;
   const totalPaid = wedding.budgetItems?.reduce((s, b) => s + (b.actualCost || 0), 0) || 0;
 
-  const TABS: { key: Tab; label: string }[] = [
-    { key: "convidados", label: `Convidados (${totalGuests})` },
-    { key: "fornecedores", label: `Fornecedores (${wedding.vendors?.length || 0})` },
+  const SECTIONS: { key: Tab; label: string; count?: number }[] = [
+    { key: "convidados", label: "Convidados", count: totalGuests },
+    { key: "fornecedores", label: "Fornecedores", count: wedding.vendors?.length || 0 },
     { key: "orcamento", label: "Orçamento" },
   ];
 
@@ -133,127 +137,149 @@ export default function CerimonialistaWeddingDetail() {
         />
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-white rounded-xl p-1 shadow-sm mb-6">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            className={`flex-1 py-2.5 rounded-lg font-body text-sm font-medium transition ${
-              tab === t.key ? "bg-midnight text-white" : "text-midnight/50 hover:text-midnight"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      {/* Collapsible sections */}
+      <div className="space-y-4">
+        {SECTIONS.map((s) => {
+          const isOpen = openSections[s.key];
+          return (
+            <div key={s.key} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+              <button
+                onClick={() => toggleSection(s.key)}
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition"
+              >
+                <div className="flex items-center gap-3">
+                  <h2 className="font-heading text-lg text-midnight">{s.label}</h2>
+                  {s.count !== undefined && (
+                    <span className="px-2 py-0.5 bg-midnight/10 text-midnight text-xs font-body font-medium rounded-full">
+                      {s.count}
+                    </span>
+                  )}
+                </div>
+                <svg
+                  className={`w-4 h-4 text-midnight/40 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
 
-      {/* Tab content */}
-      <div className="bg-white rounded-2xl shadow-sm p-6">
-        {tab === "convidados" && (
-          <div className="space-y-2">
-            {wedding.guests?.length === 0 ? (
-              <p className="font-body text-midnight/40 text-center py-8">Nenhum convidado</p>
-            ) : (
-              <table className="w-full font-body text-sm">
-                <thead>
-                  <tr className="border-b text-left text-xs text-midnight/40 uppercase">
-                    <th className="pb-2">Nome</th>
-                    <th className="pb-2">Categoria</th>
-                    <th className="pb-2">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {wedding.guests?.map((g) => (
-                    <tr key={g.id} className="border-b border-gray-50">
-                      <td className="py-2 text-midnight">{g.name}</td>
-                      <td className="py-2 text-midnight/60">{g.category || "—"}</td>
-                      <td className="py-2">
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                          g.rsvpStatus === "confirmado" ? "bg-green-100 text-green-700" :
-                          g.rsvpStatus === "recusado" ? "bg-red-100 text-red-700" :
-                          "bg-amber-100 text-amber-700"
-                        }`}>{g.rsvpStatus}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        )}
+              {isOpen && (
+                <div className="px-6 pb-6 border-t border-gray-100">
+                  {s.key === "convidados" && (
+                    <div className="space-y-2 pt-4">
+                      {wedding.guests?.length === 0 ? (
+                        <p className="font-body text-midnight/40 text-center py-8">Nenhum convidado</p>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full font-body text-sm">
+                            <thead>
+                              <tr className="border-b text-left text-xs text-midnight/40 uppercase">
+                                <th className="pb-2">Nome</th>
+                                <th className="pb-2">Categoria</th>
+                                <th className="pb-2">Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {wedding.guests?.map((g) => (
+                                <tr key={g.id} className="border-b border-gray-50">
+                                  <td className="py-2 text-midnight">{g.name}</td>
+                                  <td className="py-2 text-midnight/60">{g.category || "—"}</td>
+                                  <td className="py-2">
+                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                                      g.rsvpStatus === "confirmado" ? "bg-green-100 text-green-700" :
+                                      g.rsvpStatus === "recusado" ? "bg-red-100 text-red-700" :
+                                      "bg-amber-100 text-amber-700"
+                                    }`}>{g.rsvpStatus}</span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-        {tab === "fornecedores" && (
-          <div className="space-y-2">
-            {wedding.vendors?.length === 0 ? (
-              <p className="font-body text-midnight/40 text-center py-8">Nenhum fornecedor</p>
-            ) : (
-              <table className="w-full font-body text-sm">
-                <thead>
-                  <tr className="border-b text-left text-xs text-midnight/40 uppercase">
-                    <th className="pb-2">Nome</th>
-                    <th className="pb-2">Categoria</th>
-                    <th className="pb-2">Orcamento</th>
-                    <th className="pb-2">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {wedding.vendors?.map((v) => (
-                    <tr key={v.id} className="border-b border-gray-50">
-                      <td className="py-2 text-midnight">{v.name}</td>
-                      <td className="py-2 text-midnight/60">{v.category}</td>
-                      <td className="py-2 text-midnight/60">{v.budget ? formatCurrency(v.budget) : "—"}</td>
-                      <td className="py-2">
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                          v.status === "contratado" ? "bg-green-100 text-green-700" :
-                          v.status === "descartado" ? "bg-red-100 text-red-700" :
-                          "bg-amber-100 text-amber-700"
-                        }`}>{v.status}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        )}
+                  {s.key === "fornecedores" && (
+                    <div className="space-y-2 pt-4">
+                      {wedding.vendors?.length === 0 ? (
+                        <p className="font-body text-midnight/40 text-center py-8">Nenhum fornecedor</p>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full font-body text-sm">
+                            <thead>
+                              <tr className="border-b text-left text-xs text-midnight/40 uppercase">
+                                <th className="pb-2">Nome</th>
+                                <th className="pb-2">Categoria</th>
+                                <th className="pb-2">Orcamento</th>
+                                <th className="pb-2">Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {wedding.vendors?.map((v) => (
+                                <tr key={v.id} className="border-b border-gray-50">
+                                  <td className="py-2 text-midnight">{v.name}</td>
+                                  <td className="py-2 text-midnight/60">{v.category}</td>
+                                  <td className="py-2 text-midnight/60">{v.budget ? formatCurrency(v.budget) : "—"}</td>
+                                  <td className="py-2">
+                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                                      v.status === "contratado" ? "bg-green-100 text-green-700" :
+                                      v.status === "descartado" ? "bg-red-100 text-red-700" :
+                                      "bg-amber-100 text-amber-700"
+                                    }`}>{v.status}</span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-        {tab === "orcamento" && (
-          <div className="space-y-2">
-            {wedding.budgetItems?.length === 0 ? (
-              <p className="font-body text-midnight/40 text-center py-8">Nenhum item no orçamento</p>
-            ) : (
-              <table className="w-full font-body text-sm">
-                <thead>
-                  <tr className="border-b text-left text-xs text-midnight/40 uppercase">
-                    <th className="pb-2">Descrição</th>
-                    <th className="pb-2">Categoria</th>
-                    <th className="pb-2">Estimado</th>
-                    <th className="pb-2">Real</th>
-                    <th className="pb-2">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {wedding.budgetItems?.map((b) => (
-                    <tr key={b.id} className="border-b border-gray-50">
-                      <td className="py-2 text-midnight">{b.description}</td>
-                      <td className="py-2 text-midnight/60">{b.category}</td>
-                      <td className="py-2 text-midnight/60">{formatCurrency(b.estimatedCost)}</td>
-                      <td className="py-2 text-midnight/60">{b.actualCost ? formatCurrency(b.actualCost) : "—"}</td>
-                      <td className="py-2">
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                          b.status === "pago" ? "bg-green-100 text-green-700" :
-                          b.status === "parcial" ? "bg-amber-100 text-amber-700" :
-                          "bg-gray-100 text-gray-500"
-                        }`}>{b.status}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        )}
+                  {s.key === "orcamento" && (
+                    <div className="space-y-2 pt-4">
+                      {wedding.budgetItems?.length === 0 ? (
+                        <p className="font-body text-midnight/40 text-center py-8">Nenhum item no orçamento</p>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full font-body text-sm">
+                            <thead>
+                              <tr className="border-b text-left text-xs text-midnight/40 uppercase">
+                                <th className="pb-2">Descrição</th>
+                                <th className="pb-2">Categoria</th>
+                                <th className="pb-2">Estimado</th>
+                                <th className="pb-2">Real</th>
+                                <th className="pb-2">Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {wedding.budgetItems?.map((b) => (
+                                <tr key={b.id} className="border-b border-gray-50">
+                                  <td className="py-2 text-midnight">{b.description}</td>
+                                  <td className="py-2 text-midnight/60">{b.category}</td>
+                                  <td className="py-2 text-midnight/60">{formatCurrency(b.estimatedCost)}</td>
+                                  <td className="py-2 text-midnight/60">{b.actualCost ? formatCurrency(b.actualCost) : "—"}</td>
+                                  <td className="py-2">
+                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                                      b.status === "pago" ? "bg-green-100 text-green-700" :
+                                      b.status === "parcial" ? "bg-amber-100 text-amber-700" :
+                                      "bg-gray-100 text-gray-500"
+                                    }`}>{b.status}</span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
