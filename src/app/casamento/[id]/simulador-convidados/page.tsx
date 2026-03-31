@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
@@ -11,38 +11,25 @@ import {
   useTransform,
   animate,
 } from "framer-motion";
-import { MapPin, Phone, TrendingUp, AlertCircle, ArrowRight, Printer } from "lucide-react";
+import { MapPin, TrendingUp, AlertCircle, ArrowRight, Printer, Globe } from "lucide-react";
 import BottomNav from "@/components/bottom-nav";
 import { useToast } from "@/hooks/use-toast";
-import { dddMap, type DDDInfo } from "@/lib/ddd-map";
+import { dddMap } from "@/lib/ddd-map";
+import { DDD_COORDS, STATE_CENTROID, haversineKm, dddToWeddingKm } from "@/lib/ddd-coords";
 import type { Guest, WeddingWithRelations } from "@/types";
 import { simulateAttendance } from "@/lib/attendance-simulator";
 
 // ─── Types ──────────────────────────────────────────────────────
 
 interface RegionalAttendance {
-  state: string;
+  label: string;
   count: number;
   percentage: number;
   region: string;
-}
-
-interface DDDSamplePhone {
-  phone: string;
-  ddd: string;
-  city: string;
-  state: string;
+  isInternational?: boolean;
 }
 
 // ─── Constants ──────────────────────────────────────────────────
-
-const SAMPLE_PHONES: DDDSamplePhone[] = [
-  { phone: "(11) 98765-4321", ddd: "11", city: "São Paulo", state: "SP" },
-  { phone: "(21) 99999-8888", ddd: "21", city: "Rio de Janeiro", state: "RJ" },
-  { phone: "(31) 97654-3210", ddd: "31", city: "Belo Horizonte", state: "MG" },
-  { phone: "(85) 98888-7777", ddd: "85", city: "Fortaleza", state: "CE" },
-  { phone: "(51) 99876-5432", ddd: "51", city: "Porto Alegre", state: "RS" },
-];
 
 const REGION_COLORS: Record<string, string> = {
   Sudeste: "bg-midnight",
@@ -50,37 +37,46 @@ const REGION_COLORS: Record<string, string> = {
   Nordeste: "bg-orange-500",
   Centro: "bg-yellow-600",
   Norte: "bg-green-600",
+  Internacional: "bg-purple-500",
 };
 
 const STATE_REGIONS: Record<string, string> = {
-  SP: "Sudeste",
-  RJ: "Sudeste",
-  ES: "Sudeste",
-  MG: "Sudeste",
-  PR: "Sul",
-  SC: "Sul",
-  RS: "Sul",
-  BA: "Nordeste",
-  SE: "Nordeste",
-  AL: "Nordeste",
-  PE: "Nordeste",
-  PB: "Nordeste",
-  RN: "Nordeste",
-  CE: "Nordeste",
-  PI: "Nordeste",
-  MA: "Nordeste",
-  GO: "Centro",
-  MT: "Centro",
-  MS: "Centro",
-  DF: "Centro",
-  AC: "Norte",
-  AM: "Norte",
-  PA: "Norte",
-  RO: "Norte",
-  RR: "Norte",
-  AP: "Norte",
-  TO: "Norte",
+  SP: "Sudeste", RJ: "Sudeste", ES: "Sudeste", MG: "Sudeste",
+  PR: "Sul",     SC: "Sul",     RS: "Sul",
+  BA: "Nordeste", SE: "Nordeste", AL: "Nordeste", PE: "Nordeste",
+  PB: "Nordeste", RN: "Nordeste", CE: "Nordeste", PI: "Nordeste", MA: "Nordeste",
+  GO: "Centro",  MT: "Centro",  MS: "Centro",   DF: "Centro",
+  AC: "Norte",   AM: "Norte",   PA: "Norte",    RO: "Norte",
+  RR: "Norte",   AP: "Norte",   TO: "Norte",
 };
+
+// Guest category options for the simulator
+const CATEGORY_OPTIONS = [
+  { value: "",              label: "Misto / Não definido", mod: "0%" },
+  { value: "familia_noivo", label: "Família",              mod: "+12%" },
+  { value: "amigos_noivo",  label: "Amigos",               mod: "+5%" },
+  { value: "trabalho",      label: "Trabalho / Conhecidos",mod: "-10%" },
+  { value: "lista_b",       label: "Lista B",              mod: "-15%" },
+];
+
+// ─── Helpers ─────────────────────────────────────────────────────
+
+function extractDDDFromPhone(phone: string): string | null {
+  let cleaned = phone.replace(/\D/g, "");
+  if (cleaned.startsWith("55") && cleaned.length >= 12) cleaned = cleaned.slice(2);
+  if (cleaned.length >= 2) return cleaned.slice(0, 2);
+  return null;
+}
+
+function isInternationalPhone(phone: string): boolean {
+  const stripped = phone.replace(/\s/g, "");
+  // Stored as +DDI... – non-BR if DDI ≠ 55
+  if (stripped.startsWith("+") && !stripped.startsWith("+55")) return true;
+  // Plain digits starting with a non-55 country code (10+ digits, not starting with 55)
+  const digits = stripped.replace(/\D/g, "");
+  if (digits.length > 11 && !digits.startsWith("55")) return true;
+  return false;
+}
 
 // ─── CountUp Component ──────────────────────────────────────────
 
@@ -107,211 +103,19 @@ function CountUp({
   const [display, setDisplay] = useState(formatFn ? formatFn(0) : "0");
 
   useEffect(() => {
-    const controls = animate(motionVal, target, {
-      duration,
-      ease: "easeOut",
-    });
-
+    const controls = animate(motionVal, target, { duration, ease: "easeOut" });
     const unsubscribe = rounded.on("change", (v) => setDisplay(v));
-
-    return () => {
-      controls.stop();
-      unsubscribe();
-    };
+    return () => { controls.stop(); unsubscribe(); };
   }, [target, duration, motionVal, rounded]);
 
   return (
     <span className={className}>
-      {prefix}
-      {display}
-      {suffix}
+      {prefix}{display}{suffix}
     </span>
   );
 }
 
-// ─── Extract DDD from Phone ─────────────────────────────────────
-
-function extractDDDFromPhone(phone: string): string | null {
-  let cleaned = phone.replace(/\D/g, "");
-  // Strip Brazil country code (+55) if present
-  if (cleaned.startsWith("55") && cleaned.length >= 12) {
-    cleaned = cleaned.slice(2);
-  }
-  if (cleaned.length >= 2) {
-    return cleaned.slice(0, 2);
-  }
-  return null;
-}
-
-function formatPhoneInput(value: string): string {
-  const cleaned = value.replace(/\D/g, "");
-  if (cleaned.length === 0) return "";
-  if (cleaned.length <= 2) return `(${cleaned}`;
-  if (cleaned.length <= 7) {
-    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
-  }
-  return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7, 11)}`;
-}
-
-// ─── DDDDemo Component ──────────────────────────────────────────
-
-function DDDDemo() {
-  const [inputValue, setInputValue] = useState("");
-  const [detectedDDD, setDetectedDDD] = useState<DDDInfo | null>(null);
-  const [animatingIndex, setAnimatingIndex] = useState<number | null>(null);
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhoneInput(e.target.value);
-    setInputValue(formatted);
-
-    const ddd = extractDDDFromPhone(formatted);
-    if (ddd && dddMap[ddd]) {
-      setDetectedDDD(dddMap[ddd]);
-    } else {
-      setDetectedDDD(null);
-    }
-  };
-
-  useEffect(() => {
-    // Animate sample phones one by one
-    let timeout: NodeJS.Timeout;
-    let index = 0;
-
-    const animateSamples = () => {
-      if (index < SAMPLE_PHONES.length) {
-        setAnimatingIndex(index);
-        index++;
-        timeout = setTimeout(animateSamples, 800);
-      } else {
-        setAnimatingIndex(null);
-      }
-    };
-
-    const initialDelay = setTimeout(animateSamples, 500);
-
-    return () => {
-      clearTimeout(timeout);
-      clearTimeout(initialDelay);
-    };
-  }, []);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      className="bg-white rounded-2xl shadow-md p-6 sm:p-8"
-    >
-      <div className="mb-6">
-        <h2 className="font-heading text-2xl text-midnight mb-2">
-          <span className="flex items-center gap-2">
-            <Phone className="w-6 h-6" />
-            Detector de DDD
-          </span>
-        </h2>
-        <p className="font-body text-gray-600">
-          Digite um número e veja o Laço detectar de onde vem seu convidado
-        </p>
-      </div>
-
-      {/* Phone Input Section */}
-      <div className="mb-8">
-        <label className="block font-body text-sm text-midnight mb-3">
-          Teste um número de telefone
-        </label>
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="(XX) XXXXX-XXXX"
-            value={inputValue}
-            onChange={handlePhoneChange}
-            maxLength={15}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-midnight transition-colors font-body"
-          />
-          <Phone className="absolute right-4 top-3.5 w-5 h-5 text-gray-400 pointer-events-none" />
-        </div>
-
-        {/* Detection Result */}
-        <AnimatePresence>
-          {detectedDDD && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              className="mt-4 p-4 bg-gradient-to-r from-midnight/10 to-midnight/5 rounded-xl border border-midnight/20"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-midnight/20 rounded-full flex items-center justify-center">
-                  <MapPin className="w-5 h-5 text-midnight" />
-                </div>
-                <div>
-                  <p className="font-heading text-sm text-midnight">DDD {inputValue.slice(1, 3)}</p>
-                  <p className="font-body text-midnight">
-                    {detectedDDD.city}, {detectedDDD.state}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Sample Phones Animation */}
-      <div className="space-y-3">
-        <p className="font-body text-sm text-gray-500 font-semibold">
-          Exemplos automáticos
-        </p>
-        <div className="space-y-2">
-          {SAMPLE_PHONES.map((sample, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, x: -20 }}
-              animate={
-                animatingIndex === idx
-                  ? { opacity: 1, x: 0, backgroundColor: "rgba(44, 107, 94, 0.05)" }
-                  : { opacity: 0.6, x: 0, backgroundColor: "transparent" }
-              }
-              transition={{ duration: 0.4 }}
-              className="p-3 rounded-lg border border-gray-100 flex items-center justify-between"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-midnight to-midnight/70 rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                  {sample.ddd}
-                </div>
-                <div>
-                  <p className="font-body text-sm text-midnight font-medium">
-                    {sample.phone}
-                  </p>
-                  <p className="font-body text-xs text-gray-500">
-                    {sample.city}, {sample.state}
-                  </p>
-                </div>
-              </div>
-              {animatingIndex === idx && (
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="w-4 h-4 border-2 border-midnight border-t-transparent rounded-full"
-                />
-              )}
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* Explanation */}
-      <div className="mt-8 p-4 bg-fog rounded-xl border border-gold/10">
-        <p className="font-body text-sm text-midnight leading-relaxed">
-          O Laço lê automaticamente os 2 primeiros dígitos de cada número de
-          telefone para saber de qual estado e cidade vem o convidado. Isso
-          ajuda a prever a taxa de presença baseada na distância.
-        </p>
-      </div>
-    </motion.div>
-  );
-}
-
-// ─── Guest Origin Map Component ──────────────────────────────
+// ─── Guest Origin Map Component ──────────────────────────────────
 
 interface GuestOriginMapProps {
   guests: Guest[];
@@ -319,38 +123,51 @@ interface GuestOriginMapProps {
 }
 
 function GuestOriginMap({ guests }: GuestOriginMapProps) {
-  const [stateStats, setStateStats] = useState<RegionalAttendance[]>([]);
+  const [stats, setStats] = useState<RegionalAttendance[]>([]);
 
   useEffect(() => {
     const stateMap: Record<string, number> = {};
+    let intlCount = 0;
 
     guests.forEach((guest) => {
-      if (guest.phone) {
-        const ddd = extractDDDFromPhone(guest.phone);
-        if (ddd && dddMap[ddd]) {
-          const state = dddMap[ddd].state;
-          stateMap[state] = (stateMap[state] || 0) + 1;
-        }
+      if (!guest.phone) return;
+      if (isInternationalPhone(guest.phone)) {
+        intlCount++;
+        return;
+      }
+      const ddd = extractDDDFromPhone(guest.phone);
+      if (ddd && dddMap[ddd]) {
+        const state = dddMap[ddd].state;
+        stateMap[state] = (stateMap[state] || 0) + 1;
       }
     });
 
-    const stats: RegionalAttendance[] = Object.entries(stateMap)
+    const total = guests.length;
+    const result: RegionalAttendance[] = Object.entries(stateMap)
       .map(([state, count]) => ({
-        state,
+        label: state,
         count,
-        percentage: Math.round((count / guests.length) * 100),
+        percentage: Math.round((count / total) * 100),
         region: STATE_REGIONS[state] || "Outro",
       }))
       .sort((a, b) => b.count - a.count);
 
-    setStateStats(stats);
+    if (intlCount > 0) {
+      result.push({
+        label: "Internacional",
+        count: intlCount,
+        percentage: Math.round((intlCount / total) * 100),
+        region: "Internacional",
+        isInternational: true,
+      });
+    }
+
+    setStats(result);
   }, [guests]);
 
-  if (stateStats.length === 0) {
-    return null;
-  }
+  if (stats.length === 0) return null;
 
-  const maxCount = Math.max(...stateStats.map((s) => s.count));
+  const maxCount = Math.max(...stats.map((s) => s.count));
 
   return (
     <motion.div
@@ -364,51 +181,41 @@ function GuestOriginMap({ guests }: GuestOriginMapProps) {
           <MapPin className="w-6 h-6" />
           Origem dos Convidados
         </h2>
-        <p className="font-body text-gray-600">
-          Distribuição geográfica pelos estados
-        </p>
+        <p className="font-body text-gray-600">Distribuição geográfica — estado e país</p>
       </div>
 
       <div className="space-y-4">
-        {stateStats.map((stat, idx) => {
-          const barWidth = (stat.count / maxCount) * 100;
-          const region = STATE_REGIONS[stat.state] || "Outro";
-          const barColor = REGION_COLORS[region] || "bg-gray-400";
+        {stats.map((stat, idx) => {
+          const barColor = stat.isInternational
+            ? "bg-purple-500"
+            : REGION_COLORS[stat.region] || "bg-gray-400";
 
           return (
             <motion.div
-              key={stat.state}
+              key={stat.label}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.5 + idx * 0.08 }}
+              transition={{ duration: 0.4, delay: 0.5 + idx * 0.06 }}
             >
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <p className="font-heading text-sm text-midnight">
-                    {stat.state}
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  {stat.isInternational && <Globe className="w-3.5 h-3.5 text-purple-500" />}
+                  <p className="font-heading text-sm text-midnight">{stat.label}</p>
+                  <p className="font-body text-xs text-gray-500">
+                    {stat.isInternational ? "Fora do Brasil" : stat.region}
                   </p>
-                  <p className="font-body text-xs text-gray-500">{region}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-heading text-sm text-midnight">
-                    {stat.count}
-                  </p>
-                  <p className="font-body text-xs text-gray-500">
-                    {stat.percentage}%
-                  </p>
+                  <p className="font-heading text-sm text-midnight">{stat.count}</p>
+                  <p className="font-body text-xs text-gray-500">{stat.percentage}%</p>
                 </div>
               </div>
-
               <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
                 <motion.div
                   className={`h-full rounded-full ${barColor}`}
                   initial={{ width: 0 }}
-                  animate={{ width: `${barWidth}%` }}
-                  transition={{
-                    duration: 0.8,
-                    delay: 0.5 + idx * 0.1,
-                    ease: "easeOut",
-                  }}
+                  animate={{ width: `${(stat.count / maxCount) * 100}%` }}
+                  transition={{ duration: 0.8, delay: 0.5 + idx * 0.08, ease: "easeOut" }}
                 />
               </div>
             </motion.div>
@@ -416,81 +223,93 @@ function GuestOriginMap({ guests }: GuestOriginMapProps) {
         })}
       </div>
 
-      {/* Regional Legend */}
-      <div className="mt-8 pt-6 border-t border-gray-100">
-        <p className="font-body text-xs text-gray-500 mb-3 font-semibold">
-          REGIÕES
-        </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {Object.entries(REGION_COLORS).map(([region, color]) => (
-            <div key={region} className="flex items-center gap-2">
-              <div className={`w-3 h-3 rounded-full ${color}`} />
+      {/* Legend */}
+      <div className="mt-6 pt-4 border-t border-gray-100">
+        <div className="flex flex-wrap gap-3">
+          {[...Object.entries(REGION_COLORS)].map(([region, color]) => (
+            <div key={region} className="flex items-center gap-1.5">
+              <div className={`w-2.5 h-2.5 rounded-full ${color}`} />
               <span className="font-body text-xs text-gray-600">{region}</span>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Missing phone notice */}
+      {(() => {
+        const noPhone = guests.filter((g) => !g.phone).length;
+        return noPhone > 0 ? (
+          <p className="mt-3 font-body text-xs text-gray-400">
+            {noPhone} convidado{noPhone > 1 ? "s" : ""} sem telefone — localização não detectada
+          </p>
+        ) : null;
+      })()}
     </motion.div>
   );
 }
 
-// ─── Attendance Prediction Component ─────────────────────────
+// ─── Attendance Prediction Component (km-based) ──────────────────
 
 interface AttendancePredictionProps {
   guests: Guest[];
   weddingState: string;
+  isDestinationWedding: boolean;
 }
 
-function AttendancePrediction({
-  guests,
-  weddingState,
-}: AttendancePredictionProps) {
+function AttendancePrediction({ guests, weddingState, isDestinationWedding }: AttendancePredictionProps) {
   const [prediction, setPrediction] = useState<{
     expected: number;
-    samState: number;
-    adjacentState: number;
-    farState: number;
+    groups: { label: string; count: number; rate: string }[];
+    intlCount: number;
   } | null>(null);
 
   useEffect(() => {
     let expected = 0;
-    let samState = 0;
-    let adjacentState = 0;
-    let farState = 0;
+    const groups = [
+      { label: "Menos de 150 km",  min: 0,    max: 150,  rate: isDestinationWedding ? 87 : 85, count: 0 },
+      { label: "150 – 300 km",     min: 150,  max: 300,  rate: isDestinationWedding ? 80 : 76, count: 0 },
+      { label: "300 – 600 km",     min: 300,  max: 600,  rate: isDestinationWedding ? 71 : 63, count: 0 },
+      { label: "Mais de 600 km",   min: 600,  max: Infinity, rate: isDestinationWedding ? 58 : 45, count: 0 },
+    ];
+    let intlCount = 0;
 
     guests.forEach((guest) => {
-      // Determine guest state: from phone DDD or fallback to wedding state (no phone = local guest)
-      const ddd = guest.phone ? extractDDDFromPhone(guest.phone) : null;
-      const guestState = (ddd && dddMap[ddd]) ? dddMap[ddd].state : weddingState;
+      let rate: number;
+      let distanceKm: number | null = null;
 
-      if (guestState === weddingState) {
-        expected += 0.88;
-        samState++;
-      } else {
-        const isAdjacent = [
-          "SP", "RJ", "MG", "PR", "SC", "RS", "BA", "ES",
-        ].includes(weddingState);
-        if (isAdjacent) {
-          expected += 0.72;
-          adjacentState++;
-        } else {
-          expected += 0.55;
-          farState++;
-        }
+      if (guest.phone && isInternationalPhone(guest.phone)) {
+        intlCount++;
+        rate = isDestinationWedding ? 40 : 28;
+        expected += rate / 100;
+        return;
       }
+
+      const ddd = guest.phone ? extractDDDFromPhone(guest.phone) : null;
+      if (ddd) distanceKm = dddToWeddingKm(ddd, weddingState);
+
+      if (distanceKm !== null) {
+        const group = groups.find((g) => distanceKm! >= g.min && distanceKm! < g.max);
+        if (group) group.count++;
+        rate = groups.find((g) => distanceKm! >= g.min && distanceKm! < g.max)?.rate ?? 70;
+      } else {
+        // No phone or unrecognised DDD → same state fallback
+        groups[0].count++;
+        rate = isDestinationWedding ? 87 : 85;
+      }
+
+      expected += rate / 100;
     });
 
     setPrediction({
       expected: Math.round(expected),
-      samState,
-      adjacentState,
-      farState,
+      groups: groups.map((g) => ({ label: g.label, count: g.count, rate: `~${g.rate}%` })),
+      intlCount,
     });
-  }, [guests, weddingState]);
+  }, [guests, weddingState, isDestinationWedding]);
 
   if (!prediction) return null;
 
-  const percentage = Math.round((prediction.expected / guests.length) * 100);
+  const percentage = guests.length > 0 ? Math.round((prediction.expected / guests.length) * 100) : 0;
 
   return (
     <motion.div
@@ -499,123 +318,87 @@ function AttendancePrediction({
       transition={{ duration: 0.5, delay: 0.6 }}
       className="bg-gradient-to-br from-midnight/5 to-midnight/2 rounded-2xl shadow-md p-6 sm:p-8 border border-midnight/20"
     >
-      <div className="mb-6">
-        <h2 className="font-heading text-2xl text-midnight mb-2 flex items-center gap-2">
+      <div className="mb-5">
+        <h2 className="font-heading text-2xl text-midnight mb-1 flex items-center gap-2">
           <TrendingUp className="w-6 h-6" />
           Previsão de Presença
         </h2>
-        <p className="font-body text-gray-600">
-          Baseado na localização dos convidados
-        </p>
+        <p className="font-body text-gray-600 text-sm">Por grupo de distância</p>
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-4 mb-6">
-        {/* Same State */}
-        <div className="p-4 bg-white rounded-xl border border-midnight/10">
-          <p className="font-body text-xs text-gray-500 mb-1">Mesmo Estado</p>
-          <p className="font-heading text-2xl text-midnight mb-1">
-            {prediction.samState}
-          </p>
-          <p className="font-body text-xs text-midnight">~88% presença</p>
-        </div>
-
-        {/* Adjacent State */}
-        <div className="p-4 bg-white rounded-xl border border-midnight/10">
-          <p className="font-body text-xs text-gray-500 mb-1">Estado Adjacente</p>
-          <p className="font-heading text-2xl text-midnight mb-1">
-            {prediction.adjacentState}
-          </p>
-          <p className="font-body text-xs text-midnight">~72% presença</p>
-        </div>
-
-        {/* Far State */}
-        <div className="p-4 bg-white rounded-xl border border-midnight/10">
-          <p className="font-body text-xs text-gray-500 mb-1">Estado Distante</p>
-          <p className="font-heading text-2xl text-midnight mb-1">
-            {prediction.farState}
-          </p>
-          <p className="font-body text-xs text-midnight">~55% presença</p>
-        </div>
+      {/* Distance groups */}
+      <div className="grid grid-cols-2 gap-3 mb-5">
+        {prediction.groups.map((g) => (
+          <div key={g.label} className="p-3 bg-white rounded-xl border border-midnight/10">
+            <p className="font-body text-xs text-gray-500 mb-0.5">{g.label}</p>
+            <p className="font-heading text-xl text-midnight">{g.count}</p>
+            <p className="font-body text-xs text-midnight">{g.rate} presença</p>
+          </div>
+        ))}
+        {prediction.intlCount > 0 && (
+          <div className="p-3 bg-white rounded-xl border border-purple-200">
+            <p className="font-body text-xs text-gray-500 mb-0.5 flex items-center gap-1">
+              <Globe className="w-3 h-3 text-purple-500" /> Internacional
+            </p>
+            <p className="font-heading text-xl text-midnight">{prediction.intlCount}</p>
+            <p className="font-body text-xs text-purple-600">
+              ~{isDestinationWedding ? 40 : 28}% presença
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* Main Prediction */}
-      <div className="bg-white rounded-xl p-6 border border-midnight/20">
-        <p className="font-body text-sm text-gray-600 mb-2">Estimativa total</p>
-        <div className="flex items-baseline gap-2 mb-2">
+      {/* Main estimate */}
+      <div className="bg-white rounded-xl p-5 border border-midnight/20">
+        <p className="font-body text-sm text-gray-600 mb-1">Estimativa total</p>
+        <div className="flex items-baseline gap-2 mb-3">
           <CountUp
             target={prediction.expected}
             duration={1.2}
             className="font-heading text-4xl text-midnight"
           />
-          <span className="font-heading text-xl text-gray-400">
-            de {guests.length}
-          </span>
+          <span className="font-heading text-xl text-gray-400">de {guests.length}</span>
         </div>
-        <div className="text-right">
-          <span className="font-heading text-lg text-midnight">{percentage}%</span>
+        <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-midnight to-gold rounded-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${percentage}%` }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+          />
+        </div>
+        <div className="flex justify-between mt-1">
+          <span className="font-body text-xs text-gray-400">0%</span>
+          <span className="font-heading text-sm text-midnight">{percentage}%</span>
+          <span className="font-body text-xs text-gray-400">100%</span>
         </div>
       </div>
 
-      {/* Donut-style progress */}
-      <div className="mt-6">
-        <div className="flex items-center justify-center">
-          <svg className="w-32 h-32" viewBox="0 0 120 120">
-            {/* Background circle */}
-            <circle
-              cx="60"
-              cy="60"
-              r="50"
-              fill="none"
-              stroke="#f3f4f6"
-              strokeWidth="8"
-            />
-            {/* Progress circle */}
-            <motion.circle
-              cx="60"
-              cy="60"
-              r="50"
-              fill="none"
-              stroke="#1A1F3A"
-              strokeWidth="8"
-              strokeDasharray="314"
-              initial={{ strokeDashoffset: 314 }}
-              animate={{
-                strokeDashoffset: 314 - (percentage / 100) * 314,
-              }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              strokeLinecap="round"
-              transform="rotate(-90 60 60)"
-            />
-            {/* Center text */}
-            <text
-              x="60"
-              y="60"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="font-heading text-2xl fill-midnight"
-              fontSize="20"
-            >
-              {percentage}%
-            </text>
-          </svg>
+      {isDestinationWedding && (
+        <div className="mt-4 p-3 bg-gold/10 border border-gold/25 rounded-xl">
+          <p className="font-body text-xs text-midnight/80">
+            ✈️ <strong>Destination wedding:</strong> convidados de longe que confirmam já decidiram ir —
+            taxa de presença ajustada para cima.
+          </p>
         </div>
-      </div>
+      )}
     </motion.div>
   );
 }
 
-// ─── Category helpers ─────────────────────────────────────────
+// ─── Category helpers ─────────────────────────────────────────────
 
 const CATEGORY_LABELS: Record<string, string> = {
   família_noivo: "Família do noivo",
   família_noiva: "Família da noiva",
   familia_noivo: "Família do noivo",
   familia_noiva: "Família da noiva",
-  amigos_noivo: "Amigos do noivo",
-  amigos_noiva: "Amigos da noiva",
-  trabalho: "Trabalho",
-  lista_b: "Lista B",
+  amigos_noivo:  "Amigos do noivo",
+  amigos_noiva:  "Amigos da noiva",
+  trabalho:      "Trabalho",
+  lista_b:       "Lista B",
   sem_categoria: "Sem categoria",
+  internacional: "Internacional",
 };
 
 function categoryLabel(cat: string): string {
@@ -629,72 +412,81 @@ function normaliseCat(cat: string | null | undefined): string | undefined {
     .replace("família_noiva", "familia_noiva");
 }
 
-// ─── Guest Attendance Chart ───────────────────────────────────
+// ─── Guest Attendance Chart ────────────────────────────────────────
 
 interface GuestAttendanceChartProps {
   guests: Guest[];
   weddingState: string;
+  isDestinationWedding: boolean;
 }
 
-function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProps) {
+function GuestAttendanceChart({ guests, weddingState, isDestinationWedding }: GuestAttendanceChartProps) {
   const [result, setResult] = useState<ReturnType<typeof simulateAttendance> | null>(null);
 
   useEffect(() => {
     if (guests.length === 0) return;
 
     const guestInputs = guests.map((g) => {
+      // International detection
+      if (g.phone && isInternationalPhone(g.phone)) {
+        return { isInternational: true, category: normaliseCat(g.category) };
+      }
+
+      // State from stored field or DDD
       let state = g.state ?? undefined;
       if (!state && g.phone) {
         const ddd = extractDDDFromPhone(g.phone);
         if (ddd && dddMap[ddd]) state = dddMap[ddd].state;
       }
-      // Guests with no phone or unrecognised DDD → assume wedding city (same state, ~88% attendance)
-      if (!state && weddingState) state = weddingState;
-      return { city: g.city ?? undefined, state, category: normaliseCat(g.category) };
+      if (!state) state = weddingState; // no phone → assume local
+
+      // km distance
+      let distanceKm: number | undefined;
+      if (g.phone) {
+        const ddd = extractDDDFromPhone(g.phone);
+        if (ddd) {
+          const km = dddToWeddingKm(ddd, weddingState);
+          if (km !== null) distanceKm = km;
+        }
+      }
+
+      return {
+        city:       g.city  ?? undefined,
+        state,
+        category:   normaliseCat(g.category),
+        distanceKm,
+        isInternational: false,
+      };
     });
 
     setResult(
       simulateAttendance(guestInputs, {
-        city: "",
-        state: weddingState,
-        weddingDate: new Date().toISOString(),
+        city:                 "",
+        state:                weddingState,
+        weddingDate:          new Date().toISOString(),
+        isDestinationWedding,
       }),
     );
-  }, [guests, weddingState]);
+  }, [guests, weddingState, isDestinationWedding]);
 
   if (!result) return null;
 
-  // ── SVG layout ─────────────────────────────────────────────
   const VIEW_W = 480;
   const BAR_H = 14;
   const BAR_GAP = 5;
   const GROUP_GAP = 16;
   const LABEL_W = 132;
-  const CHART_W = VIEW_W - LABEL_W - 44; // 44 px reserved for value labels
+  const CHART_W = VIEW_W - LABEL_W - 44;
 
-  const categories = Object.entries(result.byCategory).sort(
-    (a, b) => b[1].invited - a[1].invited,
-  );
-
+  const categories = Object.entries(result.byCategory).sort((a, b) => b[1].invited - a[1].invited);
   const maxInvited = Math.max(...categories.map(([, s]) => s.invited), 1);
   const GROUP_H = BAR_H * 3 + BAR_GAP * 2 + GROUP_GAP;
   const VIEW_H = Math.max(80, categories.length * GROUP_H + 20);
-
   const percentage = Math.round(result.attendanceRate * 100);
-  const confidencePctMin = result.totalInvited > 0
-    ? Math.round((result.confidenceRange.min / result.totalInvited) * 100)
-    : 0;
-  const confidencePctMax = result.totalInvited > 0
-    ? Math.round((result.confidenceRange.max / result.totalInvited) * 100)
-    : 0;
-
-  const hasLowCategory = categories.some(
-    ([, s]) => s.invited > 0 && s.expected / s.invited < 0.7,
-  );
+  const hasLowCategory = categories.some(([, s]) => s.invited > 0 && s.expected / s.invited < 0.7);
 
   return (
     <>
-      {/* Print styles — escondem UI e mostram o gráfico */}
       <style>{`
         @media print {
           .no-print { display: none !important; }
@@ -711,7 +503,6 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
         transition={{ duration: 0.5, delay: 0.75 }}
         className="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-midnight/10"
       >
-        {/* Cabeçalho */}
         <div className="flex items-start justify-between mb-5 gap-4">
           <div>
             <h2 className="font-heading text-2xl text-midnight mb-1 flex items-center gap-2">
@@ -719,54 +510,38 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
               Visualização por Categoria
             </h2>
             <p className="font-body text-sm text-gray-600">
-              Comparativo: total, estimativa e mínimo esperado
+              Família, amigos e demais grupos — total, estimativa e mínimo
             </p>
           </div>
           <button
             onClick={() => window.print()}
-            className="no-print flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-midnight text-midnight font-body text-sm font-medium hover:bg-midnight/5 transition-all duration-200"
-            title="Exportar como PDF via impressão"
+            className="no-print flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-midnight text-midnight font-body text-sm font-medium hover:bg-midnight/5 transition-all"
+            title="Exportar como PDF"
           >
             <Printer className="w-4 h-4" />
             Exportar PDF
           </button>
         </div>
 
-        {/* Legenda */}
+        {/* Legend */}
         <div className="flex flex-wrap gap-4 mb-5 no-print">
-          <div className="flex items-center gap-1.5">
-            <svg width="16" height="10" aria-hidden="true">
-              <rect width="16" height="10" rx="3" fill="#e5e7eb" />
-            </svg>
-            <span className="font-body text-xs text-gray-500">Total convidados</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <svg width="16" height="10" aria-hidden="true">
-              <rect width="16" height="10" rx="3" fill="#1A1F3A" />
-            </svg>
-            <span className="font-body text-xs text-gray-500">Estimativa de presença</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <svg width="16" height="10" aria-hidden="true">
-              <rect width="16" height="10" rx="3" fill="#C9A96E" />
-            </svg>
-            <span className="font-body text-xs text-gray-500">Mínimo esperado</span>
-          </div>
+          {[
+            { color: "#e5e7eb", label: "Total convidados" },
+            { color: "#1A1F3A", label: "Estimativa de presença" },
+            { color: "#C9A96E", label: "Mínimo esperado" },
+          ].map(({ color, label }) => (
+            <div key={label} className="flex items-center gap-1.5">
+              <svg width="16" height="10"><rect width="16" height="10" rx="3" fill={color} /></svg>
+              <span className="font-body text-xs text-gray-500">{label}</span>
+            </div>
+          ))}
         </div>
 
-        {/* SVG puro — gráfico de barras horizontais */}
         {categories.length > 0 ? (
-          <svg
-            viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-            width="100%"
-            aria-label="Gráfico de barras de presença por categoria"
-            role="img"
-          >
+          <svg viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} width="100%" aria-label="Gráfico de presença por categoria" role="img">
             {categories.map(([cat, stats], idx) => {
               const y = idx * GROUP_H + 10;
-              const lowAttendance =
-                stats.invited > 0 && stats.expected / stats.invited < 0.7;
-
+              const lowAttendance = stats.invited > 0 && stats.expected / stats.invited < 0.7;
               const totalW = Math.max(2, Math.round((stats.invited / maxInvited) * CHART_W));
               const expectedW = Math.max(2, Math.round((stats.expected / maxInvited) * CHART_W));
               const minExpected = Math.round(stats.expected * 0.9);
@@ -775,120 +550,40 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
 
               return (
                 <g key={cat}>
-                  {/* Label da categoria */}
-                  <text
-                    x={LABEL_W - 8}
-                    y={y + BAR_H + BAR_GAP + BAR_H / 2}
-                    textAnchor="end"
-                    dominantBaseline="middle"
-                    fontSize="11"
-                    fontFamily="inherit"
-                    fill="#1A1F3A"
-                  >
-                    {categoryLabel(cat).length > 18
-                      ? categoryLabel(cat).slice(0, 16) + "…"
-                      : categoryLabel(cat)}
+                  <text x={LABEL_W - 8} y={y + BAR_H + BAR_GAP + BAR_H / 2} textAnchor="end"
+                    dominantBaseline="middle" fontSize="11" fontFamily="inherit" fill="#1A1F3A">
+                    {categoryLabel(cat).length > 18 ? categoryLabel(cat).slice(0, 16) + "…" : categoryLabel(cat)}
                   </text>
-
-                  {/* Ícone de atenção */}
                   {lowAttendance && (
-                    <text
-                      x={LABEL_W - 8}
-                      y={y}
-                      fontSize="10"
-                      textAnchor="end"
-                      dominantBaseline="hanging"
-                    >
-                      ⚠️
-                    </text>
+                    <text x={LABEL_W - 8} y={y} fontSize="10" textAnchor="end" dominantBaseline="hanging">⚠️</text>
                   )}
+                  <rect x={barX} y={y} width={totalW} height={BAR_H} rx="3" fill="#e5e7eb"
+                    stroke={lowAttendance ? "#C9A96E" : "none"} strokeWidth={lowAttendance ? "1.5" : "0"} />
+                  <text x={barX + totalW + 5} y={y + BAR_H / 2} dominantBaseline="middle"
+                    fontSize="10" fill="#6b7280" fontFamily="inherit">{stats.invited}</text>
 
-                  {/* Barra 1 — Total (cinza claro) */}
-                  <rect
-                    x={barX}
-                    y={y}
-                    width={totalW}
-                    height={BAR_H}
-                    rx="3"
-                    fill="#e5e7eb"
-                    stroke={lowAttendance ? "#C9A96E" : "none"}
-                    strokeWidth={lowAttendance ? "1.5" : "0"}
-                  />
-                  <text
-                    x={barX + totalW + 5}
-                    y={y + BAR_H / 2}
-                    dominantBaseline="middle"
-                    fontSize="10"
-                    fill="#6b7280"
-                    fontFamily="inherit"
-                  >
-                    {stats.invited}
-                  </text>
+                  <rect x={barX} y={y + BAR_H + BAR_GAP} width={expectedW} height={BAR_H} rx="3" fill="#1A1F3A" />
+                  <text x={barX + expectedW + 5} y={y + BAR_H + BAR_GAP + BAR_H / 2} dominantBaseline="middle"
+                    fontSize="10" fill="#1A1F3A" fontFamily="inherit" fontWeight="600">{stats.expected}</text>
 
-                  {/* Barra 2 — Estimativa (teal) */}
-                  <rect
-                    x={barX}
-                    y={y + BAR_H + BAR_GAP}
-                    width={expectedW}
-                    height={BAR_H}
-                    rx="3"
-                    fill="#1A1F3A"
-                  />
-                  <text
-                    x={barX + expectedW + 5}
-                    y={y + BAR_H + BAR_GAP + BAR_H / 2}
-                    dominantBaseline="middle"
-                    fontSize="10"
-                    fill="#1A1F3A"
-                    fontFamily="inherit"
-                    fontWeight="600"
-                  >
-                    {stats.expected}
-                  </text>
-
-                  {/* Barra 3 — Mínimo (gold) */}
-                  <rect
-                    x={barX}
-                    y={y + (BAR_H + BAR_GAP) * 2}
-                    width={minW}
-                    height={BAR_H}
-                    rx="3"
-                    fill="#C9A96E"
-                  />
-                  <text
-                    x={barX + minW + 5}
-                    y={y + (BAR_H + BAR_GAP) * 2 + BAR_H / 2}
-                    dominantBaseline="middle"
-                    fontSize="10"
-                    fill="#C9A96E"
-                    fontFamily="inherit"
-                  >
-                    {minExpected}
-                  </text>
+                  <rect x={barX} y={y + (BAR_H + BAR_GAP) * 2} width={minW} height={BAR_H} rx="3" fill="#C9A96E" />
+                  <text x={barX + minW + 5} y={y + (BAR_H + BAR_GAP) * 2 + BAR_H / 2} dominantBaseline="middle"
+                    fontSize="10" fill="#C9A96E" fontFamily="inherit">{minExpected}</text>
                 </g>
               );
             })}
           </svg>
         ) : (
-          <p className="font-body text-sm text-gray-500 text-center py-8">
-            Nenhuma categoria encontrada.
-          </p>
+          <p className="font-body text-sm text-gray-500 text-center py-8">Nenhuma categoria encontrada.</p>
         )}
 
-        {/* Resumo numérico */}
         <div className="mt-5 pt-5 border-t border-gray-100 space-y-1.5">
           <p className="font-body text-base text-midnight">
             <strong>Estimativa:</strong>{" "}
-            {result.confidenceRange.min}–{result.confidenceRange.max} de{" "}
-            {result.totalInvited} convidados
+            {result.confidenceRange.min}–{result.confidenceRange.max} de {result.totalInvited} convidados
           </p>
           <p className="font-body text-sm text-gray-600">
-            <strong>Taxa de presença:</strong>{" "}
-            {percentage}% ({result.totalExpected} pessoas esperadas)
-          </p>
-          <p className="font-body text-sm text-gray-600">
-            <strong>Intervalo de confiança:</strong>{" "}
-            {confidencePctMin}%–{confidencePctMax}%
+            <strong>Taxa de presença:</strong> {percentage}% ({result.totalExpected} pessoas esperadas)
           </p>
           {hasLowCategory && (
             <p className="font-body text-sm text-gold flex items-center gap-1 pt-1">
@@ -901,7 +596,7 @@ function GuestAttendanceChart({ guests, weddingState }: GuestAttendanceChartProp
   );
 }
 
-// ─── Empty State / DDD Simulator ──────────────────────────────
+// ─── Empty State / DDD Simulator ──────────────────────────────────
 
 interface DddGroup {
   id: string;
@@ -909,17 +604,31 @@ interface DddGroup {
   count: number;
   city: string;
   state: string;
+  category: string;
+  isInternational: false;
 }
+
+interface IntlGroup {
+  id: string;
+  count: number;
+  label: string;
+  isInternational: true;
+}
+
+type AnyGroup = DddGroup | IntlGroup;
 
 interface EmptyStateProps {
   id: string;
   weddingState: string;
+  isDestinationWedding: boolean;
 }
 
-function EmptyState({ id, weddingState }: EmptyStateProps) {
-  const [groups, setGroups] = useState<DddGroup[]>([]);
+function EmptyState({ id, weddingState, isDestinationWedding }: EmptyStateProps) {
+  const [groups, setGroups] = useState<AnyGroup[]>([]);
   const [dddInput, setDddInput] = useState("");
   const [countInput, setCountInput] = useState("");
+  const [categoryInput, setCategoryInput] = useState("");
+  const [intlCount, setIntlCount] = useState("");
   const [inputError, setInputError] = useState("");
   const [simResult, setSimResult] = useState<ReturnType<typeof simulateAttendance> | null>(null);
 
@@ -934,10 +643,35 @@ function EmptyState({ id, weddingState }: EmptyStateProps) {
     setSimResult(null);
     setGroups((prev) => [
       ...prev,
-      { id: `${dddInput}-${Date.now()}`, ddd: dddInput, count, city: dddInfo.city, state: dddInfo.state },
+      {
+        id: `${dddInput}-${Date.now()}`,
+        ddd: dddInput,
+        count,
+        city: dddInfo.city,
+        state: dddInfo.state,
+        category: categoryInput,
+        isInternational: false,
+      } as DddGroup,
     ]);
     setDddInput("");
     setCountInput("");
+    setCategoryInput("");
+  }
+
+  function addIntlGroup() {
+    const count = parseInt(intlCount, 10);
+    if (!count || count < 1) return;
+    setSimResult(null);
+    setGroups((prev) => [
+      ...prev,
+      {
+        id: `intl-${Date.now()}`,
+        count,
+        label: "Internacional",
+        isInternational: true,
+      } as IntlGroup,
+    ]);
+    setIntlCount("");
   }
 
   function removeGroup(groupId: string) {
@@ -947,17 +681,49 @@ function EmptyState({ id, weddingState }: EmptyStateProps) {
 
   function simulate() {
     if (groups.length === 0) return;
-    const guestInputs = groups.flatMap(({ ddd, count, state }) =>
-      Array.from({ length: count }, () => ({ state, city: dddMap[ddd]?.city, category: undefined }))
-    );
+
+    const wCoords = STATE_CENTROID[weddingState.toUpperCase()];
+
+    const guestInputs = groups.flatMap((grp) => {
+      if (grp.isInternational) {
+        return Array.from({ length: grp.count }, () => ({
+          isInternational: true as const,
+          category: undefined,
+        }));
+      }
+      const dg = grp as DddGroup;
+      const gCoords = DDD_COORDS[dg.ddd];
+      let distanceKm: number | undefined;
+      if (gCoords && wCoords) {
+        distanceKm = haversineKm(gCoords[0], gCoords[1], wCoords[0], wCoords[1]);
+      }
+      return Array.from({ length: dg.count }, () => ({
+        state: dg.state,
+        city: dg.city,
+        category: dg.category || undefined,
+        distanceKm,
+        isInternational: false as const,
+      }));
+    });
+
     setSimResult(
-      simulateAttendance(guestInputs, { city: "", state: weddingState, weddingDate: new Date().toISOString() })
+      simulateAttendance(guestInputs, {
+        city: "",
+        state: weddingState,
+        weddingDate: new Date().toISOString(),
+        isDestinationWedding,
+      })
     );
   }
 
   const byRegion = groups.reduce<Record<string, number>>((acc, g) => {
-    const region = STATE_REGIONS[g.state] || "Outro";
-    acc[region] = (acc[region] || 0) + g.count;
+    if (g.isInternational) {
+      acc["Internacional"] = (acc["Internacional"] || 0) + g.count;
+    } else {
+      const dg = g as DddGroup;
+      const region = STATE_REGIONS[dg.state] || "Outro";
+      acc[region] = (acc[region] || 0) + dg.count;
+    }
     return acc;
   }, {});
 
@@ -968,21 +734,20 @@ function EmptyState({ id, weddingState }: EmptyStateProps) {
       transition={{ duration: 0.5, delay: 0.3 }}
       className="space-y-4"
     >
-      {/* Simulator card */}
       <div className="bg-white rounded-2xl shadow-md p-6 border border-gold/15">
         <div className="flex items-center gap-2 mb-1">
           <TrendingUp className="w-5 h-5 text-gold" />
           <h2 className="font-heading text-xl text-midnight">Simule sem importar</h2>
         </div>
         <p className="font-body text-sm text-gray-600 mb-5">
-          Adicione grupos por DDD e veja a previsão de comparecimento antes de ter a lista real.
+          Adicione grupos por DDD, categoria e origem. Veja a previsão de comparecimento antes de ter a lista real.
         </p>
 
-        {/* DDD + Count input */}
-        <div className="flex gap-2 mb-2">
-          <div className="flex-shrink-0 w-24">
-            <label className="font-body text-[10px] uppercase tracking-wider text-gray-500 mb-1 block">DDD</label>
-            <div className="relative">
+        {/* DDD + Count + Category input */}
+        <div className="space-y-3 mb-2">
+          <div className="flex gap-2">
+            <div className="flex-shrink-0 w-24">
+              <label className="font-body text-[10px] uppercase tracking-wider text-gray-500 mb-1 block">DDD</label>
               <input
                 type="text"
                 placeholder="11"
@@ -993,60 +758,138 @@ function EmptyState({ id, weddingState }: EmptyStateProps) {
                 className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl font-mono text-center text-midnight focus:outline-none focus:border-midnight transition"
               />
             </div>
+            <div className="w-24 flex-shrink-0">
+              <label className="font-body text-[10px] uppercase tracking-wider text-gray-500 mb-1 block">Pessoas</label>
+              <input
+                type="number"
+                placeholder="50"
+                min={1}
+                value={countInput}
+                onChange={(e) => { setCountInput(e.target.value); setInputError(""); }}
+                onKeyDown={(e) => e.key === "Enter" && addGroup()}
+                className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl font-body text-midnight focus:outline-none focus:border-midnight transition"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="font-body text-[10px] uppercase tracking-wider text-gray-500 mb-1 block">Categoria</label>
+              <select
+                value={categoryInput}
+                onChange={(e) => setCategoryInput(e.target.value)}
+                className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl font-body text-sm text-midnight focus:outline-none focus:border-midnight transition bg-white"
+              >
+                {CATEGORY_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label} ({opt.mod})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex-shrink-0 self-end">
+              <button
+                onClick={addGroup}
+                className="h-[42px] px-4 bg-midnight text-white rounded-xl font-body text-sm font-medium hover:bg-midnight/85 transition flex items-center gap-1"
+              >
+                <span className="text-lg leading-none">+</span>
+              </button>
+            </div>
           </div>
-          <div className="flex-1">
-            <label className="font-body text-[10px] uppercase tracking-wider text-gray-500 mb-1 block">Pessoas</label>
-            <input
-              type="number"
-              placeholder="50"
-              min={1}
-              value={countInput}
-              onChange={(e) => { setCountInput(e.target.value); setInputError(""); }}
-              onKeyDown={(e) => e.key === "Enter" && addGroup()}
-              className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl font-body text-midnight focus:outline-none focus:border-midnight transition"
-            />
-          </div>
-          <div className="flex-shrink-0 self-end">
-            <button
-              onClick={addGroup}
-              className="h-[42px] px-4 bg-midnight text-white rounded-xl font-body text-sm font-medium hover:bg-midnight/85 transition flex items-center gap-1"
-            >
-              <span className="text-lg leading-none">+</span>
-            </button>
-          </div>
+
+          {/* DDD preview */}
+          <AnimatePresence>
+            {dddInfo && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                className="flex items-center gap-2 text-xs font-body text-midnight/60"
+              >
+                <MapPin className="w-3.5 h-3.5 text-gold" />
+                <span>{dddInfo.city}, {dddInfo.state} — {STATE_REGIONS[dddInfo.state] || "Outro"}</span>
+                {(() => {
+                  const wCoords = STATE_CENTROID[weddingState.toUpperCase()];
+                  const gCoords = DDD_COORDS[dddInput];
+                  if (gCoords && wCoords) {
+                    const km = Math.round(haversineKm(gCoords[0], gCoords[1], wCoords[0], wCoords[1]));
+                    return <span className="ml-1 text-midnight/40">· ~{km} km do local</span>;
+                  }
+                  return null;
+                })()}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        {/* DDD preview */}
-        <AnimatePresence>
-          {dddInfo && (
-            <motion.div
-              initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="mb-3 flex items-center gap-2 text-xs font-body text-midnight/60"
-            >
-              <MapPin className="w-3.5 h-3.5 text-gold" />
-              <span>{dddInfo.city}, {dddInfo.state} — {STATE_REGIONS[dddInfo.state] || "Outro"}</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {inputError && <p className="mb-3 text-xs font-body text-red-500">{inputError}</p>}
+
+        {/* International section */}
+        <div className="mt-4 mb-4 p-3 bg-purple-50 rounded-xl border border-purple-100">
+          <div className="flex items-center gap-2 mb-2">
+            <Globe className="w-4 h-4 text-purple-500" />
+            <span className="font-body text-xs font-semibold text-purple-700">Convidados Internacionais</span>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="number"
+              placeholder="Ex: 5"
+              min={1}
+              value={intlCount}
+              onChange={(e) => setIntlCount(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && addIntlGroup()}
+              className="flex-1 px-3 py-2 border-2 border-purple-200 rounded-lg font-body text-sm text-midnight focus:outline-none focus:border-purple-400 transition bg-white"
+            />
+            <button
+              onClick={addIntlGroup}
+              disabled={!intlCount || parseInt(intlCount) < 1}
+              className="px-4 py-2 bg-purple-500 text-white rounded-lg font-body text-sm hover:bg-purple-600 transition disabled:opacity-40"
+            >
+              + Adicionar
+            </button>
+          </div>
+          <p className="font-body text-[10px] text-purple-500 mt-1">
+            Taxa base: ~{isDestinationWedding ? "40" : "28"}% de presença
+          </p>
+        </div>
 
         {/* Groups list */}
         <AnimatePresence>
           {groups.length > 0 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 space-y-1.5">
               {groups.map((g) => {
-                const region = STATE_REGIONS[g.state] || "Outro";
+                if (g.isInternational) {
+                  return (
+                    <div key={g.id} className="flex items-center gap-3 bg-purple-50 rounded-xl px-3 py-2">
+                      <Globe className="w-4 h-4 text-purple-500 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <span className="font-body text-xs font-semibold text-purple-700">Internacional</span>
+                      </div>
+                      <span className="font-body text-xs font-semibold text-midnight">{g.count} pessoas</span>
+                      <button onClick={() => removeGroup(g.id)} className="text-gray-400 hover:text-red-400 transition">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  );
+                }
+                const dg = g as DddGroup;
+                const region = STATE_REGIONS[dg.state] || "Outro";
                 const barColor = REGION_COLORS[region] || "bg-gray-400";
+                const wCoords = STATE_CENTROID[weddingState.toUpperCase()];
+                const gCoords = DDD_COORDS[dg.ddd];
+                const km = gCoords && wCoords ? Math.round(haversineKm(gCoords[0], gCoords[1], wCoords[0], wCoords[1])) : null;
+                const catLabel = CATEGORY_OPTIONS.find((o) => o.value === dg.category)?.label ?? "Misto";
+
                 return (
-                  <div key={g.id} className="flex items-center gap-3 bg-fog rounded-xl px-3 py-2">
+                  <div key={dg.id} className="flex items-center gap-3 bg-fog rounded-xl px-3 py-2">
                     <div className={`w-2 h-6 rounded-full flex-shrink-0 ${barColor}`} />
                     <div className="flex-1 min-w-0">
-                      <span className="font-mono text-xs font-semibold text-midnight">{g.ddd}</span>
-                      <span className="font-body text-xs text-midnight/60 ml-2">{g.city}, {g.state}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-mono text-xs font-semibold text-midnight">{dg.ddd}</span>
+                        <span className="font-body text-xs text-midnight/60">{dg.city}, {dg.state}</span>
+                        {km !== null && <span className="font-body text-[10px] text-midnight/40">{km} km</span>}
+                      </div>
+                      <span className="font-body text-[10px] text-stone">{catLabel}</span>
                     </div>
-                    <span className="font-body text-xs font-semibold text-midnight">{g.count} pessoas</span>
-                    <button onClick={() => removeGroup(g.id)} className="text-gray-400 hover:text-red-400 transition">
+                    <span className="font-body text-xs font-semibold text-midnight">{dg.count} p.</span>
+                    <button onClick={() => removeGroup(dg.id)} className="text-gray-400 hover:text-red-400 transition">
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                       </svg>
@@ -1055,14 +898,12 @@ function EmptyState({ id, weddingState }: EmptyStateProps) {
                 );
               })}
 
-              {/* Totals row */}
-              <div className="flex items-center justify-between px-3 py-2 border-t border-gray-200 mt-1">
+              <div className="flex items-center justify-between px-3 py-2 border-t border-gray-200">
                 <span className="font-body text-xs text-gray-500">Total</span>
                 <span className="font-body text-sm font-bold text-midnight">{totalGuests} convidados</span>
               </div>
 
-              {/* Regional breakdown */}
-              {Object.entries(byRegion).length > 1 && (
+              {Object.keys(byRegion).length > 1 && (
                 <div className="flex flex-wrap gap-1.5 px-1">
                   {Object.entries(byRegion).map(([region, cnt]) => (
                     <span key={region} className="text-[10px] font-body px-2 py-0.5 rounded-full bg-white border border-gray-200 text-gray-600">
@@ -1099,7 +940,7 @@ function EmptyState({ id, weddingState }: EmptyStateProps) {
                   <p className="font-body text-[10px] text-gray-500">Esperados</p>
                 </div>
                 <div className="text-center">
-                  <p className="font-heading text-2xl text-midnight">{simResult.confidenceRange.min}–{simResult.confidenceRange.max}</p>
+                  <p className="font-heading text-xl text-midnight">{simResult.confidenceRange.min}–{simResult.confidenceRange.max}</p>
                   <p className="font-body text-[10px] text-gray-500">Intervalo</p>
                 </div>
                 <div className="text-center">
@@ -1113,6 +954,22 @@ function EmptyState({ id, weddingState }: EmptyStateProps) {
                   style={{ width: `${Math.round(simResult.attendanceRate * 100)}%` }}
                 />
               </div>
+
+              {/* Category breakdown */}
+              {Object.entries(simResult.byCategory).length > 0 && (
+                <div className="mt-3 space-y-1">
+                  {Object.entries(simResult.byCategory)
+                    .sort((a, b) => b[1].invited - a[1].invited)
+                    .map(([cat, stats]) => (
+                      <div key={cat} className="flex items-center justify-between text-xs font-body">
+                        <span className="text-midnight/70">{categoryLabel(cat)}</span>
+                        <span className="text-midnight font-medium">
+                          {stats.expected}/{stats.invited} ({Math.round(stats.rate * 100)}%)
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -1136,7 +993,7 @@ function EmptyState({ id, weddingState }: EmptyStateProps) {
   );
 }
 
-// ─── Main Page ──────────────────────────────────────────────
+// ─── Main Page ──────────────────────────────────────────────────
 
 export default function SimuladorConvidadosPage() {
   const { id } = useParams<{ id: string }>();
@@ -1146,6 +1003,7 @@ export default function SimuladorConvidadosPage() {
   const [wedding, setWedding] = useState<WeddingWithRelations | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDestinationWedding, setIsDestinationWedding] = useState(false);
 
   useEffect(() => {
     if (status !== "authenticated") return;
@@ -1157,8 +1015,7 @@ export default function SimuladorConvidadosPage() {
         const data: WeddingWithRelations = await res.json();
         setWedding(data);
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Erro desconhecido";
+        const message = err instanceof Error ? err.message : "Erro desconhecido";
         setError(message);
         toast.error(message);
       } finally {
@@ -1169,8 +1026,6 @@ export default function SimuladorConvidadosPage() {
     fetchData();
   }, [id, status, toast]);
 
-  // ─── Auth guard ────────────────────────────────────────
-
   if (status === "loading" || loading) {
     return (
       <div className="min-h-screen bg-ivory flex items-center justify-center">
@@ -1179,21 +1034,14 @@ export default function SimuladorConvidadosPage() {
     );
   }
 
-  if (status === "unauthenticated" || !session) {
-    return null;
-  }
+  if (status === "unauthenticated" || !session) return null;
 
   if (error) {
     return (
       <div className="min-h-screen bg-ivory flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-md p-8 max-w-md w-full text-center">
           <p className="font-body text-red-500 mb-4">{error}</p>
-          <Link
-            href={`/casamento/${id}`}
-            className="font-body text-midnight underline"
-          >
-            Voltar ao casamento
-          </Link>
+          <Link href={`/casamento/${id}`} className="font-body text-midnight underline">Voltar</Link>
         </div>
       </div>
     );
@@ -1202,90 +1050,109 @@ export default function SimuladorConvidadosPage() {
   if (!wedding) return null;
 
   const hasGuests = wedding.guests && wedding.guests.length > 0;
-  // Include ALL guests; those without phone default to wedding state in all components
   const allGuests = wedding.guests ?? [];
 
   return (
     <div className="min-h-screen bg-ivory py-10 px-4 pb-20">
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Hero Section */}
+
+        {/* Hero */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-10"
+          className="text-center mb-6"
         >
-          <h1 className="font-heading text-4xl sm:text-5xl text-midnight mb-3">
+          <h1 className="font-heading text-4xl sm:text-5xl text-midnight mb-2">
             Simulador de Convidados
           </h1>
-          <p className="font-body text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="font-body text-gray-600">
             Descubra de onde vêm seus convidados e quantos vão comparecer
           </p>
-          <p className="font-body text-sm text-gray-500 mt-2">
+          <p className="font-body text-sm text-gray-500 mt-1">
             {wedding.partnerName1} & {wedding.partnerName2}
           </p>
         </motion.div>
 
-        {/* DDD Demo - always show */}
-        <DDDDemo />
+        {/* Destination wedding toggle */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="bg-white rounded-2xl shadow-sm border border-midnight/10 p-4 flex items-start justify-between gap-4"
+        >
+          <div>
+            <p className="font-body font-semibold text-sm text-midnight">Destination Wedding</p>
+            <p className="font-body text-xs text-gray-500 mt-0.5">
+              Local diferente da cidade dos noivos ou em resort/pousada. Convidados que confirmam já decidiram viajar —
+              isso aumenta a taxa de comparecimento de quem está longe.
+            </p>
+          </div>
+          <button
+            onClick={() => setIsDestinationWedding((v) => !v)}
+            className={`relative flex-shrink-0 w-12 h-6 rounded-full transition-colors duration-200 ${
+              isDestinationWedding ? "bg-gold" : "bg-gray-200"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
+                isDestinationWedding ? "translate-x-6" : "translate-x-0"
+              }`}
+            />
+          </button>
+        </motion.div>
 
-        {/* Conditional: Guests or Empty State */}
         {hasGuests ? (
           <>
             <GuestOriginMap guests={allGuests} weddingState={wedding.state ?? ""} />
             <AttendancePrediction
               guests={allGuests}
               weddingState={wedding.state ?? ""}
+              isDestinationWedding={isDestinationWedding}
             />
-
-            {/* Gráfico de barras por categoria */}
             <GuestAttendanceChart
               guests={allGuests}
               weddingState={wedding.state ?? ""}
+              isDestinationWedding={isDestinationWedding}
             />
-
-            {/* Info Card */}
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 }}
-              className="bg-fog rounded-2xl shadow-md p-6 sm:p-8 border border-gold/10"
+              className="bg-fog rounded-2xl shadow-md p-6 border border-gold/10"
             >
               <p className="font-body text-sm text-midnight leading-relaxed">
-                <strong>Como funciona?</strong> O Laço detecta o DDD (código de
-                área) de cada convidado através do número de telefone. Com isso,
-                sabemos em qual estado ele está e podemos estimar a probabilidade
-                de presença baseado em fatores como distância e categoria.
+                <strong>Como funciona?</strong> O Laço detecta o DDD de cada convidado pelo telefone e
+                calcula a distância real em km até o local do casamento. A previsão considera categoria
+                (família, amigos, trabalho), distância, dia da semana e feriados próximos.
               </p>
             </motion.div>
           </>
         ) : (
-          <EmptyState id={id} weddingState={wedding.state ?? ""} />
+          <EmptyState
+            id={id}
+            weddingState={wedding.state ?? ""}
+            isDestinationWedding={isDestinationWedding}
+          />
         )}
 
-        {/* Navigation Links */}
+        {/* Navigation */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 1 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center pt-6"
+          className="flex flex-col sm:flex-row gap-4 justify-center pt-4"
         >
           <Link
-            href={`/casamento/${id}/simulador`}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-midnight text-midnight rounded-xl font-body font-medium hover:bg-midnight/5 transition-all duration-200"
-          >
-            Ver Simulador Inteligente
-          </Link>
-          <Link
             href={`/casamento/${id}/convidados`}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-midnight text-midnight rounded-xl font-body font-medium hover:bg-midnight/5 transition-all duration-200"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-midnight text-midnight rounded-xl font-body font-medium hover:bg-midnight/5 transition"
           >
             Gerenciar Convidados
           </Link>
         </motion.div>
       </div>
 
-      <BottomNav />
+      <BottomNav weddingId={id} />
     </div>
   );
 }

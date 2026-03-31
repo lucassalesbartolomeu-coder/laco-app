@@ -76,6 +76,15 @@ function buildLogoPrompt(
   return `Wedding monogram crest logo design for initials ${initial1} & ${initial2} (${name1} and ${name2}), ${styleEn} style, ${primaryColor} and ${accentColor} color scheme, clean white background, vector illustration style, symmetrical composition, ornate decorative elements, no realistic photography`;
 }
 
+const ART_STYLE_PROMPTS: Record<string, string> = {
+  aquarela:      "delicate watercolor illustration, soft color washes, bleeding pigment, loose expressive brushstrokes, romantic painterly style, fine art watercolor",
+  lapis:         "detailed pencil sketch illustration, fine graphite lines, soft hatching and cross-hatching shading, intimate and artisanal feel, hand-drawn quality",
+  "preto-branco": "high-contrast black and white ink illustration, bold shadows, elegant monochromatic, timeless editorial style, no colors",
+  "traco-fino":  "fine line art illustration, ultra-thin elegant lines, minimal shading, delicate and ethereal linework, modern luxury aesthetic",
+  pontilhismo:   "pointillism art made entirely of tiny dots, stippling technique, rich texture and depth, impressionistic and poetic, dot stipple drawing",
+  floral:        "lush floral watercolor illustration, abundant flowers and botanical elements, soft pastel washes, romantic garden atmosphere, dreamy botanical art",
+};
+
 // POST /api/weddings/[id]/identity-kit/images — gera imagens DALL-E para o kit
 export async function POST(request: Request, { params }: Params) {
   try {
@@ -88,6 +97,58 @@ export async function POST(request: Request, { params }: Params) {
     if (error === "forbidden") return forbiddenResponse();
 
     const body = await request.json();
+
+    // ── Photo stylization flow ──
+    if (body.photo && body.artStyle) {
+      const { photo, artStyle, kitId } = body as { photo: string; artStyle: string; kitId?: string };
+
+      if (!photo.startsWith("data:image")) return validationError("photo deve ser base64");
+
+      const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+      // Step 1: analyze photo with vision
+      const descResponse = await client.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [{
+          role: "user",
+          content: [
+            { type: "text", text: "Describe this photo in under 60 words for an artistic illustration prompt. Focus on subjects, setting, mood and key visual elements. No markdown." },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { type: "image_url", image_url: { url: photo, detail: "low" } } as any,
+          ],
+        }],
+        max_tokens: 100,
+      });
+
+      const photoDesc = descResponse.choices[0].message.content?.trim() ?? "a beautiful wedding scene";
+      const stylePrompt = ART_STYLE_PROMPTS[artStyle] ?? ART_STYLE_PROMPTS["aquarela"];
+      const dallePrompt = `${stylePrompt}, ${photoDesc}, wedding theme, fine art illustration, no text, no watermarks, no people's faces visible`;
+
+      const result = await client.images.generate({
+        model: "dall-e-3",
+        prompt: dallePrompt,
+        n: 1,
+        size: "1024x1024",
+        quality: "standard",
+        response_format: "url",
+      });
+
+      const imageUrl = result.data?.[0]?.url ?? null;
+
+      // Optionally persist to kit
+      if (kitId && imageUrl) {
+        const existingKit = await prisma.identityKit.findFirst({ where: { id: kitId, weddingId: id } });
+        if (existingKit) {
+          await prisma.identityKit.update({
+            where: { id: kitId },
+            data: { generatedImages: [...(existingKit.generatedImages ?? []), imageUrl] },
+          });
+        }
+      }
+
+      return NextResponse.json({ imageUrl });
+    }
+
     const { kitId } = body;
     if (!kitId) return validationError("kitId é obrigatório");
 
