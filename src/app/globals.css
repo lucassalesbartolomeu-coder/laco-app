@@ -4,16 +4,27 @@
 @tailwind utilities;
 
 :root {
-  --background: #FAF7F2;
-  --foreground: #1A1F3A;
+  --background: #FAF6EF;
+  --foreground: #3D322A;
 
-  /* Brand tokens — BRAND.md v2 */
+  /* Brand tokens — Design System v3 (identidade creme/dourado) */
   --midnight:  #1A1F3A;
-  --gold:      #C9A96E;
-  --champagne: #E8D5B0;
-  --ivory:     #FAF7F2;
-  --fog:       #F0EDE7;
-  --stone:     #8A8FA8;
+  --gold:      #A98950;
+  --gold-light: #C4A76C;
+  --champagne: #F0E8DA;
+  --ivory:     #FAF6EF;
+  --fog:       #F5F0E8;
+  --stone:     #8A8070;
+
+  /* Novos tokens de UI */
+  --laco-bg:        #FAF6EF;
+  --laco-bg-dark:   #F0E8DA;
+  --laco-accent:    #A98950;
+  --laco-text:      #3D322A;
+  --laco-text-sec:  rgba(61,50,42,0.58);
+  --laco-text-mute: rgba(61,50,42,0.35);
+  --laco-border:    rgba(169,137,80,0.16);
+  --laco-border-lt: rgba(169,137,80,0.09);
 }
 
 @layer utilities {
@@ -49,8 +60,8 @@
   }
 
   body {
-    color: var(--foreground);
-    background: var(--background);
+    color: var(--laco-text);
+    background: var(--laco-bg);
     font-family: "DM Sans", system-ui, sans-serif;
   }
 
