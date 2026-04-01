@@ -16,7 +16,6 @@ const SmartSuggestions = dynamic(() => import("@/components/smart-suggestions"),
 const GOLD    = "#A98950";
 const BROWN   = "#3D322A";
 const CREME   = "#FAF6EF";
-const CHAMPAGNE = "#F0E8DA";
 
 interface Wedding {
   id: string;
