@@ -17,7 +17,7 @@ export default function PartnerInvitePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
-  const token = params.token as string;
+  const token = params?.token as string;
 
   const [invite, setInvite] = useState<InviteInfo | null>(null);
   const [error, setError] = useState<string | null>(null);

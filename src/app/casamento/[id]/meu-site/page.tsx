@@ -61,7 +61,7 @@ function CheckIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 export default function MeuSitePage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status } = useSession();
   const router = useRouter();
   const [hasKit, setHasKit] = useState<boolean | null>(null);

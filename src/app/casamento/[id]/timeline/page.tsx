@@ -390,7 +390,7 @@ function EventItem({ event, isNext, isLast, onToggle, onEdit, onDelete }: EventI
 
 export default function TimelinePage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status: authStatus } = useSession();
 
   const [events, setEvents] = useState<TimelineEvent[]>([]);

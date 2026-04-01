@@ -27,7 +27,7 @@ const EVENT_PRESETS = ["Cerimônia civil", "Cerimônia religiosa", "Festa / Rece
 
 export default function ContaCasamentoPage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status } = useSession();
   const toast = useToast();
 

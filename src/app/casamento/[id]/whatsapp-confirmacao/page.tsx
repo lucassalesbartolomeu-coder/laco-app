@@ -14,7 +14,7 @@ interface WhatsAppConfig {
 
 export default function WhatsAppConfirmacaoPage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status } = useSession();
   const [config, setConfig] = useState<WhatsAppConfig | null>(null);
   const [loading, setLoading] = useState(true);

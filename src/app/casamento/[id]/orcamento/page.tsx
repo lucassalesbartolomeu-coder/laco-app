@@ -135,7 +135,8 @@ const numChange = (raw: string) => raw.replace(/\D/g, "");
 
 
 export default function OrcamentoPage() {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams();
+  const id = params?.id as string;
   const toast = useToast();
   const [items, setItems] = useState<BudgetItem[]>([]);
   const [summary, setSummary] = useState<Summary | null>(null);

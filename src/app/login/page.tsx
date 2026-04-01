@@ -22,7 +22,7 @@ function LoginForm() {
   const [refCode, setRefCode] = useState<string | null>(null);
 
   useEffect(() => {
-    const ref = searchParams.get("ref");
+    const ref = searchParams?.get("ref");
     if (ref) {
       setRefCode(ref);
       setMode("register");

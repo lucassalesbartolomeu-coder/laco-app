@@ -189,7 +189,8 @@ const formatBRL = (value: number) =>
 // ─── Main Page ─────────────────────────────────────────────
 
 export default function SimuladorPage() {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams();
+  const id = params?.id as string;
   const { data: session, status } = useSession();
 
   const [wedding, setWedding] = useState<WeddingWithRelations | null>(null);

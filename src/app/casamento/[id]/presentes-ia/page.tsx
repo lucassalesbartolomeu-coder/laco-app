@@ -44,7 +44,7 @@ const PLANS = [
 
 export default function PresentesIAPage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status } = useSession();
   const [selectedPlan, setSelectedPlan] = useState("completa");
   const [uploading, setUploading] = useState(false);

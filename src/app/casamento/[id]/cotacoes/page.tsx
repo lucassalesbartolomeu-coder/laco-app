@@ -39,7 +39,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 export default function CotacoesPage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status } = useSession();
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);

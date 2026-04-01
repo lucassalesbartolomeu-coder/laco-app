@@ -11,7 +11,7 @@ import {
   useTransform,
   animate,
 } from "framer-motion";
-import { MapPin, TrendingUp, AlertCircle, ArrowRight, Printer, Globe } from "lucide-react";
+import { MapPin, TrendingUp, AlertCircle, ArrowRight, Globe } from "lucide-react";
 import BottomNav from "@/components/bottom-nav";
 import { useToast } from "@/hooks/use-toast";
 import { dddMap } from "@/lib/ddd-map";
@@ -371,13 +371,24 @@ function AttendancePrediction({ guests, weddingCity, weddingState }: AttendanceP
           <span className="font-heading text-sm text-midnight">{percentage}%</span>
           <span className="font-body text-xs text-gray-400">100%</span>
         </div>
+        <p className="font-body text-xs text-gray-500 mt-3">
+          Pode variar ±5% — entre{" "}
+          <span className="font-semibold text-midnight">
+            {Math.round(prediction.expected * 0.95)} (-5%)
+          </span>{" "}
+          e{" "}
+          <span className="font-semibold text-midnight">
+            {Math.round(prediction.expected * 1.05)} (+5%)
+          </span>
+        </p>
       </div>
 
     </motion.div>
   );
 }
 
-// ─── Category helpers ─────────────────────────────────────────────
+
+// ─── Category label helper ────────────────────────────────────────
 
 const CATEGORY_LABELS: Record<string, string> = {
   família_noivo: "Família do noivo",
@@ -394,197 +405,6 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 function categoryLabel(cat: string): string {
   return CATEGORY_LABELS[cat] ?? cat;
-}
-
-function normaliseCat(cat: string | null | undefined): string | undefined {
-  if (!cat) return undefined;
-  return cat
-    .replace("família_noivo", "familia_noivo")
-    .replace("família_noiva", "familia_noiva");
-}
-
-// ─── Guest Attendance Chart ────────────────────────────────────────
-
-interface GuestAttendanceChartProps {
-  guests: Guest[];
-  weddingCity: string;
-  weddingState: string;
-  weddingDate: string;
-}
-
-function GuestAttendanceChart({ guests, weddingCity, weddingState, weddingDate }: GuestAttendanceChartProps) {
-  const [result, setResult] = useState<ReturnType<typeof simulateAttendance> | null>(null);
-
-  useEffect(() => {
-    if (guests.length === 0) return;
-
-    const guestInputs = guests.map((g) => {
-      // International detection
-      if (g.phone && isInternationalPhone(g.phone)) {
-        return { isInternational: true, category: normaliseCat(g.category) };
-      }
-
-      // State from stored field or DDD
-      let state = g.state ?? undefined;
-      if (!state && g.phone) {
-        const ddd = extractDDDFromPhone(g.phone);
-        if (ddd && dddMap[ddd]) state = dddMap[ddd].state;
-      }
-      if (!state) state = weddingState; // no phone → assume local
-
-      // km distance
-      let distanceKm: number | undefined;
-      if (g.phone) {
-        const ddd = extractDDDFromPhone(g.phone);
-        if (ddd) {
-          const km = dddToWeddingKm(ddd, weddingCity, weddingState);
-          if (km !== null) distanceKm = km;
-        }
-      }
-
-      return {
-        city:       g.city  ?? undefined,
-        state,
-        category:   normaliseCat(g.category),
-        distanceKm,
-        isInternational: false,
-      };
-    });
-
-    setResult(
-      simulateAttendance(guestInputs, {
-        city:        weddingCity,
-        state:       weddingState,
-        weddingDate,
-      }),
-    );
-  }, [guests, weddingCity, weddingState, weddingDate]);
-
-  if (!result) return null;
-
-  const VIEW_W = 480;
-  const BAR_H = 14;
-  const BAR_GAP = 5;
-  const GROUP_GAP = 16;
-  const LABEL_W = 132;
-  const CHART_W = VIEW_W - LABEL_W - 44;
-
-  const categories = Object.entries(result.byCategory).sort((a, b) => b[1].invited - a[1].invited);
-  const maxInvited = Math.max(...categories.map(([, s]) => s.invited), 1);
-  const GROUP_H = BAR_H * 3 + BAR_GAP * 2 + GROUP_GAP;
-  const VIEW_H = Math.max(80, categories.length * GROUP_H + 20);
-  const percentage = Math.round(result.attendanceRate * 100);
-  const hasLowCategory = categories.some(([, s]) => s.invited > 0 && s.expected / s.invited < 0.7);
-
-  return (
-    <>
-      <style>{`
-        @media print {
-          .no-print { display: none !important; }
-          header, nav, footer { display: none !important; }
-          body, .min-h-screen { background: white !important; }
-          #attendance-chart { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
-        }
-      `}</style>
-
-      <motion.div
-        id="attendance-chart"
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.75 }}
-        className="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-midnight/10"
-      >
-        <div className="flex items-start justify-between mb-5 gap-4">
-          <div>
-            <h2 className="font-heading text-2xl text-midnight mb-1 flex items-center gap-2">
-              <TrendingUp className="w-6 h-6 no-print" />
-              Visualização por Categoria
-            </h2>
-            <p className="font-body text-sm text-gray-600">
-              Família, amigos e demais grupos — total, estimativa e mínimo
-            </p>
-          </div>
-          <button
-            onClick={() => window.print()}
-            className="no-print flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-midnight text-midnight font-body text-sm font-medium hover:bg-midnight/5 transition-all"
-            title="Exportar como PDF"
-          >
-            <Printer className="w-4 h-4" />
-            Exportar PDF
-          </button>
-        </div>
-
-        {/* Legend */}
-        <div className="flex flex-wrap gap-4 mb-5 no-print">
-          {[
-            { color: "#e5e7eb", label: "Total convidados" },
-            { color: "#1A1F3A", label: "Estimativa de presença" },
-            { color: "#C9A96E", label: "Mínimo esperado" },
-          ].map(({ color, label }) => (
-            <div key={label} className="flex items-center gap-1.5">
-              <svg width="16" height="10"><rect width="16" height="10" rx="3" fill={color} /></svg>
-              <span className="font-body text-xs text-gray-500">{label}</span>
-            </div>
-          ))}
-        </div>
-
-        {categories.length > 0 ? (
-          <svg viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} width="100%" aria-label="Gráfico de presença por categoria" role="img">
-            {categories.map(([cat, stats], idx) => {
-              const y = idx * GROUP_H + 10;
-              const lowAttendance = stats.invited > 0 && stats.expected / stats.invited < 0.7;
-              const totalW = Math.max(2, Math.round((stats.invited / maxInvited) * CHART_W));
-              const expectedW = Math.max(2, Math.round((stats.expected / maxInvited) * CHART_W));
-              const minExpected = Math.round(stats.expected * 0.9);
-              const minW = Math.max(2, Math.round((minExpected / maxInvited) * CHART_W));
-              const barX = LABEL_W;
-
-              return (
-                <g key={cat}>
-                  <text x={LABEL_W - 8} y={y + BAR_H + BAR_GAP + BAR_H / 2} textAnchor="end"
-                    dominantBaseline="middle" fontSize="11" fontFamily="inherit" fill="#1A1F3A">
-                    {categoryLabel(cat).length > 18 ? categoryLabel(cat).slice(0, 16) + "…" : categoryLabel(cat)}
-                  </text>
-                  {lowAttendance && (
-                    <text x={LABEL_W - 8} y={y} fontSize="10" textAnchor="end" dominantBaseline="hanging">⚠️</text>
-                  )}
-                  <rect x={barX} y={y} width={totalW} height={BAR_H} rx="3" fill="#e5e7eb"
-                    stroke={lowAttendance ? "#C9A96E" : "none"} strokeWidth={lowAttendance ? "1.5" : "0"} />
-                  <text x={barX + totalW + 5} y={y + BAR_H / 2} dominantBaseline="middle"
-                    fontSize="10" fill="#6b7280" fontFamily="inherit">{stats.invited}</text>
-
-                  <rect x={barX} y={y + BAR_H + BAR_GAP} width={expectedW} height={BAR_H} rx="3" fill="#1A1F3A" />
-                  <text x={barX + expectedW + 5} y={y + BAR_H + BAR_GAP + BAR_H / 2} dominantBaseline="middle"
-                    fontSize="10" fill="#1A1F3A" fontFamily="inherit" fontWeight="600">{stats.expected}</text>
-
-                  <rect x={barX} y={y + (BAR_H + BAR_GAP) * 2} width={minW} height={BAR_H} rx="3" fill="#C9A96E" />
-                  <text x={barX + minW + 5} y={y + (BAR_H + BAR_GAP) * 2 + BAR_H / 2} dominantBaseline="middle"
-                    fontSize="10" fill="#C9A96E" fontFamily="inherit">{minExpected}</text>
-                </g>
-              );
-            })}
-          </svg>
-        ) : (
-          <p className="font-body text-sm text-gray-500 text-center py-8">Nenhuma categoria encontrada.</p>
-        )}
-
-        <div className="mt-5 pt-5 border-t border-gray-100 space-y-1.5">
-          <p className="font-body text-base text-midnight">
-            <strong>Estimativa:</strong>{" "}
-            {result.confidenceRange.min}–{result.confidenceRange.max} de {result.totalInvited} convidados
-          </p>
-          <p className="font-body text-sm text-gray-600">
-            <strong>Taxa de presença:</strong> {percentage}% ({result.totalExpected} pessoas esperadas)
-          </p>
-          {hasLowCategory && (
-            <p className="font-body text-sm text-gold flex items-center gap-1 pt-1">
-              ⚠️ Categorias marcadas têm estimativa abaixo de 70% do total
-            </p>
-          )}
-        </div>
-      </motion.div>
-    </>
-  );
 }
 
 // ─── Empty State / DDD Simulator ──────────────────────────────────
@@ -986,7 +806,8 @@ function EmptyState({ id, weddingCity, weddingState }: EmptyStateProps) {
 // ─── Main Page ──────────────────────────────────────────────────
 
 export default function SimuladorConvidadosPage() {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams();
+  const id = params?.id as string;
   const { data: session, status } = useSession();
   const toast = useToast();
 
@@ -1069,12 +890,6 @@ export default function SimuladorConvidadosPage() {
               guests={allGuests}
               weddingCity={wedding.city ?? ""}
               weddingState={wedding.state ?? ""}
-            />
-            <GuestAttendanceChart
-              guests={allGuests}
-              weddingCity={wedding.city ?? ""}
-              weddingState={wedding.state ?? ""}
-              weddingDate={wedding.weddingDate ? String(wedding.weddingDate) : "2026-01-03"}
             />
             <motion.div
               initial={{ opacity: 0, y: 24 }}

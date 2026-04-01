@@ -17,7 +17,7 @@ interface Questionnaire {
 
 export default function QuestionariosPage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status } = useSession();
   const [items, setItems] = useState<Questionnaire[]>([]);
   const [loading, setLoading] = useState(true);

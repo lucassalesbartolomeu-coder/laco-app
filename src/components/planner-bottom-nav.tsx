@@ -98,7 +98,7 @@ export default function PlannerBottomNav() {
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-midnight/[0.06] safe-area-pb">
         <div className="max-w-lg mx-auto flex items-stretch">
           {TABS.map((tab) => {
-            const active = tab.match(pathname);
+            const active = tab.match(pathname ?? "");
 
             return (
               <div key={tab.label} className="flex-1 flex items-center justify-center">

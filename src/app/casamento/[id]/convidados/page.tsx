@@ -182,7 +182,7 @@ const modalVariants = {
 
 export default function ConvidadosPage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status: authStatus } = useSession();
 
   const [guests, setGuests] = useState<Guest[]>([]);

@@ -118,7 +118,7 @@ export default function CerimonialistaLayout({ children }: { children: React.Rea
   usePwaManifest();
 
   const isActive = (href: string) =>
-    pathname === href || (href !== "/cerimonialista/dashboard" && pathname.startsWith(href));
+    pathname === href || (href !== "/cerimonialista/dashboard" && (pathname?.startsWith(href) ?? false));
 
   return (
     <div className="min-h-screen bg-ivory flex">

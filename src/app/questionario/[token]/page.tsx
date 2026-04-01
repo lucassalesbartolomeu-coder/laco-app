@@ -143,7 +143,7 @@ function ScaleQuestion({
 
 export default function QuestionarioPublicoPage() {
   const params = useParams();
-  const token = params.token as string;
+  const token = params?.token as string;
 
   const [data, setData] = useState<QuestionnaireData | null>(null);
   const [loading, setLoading] = useState(true);

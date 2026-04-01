@@ -204,7 +204,7 @@ export default function ConfirmacoesPage() {
   const { status } = useSession();
   const router = useRouter();
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
 
   const [wedding, setWedding] = useState<Wedding | null>(null);
   const [guests, setGuests] = useState<Guest[]>([]);

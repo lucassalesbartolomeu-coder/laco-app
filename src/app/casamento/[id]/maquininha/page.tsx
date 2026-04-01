@@ -6,7 +6,7 @@ import BottomNav from "@/components/bottom-nav";
 
 export default function MaquininhaPage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status } = useSession();
 
   if (status === "loading") {

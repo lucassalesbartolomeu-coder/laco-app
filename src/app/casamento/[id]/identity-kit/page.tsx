@@ -59,7 +59,7 @@ export default function IdentityKitPage() {
   const { status } = useSession();
   const router = useRouter();
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
 
   const [screen, setScreen] = useState<"templates" | "loading" | "result">("templates");
   const [selectedPreset, setSelectedPreset] = useState<TemplateConfig | null>(null);

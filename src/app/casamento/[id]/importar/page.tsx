@@ -112,7 +112,8 @@ function parseCsvText(text: string): Contact[] {
 /* ------------------------------------------------------------------ */
 
 export default function ImportarContatosPage() {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams();
+  const id = params?.id as string;
   const router = useRouter();
   useSession();
 

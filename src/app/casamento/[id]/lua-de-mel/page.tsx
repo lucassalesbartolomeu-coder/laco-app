@@ -141,7 +141,7 @@ const DESTINOS = [
 
 export default function LuaDeMelPage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status } = useSession();
 
   if (status === "loading") {

@@ -35,7 +35,7 @@ function MoreIcon({ className = "w-5 h-5" }: { className?: string }) {
 
 export default function MaisPage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status } = useSession();
 
   if (status === "loading") {

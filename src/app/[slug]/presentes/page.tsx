@@ -24,7 +24,8 @@ interface Gift {
 }
 
 export default function PresentesPage() {
-  const { slug } = useParams<{ slug: string }>();
+  const params = useParams();
+  const slug = params?.slug as string;
   const router = useRouter();
 
   const [wedding, setWedding] = useState<Wedding | null>(null);

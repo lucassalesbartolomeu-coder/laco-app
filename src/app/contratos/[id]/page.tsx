@@ -28,7 +28,8 @@ function formatCurrency(v: number) {
 }
 
 export default function PublicContractPage() {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams();
+  const id = params?.id as string;
   const [contract, setContract] = useState<ContractData | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);

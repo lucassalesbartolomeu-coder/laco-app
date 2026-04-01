@@ -15,7 +15,7 @@ interface WeddingPreview {
 export default function ConectarPage() {
   const params = useParams();
   const router = useRouter();
-  const code = (params.code as string).toUpperCase();
+  const code = (params?.code as string).toUpperCase();
   const { status: authStatus } = useSession();
 
   const [preview, setPreview] = useState<WeddingPreview | null>(null);

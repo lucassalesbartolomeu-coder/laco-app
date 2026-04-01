@@ -33,7 +33,8 @@ function formatDate(iso: string) {
 }
 
 export default function CerimonialistaWeddingDetail() {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams();
+  const id = params?.id as string;
   const { status: authStatus } = useSession();
   const [wedding, setWedding] = useState<WeddingDetail | null>(null);
   const [loading, setLoading] = useState(true);

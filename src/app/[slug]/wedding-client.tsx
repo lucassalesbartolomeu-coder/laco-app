@@ -195,7 +195,7 @@ function FadeIn({ children, className = "" }: { children: React.ReactNode; class
 /* ─── Page ─── */
 export default function WeddingClientPage({ initialSlug }: { initialSlug?: string }) {
   const params = useParams();
-  const slug = initialSlug ?? (params.slug as string);
+  const slug = initialSlug ?? (params?.slug as string);
 
   const [wedding, setWedding] = useState<Wedding | null>(null);
   const [gifts, setGifts] = useState<Gift[]>([]);

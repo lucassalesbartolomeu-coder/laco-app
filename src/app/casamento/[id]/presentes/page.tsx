@@ -165,7 +165,7 @@ const modalVariants = {
 export default function PresentesPage() {
   const params = useParams();
   const router = useRouter();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status: authStatus } = useSession();
   const toast = useToast();
 

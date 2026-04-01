@@ -20,7 +20,7 @@ interface InviteCodeData {
 
 export default function CerimonialstaPage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status: authStatus } = useSession();
   const toast = useToast();
 

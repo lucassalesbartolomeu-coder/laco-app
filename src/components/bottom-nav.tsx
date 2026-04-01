@@ -58,7 +58,7 @@ export default function BottomNav({ weddingId }: BottomNavProps) {
     }
   }, [weddingId]);
 
-  const isActive = (pattern: string) => pathname.includes(pattern);
+  const isActive = (pattern: string) => pathname?.includes(pattern) ?? false;
   const isHome = pathname === "/dashboard";
 
   const weddingBase = resolvedId ? `/casamento/${resolvedId}` : null;

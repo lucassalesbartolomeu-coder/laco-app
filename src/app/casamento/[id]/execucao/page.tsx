@@ -38,7 +38,7 @@ function CheckCircleIcon({ className = "w-5 h-5" }: { className?: string }) {
 
 export default function ExecucaoPage() {
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const { data: session, status } = useSession();
 
   const [guestStats, setGuestStats] = useState<GuestStats>({ total: 0, confirmed: 0, pending: 0, declined: 0 });

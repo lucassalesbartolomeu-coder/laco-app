@@ -648,7 +648,7 @@ export default function OrcamentoInteligentePage() {
   const { status } = useSession();
   const router = useRouter();
   const params = useParams();
-  const weddingId = params.id as string;
+  const weddingId = params?.id as string;
   const toast = useToast();
 
   const [state, setState] = useState<WizardState>({
