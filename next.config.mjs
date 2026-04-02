@@ -32,18 +32,17 @@ const nextConfig = {
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   experimental: {
     serverComponentsExternalPackages: ["@react-pdf/renderer"],
+    optimizePackageImports: ["framer-motion", "lucide-react"],
   },
   images: {
     formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 86400,
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**.supabase.co",
-      },
-      {
-        protocol: "https",
-        hostname: "**.supabase.in",
-      },
+      { protocol: "https", hostname: "**.supabase.co" },
+      { protocol: "https", hostname: "**.supabase.in" },
+      { protocol: "https", hostname: "images-na.ssl-images-amazon.com" },
+      { protocol: "https", hostname: "**.amazonaws.com" },
+      { protocol: "https", hostname: "m.media-amazon.com" },
     ],
   },
   compress: true,

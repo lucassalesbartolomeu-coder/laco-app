@@ -154,7 +154,7 @@ export default function PhotoGallery({ photos }: PhotoGalleryProps) {
               placeholder="blur"
               blurDataURL={BLUR_DATA_URL}
               loading="lazy"
-              unoptimized
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
             {photo.caption && (
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -245,7 +245,7 @@ export default function PhotoGallery({ photos }: PhotoGalleryProps) {
                     className="max-h-[80vh] w-auto max-w-full object-contain rounded-xl shadow-2xl"
                     placeholder="blur"
                     blurDataURL={BLUR_DATA_URL}
-                    unoptimized
+                    sizes="100vw"
                   />
                 </div>
                 {currentPhoto.caption && (

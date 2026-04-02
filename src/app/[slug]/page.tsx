@@ -6,6 +6,30 @@ interface Props {
   params: { slug: string };
 }
 
+const weddingSelect = {
+  id: true,
+  slug: true,
+  partnerName1: true,
+  partnerName2: true,
+  weddingDate: true,
+  venue: true,
+  venueAddress: true,
+  ceremonyVenue: true,
+  ceremonyAddress: true,
+  city: true,
+  state: true,
+  style: true,
+  storyText: true,
+  estimatedGuests: true,
+  coverImage: true,
+  message: true,
+  theme: true,
+  photos: {
+    select: { id: true, url: true, caption: true, sortOrder: true },
+    orderBy: { sortOrder: "asc" as const },
+  },
+} as const;
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const wedding = await prisma.wedding.findUnique({
     where: { slug: params.slug },
@@ -72,6 +96,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function WeddingPage({ params }: Props) {
-  return <WeddingClientPage initialSlug={params.slug} />;
+export default async function WeddingPage({ params }: Props) {
+  const wedding = await prisma.wedding.findUnique({
+    where: { slug: params.slug },
+    select: weddingSelect,
+  });
+
+  const gifts = wedding
+    ? await prisma.gift.findMany({
+        where: { weddingId: wedding.id },
+        orderBy: { createdAt: "desc" },
+        select: { id: true, name: true, price: true, url: true, status: true },
+      })
+    : [];
+
+  return (
+    <WeddingClientPage
+      initialSlug={params.slug}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      initialWedding={wedding as any}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      initialGifts={gifts as any}
+    />
+  );
 }

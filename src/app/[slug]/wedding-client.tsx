@@ -193,14 +193,22 @@ function FadeIn({ children, className = "" }: { children: React.ReactNode; class
 }
 
 /* ─── Page ─── */
-export default function WeddingClientPage({ initialSlug }: { initialSlug?: string }) {
+export default function WeddingClientPage({
+  initialSlug,
+  initialWedding,
+  initialGifts,
+}: {
+  initialSlug?: string;
+  initialWedding?: Wedding | null;
+  initialGifts?: Gift[];
+}) {
   const params = useParams();
   const slug = initialSlug ?? (params?.slug as string);
 
-  const [wedding, setWedding] = useState<Wedding | null>(null);
-  const [gifts, setGifts] = useState<Gift[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+  const [wedding, setWedding] = useState<Wedding | null>(initialWedding ?? null);
+  const [gifts, setGifts] = useState<Gift[]>(initialGifts ?? []);
+  const [loading, setLoading] = useState(initialWedding === undefined);
+  const [notFound, setNotFound] = useState(initialWedding === null);
 
   /* countdown */
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -215,8 +223,9 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
   const [rsvpSuccess, setRsvpSuccess] = useState(false);
   const [rsvpError, setRsvpError] = useState("");
 
-  /* ── Fetch data ── */
+  /* ── Fetch data (only when not provided server-side) ── */
   useEffect(() => {
+    if (initialWedding !== undefined) return; // server already provided data
     if (!slug) return;
     (async () => {
       try {
@@ -241,7 +250,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
         setLoading(false);
       }
     })();
-  }, [slug]);
+  }, [slug, initialWedding]);
 
   /* ── Countdown timer ── */
   useEffect(() => {
@@ -320,7 +329,7 @@ export default function WeddingClientPage({ initialSlug }: { initialSlug?: strin
         {wedding.coverImage ? (
           <div className="absolute inset-0">
             <Image src={wedding.coverImage} alt={`${wedding.partnerName1} & ${wedding.partnerName2}`}
-              fill className="object-cover opacity-40 scale-105" unoptimized />
+              fill className="object-cover opacity-40 scale-105" priority sizes="100vw" />
             {/* dark gradient overlay at bottom for readability */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
           </div>

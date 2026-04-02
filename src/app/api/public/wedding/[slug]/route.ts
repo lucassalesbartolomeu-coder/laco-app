@@ -38,7 +38,9 @@ export async function GET(_req: Request, { params }: Params) {
       return NextResponse.json({ error: "Casamento não encontrado" }, { status: 404 });
     }
 
-    return NextResponse.json(wedding);
+    return NextResponse.json(wedding, {
+      headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+    });
   } catch (error) {
     console.error("GET /api/public/wedding/[slug] error:", error);
     return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
