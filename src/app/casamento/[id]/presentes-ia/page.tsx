@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import BottomNav from "@/components/bottom-nav";
 
 const EXAMPLES = [
@@ -42,6 +41,10 @@ const PLANS = [
   },
 ];
 
+const GOLD = "#A98950";
+const BROWN = "#3D322A";
+const CREME = "#FAF6EF";
+
 export default function PresentesIAPage() {
   const params = useParams();
   const weddingId = params?.id as string;
@@ -51,45 +54,39 @@ export default function PresentesIAPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-ivory flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: CREME }}>
+        <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: GOLD, borderTopColor: "transparent" }} />
       </div>
     );
   }
   if (!session) return null;
 
   return (
-    <div className="min-h-screen bg-ivory pb-24">
+    <div className="min-h-screen pb-24" style={{ background: CREME }}>
 
-      {/* Hero */}
-      <div className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #1A1F3A 0%, #2D7D6F 50%, #B87333 100%)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
-        <div className="relative z-10 px-5 pt-12 pb-10">
-          <Link
-            href={`/casamento/${weddingId}/presentes`}
-            className="inline-flex items-center gap-1 font-body text-xs text-white/50 hover:text-white/80 transition mb-4"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-            Lista de Presentes
-          </Link>
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/15 rounded-full mb-4">
-            <span className="text-sm">✨</span>
-            <span className="font-body text-xs font-medium text-white/90">Powered by IA</span>
-          </div>
-          <h1 className="font-heading text-3xl text-white mb-2 leading-tight">
-            Lista de Presentes<br />com Fotos suas
-          </h1>
-          <p className="font-body text-sm text-white/70 max-w-xs leading-relaxed">
-            A IA cria fotos reais de vocês dois aproveitando cada presente — os convidados compram 25% mais quando se imaginam dando algo que o casal vai usar.
-          </p>
-        </div>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+          Lista de Presentes
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+          Sugestões por IA
+        </h1>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+          Ideias personalizadas para sua lista
+        </p>
+      </div>
+
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
       </div>
 
       {/* Social proof stat */}
-      <div className="px-4 -mt-5 relative z-10 mb-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+      <div className="px-4 mt-4 mb-6">
+        <div className="bg-white rounded-2xl border p-4" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
           <div className="grid grid-cols-3 gap-3 text-center">
             <div>
               <p className="font-heading text-2xl text-gold">+25%</p>
@@ -116,7 +113,7 @@ export default function PresentesIAPage() {
             { step: "2", title: "A IA cria as cenas", desc: "Para cada presente da sua lista, geramos uma foto realista de vocês dois usando o item" },
             { step: "3", title: "Aprove e publique", desc: "Você revisa e escolhe as melhores. Os convidados veem tudo na página pública" },
           ].map((s) => (
-            <div key={s.step} className="flex items-start gap-4 bg-white rounded-2xl border border-gray-100 p-4">
+            <div key={s.step} className="flex items-start gap-4 bg-white rounded-2xl p-4" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
               <div className="w-8 h-8 rounded-full bg-midnight flex-shrink-0 flex items-center justify-center">
                 <span className="font-heading text-sm text-white font-bold">{s.step}</span>
               </div>
@@ -134,7 +131,7 @@ export default function PresentesIAPage() {
         <h2 className="font-heading text-lg text-midnight mb-3 px-4">Exemplos de cenas</h2>
         <div className="flex gap-3 overflow-x-auto px-4 pb-1" style={{ scrollbarWidth: "none" }}>
           {EXAMPLES.map((ex) => (
-            <div key={ex.gift} className="flex-shrink-0 w-52 bg-white rounded-2xl border border-gray-100 overflow-hidden">
+            <div key={ex.gift} className="flex-shrink-0 w-52 bg-white rounded-2xl overflow-hidden" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
               {/* Placeholder visual */}
               <div className="h-32 flex items-center justify-center text-5xl" style={{ background: "linear-gradient(135deg, #F5F0E8, #E8EDE8)" }}>
                 {ex.emoji}
@@ -199,7 +196,7 @@ export default function PresentesIAPage() {
 
       {/* Upload CTA */}
       <div className="px-4 mb-4">
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+        <div className="bg-white rounded-2xl p-5" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
           <p className="font-body text-sm font-medium text-midnight mb-1">Envie uma foto de vocês</p>
           <p className="font-body text-xs text-midnight/50 mb-4">A IA usa para gerar as cenas personalizadas</p>
           <button

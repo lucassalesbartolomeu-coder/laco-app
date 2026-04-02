@@ -540,32 +540,36 @@ export default function TimelinePage() {
       })
     : null;
 
+  const GOLD = "#A98950";
+  const BROWN = "#3D322A";
+  const CREME = "#FAF6EF";
+
   return (
-    <div className="min-h-screen bg-ivory">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-midnight via-midnight to-midnight/80 px-5 pt-12 pb-8 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-2">
-            <CalendarIcon />
-            <span className="font-body text-xs text-white/60 uppercase tracking-wider">Dia D</span>
-          </div>
-          <h1 className="font-heading text-3xl text-white mb-1">Timeline do Dia</h1>
-          {formattedDate && (
-            <p className="font-body text-sm text-white/60">{formattedDate}</p>
-          )}
-          {wedding && (
-            <p className="font-body text-sm text-white/50 mt-0.5">
-              {wedding.partnerName1} &amp; {wedding.partnerName2}
-            </p>
-          )}
-        </div>
+    <div className="min-h-screen" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+          Organização
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+          Cronograma
+        </h1>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+          {formattedDate ? formattedDate : "Todos os momentos do seu grande dia"}
+        </p>
+      </div>
+
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
       </div>
 
       {/* Barra de progresso */}
       {total > 0 && (
-        <div className="px-4 -mt-5 relative z-10 mb-2">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+        <div className="px-4 mb-2">
+          <div className="bg-white rounded-2xl shadow-sm p-4" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
             <div className="flex items-center justify-between mb-2">
               <span className="font-body text-xs text-gray-400">Progresso do dia</span>
               <span className="font-body text-xs font-semibold text-midnight">{done}/{total} concluídos</span>

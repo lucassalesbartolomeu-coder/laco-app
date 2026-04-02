@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 
@@ -76,23 +75,6 @@ function PlusIcon({ className = "w-5 h-5" }: { className?: string }) {
     >
       <line x1="12" y1="5" x2="12" y2="19" />
       <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
-  );
-}
-
-function ArrowLeftIcon({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="19" y1="12" x2="5" y2="12" />
-      <polyline points="12 19 5 12 12 5" />
     </svg>
   );
 }
@@ -367,28 +349,34 @@ export default function PresentesPage() {
 
   /* ── Render ─────────────────────────────────────────────────────── */
 
+  const GOLD = "#A98950";
+  const BROWN = "#3D322A";
+  const CREME = "#FAF6EF";
+
   return (
-    <div className="min-h-screen bg-ivory py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-2 font-body text-sm text-midnight hover:text-midnight/80 transition-colors mb-6"
-        >
-          <ArrowLeftIcon className="w-4 h-4" />
-          Voltar ao painel
-        </Link>
+    <div className="min-h-screen" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+          Lista de Presentes
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+          Presentes
+        </h1>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+          Gerencie sua lista e acompanhe reservas
+        </p>
+      </div>
 
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="font-heading text-3xl sm:text-4xl text-midnight mb-1">
-              Presentes
-            </h1>
-            <p className="font-body text-gray-500">
-              Gerencie a lista de presentes do casamento
-            </p>
-          </div>
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      </div>
 
+      <div className="max-w-6xl mx-auto px-4 py-4">
+        <div className="flex items-center justify-end mb-6">
           <button
             type="button"
             onClick={openAddModal}
@@ -413,7 +401,7 @@ export default function PresentesPage() {
             {gifts.map((gift) => (
               <div
                 key={gift.id}
-                className="bg-white rounded-2xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200 overflow-hidden"
+                className="bg-white rounded-2xl hover:shadow-md hover:scale-[1.02] transition-all duration-200 overflow-hidden" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}
               >
                 {/* Placeholder image area */}
                 <div className="w-full h-40 bg-gray-100 flex items-center justify-center">

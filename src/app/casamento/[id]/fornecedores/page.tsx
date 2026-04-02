@@ -120,34 +120,50 @@ export default function FornecedoresPage() {
     groups[v.category].push(v);
   }
 
+  const GOLD = "#A98950";
+  const BROWN = "#3D322A";
+  const CREME = "#FAF6EF";
+
   if (loading) return (
-    <div className="min-h-screen bg-fog flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen flex items-center justify-center" style={{ background: CREME }}>
+      <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: GOLD, borderTopColor: "transparent" }} />
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-fog">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div className="min-h-screen pb-24" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <div className="flex items-start justify-between">
           <div>
-            <h1 className="font-heading text-xl font-semibold text-midnight">Fornecedores</h1>
-            <p className="font-body text-xs text-midnight/50 mt-0.5">
-              {vendors.length} cadastrados · {vendors.filter(v => v.status === "contratado").length} contratados
+            <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+              Fornecedores
+            </p>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+              Fornecedores
+            </h1>
+            <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+              Gerencie todos os seus fornecedores
             </p>
           </div>
           <button onClick={openNew}
-            className="flex items-center gap-1.5 px-4 py-2 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition">
+            className="flex items-center gap-1.5 px-4 py-2 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition flex-shrink-0 mt-1">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
             Novo
           </button>
         </div>
-      </header>
+      </div>
 
-      <div className="max-w-3xl mx-auto px-4 py-6 space-y-5">
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      </div>
+
+      <div className="max-w-3xl mx-auto px-4 py-4 space-y-5">
 
         {/* Summary cards */}
         {vendors.length > 0 && (
@@ -156,7 +172,7 @@ export default function FornecedoresPage() {
               <p className="font-body text-xs opacity-60 mb-1">Contratado</p>
               <p className="font-body text-xl font-bold">{fmt(totalContratado)}</p>
             </div>
-            <div className="bg-white border border-gray-100 rounded-2xl p-4">
+            <div className="bg-white rounded-2xl p-4" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
               <p className="font-body text-xs text-midnight/50 mb-1">Em cotação</p>
               <p className="font-body text-xl font-bold text-midnight">{fmt(totalCotado)}</p>
             </div>
@@ -179,7 +195,7 @@ export default function FornecedoresPage() {
 
         {/* Empty state */}
         {vendors.length === 0 && (
-          <div className="bg-white rounded-3xl border border-gray-100 p-12 text-center">
+          <div className="bg-white rounded-3xl p-12 text-center" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
             <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gold/10 flex items-center justify-center">
               <svg className="w-7 h-7 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -201,7 +217,7 @@ export default function FornecedoresPage() {
               {items.map(v => {
                 const sc = STATUS_CONFIG[v.status] ?? { label: v.status, color: "bg-gray-100 text-gray-600 border border-gray-200" };
                 return (
-                  <div key={v.id} className="bg-white rounded-2xl border border-gray-100 p-4">
+                  <div key={v.id} className="bg-white rounded-2xl p-4" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
                     <div className="flex items-start gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1.5">

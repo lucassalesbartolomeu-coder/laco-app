@@ -258,22 +258,40 @@ export default function ImportarContatosPage() {
   /*  Render                                                           */
   /* ---------------------------------------------------------------- */
 
-  return (
-    <main className="min-h-screen bg-ivory py-8 px-4 pb-24">
-      <div className="mx-auto max-w-2xl space-y-6">
+  const GOLD = "#A98950";
+  const BROWN = "#3D322A";
+  const CREME = "#FAF6EF";
 
-        {/* Header */}
-        <div className="flex items-center gap-3">
+  return (
+    <main className="min-h-screen pb-24" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <div className="flex items-center gap-3 mb-4">
           <Link href={`/casamento/${id}/convidados`} className="p-2 rounded-xl hover:bg-midnight/5 transition text-midnight/60">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </Link>
-          <div>
-            <h1 className="font-heading text-2xl font-bold text-midnight">Importar Contatos</h1>
-            <p className="font-body text-sm text-midnight/60">CSV, agenda do celular ou manual</p>
-          </div>
         </div>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+          Convidados
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+          Importar Convidados
+        </h1>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+          Adicione convidados da agenda, CSV ou manualmente
+        </p>
+      </div>
+
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      </div>
+
+      <div className="mx-auto max-w-2xl px-4 pb-8 space-y-6">
 
         {/* ── Contact Picker ── */}
         <div className="bg-white rounded-2xl border border-midnight/8 shadow-sm p-5">

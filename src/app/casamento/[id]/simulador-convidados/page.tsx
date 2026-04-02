@@ -861,27 +861,33 @@ export default function SimuladorConvidadosPage() {
   const hasGuests = wedding.guests && wedding.guests.length > 0;
   const allGuests = wedding.guests ?? [];
 
-  return (
-    <div className="min-h-screen bg-ivory py-10 px-4 pb-20">
-      <div className="max-w-4xl mx-auto space-y-8">
+  const GOLD = "#A98950";
+  const BROWN = "#3D322A";
+  const CREME = "#FAF6EF";
 
-        {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-6"
-        >
-          <h1 className="font-heading text-4xl sm:text-5xl text-midnight mb-2">
-            Simulador de Convidados
-          </h1>
-          <p className="font-body text-gray-600">
-            Descubra de onde vêm seus convidados e quantos vão comparecer
-          </p>
-          <p className="font-body text-sm text-gray-500 mt-1">
-            {wedding.partnerName1} & {wedding.partnerName2}
-          </p>
-        </motion.div>
+  return (
+    <div className="min-h-screen pb-20" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+          Planejamento
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+          Simulador de Convidados
+        </h1>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+          Estime o número ideal de convidados
+        </p>
+      </div>
+
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 space-y-8 py-4">
 
         {hasGuests ? (
           <>

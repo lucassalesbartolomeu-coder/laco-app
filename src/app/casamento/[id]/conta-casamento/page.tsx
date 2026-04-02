@@ -76,26 +76,37 @@ export default function ContaCasamentoPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-ivory flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FAF6EF" }}>
+        <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: "#A98950", borderTopColor: "transparent" }} />
       </div>
     );
   }
 
   if (!session) return null;
 
+  const GOLD = "#A98950";
+  const BROWN = "#3D322A";
+  const CREME = "#FAF6EF";
+
   return (
-    <div className="min-h-screen bg-fog pb-24">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div className="min-h-screen pb-24" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <div className="flex items-start justify-between">
           <div>
-            <h1 className="font-heading text-xl font-semibold text-midnight">Meu Casamento</h1>
-            <p className="font-body text-xs text-midnight/50 mt-0.5">Eventos e configurações</p>
+            <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+              Configurações
+            </p>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+              Conta do Casamento
+            </h1>
+            <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+              Dados e configurações do seu casamento
+            </p>
           </div>
           <button
             onClick={() => { setForm(EMPTY); setShowForm(true); }}
-            className="flex items-center gap-1.5 px-4 py-2 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition"
+            className="flex items-center gap-1.5 px-4 py-2 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition flex-shrink-0 mt-1"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -103,9 +114,16 @@ export default function ContaCasamentoPage() {
             Evento
           </button>
         </div>
-      </header>
+      </div>
 
-      <div className="max-w-3xl mx-auto px-4 py-6 space-y-5">
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      </div>
+
+      <div className="max-w-3xl mx-auto px-4 py-4 space-y-5">
         {/* Events section */}
         <div>
           <p className="font-body text-xs font-semibold text-midnight/40 uppercase tracking-widest mb-3 px-1">
@@ -113,7 +131,7 @@ export default function ContaCasamentoPage() {
           </p>
 
           {events.length === 0 ? (
-            <div className="bg-white rounded-3xl border border-gray-100 p-8 text-center">
+            <div className="bg-white rounded-3xl p-8 text-center" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
               <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-midnight/5 flex items-center justify-center">
                 <svg className="w-6 h-6 text-midnight/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -131,7 +149,7 @@ export default function ContaCasamentoPage() {
           ) : (
             <div className="space-y-3">
               {events.map(ev => (
-                <div key={ev.id} className="bg-white rounded-2xl border border-gray-100 p-4">
+                <div key={ev.id} className="bg-white rounded-2xl p-4" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <p className="font-body text-sm font-semibold text-midnight">{ev.name}</p>
@@ -177,7 +195,7 @@ export default function ContaCasamentoPage() {
           <p className="font-body text-xs font-semibold text-midnight/40 uppercase tracking-widest mb-3 px-1">
             Conta digital Laço
           </p>
-          <div className="bg-white rounded-3xl border border-gray-100 p-5">
+          <div className="bg-white rounded-3xl p-5" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
             <div className="flex items-start gap-3 mb-4">
               <span className="inline-block font-body text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-full bg-gold/10 text-gold flex-shrink-0">
                 Em breve

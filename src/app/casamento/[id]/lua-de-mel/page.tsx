@@ -137,6 +137,10 @@ const DESTINOS = [
   },
 ];
 
+const GOLD = "#A98950";
+const BROWN = "#3D322A";
+const CREME = "#FAF6EF";
+
 /* ─── Component ─────────────────────────────────────────────────────── */
 
 export default function LuaDeMelPage() {
@@ -146,26 +150,33 @@ export default function LuaDeMelPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-ivory flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: CREME }}>
+        <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: GOLD, borderTopColor: "transparent" }} />
       </div>
     );
   }
   if (!session) return null;
 
   return (
-    <div className="min-h-screen bg-ivory pb-24">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-midnight via-midnight/90 to-[#0E4D4D] px-5 pt-12 pb-10 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-gold/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-midnight/15 rounded-full blur-2xl" />
-        <div className="relative z-10">
-          <p className="font-body text-xs text-white/50 uppercase tracking-wider mb-2">Pós-Casamento</p>
-          <h1 className="font-heading text-4xl text-white mb-2">Lua de Mel</h1>
-          <p className="font-body text-sm text-white/70 max-w-sm">
-            Destinos românticos selecionados para o próximo grande capítulo. Parceiros com os melhores preços.
-          </p>
-        </div>
+    <div className="min-h-screen pb-24" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+          Pós-Casamento
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+          Lua de Mel
+        </h1>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+          Planeje a viagem dos seus sonhos
+        </p>
+      </div>
+
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
       </div>
 
       {/* Aviso de afiliado */}
@@ -182,7 +193,7 @@ export default function LuaDeMelPage() {
             <h2 className="font-heading text-lg text-midnight mb-3">{categoria.categoria}</h2>
             <div className="space-y-3">
               {categoria.items.map((dest) => (
-                <div key={dest.nome} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div key={dest.nome} className="bg-white rounded-2xl overflow-hidden" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
                   {/* Color bar */}
                   <div className="h-1.5 w-full" style={{ backgroundColor: dest.cor }} />
 

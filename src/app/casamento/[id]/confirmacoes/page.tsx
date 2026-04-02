@@ -317,10 +317,6 @@ export default function ConfirmacoesPage() {
 
   const categories = [...new Set(guests.map((g) => g.category).filter(Boolean))] as string[];
 
-  const coupleName = wedding
-    ? `${wedding.partnerName1} & ${wedding.partnerName2}`
-    : "Casal";
-
   const pendingWithPhone = guests.filter(
     (g) => g.rsvpStatus === "pendente" && g.phone && !g.whatsappSentAt
   ).length;
@@ -328,31 +324,43 @@ export default function ConfirmacoesPage() {
     (g) => g.rsvpStatus === "pendente" && g.phone && g.whatsappSentAt
   ).length;
 
+  const GOLD = "#A98950";
+  const BROWN = "#3D322A";
+  const CREME = "#FAF6EF";
+
   return (
-    <div className="min-h-screen bg-ivory pb-16">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="text-midnight/50 hover:text-midnight transition">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-            </Link>
-            <div>
-              <h1 className="font-heading text-xl text-midnight">Confirmações</h1>
-              {wedding && (
-                <p className="font-body text-xs text-midnight/40">{coupleName}</p>
-              )}
-            </div>
-          </div>
+    <div className="min-h-screen pb-16" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Link href="/dashboard" className="text-midnight/50 hover:text-midnight transition">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </Link>
           {/* Live indicator */}
-          <div className="flex items-center gap-1.5 text-xs font-body text-midnight">
-            <div className="w-1.5 h-1.5 bg-midnight rounded-full animate-pulse" />
+          <div className="ml-auto flex items-center gap-1.5 text-xs font-body" style={{ color: BROWN }}>
+            <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: GOLD }} />
             Ao vivo
           </div>
         </div>
-      </header>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+          Convidados
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+          Confirmações
+        </h1>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+          Acompanhe as respostas dos seus convidados
+        </p>
+      </div>
+
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      </div>
 
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
 

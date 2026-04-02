@@ -55,21 +55,46 @@ function WelcomeStep({ onNext }: { onNext: (guests: number, region: Region) => v
   const [region, setRegion] = useState<Region>("sp");
   const isValid = guests > 0 && guests <= 500 && region;
 
+  const GOLD = "#A98950";
+  const BROWN = "#3D322A";
+  const CREME = "#FAF6EF";
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-gradient-to-br from-midnight to-midnight/20 flex flex-col items-center justify-center px-4 py-8"
+      className="min-h-screen flex flex-col px-4 py-8"
+      style={{ background: CREME }}
     >
-      <div className="max-w-md w-full space-y-8">
+      {/* Light header */}
+      <div className="px-1 pt-2 pb-6">
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+          Planejamento
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+          Orçamento Inteligente
+        </h1>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+          Sugestões de orçamento personalizadas por IA
+        </p>
+      </div>
+
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 py-2 mb-4">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      </div>
+
+      <div className="max-w-md w-full mx-auto space-y-8">
         {/* Hero illustration */}
         <div className="text-center space-y-4">
           <div className="text-6xl">💍</div>
-          <h1 className="font-heading text-4xl text-cream font-bold">
+          <h2 className="font-heading text-2xl font-bold" style={{ color: BROWN }}>
             Vamos montar o orçamento do seu casamento
-          </h1>
-          <p className="font-body text-cream/70 text-base">
+          </h2>
+          <p className="font-body text-base" style={{ color: "rgba(61,50,42,0.6)" }}>
             Um guia inteligente para planejar cada detalhe dentro da sua realidade financeira.
           </p>
         </div>
@@ -389,27 +414,42 @@ function ResultsStep({
     ? `R$${(budget.minTotal / 1000).toFixed(0)}k-${(budget.maxTotal / 1000).toFixed(0)}k`
     : "Orçamento";
 
+  const GOLD_R = "#A98950";
+  const BROWN_R = "#3D322A";
+  const CREME_R = "#FAF6EF";
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-ivory pb-32"
+      className="min-h-screen pb-32"
+      style={{ background: CREME_R }}
     >
-      {/* Header */}
-      <div className="sticky top-0 z-20 bg-white border-b border-gray-100">
-        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="text-center flex-1">
-            <h1 className="font-heading text-2xl text-midnight font-bold">Seu Orçamento</h1>
-          </div>
-        </div>
-        <ProgressBar current={100} total={100} />
+      {/* Light header */}
+      <div style={{ background: CREME_R }} className="px-5 pt-10 pb-6">
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD_R, textTransform: "uppercase" as const, fontWeight: 500 }}>
+          Planejamento
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN_R, lineHeight: 1.2, marginTop: "4px" }}>
+          Orçamento Inteligente
+        </h1>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+          Seu orçamento personalizado
+        </p>
+      </div>
+
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD_R, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
         {/* Total budget display */}
         {budget && (
-          <div className="bg-gradient-to-br from-midnight to-midnight rounded-2xl text-cream p-6 text-center space-y-2">
+          <div className="rounded-2xl p-6 text-center space-y-2" style={{ background: BROWN_R, color: "#FAF6EF" }}>
             <p className="font-body text-sm opacity-90">Orçamento Estimado</p>
             <p className="font-heading text-4xl font-bold">
               R$ {(budget.minTotal / 1000).toFixed(1)}k

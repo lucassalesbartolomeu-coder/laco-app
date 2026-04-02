@@ -341,7 +341,7 @@ export default function OrcamentoPage() {
   ];
 
   if (loading || loadingTemplate) return (
-    <div className="min-h-screen bg-fog flex flex-col items-center justify-center gap-3">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-3" style={{ background: "#FAF6EF" }}>
       <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
       {loadingTemplate && (
         <p className="font-body text-sm text-midnight/50">Preparando seu orçamento...</p>
@@ -349,27 +349,42 @@ export default function OrcamentoPage() {
     </div>
   );
 
+  const GOLD = "#A98950";
+  const BROWN = "#3D322A";
+  const CREME = "#FAF6EF";
+
   return (
-    <div className="min-h-screen bg-fog">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div className="min-h-screen" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <div className="flex items-start justify-between">
           <div>
-            <h1 className="font-heading text-xl font-semibold text-midnight">Orçamento</h1>
-            <p className="font-body text-xs text-midnight/50 mt-0.5">
-              {items.length} {items.length === 1 ? "item" : "itens"}
-              {summary && summary.totalEstimated > 0 && ` · ${fmt(summary.totalEstimated)}`}
+            <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+              Planejamento
+            </p>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+              Orçamento
+            </h1>
+            <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+              Acompanhe seus gastos e o planejado
             </p>
           </div>
           <button onClick={openNew}
-            className="flex items-center gap-1.5 px-4 py-2 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition">
+            className="flex items-center gap-1.5 px-4 py-2 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition mt-2">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
             Novo
           </button>
         </div>
-      </header>
+      </div>
+
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      </div>
 
       <div className="max-w-3xl mx-auto px-4 py-5 space-y-5 pb-28">
 
@@ -480,7 +495,7 @@ export default function OrcamentoPage() {
                         const isEditing = inlineId === item.id;
 
                         return (
-                          <div key={item.id} className="bg-white rounded-2xl border border-gray-100 p-4">
+                          <div key={item.id} className="bg-white rounded-2xl p-4" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
                             <div className="flex items-center gap-3">
                               {/* Paid toggle */}
                               <button onClick={() => togglePaid(item)}

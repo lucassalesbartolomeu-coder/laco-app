@@ -37,6 +37,10 @@ const CATEGORY_LABELS: Record<string, string> = {
   outro: "Outro",
 };
 
+const GOLD = "#A98950";
+const BROWN = "#3D322A";
+const CREME = "#FAF6EF";
+
 export default function CotacoesPage() {
   const params = useParams();
   const weddingId = params?.id as string;
@@ -59,8 +63,8 @@ export default function CotacoesPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-ivory flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: CREME }}>
+        <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: GOLD, borderTopColor: "transparent" }} />
       </div>
     );
   }
@@ -83,23 +87,31 @@ export default function CotacoesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-ivory pb-24">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-midnight to-midnight/90 px-5 pt-12 pb-10">
-        <Link href={`/casamento/${weddingId}/execucao`} className="flex items-center gap-1 text-white/50 text-xs font-body mb-3">
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-          Organizar
-        </Link>
-        <h1 className="font-heading text-3xl text-white mb-1">Cotações</h1>
-        <p className="font-body text-sm text-white/65">Compare orçamentos de diferentes fornecedores por categoria.</p>
+    <div className="min-h-screen pb-24" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+          Fornecedores
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+          Cotações
+        </h1>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+          Compare orçamentos e escolha os melhores
+        </p>
       </div>
 
-      <div className="px-4 mt-5 space-y-5">
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      </div>
+
+      <div className="px-4 mt-4 space-y-5">
 
         {vendors.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+          <div className="bg-white rounded-2xl p-8 text-center" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
             <p className="text-4xl mb-3">📊</p>
             <p className="font-heading text-lg text-midnight mb-1">Nenhum fornecedor ainda</p>
             <p className="font-body text-sm text-gray-400 mb-5">Adicione fornecedores para poder comparar cotações.</p>
@@ -123,7 +135,7 @@ export default function CotacoesPage() {
                     const withPrice = vs.filter(v => v.price != null);
                     const lowest = withPrice.length > 0 ? Math.min(...withPrice.map(v => v.price!)) : null;
                     return (
-                      <div key={cat} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                      <div key={cat} className="bg-white rounded-2xl overflow-hidden" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
                         <div className="px-4 py-3 bg-midnight/5 border-b border-midnight/10 flex items-center justify-between">
                           <span className="font-body text-sm font-semibold text-midnight">
                             {CATEGORY_LABELS[cat] ?? cat}
@@ -178,7 +190,7 @@ export default function CotacoesPage() {
                 </p>
                 <div className="space-y-2">
                   {singleCategories.map(([cat, vs]) => (
-                    <div key={cat} className="bg-white rounded-2xl shadow-sm border border-gray-100 px-4 py-3 flex items-center gap-3">
+                    <div key={cat} className="bg-white rounded-2xl px-4 py-3 flex items-center gap-3" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
                       <div className="flex-1 min-w-0">
                         <p className="font-body text-xs text-gray-400">{CATEGORY_LABELS[cat] ?? cat}</p>
                         <p className="font-body text-sm font-medium text-midnight truncate">{vs[0].name}</p>

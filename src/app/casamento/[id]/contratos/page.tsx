@@ -40,6 +40,10 @@ function statusInfo(c: Contract) {
   return { label: "Aguardando cerimonialista", bg: "bg-gray-50", text: "text-gray-500", dot: "bg-gray-300" };
 }
 
+const GOLD = "#A98950";
+const BROWN = "#3D322A";
+const CREME = "#FAF6EF";
+
 export default function ContratosPage() {
   const params = useParams();
   const weddingId = params?.id as string;
@@ -86,38 +90,38 @@ export default function ContratosPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-ivory flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: CREME }}>
+        <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: GOLD, borderTopColor: "transparent" }} />
       </div>
     );
   }
   if (!session) return null;
 
   return (
-    <div className="min-h-screen bg-ivory pb-24">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-midnight via-midnight/95 to-midnight/70 px-5 pt-12 pb-10 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-gold/10 rounded-full blur-3xl" />
-        <div className="relative z-10">
-          <Link
-            href={`/casamento/${weddingId}/execucao`}
-            className="inline-flex items-center gap-1 font-body text-xs text-white/50 hover:text-white/80 transition mb-4"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-            Organizar
-          </Link>
-          <h1 className="font-heading text-3xl text-white mb-2">Contratos</h1>
-          <p className="font-body text-sm text-white/70">
-            Contratos enviados pelo(a) seu(a) cerimonialista para revisar e assinar.
-          </p>
-        </div>
+    <div className="min-h-screen pb-24" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+          Documentação
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+          Contratos
+        </h1>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+          Gerencie seus contratos com fornecedores
+        </p>
       </div>
 
-      <div className="px-4 -mt-5 relative z-10 space-y-4">
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      </div>
+
+      <div className="px-4 mt-4 space-y-4">
         {contracts.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 text-center mt-6">
+          <div className="bg-white rounded-2xl border p-10 text-center mt-6" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
             <p className="font-heading text-xl text-midnight mb-2">Nenhum contrato ainda</p>
             <p className="font-body text-sm text-midnight/50">
               Quando seu(a) cerimonialista enviar um contrato, ele aparecerá aqui para você revisar e assinar.
@@ -130,7 +134,7 @@ export default function ContratosPage() {
             const needsSign = contract.signedByPlanner && !contract.signedByCouple;
 
             return (
-              <div key={contract.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div key={contract.id} className="bg-white rounded-2xl overflow-hidden" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
                 {/* Top accent */}
                 {needsSign && <div className="h-1 bg-gradient-to-r from-amber-400 to-gold" />}
 

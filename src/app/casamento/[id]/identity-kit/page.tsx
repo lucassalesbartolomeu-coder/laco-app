@@ -194,21 +194,41 @@ export default function IdentityKitPage() {
     );
   }
 
+  const GOLD = "#A98950";
+  const BROWN = "#3D322A";
+  const CREME = "#FAF6EF";
+
   // ─── Templates Screen ────────────────────────────────────
   if (screen === "templates") {
     const presets = Object.values(TEMPLATES);
     return (
-      <div className="min-h-screen bg-ivory pb-10">
-        <header className="bg-gradient-to-br from-midnight to-midnight/95 sticky top-0 z-10">
-          <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
-            <Link href={`/casamento/${weddingId}/meu-site`} className="text-white/60 hover:text-white transition">
+      <div className="min-h-screen pb-10" style={{ background: CREME }}>
+        {/* Light header */}
+        <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Link href={`/casamento/${weddingId}/meu-site`} className="text-midnight/50 hover:text-midnight transition">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </Link>
-            <h1 className="font-heading text-xl text-white">Identidade Visual</h1>
           </div>
-        </header>
+          <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+            Identidade Visual
+          </p>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+            Identity Kit
+          </h1>
+          <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+            Paleta, tipografia e imagens do seu casamento
+          </p>
+        </div>
+
+        {/* Ornamental divider */}
+        <div className="flex items-center gap-2.5 px-5 py-2">
+          <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+          <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+          <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        </div>
 
         <div className="max-w-lg mx-auto px-4 pt-6">
           <div className="mb-5">
@@ -286,25 +306,40 @@ export default function IdentityKitPage() {
       : [];
 
     return (
-      <div className="min-h-screen bg-ivory pb-10">
-        <header className="bg-gradient-to-br from-midnight to-midnight/95 sticky top-0 z-10">
-          <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Link href={`/casamento/${weddingId}/meu-site`} className="text-white/60 hover:text-white transition">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-              </Link>
-              <h1 className="font-heading text-xl text-white">Identidade Visual</h1>
-            </div>
+      <div className="min-h-screen pb-10" style={{ background: CREME }}>
+        {/* Light header */}
+        <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Link href={`/casamento/${weddingId}/meu-site`} className="text-midnight/50 hover:text-midnight transition">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </Link>
             <button
               onClick={() => { setScreen("templates"); setSelectedPreset(null); }}
-              className="font-body text-xs text-white/60 hover:text-white transition"
+              className="ml-auto font-body text-xs hover:opacity-70 transition"
+              style={{ color: GOLD }}
             >
               Trocar tema
             </button>
           </div>
-        </header>
+          <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+            Identidade Visual
+          </p>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+            Identity Kit
+          </h1>
+          <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+            Paleta, tipografia e imagens do seu casamento
+          </p>
+        </div>
+
+        {/* Ornamental divider */}
+        <div className="flex items-center gap-2.5 px-5 py-2">
+          <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+          <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+          <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        </div>
 
         <div className="max-w-lg mx-auto px-4 pt-6 space-y-5">
 

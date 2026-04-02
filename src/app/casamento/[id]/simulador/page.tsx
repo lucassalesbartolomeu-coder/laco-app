@@ -259,18 +259,33 @@ export default function SimuladorPage() {
 
   const ratePercent = Math.round(simulation.overallRate * 100);
 
+  const GOLD = "#A98950";
+  const BROWN = "#3D322A";
+  const CREME = "#FAF6EF";
+
   return (
-    <div className="min-h-screen bg-ivory py-10 px-4">
+    <div className="min-h-screen px-4 pb-10" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-1 pt-10 pb-6">
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+          Planejamento
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+          Simulador
+        </h1>
+        <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+          Estime custos e planeje seu orçamento
+        </p>
+      </div>
+
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-1 py-2 mb-4">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      </div>
+
       <div className="max-w-3xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center">
-          <h1 className="font-heading text-3xl sm:text-4xl text-midnight mb-1">
-            Simulador Inteligente
-          </h1>
-          <p className="font-body text-gray-500">
-            {wedding.partnerName1} & {wedding.partnerName2}
-          </p>
-        </div>
 
         {/* ─── 1. Main Attendance Card ──────────────────── */}
         <motion.div

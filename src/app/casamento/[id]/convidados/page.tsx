@@ -276,7 +276,6 @@ export default function ConvidadosPage() {
   const pctConfirmados = total > 0 ? Math.round((confirmados / total) * 100) : 0;
 
   // Global stats
-  const totalAll = guests.length;
   const totalA = guestsByList.A.length;
 
   /* ── Actions ───────────────────────────────────────────────────── */
@@ -423,20 +422,27 @@ export default function ConvidadosPage() {
 
   /* ── Render ────────────────────────────────────────────────────── */
 
+  const GOLD = "#A98950";
+  const BROWN = "#3D322A";
+  const CREME = "#FAF6EF";
+
   return (
-    <div className="min-h-screen bg-ivory py-6 px-4 pb-32">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-6">
+    <div className="min-h-screen pb-32" style={{ background: CREME }}>
+      {/* Light header */}
+      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+        <div className="flex items-start justify-between">
           <div>
-            <h1 className="font-heading text-3xl sm:text-4xl text-midnight">
+            <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
+              Convidados
+            </p>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
               Convidados
             </h1>
-            <p className="font-body text-sm text-gray-500 mt-1">
-              {totalAll} convidado{totalAll !== 1 ? "s" : ""} no total &middot; {totalA} na lista oficial
+            <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
+              Gerencie listas, mesas e confirmações
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-2">
             <button
               onClick={() => setShowWhatsApp(!showWhatsApp)}
               className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-body font-medium bg-green-600 text-white hover:bg-green-700 transition shadow-sm"
@@ -454,6 +460,16 @@ export default function ConvidadosPage() {
             </Link>
           </div>
         </div>
+      </div>
+
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 px-5 py-2">
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
+        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4">
 
         {/* ── WhatsApp Blast Modal ─────────────────────────────────── */}
         {showWhatsApp && (
