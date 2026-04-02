@@ -4,7 +4,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import BottomNav from "@/components/bottom-nav";
 import dynamic from "next/dynamic";
 
@@ -13,9 +12,10 @@ const ActivationChecklist = dynamic(() => import("@/components/activation-checkl
 const SmartSuggestions = dynamic(() => import("@/components/smart-suggestions"), { ssr: false });
 
 // ── Design tokens ────────────────────────────────────────────────
-const GOLD  = "#A98950";
-const BROWN = "#3D322A";
-const CREME = "#FAF6EF";
+const GOLD   = "#A98950";
+const BROWN  = "#3D322A";
+const CREME  = "#FAF6EF";
+const BG_DARK = "#F0E8DA";
 
 interface Wedding {
   id: string;
@@ -44,81 +44,6 @@ interface GuestStats {
 function daysUntil(dateStr: string | null): number | null {
   if (!dateStr) return null;
   return Math.ceil((new Date(dateStr).setHours(0,0,0,0) - new Date().setHours(0,0,0,0)) / 86400000);
-}
-
-// ── Countdown ring ───────────────────────────────────────────────
-function CountdownRing({ days }: { days: number }) {
-  const max = 365;
-  const pct = Math.max(0, Math.min(1, days / max));
-  const r = 36;
-  const circ = 2 * Math.PI * r;
-  const dash = circ * pct;
-
-  return (
-    <div className="relative w-24 h-24 flex-shrink-0">
-      <svg viewBox="0 0 88 88" className="w-24 h-24 -rotate-90">
-        <circle cx="44" cy="44" r={r} fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="5" />
-        <circle
-          cx="44" cy="44" r={r} fill="none"
-          stroke={GOLD} strokeWidth="5"
-          strokeDasharray={`${dash} ${circ}`}
-          strokeLinecap="round"
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-semibold text-white leading-none"
-          style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-          {days}
-        </span>
-        <span className="text-[9px] text-white/50 leading-none mt-0.5 tracking-[0.15em] uppercase"
-          style={{ fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
-          dias
-        </span>
-      </div>
-    </div>
-  );
-}
-
-// ── Stat tile ────────────────────────────────────────────────────
-function StatTile({
-  label,
-  value,
-  sub,
-  color = "warm",
-  icon,
-}: {
-  label: string;
-  value: string | number;
-  sub?: string;
-  color?: "warm" | "gold" | "green";
-  icon: React.ReactNode;
-}) {
-  const iconBg: Record<string, string> = {
-    warm:  "rgba(61,50,42,0.07)",
-    gold:  "rgba(169,137,80,0.12)",
-    green: "rgba(74,149,108,0.10)",
-  };
-  const iconColor: Record<string, string> = {
-    warm:  BROWN,
-    gold:  GOLD,
-    green: "#4A956C",
-  };
-  return (
-    <div className="rounded-2xl p-4 flex flex-col gap-2"
-      style={{ background: "white", border: "1px solid rgba(169,137,80,0.14)", boxShadow: "0 1px 6px rgba(61,50,42,0.06)" }}>
-      <div className="w-8 h-8 rounded-xl flex items-center justify-center"
-        style={{ background: iconBg[color], color: iconColor[color] }}>
-        {icon}
-      </div>
-      <div>
-        <p className="text-2xl font-light leading-none" style={{ color: BROWN, fontFamily: "'Cormorant Garamond', serif" }}>
-          {value}
-        </p>
-        {sub && <p className="text-[10px] mt-0.5" style={{ color: "rgba(61,50,42,0.38)" }}>{sub}</p>}
-        <p className="text-xs mt-1" style={{ color: "rgba(61,50,42,0.50)" }}>{label}</p>
-      </div>
-    </div>
-  );
 }
 
 // ── Partner Invite Panel ─────────────────────────────────────────
@@ -402,162 +327,55 @@ export default function DashboardPage() {
     },
   ] : [];
 
+  // suppress unused warning — formatCurrency is available for future use
+  void formatCurrency;
+
   return (
     <div className="min-h-screen pb-24" style={{ background: CREME }}>
 
-      {/* ── Hero header (dark gradient) ── */}
-      <div className="relative overflow-hidden px-5 pt-10 pb-10"
-        style={{ background: `linear-gradient(135deg, ${BROWN} 0%, #2A2019 100%)` }}>
-
-        {/* Glow orbs */}
-        <div className="absolute top-0 right-0 w-56 h-56 rounded-full blur-3xl pointer-events-none"
-          style={{ background: "rgba(169,137,80,0.18)" }} />
-        <div className="absolute -bottom-6 left-0 w-36 h-36 rounded-full blur-3xl pointer-events-none"
-          style={{ background: "rgba(169,137,80,0.10)" }} />
-
-        {/* Logo row */}
-        <div className="relative z-10 flex items-center justify-between mb-8">
-          <Link href="/" className="hover:opacity-80 transition">
-            <Image src="/brand/logo-dark.svg" alt="Laço" width={72} height={16} priority />
-          </Link>
-          <Link href="/perfil"
-            className="w-8 h-8 rounded-full flex items-center justify-center transition"
-            style={{ background: "rgba(255,255,255,0.10)", color: "rgba(255,255,255,0.60)" }}>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </Link>
+      {/* ── Greeting header ── */}
+      <div className="px-5 pt-10 pb-6 flex items-start justify-between">
+        <div>
+          <p className="text-[9px] tracking-[0.28em] uppercase mb-1"
+            style={{ color: "rgba(61,50,42,0.36)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+            Bom dia,
+          </p>
+          <h1 className="text-[26px] font-light leading-tight"
+            style={{ color: BROWN, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
+            {firstName || "Olá"}
+          </h1>
         </div>
-
-        {/* Hero content */}
-        <div className="relative z-10">
-          {w ? (
-            <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0 flex-1">
-
-                {/* Label row */}
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} style={{ color: GOLD }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                    </svg>
-                    <span className="text-[9px] tracking-[0.26em] uppercase"
-                      style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
-                      {firstName ? `Olá, ${firstName}` : "Início"}
-                    </span>
-                  </div>
-
-                  {/* Delete button */}
-                  {w.userId === userId && (
-                    confirmDeleteId === w.id ? (
-                      <div className="flex items-center gap-1.5 flex-shrink-0">
-                        <button onClick={() => deleteWedding(w.id)} disabled={deletingId === w.id}
-                          className="px-2 py-0.5 rounded-lg text-[10px] font-medium bg-red-500 text-white">
-                          Apagar
-                        </button>
-                        <button onClick={() => setConfirmDeleteId(null)}
-                          className="px-2 py-0.5 rounded-lg text-[10px] text-white/50">
-                          Não
-                        </button>
-                      </div>
-                    ) : (
-                      <button onClick={() => setConfirmDeleteId(w.id)} disabled={deletingId === w.id}
-                        className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full transition"
-                        style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.35)" }}>
-                        {deletingId === w.id ? (
-                          <div className="w-3.5 h-3.5 border border-white/30 border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        )}
-                      </button>
-                    )
-                  )}
-                </div>
-
-                <h1 className="text-4xl font-light text-white mb-1 leading-tight"
-                  style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                  {w.partnerName1} &amp; {w.partnerName2}
-                </h1>
-
-                {w.weddingDate && (
-                  <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.60)" }}>
-                    {new Date(w.weddingDate).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
-                  </p>
-                )}
-                {w.city && (
-                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.38)" }}>
-                    {w.city}{w.state ? `, ${w.state}` : ""}
-                  </p>
-                )}
-
-                {/* Info badges */}
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {w.estimatedGuests && (
-                    <div className="flex items-center gap-1.5 rounded-full px-2.5 py-1"
-                      style={{ background: "rgba(255,255,255,0.10)" }}>
-                      <svg className="w-3 h-3" style={{ color: "rgba(255,255,255,0.50)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      <span className="text-xs" style={{ color: "rgba(255,255,255,0.70)" }}>{w.estimatedGuests} convidados</span>
-                    </div>
-                  )}
-                  {formatCurrency(w.estimatedBudget) && (
-                    <div className="flex items-center gap-1.5 rounded-full px-2.5 py-1"
-                      style={{ background: "rgba(255,255,255,0.10)" }}>
-                      <svg className="w-3 h-3" style={{ color: "rgba(255,255,255,0.50)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span className="text-xs" style={{ color: "rgba(255,255,255,0.70)" }}>{formatCurrency(w.estimatedBudget)}</span>
-                    </div>
-                  )}
-                  {w.style && (
-                    <div className="flex items-center rounded-full px-2.5 py-1"
-                      style={{ background: "rgba(255,255,255,0.10)" }}>
-                      <span className="text-xs" style={{ color: "rgba(255,255,255,0.70)" }}>{w.style}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {days != null && days >= 0 && <CountdownRing days={days} />}
-            </div>
-          ) : (
-            /* No wedding hero */
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} style={{ color: GOLD }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-                <span className="text-[9px] tracking-[0.26em] uppercase"
-                  style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
-                  {firstName ? `Olá, ${firstName}` : "Bem-vindo(a)"}
-                </span>
-              </div>
-              <h1 className="text-4xl font-light text-white mb-1 leading-tight"
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                Início
-              </h1>
-              <p className="text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>
-                Comece organizando seu casamento
-              </p>
-            </div>
-          )}
+        {/* Mini brasão with couple initials */}
+        <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
+          style={{ background: BG_DARK, border: "1px solid rgba(169,137,80,0.16)" }}>
+          <svg viewBox="0 0 80 80" width="32" height="32">
+            <circle cx="40" cy="40" r="35" fill="none" stroke="#A98950" strokeWidth="1"/>
+            <circle cx="40" cy="40" r="22" fill="none" stroke="#A98950" strokeWidth="0.5"/>
+            <text x="40" y="44" textAnchor="middle" fill="#A98950"
+              style={{ fontFamily: "'Josefin Sans'", fontSize: "10px", fontWeight: "300", letterSpacing: "0.08em" }}>
+              {w ? `${w.partnerName1[0]}${w.partnerName2[0]}` : "♡"}
+            </text>
+          </svg>
         </div>
       </div>
 
-      {/* ── Content ── */}
-      <div className="px-4 -mt-4 relative z-10 pb-4 space-y-6">
+      {/* ── Ornamental divider ── */}
+      <div className="flex items-center gap-2.5 mx-5 mb-5">
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+        <div className="w-[5px] h-[5px] rotate-45 opacity-55 flex-shrink-0" style={{ background: GOLD }} />
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+      </div>
+
+      <div className="px-5 space-y-5">
 
         {!w ? (
           /* ── Empty state ── */
-          <div className="rounded-3xl overflow-hidden"
-            style={{ background: "white", border: "1px solid rgba(169,137,80,0.14)", boxShadow: "0 2px 16px rgba(61,50,42,0.06)" }}>
-            <div className="h-1" style={{ background: `linear-gradient(90deg, ${GOLD}, #E8D5B0)` }} />
+          <div className="rounded-2xl overflow-hidden"
+            style={{ background: "white", border: "1.5px solid rgba(169,137,80,0.16)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
+            <div className="h-[3px]" style={{ background: `linear-gradient(90deg, ${GOLD}, #D4B888)` }} />
             <div className="px-8 py-14 text-center">
               <div className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center"
-                style={{ background: "rgba(169,137,80,0.10)" }}>
+                style={{ background: BG_DARK }}>
                 <svg className="w-8 h-8" style={{ color: GOLD }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.4}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
@@ -566,150 +384,186 @@ export default function DashboardPage() {
                 Seu casamento começa aqui
               </h3>
               <p className="text-sm max-w-sm mx-auto mb-8 leading-relaxed" style={{ color: "rgba(61,50,42,0.55)" }}>
-                Crie seu casamento e comece a organizar convidados, fornecedores e muito mais — tudo num só lugar.
+                Crie seu casamento e comece a organizar convidados, fornecedores e muito mais.
               </p>
               <Link href="/casamento/novo"
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-white text-sm transition-all active:scale-[0.98]"
-                style={{ background: GOLD }}>
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-white text-[11.5px] tracking-[0.22em] uppercase transition-all active:scale-[0.98]"
+                style={{ background: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
                 Criar meu casamento
               </Link>
-              <p className="text-xs mt-8" style={{ color: "rgba(61,50,42,0.28)" }}>Mais de 2.400 casais já usam o Laço</p>
             </div>
           </div>
         ) : (
           <>
-            {/* ── Activation Checklist ── */}
-            <ActivationChecklist weddingId={w.id} />
+            {/* ── Compact countdown card ── */}
+            <div className="rounded-2xl px-[22px] py-5 relative overflow-hidden"
+              style={{ background: `linear-gradient(135deg, #3D322A 0%, #2A2019 100%)` }}>
+              <div className="absolute -top-5 -right-5 w-[90px] h-[90px] rounded-full pointer-events-none"
+                style={{ background: "rgba(169,137,80,0.15)", filter: "blur(24px)" }} />
+              <div className="absolute -bottom-3 left-2.5 w-[60px] h-[60px] rounded-full pointer-events-none"
+                style={{ background: "rgba(169,137,80,0.08)", filter: "blur(20px)" }} />
 
-            {/* ── Stats row ── */}
-            {guestStats && guestStats.total > 0 && (
-              <div>
-                <h2 className="text-[9.5px] tracking-[0.28em] uppercase mb-3 px-1"
-                  style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
-                  Confirmações
-                </h2>
-                <div className="grid grid-cols-3 gap-3">
-                  <StatTile
-                    label="Confirmados"
-                    value={guestStats.confirmed}
-                    sub={`de ${guestStats.total}`}
-                    color="green"
-                    icon={
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    }
-                  />
-                  <StatTile
-                    label="Pendentes"
-                    value={guestStats.pending}
-                    color="gold"
-                    icon={
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    }
-                  />
-                  <StatTile
-                    label="Recusados"
-                    value={guestStats.declined}
-                    color="warm"
-                    icon={
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    }
-                  />
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-[9px] tracking-[0.28em] uppercase mb-1.5"
+                    style={{ color: "rgba(169,137,80,0.65)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                    {days != null && days >= 0 ? "Contagem Regressiva" : "Casamento Realizado"}
+                  </p>
+                  {days != null && days >= 0 ? (
+                    <>
+                      <p className="text-[44px] font-light text-white leading-none"
+                        style={{ fontFamily: "'Cormorant Garamond', serif" }}>{days}</p>
+                      <p className="text-[9px] tracking-[0.22em] uppercase mt-0.5"
+                        style={{ color: "rgba(255,255,255,0.45)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                        dias
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-[20px] font-light text-white leading-none"
+                      style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                      {w.partnerName1} &amp; {w.partnerName2}
+                    </p>
+                  )}
                 </div>
-              </div>
-            )}
-
-            {/* ── Smart Suggestions ── */}
-            <SmartSuggestions weddingId={w.id} />
-
-            {/* ── Quick access ── */}
-            <div>
-              <h2 className="text-[9.5px] tracking-[0.28em] uppercase mb-3 px-1"
-                style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
-                Acesso rápido
-              </h2>
-              <div className="rounded-2xl overflow-hidden"
-                style={{ background: "white", border: "1px solid rgba(169,137,80,0.14)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
-                {quickItems.map((item, idx) => (
-                  <div key={item.href}
-                    style={idx > 0 ? { borderTop: "1px solid rgba(169,137,80,0.08)" } : undefined}>
-                    <Link href={item.href}
-                      className="flex items-center gap-4 px-4 py-3.5 transition-colors duration-100"
-                      style={{ background: "transparent" }}>
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                        style={{ background: "rgba(169,137,80,0.08)", color: GOLD }}>
-                        {item.icon}
+                {/* Mini date ring */}
+                {days != null && days >= 0 && w.weddingDate && (() => {
+                  const r = 30; const circ = 2 * Math.PI * r;
+                  const pct = Math.max(0, Math.min(1, days / 365));
+                  const dash = circ * pct;
+                  const d = new Date(w.weddingDate);
+                  const mes = d.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "");
+                  return (
+                    <div className="relative w-[72px] h-[72px] flex-shrink-0">
+                      <svg viewBox="0 0 72 72" width="72" height="72"
+                        style={{ position: "absolute", top: 0, left: 0, transform: "rotate(-90deg)" }}>
+                        <circle cx="36" cy="36" r={r} fill="none" stroke="rgba(169,137,80,0.15)" strokeWidth="3"/>
+                        <circle cx="36" cy="36" r={r} fill="none" stroke="#A98950" strokeWidth="3"
+                          strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"/>
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-[11px] leading-tight"
+                          style={{ color: "rgba(255,255,255,0.70)", fontFamily: "'Cormorant Garamond', serif", letterSpacing: "0.04em" }}>
+                          {d.getDate()} {mes}
+                        </span>
+                        <span className="text-[7.5px] tracking-[0.12em] uppercase"
+                          style={{ color: "rgba(169,137,80,0.55)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                          {d.getFullYear()}
+                        </span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium leading-tight" style={{ color: BROWN }}>{item.label}</p>
-                        <p className="text-xs leading-snug mt-0.5" style={{ color: "rgba(61,50,42,0.50)" }}>{item.desc}</p>
+                    </div>
+                  );
+                })()}
+                {/* Delete button top-right */}
+                {w.userId === userId && (
+                  <div className="absolute top-0 right-0">
+                    {confirmDeleteId === w.id ? (
+                      <div className="flex items-center gap-1.5 p-2">
+                        <button onClick={() => deleteWedding(w.id)} disabled={deletingId === w.id}
+                          className="px-2 py-0.5 rounded-lg text-[10px] font-medium bg-red-500 text-white">Apagar</button>
+                        <button onClick={() => setConfirmDeleteId(null)}
+                          className="px-2 py-0.5 rounded-lg text-[10px] text-white/50">Não</button>
                       </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {item.badge != null && item.badge > 0 && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-medium"
-                            style={{ background: "rgba(169,137,80,0.10)", color: GOLD }}>
-                            {item.badge}
-                          </span>
+                    ) : (
+                      <button onClick={() => setConfirmDeleteId(w.id)} disabled={deletingId === w.id}
+                        className="w-7 h-7 flex items-center justify-center rounded-full m-2 transition"
+                        style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.35)" }}>
+                        {deletingId === w.id ? (
+                          <div className="w-3 h-3 border border-white/30 border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
                         )}
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-                          style={{ color: "rgba(169,137,80,0.35)" }}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
-                    </Link>
+                      </button>
+                    )}
                   </div>
-                ))}
+                )}
+              </div>
+
+              {/* Couple names */}
+              <div className="relative z-10 mt-3.5 pt-3 flex items-center justify-center gap-2"
+                style={{ borderTop: "1px solid rgba(169,137,80,0.18)" }}>
+                <span className="text-[13px]" style={{ color: "rgba(255,255,255,0.62)", fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
+                  {w.partnerName1}
+                </span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A98950" strokeWidth="1.5" strokeLinecap="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                <span className="text-[13px]" style={{ color: "rgba(255,255,255,0.62)", fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
+                  {w.partnerName2}
+                </span>
               </div>
             </div>
 
-            {/* ── Recent Activity ── */}
+            {/* ── Quick stats 3-col ── */}
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { val: guestStats?.confirmed ?? 0, lbl: "confirmados" },
+                { val: guestStats != null ? `${Math.round((guestStats.confirmed / Math.max(1, guestStats.total)) * 100)}%` : "—", lbl: "presença", color: "#4A956C" },
+                { val: guestStats?.pending ?? 0, lbl: "pendentes" },
+              ].map(({ val, lbl, color }) => (
+                <div key={lbl} className="rounded-2xl px-2.5 py-3.5 text-center"
+                  style={{ background: "white", border: "1.5px solid rgba(169,137,80,0.16)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
+                  <p className="text-[22px] font-light leading-none mb-1"
+                    style={{ color: color ?? BROWN, fontFamily: "'Cormorant Garamond', serif" }}>
+                    {guestStats != null ? val : "—"}
+                  </p>
+                  <p className="text-[8.5px] tracking-[0.18em] uppercase"
+                    style={{ color: "rgba(61,50,42,0.36)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                    {lbl}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* ── Activation Checklist ── */}
             <div>
-              <h2 className="text-[9.5px] tracking-[0.28em] uppercase mb-3 px-1"
+              <p className="text-[9.5px] tracking-[0.3em] uppercase pb-2.5"
+                style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                Checklist geral
+              </p>
+              <ActivationChecklist weddingId={w.id} />
+            </div>
+
+            {/* ── Smart Suggestions / Próximas ações ── */}
+            <div>
+              <p className="text-[9.5px] tracking-[0.3em] uppercase pb-2.5"
+                style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                Próximas ações
+              </p>
+              <SmartSuggestions weddingId={w.id} />
+            </div>
+
+            {/* ── Activity ── */}
+            <div>
+              <p className="text-[9.5px] tracking-[0.3em] uppercase pb-2.5"
                 style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
                 Atividade recente
-              </h2>
+              </p>
               <ActivityFeed weddingId={w.id} />
             </div>
 
-            {/* ── Partner section ── */}
-            <div className="rounded-2xl p-4"
-              style={{ background: "white", border: "1px solid rgba(169,137,80,0.14)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
-              <p className="text-[9.5px] tracking-[0.28em] uppercase mb-3"
+            {/* ── Partner ── */}
+            <div>
+              <p className="text-[9.5px] tracking-[0.3em] uppercase pb-2.5"
                 style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
                 Parceiro(a)
               </p>
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: "rgba(169,137,80,0.08)", color: GOLD }}>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                  </svg>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium leading-tight" style={{ color: BROWN }}>Planejar juntos</p>
-                  <p className="text-xs mt-0.5" style={{ color: "rgba(61,50,42,0.50)" }}>Convide o noivo(a) para acessar o painel</p>
-                </div>
+              <div className="rounded-2xl p-4"
+                style={{ background: "white", border: "1.5px solid rgba(169,137,80,0.16)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
+                <PartnerInvitePanel wedding={w} currentUserId={userId} onUpdate={loadWeddings} />
               </div>
-              <PartnerInvitePanel wedding={w} currentUserId={userId} onUpdate={loadWeddings} />
             </div>
 
             {/* ── Multiple weddings ── */}
             {weddings.length > 1 && (
               <div>
-                <div className="flex items-center justify-between mb-3 px-1">
-                  <h2 className="text-[9.5px] tracking-[0.28em] uppercase"
+                <div className="flex items-center justify-between pb-2.5">
+                  <p className="text-[9.5px] tracking-[0.3em] uppercase"
                     style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
                     Outros casamentos
-                  </h2>
-                  <Link href="/casamento/novo" className="flex items-center gap-1 text-xs transition" style={{ color: GOLD }}>
+                  </p>
+                  <Link href="/casamento/novo" className="text-[11px] flex items-center gap-1" style={{ color: GOLD }}>
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
@@ -719,7 +573,7 @@ export default function DashboardPage() {
                 <div className="space-y-2">
                   {weddings.slice(1).map((ww) => (
                     <div key={ww.id} className="rounded-2xl p-4 flex items-center justify-between gap-3"
-                      style={{ background: "white", border: "1px solid rgba(169,137,80,0.14)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
+                      style={{ background: "white", border: "1.5px solid rgba(169,137,80,0.16)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
                       <div>
                         <p className="text-sm font-medium" style={{ color: BROWN }}>{ww.partnerName1} &amp; {ww.partnerName2}</p>
                         {ww.weddingDate && (
@@ -731,7 +585,7 @@ export default function DashboardPage() {
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <Link href={`/casamento/${ww.id}/convidados`}
                           className="px-3 py-1.5 text-xs rounded-xl transition"
-                          style={{ border: `1px solid rgba(169,137,80,0.22)`, color: BROWN }}>
+                          style={{ border: "1px solid rgba(169,137,80,0.22)", color: BROWN }}>
                           Abrir
                         </Link>
                         {ww.userId === userId && (
@@ -763,7 +617,43 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {/* ── Add event ── */}
+            {/* ── Quick access entry cards ── */}
+            <div>
+              <p className="text-[9.5px] tracking-[0.3em] uppercase pb-2.5"
+                style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                Acesso rápido
+              </p>
+              <div className="rounded-2xl overflow-hidden"
+                style={{ background: "white", border: "1.5px solid rgba(169,137,80,0.16)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
+                {quickItems.map((item, idx) => (
+                  <div key={item.href} style={idx > 0 ? { borderTop: "1px solid rgba(169,137,80,0.09)" } : undefined}>
+                    <Link href={item.href} className="flex items-center gap-3.5 px-4 py-3.5 transition-colors">
+                      <div className="w-[38px] h-[38px] rounded-xl flex items-center justify-center flex-shrink-0"
+                        style={{ background: BG_DARK, color: GOLD }}>
+                        {item.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[12px] tracking-[0.03em]"
+                          style={{ fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300, color: BROWN }}>
+                          {item.label}
+                        </p>
+                        <p className="text-[11px] mt-0.5 leading-snug" style={{ color: "rgba(61,50,42,0.36)" }}>
+                          {item.desc}
+                        </p>
+                      </div>
+                      {item.badge != null && item.badge > 0 && (
+                        <span className="px-2 py-0.5 rounded-md text-[9px] tracking-[0.06em] flex-shrink-0"
+                          style={{ background: "rgba(169,137,80,0.11)", color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                          {item.badge}
+                        </span>
+                      )}
+                      <span className="text-[18px] flex-shrink-0" style={{ color: "rgba(169,137,80,0.40)" }}>›</span>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {weddings.length === 1 && (
               <div className="flex justify-center pb-2">
                 <Link href={`/casamento/${weddings[0].id}/conta-casamento`}

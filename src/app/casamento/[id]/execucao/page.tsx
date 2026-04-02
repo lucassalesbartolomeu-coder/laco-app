@@ -7,9 +7,10 @@ import { useState, useEffect, useCallback } from "react";
 import BottomNav from "@/components/bottom-nav";
 
 // ── Design tokens ─────────────────────────────────────────────────
-const GOLD  = "#A98950";
-const BROWN = "#3D322A";
-const CREME = "#FAF6EF";
+const GOLD    = "#A98950";
+const BROWN   = "#3D322A";
+const CREME   = "#FAF6EF";
+const BG_DARK = "#F0E8DA";
 
 /* ─── Types ─────────────────────────────────────────────────────────── */
 
@@ -95,100 +96,97 @@ export default function ExecucaoPage() {
   return (
     <div className="min-h-screen pb-24" style={{ background: CREME }}>
 
-      {/* ── Hero header ── */}
-      <div className="relative overflow-hidden px-5 pt-12 pb-10"
-        style={{ background: `linear-gradient(135deg, ${BROWN} 0%, #2A2019 100%)` }}>
-        <div className="absolute top-4 right-0 w-48 h-48 rounded-full blur-3xl pointer-events-none"
-          style={{ background: "rgba(169,137,80,0.18)" }} />
-        <div className="absolute -bottom-4 left-0 w-32 h-32 rounded-full blur-3xl pointer-events-none"
-          style={{ background: "rgba(169,137,80,0.10)" }} />
-
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-3">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} style={{ color: GOLD }}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-            </svg>
-            <span className="text-[9px] tracking-[0.26em] uppercase"
-              style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
-              Gestão e Acompanhamento
-            </span>
-          </div>
-          <h1 className="text-4xl font-light text-white mb-2 leading-tight"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-            Organizar
-          </h1>
-          <p className="text-sm leading-relaxed max-w-md"
-            style={{ color: "rgba(255,255,255,0.62)" }}>
-            Gerencie convidados, orçamento, fornecedores, contratos e o cronograma do grande dia.
-          </p>
-        </div>
+      {/* ── Header ── */}
+      <div className="px-5 pt-10 pb-6">
+        <p className="text-[9px] tracking-[0.28em] uppercase mb-1"
+          style={{ color: "rgba(61,50,42,0.36)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+          Gestão e Acompanhamento
+        </p>
+        <h1 className="text-[30px] font-light leading-tight mb-1"
+          style={{ color: BROWN, fontFamily: "'Cormorant Garamond', serif" }}>
+          Organizar
+        </h1>
+        <p className="text-[12px] leading-relaxed" style={{ color: "rgba(61,50,42,0.58)" }}>
+          Convidados, orçamento, fornecedores, contratos e o cronograma do grande dia.
+        </p>
       </div>
 
-      {/* ── Guest stats bar ── */}
-      {guestStats.total > 0 && (
-        <div className="px-4 -mt-4 relative z-10 mb-4">
+      {/* ── Ornamental divider ── */}
+      <div className="flex items-center gap-2.5 mx-5 mb-5">
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+        <div className="w-[5px] h-[5px] rotate-45 opacity-55 flex-shrink-0" style={{ background: GOLD }} />
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+      </div>
+
+      <div className="px-5 space-y-5 pb-4">
+
+        {/* ── RSVP mini card (only when guestStats.total > 0) ── */}
+        {guestStats.total > 0 && (
           <div className="rounded-2xl p-4"
-            style={{ background: "white", border: "1px solid rgba(169,137,80,0.14)", boxShadow: "0 2px 12px rgba(61,50,42,0.07)" }}>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[9.5px] tracking-[0.24em] uppercase"
+            style={{ background: "white", border: "1.5px solid rgba(169,137,80,0.16)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-[9.5px] tracking-[0.3em] uppercase"
                 style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
                 Confirmação de presença
-              </span>
-              <span className="text-sm font-medium" style={{ color: BROWN,  fontFamily: "'Cormorant Garamond', serif", fontSize: "18px" }}>
+              </p>
+              <p className="text-[20px] font-light" style={{ color: GOLD, fontFamily: "'Cormorant Garamond', serif" }}>
                 {pctConfirmed}%
-              </span>
+              </p>
             </div>
-            {/* Progress bar */}
-            <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(169,137,80,0.10)" }}>
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{ width: `${pctConfirmed}%`, background: `linear-gradient(90deg, ${GOLD}, #E8D5B0)` }}
-              />
+            <div className="w-full h-[4px] rounded-full overflow-hidden mb-2" style={{ background: BG_DARK }}>
+              <div className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${pctConfirmed}%`, background: `linear-gradient(90deg, ${GOLD}, #D4B888)` }} />
             </div>
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-[10px]" style={{ color: "rgba(61,50,42,0.48)" }}>{guestStats.confirmed} confirmados</span>
-              <span className="text-[10px]" style={{ color: "rgba(61,50,42,0.48)" }}>{guestStats.pending} pendentes</span>
-              <span className="text-[10px]" style={{ color: "rgba(61,50,42,0.48)" }}>{guestStats.declined} recusados</span>
+            <div className="flex justify-between">
+              <span className="text-[10.5px]" style={{ color: "rgba(61,50,42,0.36)" }}>{guestStats.confirmed} confirmados</span>
+              <span className="text-[10.5px]" style={{ color: "rgba(61,50,42,0.36)" }}>{guestStats.pending} pendentes</span>
+              <span className="text-[10.5px]" style={{ color: "rgba(61,50,42,0.36)" }}>{guestStats.declined} recusados</span>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ── Sections ── */}
-      <div className="px-4 space-y-7 pb-4" style={{ marginTop: guestStats.total > 0 ? undefined : "-1rem" }}>
+        {/* ── Sections ── */}
         {sections.map((section) => (
           <div key={section.category}>
-            <h2 className="text-[9.5px] tracking-[0.28em] uppercase mb-3 px-1"
+            <p className="text-[9.5px] tracking-[0.3em] uppercase pb-2.5"
               style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
               {section.category}
-            </h2>
-            <div className="space-y-2">
-              {section.items.map((item) => (
-                <Link key={item.href} href={item.href}
-                  className="flex items-center gap-4 rounded-2xl p-4 transition-all active:scale-[0.98]"
-                  style={{ background: "white", border: "1px solid rgba(169,137,80,0.14)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
-                  <span className="text-2xl flex-shrink-0">{item.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium" style={{ color: BROWN }}>{item.label}</p>
-                    <p className="text-xs leading-snug mt-0.5" style={{ color: "rgba(61,50,42,0.52)" }}>{item.desc}</p>
-                  </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {item.badge && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium"
-                        style={{ background: "rgba(169,137,80,0.10)", color: GOLD }}>
-                        {item.badge}
-                      </span>
-                    )}
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-                      style={{ color: "rgba(169,137,80,0.35)" }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </Link>
+            </p>
+            <div className="rounded-2xl overflow-hidden"
+              style={{ background: "white", border: "1.5px solid rgba(169,137,80,0.16)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
+              {section.items.map((item, idx) => (
+                <div key={item.href} style={idx > 0 ? { borderTop: "1px solid rgba(169,137,80,0.09)" } : undefined}>
+                  <Link href={item.href}
+                    className="flex items-center gap-3.5 px-4 py-3.5 transition-colors active:bg-stone-50">
+                    <div className="w-[38px] h-[38px] rounded-xl flex items-center justify-center flex-shrink-0 text-[18px]"
+                      style={{ background: BG_DARK }}>
+                      {item.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[12.5px] font-medium leading-tight" style={{ color: BROWN }}>
+                        {item.label}
+                      </p>
+                      <p className="text-[11px] mt-0.5 leading-snug" style={{ color: "rgba(61,50,42,0.36)" }}>
+                        {item.desc}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {item.badge && (
+                        <span className="text-[9px] tracking-[0.06em] px-2 py-0.5 rounded-md"
+                          style={{ background: "rgba(169,137,80,0.11)", color: GOLD,
+                          fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                          {item.badge}
+                        </span>
+                      )}
+                      <span className="text-[18px]" style={{ color: "rgba(169,137,80,0.40)" }}>›</span>
+                    </div>
+                  </Link>
+                </div>
               ))}
             </div>
           </div>
         ))}
+
       </div>
 
       <BottomNav weddingId={weddingId} />

@@ -6,9 +6,10 @@ import { useSession, signOut } from "next-auth/react";
 import BottomNav from "@/components/bottom-nav";
 
 // ── Design tokens ─────────────────────────────────────────────────
-const GOLD  = "#A98950";
-const BROWN = "#3D322A";
-const CREME = "#FAF6EF";
+const GOLD   = "#A98950";
+const BROWN  = "#3D322A";
+const CREME  = "#FAF6EF";
+const BG_DARK = "#F0E8DA";
 
 /* ─── Page ──────────────────────────────────────────────────────────── */
 
@@ -66,88 +67,80 @@ export default function MaisPage() {
   return (
     <div className="min-h-screen pb-24" style={{ background: CREME }}>
 
-      {/* ── Hero header ── */}
-      <div className="relative overflow-hidden px-5 pt-12 pb-10"
-        style={{ background: `linear-gradient(135deg, ${BROWN} 0%, #2A2019 100%)` }}>
-        <div className="absolute top-4 right-0 w-48 h-48 rounded-full blur-3xl pointer-events-none"
-          style={{ background: "rgba(169,137,80,0.18)" }} />
-        <div className="absolute -bottom-4 left-0 w-32 h-32 rounded-full blur-3xl pointer-events-none"
-          style={{ background: "rgba(169,137,80,0.10)" }} />
-
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-3">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} style={{ color: GOLD }}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            <span className="text-[9px] tracking-[0.26em] uppercase"
-              style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
-              Configurações e Serviços
-            </span>
-          </div>
-          <h1 className="text-4xl font-light text-white mb-1 leading-tight"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-            Mais
-          </h1>
-          <p className="text-sm" style={{ color: "rgba(255,255,255,0.62)" }}>
-            Serviços, cerimonialista, conta e configurações
-          </p>
-        </div>
+      {/* ── Header ── */}
+      <div className="px-5 pt-10 pb-6">
+        <p className="text-[9px] tracking-[0.28em] uppercase mb-1"
+          style={{ color: "rgba(61,50,42,0.36)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+          Configurações e Serviços
+        </p>
+        <h1 className="text-[30px] font-light leading-tight mb-1"
+          style={{ color: BROWN, fontFamily: "'Cormorant Garamond', serif" }}>
+          Mais
+        </h1>
+        <p className="text-[12px] leading-relaxed" style={{ color: "rgba(61,50,42,0.58)" }}>
+          Serviços, cerimonialista, conta digital e configurações.
+        </p>
       </div>
 
-      {/* ── Sections ── */}
-      <div className="px-4 -mt-4 relative z-10 space-y-6 pb-4">
+      {/* ── Ornamental divider ── */}
+      <div className="flex items-center gap-2.5 mx-5 mb-5">
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+        <div className="w-[5px] h-[5px] rotate-45 opacity-55 flex-shrink-0" style={{ background: GOLD }} />
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+      </div>
+
+      <div className="px-5 space-y-5 pb-4">
+
+        {/* ── Service sections ── */}
         {services.map((section) => (
           <div key={section.category}>
-            <h2 className="text-[9.5px] tracking-[0.28em] uppercase mb-3 px-1"
+            <p className="text-[9.5px] tracking-[0.3em] uppercase pb-2.5"
               style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
               {section.category}
-            </h2>
+            </p>
             <div className="rounded-2xl overflow-hidden"
-              style={{ background: "white", border: "1px solid rgba(169,137,80,0.14)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
+              style={{ background: "white", border: "1.5px solid rgba(169,137,80,0.16)", boxShadow: "0 1px 6px rgba(61,50,42,0.05)" }}>
               {section.items.map((item, idx) => {
-                const inner = (
-                  <div className="flex items-center gap-4 px-4 py-3.5">
-                    <span className={`text-xl flex-shrink-0 ${!item.available ? "grayscale opacity-40" : ""}`}>
-                      {item.icon}
-                    </span>
+                const row = (
+                  <div className="flex items-center gap-3.5 px-4 py-3.5">
+                    <div className="w-[38px] h-[38px] rounded-xl flex items-center justify-center flex-shrink-0 text-[18px]"
+                      style={{ background: item.available ? BG_DARK : "rgba(61,50,42,0.04)" }}>
+                      <span style={{ filter: item.available ? "none" : "grayscale(1)", opacity: item.available ? 1 : 0.35 }}>
+                        {item.icon}
+                      </span>
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium leading-tight"
-                        style={{ color: item.available ? BROWN : "rgba(61,50,42,0.35)" }}>
+                      <p className="text-[12.5px] font-medium leading-tight"
+                        style={{ color: item.available ? BROWN : "rgba(61,50,42,0.30)" }}>
                         {item.label}
                       </p>
-                      <p className="text-xs leading-snug mt-0.5"
-                        style={{ color: item.available ? "rgba(61,50,42,0.52)" : "rgba(61,50,42,0.30)" }}>
+                      <p className="text-[11px] mt-0.5 leading-snug"
+                        style={{ color: item.available ? "rgba(61,50,42,0.50)" : "rgba(61,50,42,0.25)" }}>
                         {item.desc}
                       </p>
                     </div>
                     {item.available ? (
-                      <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-                        style={{ color: "rgba(169,137,80,0.35)" }}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                      </svg>
+                      <span className="text-[18px] flex-shrink-0" style={{ color: "rgba(169,137,80,0.40)" }}>›</span>
                     ) : (
                       <div className="flex items-center gap-1 flex-shrink-0">
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
                           style={{ color: "rgba(61,50,42,0.25)" }}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
-                        <span className="text-[10px]" style={{ color: "rgba(61,50,42,0.28)" }}>Breve</span>
+                        <span className="text-[10px]" style={{ color: "rgba(61,50,42,0.28)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>Breve</span>
                       </div>
                     )}
                   </div>
                 );
-
                 return (
                   <div key={item.label}
-                    style={idx > 0 ? { borderTop: "1px solid rgba(169,137,80,0.08)" } : undefined}>
+                    style={idx > 0 ? { borderTop: "1px solid rgba(169,137,80,0.09)" } : undefined}>
                     {item.available ? (
-                      <Link href={item.href}
-                        className="block transition-colors duration-100"
-                        style={{ background: "transparent" }}>
-                        {inner}
+                      <Link href={item.href} className="block transition-colors active:bg-stone-50">
+                        {row}
                       </Link>
                     ) : (
-                      <div className="cursor-default">{inner}</div>
+                      <div className="cursor-default">{row}</div>
                     )}
                   </div>
                 );
@@ -157,15 +150,20 @@ export default function MaisPage() {
         ))}
 
         {/* ── Logout ── */}
-        <div className="pt-2">
+        <div className="pt-1 pb-2">
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="w-full py-3 rounded-2xl text-sm transition-all active:scale-[0.98]"
-            style={{ border: "1px solid rgba(200,80,80,0.20)", color: "rgba(200,80,80,0.70)", background: "transparent" }}
-          >
+            className="w-full py-3 rounded-2xl text-[11.5px] tracking-[0.18em] uppercase transition-all active:scale-[0.98]"
+            style={{
+              fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300,
+              border: "1.5px solid rgba(200,80,80,0.22)",
+              color: "rgba(200,80,80,0.70)",
+              background: "transparent",
+            }}>
             Sair da conta
           </button>
         </div>
+
       </div>
 
       <BottomNav weddingId={weddingId} />
