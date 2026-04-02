@@ -102,7 +102,7 @@ export default function RootLayout({
       className={`${raleway.variable} ${cormorant.variable} ${dmSans.variable}`}
     >
       <head>
-        <meta name="theme-color" content="#1A1F3A" />
+        <meta name="theme-color" content="#FAF6EF" />
         <link rel="apple-touch-icon" href="/brand/app-icon-192.png" />
       </head>
       <body className="font-body antialiased bg-ivory text-midnight">

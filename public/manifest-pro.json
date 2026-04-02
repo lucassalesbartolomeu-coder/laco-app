@@ -6,8 +6,8 @@
   "scope": "/cerimonialista/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#1A3A33",
-  "background_color": "#1A3A33",
+  "theme_color": "#FAF6EF",
+  "background_color": "#FAF6EF",
   "lang": "pt-BR",
   "categories": ["business", "productivity"],
   "shortcuts": [
