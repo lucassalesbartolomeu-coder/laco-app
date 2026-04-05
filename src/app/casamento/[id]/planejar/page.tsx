@@ -29,6 +29,14 @@ function PeopleIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
+function CheckIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  );
+}
+
 /* ─── Page ──────────────────────────────────────────────────────────── */
 
 export default function PlanejarPage() {
@@ -62,6 +70,13 @@ export default function PlanejarPage() {
       title: "Simulador de Orçamento",
       desc: "Quiz por fornecedor — descubra quanto vai custar seu casamento com preços reais por região",
       tag: "IA",
+    },
+    {
+      href: `${base}/tarefas`,
+      icon: <CheckIcon />,
+      title: "Tarefas",
+      desc: "Acompanhe tarefas criadas pelo seu cerimonialista e adicione as suas",
+      tag: "Novo",
     },
   ];
 
