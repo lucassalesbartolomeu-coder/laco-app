@@ -49,7 +49,10 @@ export async function DELETE(_request: Request, { params }: Params) {
 
     if (storagePath) {
       const supabase = getSupabaseAdmin();
-      await supabase.storage.from(BUCKET).remove([storagePath]);
+      const { error: storageError } = await supabase.storage.from(BUCKET).remove([storagePath]);
+      if (storageError) {
+        Sentry.captureException(storageError);
+      }
     }
 
     await prisma.vendorDocument.delete({ where: { id: docId } });

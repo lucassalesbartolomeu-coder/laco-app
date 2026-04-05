@@ -82,7 +82,7 @@ export async function POST(request: Request, { params }: Params) {
     const supabase = getSupabaseAdmin();
     const { error: uploadError } = await supabase.storage
       .from(BUCKET)
-      .upload(storagePath, buffer, { contentType: "application/pdf", upsert: false });
+      .upload(storagePath, buffer, { contentType: file.type || "application/pdf", upsert: false });
 
     if (uploadError) {
       Sentry.captureException(uploadError);
