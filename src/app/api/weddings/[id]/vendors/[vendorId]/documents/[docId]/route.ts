@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { prisma } from "@/lib/prisma";
 import {
   getAuthenticatedUser,
@@ -9,18 +8,12 @@ import {
   notFoundResponse,
   errorResponse,
 } from "@/lib/api-helpers";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import * as Sentry from "@sentry/nextjs";
 
 type Params = { params: Promise<{ id: string; vendorId: string; docId: string }> };
 
 const BUCKET = "vendor-documents";
-
-function getSupabaseAdmin() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-}
 
 // DELETE /api/weddings/[id]/vendors/[vendorId]/documents/[docId]
 export async function DELETE(_request: Request, { params }: Params) {
@@ -40,16 +33,8 @@ export async function DELETE(_request: Request, { params }: Params) {
 
     if (!doc || doc.vendor.weddingId !== id) return notFoundResponse("Documento");
 
-    // Extract relative path from public Supabase Storage URL
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const baseUrl = `${supabaseUrl}/storage/v1/object/public/${BUCKET}/`;
-    const storagePath = doc.url.startsWith(baseUrl)
-      ? doc.url.slice(baseUrl.length)
-      : null;
-
-    if (storagePath) {
-      const supabase = getSupabaseAdmin();
-      const { error: storageError } = await supabase.storage.from(BUCKET).remove([storagePath]);
+    if (doc.storagePath) {
+      const { error: storageError } = await supabaseAdmin.storage.from(BUCKET).remove([doc.storagePath]);
       if (storageError) {
         Sentry.captureException(storageError);
       }

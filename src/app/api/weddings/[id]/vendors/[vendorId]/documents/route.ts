@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { prisma } from "@/lib/prisma";
 import {
   getAuthenticatedUser,
@@ -8,20 +7,15 @@ import {
   forbiddenResponse,
   notFoundResponse,
   errorResponse,
+  validationError,
 } from "@/lib/api-helpers";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import * as Sentry from "@sentry/nextjs";
 
 type Params = { params: Promise<{ id: string; vendorId: string }> };
 
 const BUCKET = "vendor-documents";
 const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
-
-function getSupabaseAdmin() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-}
 
 // GET /api/weddings/[id]/vendors/[vendorId]/documents
 export async function GET(_request: Request, { params }: Params) {
@@ -67,10 +61,10 @@ export async function POST(request: Request, { params }: Params) {
     const file = formData.get("file") as File | null;
 
     if (!file) {
-      return NextResponse.json({ error: "Arquivo obrigatório" }, { status: 400 });
+      return validationError("Arquivo obrigatório");
     }
     if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: "Arquivo muito grande (máx 10 MB)" }, { status: 400 });
+      return validationError("Arquivo muito grande (máx 10 MB)");
     }
 
     const bytes = await file.arrayBuffer();
@@ -79,8 +73,7 @@ export async function POST(request: Request, { params }: Params) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
     const storagePath = `${id}/${vendorId}/${timestamp}-${safeName}`;
 
-    const supabase = getSupabaseAdmin();
-    const { error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabaseAdmin.storage
       .from(BUCKET)
       .upload(storagePath, buffer, { contentType: file.type || "application/pdf", upsert: false });
 
@@ -89,13 +82,14 @@ export async function POST(request: Request, { params }: Params) {
       return NextResponse.json({ error: "Falha no upload" }, { status: 500 });
     }
 
-    const { data: { publicUrl } } = supabase.storage.from(BUCKET).getPublicUrl(storagePath);
+    const { data: { publicUrl } } = supabaseAdmin.storage.from(BUCKET).getPublicUrl(storagePath);
 
     const doc = await prisma.vendorDocument.create({
       data: {
         vendorId,
         name: file.name,
         url: publicUrl,
+        storagePath,
         size: file.size,
       },
     });

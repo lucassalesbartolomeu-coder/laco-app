@@ -122,6 +122,10 @@ export async function PATCH(request: Request, { params }: Params) {
 
     const body = await request.json();
 
+    if (body.contractStatus === undefined) {
+      return validationError("contractStatus é obrigatório");
+    }
+
     const VALID_CONTRACT_STATUSES = ["NONE", "PENDING", "SIGNED"];
     if (body.contractStatus !== undefined && !VALID_CONTRACT_STATUSES.includes(body.contractStatus)) {
       return validationError("contractStatus inválido");

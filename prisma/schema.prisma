@@ -254,12 +254,13 @@ model Vendor {
 }
 
 model VendorDocument {
-  id        String   @id @default(cuid())
-  vendorId  String
-  name      String
-  url       String
-  size      Int?
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  vendorId    String
+  name        String
+  url         String
+  storagePath String?
+  size        Int?
+  createdAt   DateTime @default(now())
 
   vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
