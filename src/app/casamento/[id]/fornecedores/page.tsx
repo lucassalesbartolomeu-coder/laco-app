@@ -1,8 +1,10 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import BottomNav from "@/components/bottom-nav";
+import { useSession } from "next-auth/react";
+import { Pencil, Plus, Trash2, X } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const GOLD    = "#A98950";
 const BROWN   = "#3D322A";
@@ -68,6 +70,9 @@ const fmt = (v: number) =>
 export default function FornecedoresPage() {
   const params = useParams();
   const weddingId = params?.id as string;
+  const { status } = useSession();
+  const toast = useToast();
+
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -79,15 +84,17 @@ export default function FornecedoresPage() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [uploadingFor, setUploadingFor] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [pendingUploadVendorId, setPendingUploadVendorId] = useState<string | null>(null);
+  const pendingUploadVendorIdRef = useRef<string | null>(null);
 
-  async function load() {
+  const load = useCallback(async () => {
     const res = await fetch(`/api/weddings/${weddingId}/vendors`);
     if (res.ok) setVendors(await res.json());
     setLoading(false);
-  }
+  }, [weddingId]);
 
-  useEffect(() => { load(); }, [weddingId]);
+  useEffect(() => {
+    if (status === "authenticated") load();
+  }, [status, load]);
 
   function openNew() { setEditing(null); setForm(EMPTY); setShowForm(true); }
 
@@ -114,13 +121,18 @@ export default function FornecedoresPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...form, budget: form.budget ? Number(form.budget) : null }),
     });
-    if (res.ok) { await load(); setShowForm(false); }
+    if (res.ok) {
+      await load();
+      setShowForm(false);
+    } else {
+      toast.error("Erro ao salvar fornecedor. Tente novamente.");
+    }
     setSaving(false);
   }
 
   async function remove(vendorId: string) {
-    await fetch(`/api/weddings/${weddingId}/vendors/${vendorId}`, { method: "DELETE" });
-    setVendors(v => v.filter(x => x.id !== vendorId));
+    const res = await fetch(`/api/weddings/${weddingId}/vendors/${vendorId}`, { method: "DELETE" });
+    if (res.ok) setVendors(v => v.filter(x => x.id !== vendorId));
     setConfirmDeleteId(null);
   }
 
@@ -137,40 +149,40 @@ export default function FornecedoresPage() {
   }
 
   function triggerUpload(vendorId: string) {
-    setPendingUploadVendorId(vendorId);
+    pendingUploadVendorIdRef.current = vendorId;
     fileInputRef.current?.click();
   }
 
   async function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file || !pendingUploadVendorId) return;
+    const vendorId = pendingUploadVendorIdRef.current;
+    if (!file || !vendorId) return;
     e.target.value = "";
+    pendingUploadVendorIdRef.current = null;
 
     if (file.size > 10 * 1024 * 1024) {
-      alert("O arquivo deve ter no máximo 10 MB.");
-      setPendingUploadVendorId(null);
+      toast.warning("O arquivo deve ter no máximo 10 MB.");
       return;
     }
 
-    setUploadingFor(pendingUploadVendorId);
+    setUploadingFor(vendorId);
     const formData = new FormData();
     formData.append("file", file);
 
     const res = await fetch(
-      `/api/weddings/${weddingId}/vendors/${pendingUploadVendorId}/documents`,
+      `/api/weddings/${weddingId}/vendors/${vendorId}/documents`,
       { method: "POST", body: formData }
     );
 
     if (res.ok) {
       const doc: VendorDocument = await res.json();
       setVendors(v => v.map(x =>
-        x.id === pendingUploadVendorId
+        x.id === vendorId
           ? { ...x, documents: [...x.documents, doc] }
           : x
       ));
     }
     setUploadingFor(null);
-    setPendingUploadVendorId(null);
   }
 
   async function deleteDocument(vendorId: string, docId: string) {
@@ -205,8 +217,9 @@ export default function FornecedoresPage() {
     if (!groups[v.category]) groups[v.category] = [];
     groups[v.category].push(v);
   }
+  const orderedGroupKeys = CATEGORIES.filter(c => groups[c]);
 
-  if (loading) {
+  if (status === "loading" || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: CREME }}>
         <div className="w-7 h-7 border-[1.5px] border-t-transparent rounded-full animate-spin"
@@ -242,9 +255,7 @@ export default function FornecedoresPage() {
           <button onClick={openNew}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-white text-sm mt-2 flex-shrink-0"
             style={{ background: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
+            <Plus className="w-4 h-4" />
             Novo
           </button>
         </div>
@@ -312,14 +323,14 @@ export default function FornecedoresPage() {
         )}
 
         {/* Grouped list */}
-        {Object.entries(groups).map(([cat, items]) => (
+        {orderedGroupKeys.map(cat => (
           <div key={cat}>
             <p className="text-[9.5px] tracking-[0.3em] uppercase pb-2.5"
               style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
               {cat}
             </p>
             <div className="space-y-3">
-              {items.map(v => {
+              {groups[cat].map(v => {
                 const sc = STATUS_CONFIG[v.status] ?? { label: v.status, bg: BG_DARK, color: BROWN };
                 const cc = CONTRACT_CONFIG[v.contractStatus] ?? CONTRACT_CONFIG["NONE"];
                 return (
@@ -378,16 +389,12 @@ export default function FornecedoresPage() {
                             <button onClick={() => openEdit(v)}
                               className="p-1.5 rounded-lg transition-colors"
                               style={{ color: "rgba(61,50,42,0.30)" }}>
-                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
+                              <Pencil className="w-4 h-4" />
                             </button>
                             <button onClick={() => setConfirmDeleteId(v.id)}
                               className="p-1.5 rounded-lg transition-colors"
                               style={{ color: "rgba(61,50,42,0.30)" }}>
-                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </>
                         )}
@@ -470,9 +477,7 @@ export default function FornecedoresPage() {
                   {editing ? "Editar fornecedor" : "Novo fornecedor"}
                 </h2>
                 <button onClick={() => setShowForm(false)} style={{ color: "rgba(61,50,42,0.30)" }}>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
@@ -510,7 +515,7 @@ export default function FornecedoresPage() {
 
                 <div>
                   <label className="block text-xs mb-1.5" style={{ color: "rgba(61,50,42,0.50)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>Valor orçado (R$)</label>
-                  <input type="number" value={form.budget} onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}
+                  <input type="number" min="0" step="0.01" value={form.budget} onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}
                     placeholder="0"
                     className="w-full px-3 py-2.5 text-sm outline-none rounded-xl"
                     style={{ border: "1.5px solid rgba(169,137,80,0.25)", color: BROWN }} />
@@ -566,8 +571,6 @@ export default function FornecedoresPage() {
           </div>
         </div>
       )}
-
-      <BottomNav weddingId={weddingId} />
     </div>
   );
 }
