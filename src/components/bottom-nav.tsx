@@ -18,21 +18,15 @@ const InicioIcon = () => (
   </svg>
 );
 
-const PlanejarIcon = () => (
+const CasamentoIcon = () => (
   <svg className="w-[22px] h-[22px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.4}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
   </svg>
 );
 
 const DesignIcon = () => (
   <svg className="w-[22px] h-[22px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.4}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
-  </svg>
-);
-
-const OrganizarIcon = () => (
-  <svg className="w-[22px] h-[22px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.4}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
   </svg>
 );
 
@@ -72,15 +66,27 @@ export default function BottomNav({ weddingId }: BottomNavProps) {
       disabled: false,
     },
     {
-      label: "Planejar",
+      label: "Casamento",
       href: weddingBase ? `${weddingBase}/planejar` : null,
-      icon: <PlanejarIcon />,
+      icon: <CasamentoIcon />,
       active:
         isActive("/planejar") ||
+        isActive("/execucao") ||
+        isActive("/convidados") ||
+        isActive("/confirmacoes") ||
+        isActive("/importar") ||
         isActive("/orcamento-inteligente") ||
         isActive("/simulador-convidados") ||
         isActive("/simulador") ||
-        isActive("/fornecedores"),
+        isActive("/orcamento") ||
+        isActive("/presentes") ||
+        isActive("/fornecedores") ||
+        isActive("/contratos") ||
+        isActive("/timeline") ||
+        isActive("/questionarios") ||
+        isActive("/lua-de-mel") ||
+        isActive("/tarefas") ||
+        isActive("/whatsapp-confirmacao"),
       disabled: !weddingBase,
     },
     {
@@ -88,23 +94,6 @@ export default function BottomNav({ weddingId }: BottomNavProps) {
       href: weddingBase ? `${weddingBase}/meu-site` : null,
       icon: <DesignIcon />,
       active: isActive("/meu-site") || isActive("/identity-kit"),
-      disabled: !weddingBase,
-    },
-    {
-      label: "Organizar",
-      href: weddingBase ? `${weddingBase}/execucao` : null,
-      icon: <OrganizarIcon />,
-      active:
-        isActive("/execucao") ||
-        isActive("/convidados") ||
-        isActive("/confirmacoes") ||
-        isActive("/importar") ||
-        isActive("/orcamento") ||
-        isActive("/presentes") ||
-        isActive("/contratos") ||
-        isActive("/timeline") ||
-        isActive("/lua-de-mel") ||
-        isActive("/fornecedores"),
       disabled: !weddingBase,
     },
     {

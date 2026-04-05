@@ -34,6 +34,15 @@ const nextConfig = {
     serverComponentsExternalPackages: ["@react-pdf/renderer"],
     optimizePackageImports: ["framer-motion", "lucide-react"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/casamento/:id/execucao",
+        destination: "/casamento/:id/planejar",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 86400,
