@@ -62,6 +62,8 @@ export default function CerimonialistaWeddingDetail() {
   const [showNewTaskModal, setShowNewTaskModal] = useState(false);
   const [applyingTemplate, setApplyingTemplate] = useState(false);
   const [newTask, setNewTask] = useState({ title: "", priority: "MEDIUM", dueDate: "" });
+  const [creatingTask, setCreatingTask] = useState(false);
+  const [togglingTaskId, setTogglingTaskId] = useState<string | null>(null);
 
   function toggleSection(key: Tab) {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -95,6 +97,7 @@ export default function CerimonialistaWeddingDetail() {
 
   async function handleCreateTask() {
     if (!newTask.title.trim()) return;
+    setCreatingTask(true);
     await fetch(`/api/weddings/${id}/tasks`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -102,16 +105,19 @@ export default function CerimonialistaWeddingDetail() {
     });
     setNewTask({ title: "", priority: "MEDIUM", dueDate: "" });
     setShowNewTaskModal(false);
+    setCreatingTask(false);
     loadTasks();
   }
 
   async function toggleTaskStatus(task: WeddingTask) {
+    setTogglingTaskId(task.id);
     const next = task.status === "DONE" ? "PENDING" : "DONE";
     await fetch(`/api/weddings/${id}/tasks/${task.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: next }),
     });
+    setTogglingTaskId(null);
     loadTasks();
   }
 
@@ -396,7 +402,8 @@ export default function CerimonialistaWeddingDetail() {
                         tasks.map((task) => (
                           <div key={task.id} className="flex items-start gap-3 py-2.5 border-b last:border-0" style={{ borderColor: "rgba(169,137,80,0.08)" }}>
                             <button onClick={() => toggleTaskStatus(task)}
-                              className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition"
+                              disabled={togglingTaskId === task.id}
+                              className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition disabled:opacity-50"
                               style={{ borderColor: task.status === "DONE" ? "#A98950" : "rgba(169,137,80,0.3)", background: task.status === "DONE" ? "#A98950" : "transparent" }}>
                               {task.status === "DONE" && (
                                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -498,9 +505,12 @@ export default function CerimonialistaWeddingDetail() {
                 style={{ border: "1.5px solid rgba(169,137,80,0.3)", color: "#A98950" }}>
                 Cancelar
               </button>
-              <button onClick={handleCreateTask} className="flex-1 py-3 rounded-xl text-white text-sm"
+              <button onClick={handleCreateTask} disabled={creatingTask}
+                className="flex-1 py-3 rounded-xl text-white text-sm disabled:opacity-50"
                 style={{ background: "#A98950" }}>
-                Criar
+                {creatingTask ? (
+                  <div className="w-4 h-4 border border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                ) : "Criar"}
               </button>
             </div>
           </div>

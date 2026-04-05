@@ -53,6 +53,8 @@ export default function TemplatesPage() {
   const [showModal, setShowModal] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -95,15 +97,25 @@ export default function TemplatesPage() {
     if (res.ok) {
       setShowModal(false);
       setForm({ name: "", description: "", phase: "ONE_MONTH", items: [emptyItem()] });
+      setSaveError(false);
       loadTemplates();
+    } else {
+      setSaveError(true);
     }
     setSaving(false);
   }
 
+  function closeModal() {
+    setShowModal(false);
+    setSaveError(false);
+  }
+
   async function handleDelete(id: string) {
-    if (!confirm("Remover este template?")) return;
     const res = await fetch(`/api/planner/task-templates/${id}`, { method: "DELETE" });
-    if (res.ok) setTemplates((t) => t.filter((x) => x.id !== id));
+    if (res.ok) {
+      setTemplates((t) => t.filter((x) => x.id !== id));
+      setConfirmDeleteId(null);
+    }
   }
 
   return (
@@ -157,9 +169,24 @@ export default function TemplatesPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => handleDelete(t.id)} className="p-2 rounded-lg hover:bg-red-50 transition">
-                    <Trash2 className="w-4 h-4 text-red-400" />
-                  </button>
+                  {confirmDeleteId === t.id ? (
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => handleDelete(t.id)}
+                        className="px-2 py-1 text-[10px] rounded-lg text-white"
+                        style={{ background: "#EF4444", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                        Confirmar
+                      </button>
+                      <button onClick={() => setConfirmDeleteId(null)}
+                        className="px-2 py-1 text-[10px] rounded-lg"
+                        style={{ border: "1px solid rgba(169,137,80,0.3)", color: "rgba(61,50,42,0.42)" }}>
+                        Não
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => setConfirmDeleteId(t.id)} className="p-2 rounded-lg hover:bg-red-50 transition">
+                      <Trash2 className="w-4 h-4 text-red-400" />
+                    </button>
+                  )}
                   <button onClick={() => setExpandedId(expandedId === t.id ? null : t.id)} className="p-2 rounded-lg hover:bg-gray-50 transition">
                     {expandedId === t.id ? <ChevronUp className="w-4 h-4" style={{ color: "#A98950" }} /> : <ChevronDown className="w-4 h-4" style={{ color: "rgba(61,50,42,0.42)" }} />}
                   </button>
@@ -265,8 +292,14 @@ export default function TemplatesPage() {
               </div>
             </div>
 
+            {saveError && (
+              <p className="text-[11px] text-red-500 text-center mt-3">
+                Erro ao salvar. Tente novamente.
+              </p>
+            )}
+
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowModal(false)} className="flex-1 py-3 rounded-xl text-sm"
+              <button onClick={closeModal} className="flex-1 py-3 rounded-xl text-sm"
                 style={{ border: "1.5px solid rgba(169,137,80,0.3)", color: "#A98950", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
                 Cancelar
               </button>

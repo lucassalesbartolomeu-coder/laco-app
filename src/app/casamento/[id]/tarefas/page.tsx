@@ -43,6 +43,7 @@ export default function TarefasPage() {
   const [showModal, setShowModal] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [newTask, setNewTask] = useState({ title: "", priority: "MEDIUM", dueDate: "" });
+  const [creating, setCreating] = useState(false);
 
   async function loadTasks() {
     const res = await fetch(`/api/weddings/${weddingId}/tasks`);
@@ -77,6 +78,7 @@ export default function TarefasPage() {
 
   async function handleCreate() {
     if (!newTask.title.trim()) return;
+    setCreating(true);
     const res = await fetch(`/api/weddings/${weddingId}/tasks`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -87,6 +89,7 @@ export default function TarefasPage() {
       setNewTask({ title: "", priority: "MEDIUM", dueDate: "" });
       loadTasks();
     }
+    setCreating(false);
   }
 
   const filtered = tasks.filter((t) => filter === "all" ? true : t.status === filter);
@@ -231,9 +234,12 @@ export default function TarefasPage() {
                 style={{ border: "1.5px solid rgba(169,137,80,0.3)", color: GOLD }}>
                 Cancelar
               </button>
-              <button onClick={handleCreate} className="flex-1 py-3 rounded-xl text-white text-sm"
+              <button onClick={handleCreate} disabled={creating}
+                className="flex-1 py-3 rounded-xl text-white text-sm disabled:opacity-50"
                 style={{ background: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
-                Criar
+                {creating ? (
+                  <div className="w-4 h-4 border border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                ) : "Criar"}
               </button>
             </div>
           </div>
@@ -247,12 +253,18 @@ export default function TarefasPage() {
 
 // Confetti overlay — reuses the pattern from /src/app/onboarding/page.tsx
 function ConfettiOverlay() {
-  const pieces = Array.from({ length: 40 }).map((_, i) => ({
-    id: i,
-    left: Math.random() * 100,
-    delay: Math.random() * 0.4,
-    color: ["#3D322A", "#A98950", "#FAF6EF"][Math.floor(Math.random() * 3)],
-  }));
+  const [pieces, setPieces] = useState<Array<{ id: number; left: number; delay: number; color: string }>>([]);
+
+  useEffect(() => {
+    setPieces(
+      Array.from({ length: 40 }).map((_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 0.4,
+        color: ["#3D322A", "#A98950", "#FAF6EF"][Math.floor(Math.random() * 3)],
+      }))
+    );
+  }, []);
 
   return (
     <>
