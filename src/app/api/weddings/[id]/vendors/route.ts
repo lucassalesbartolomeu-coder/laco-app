@@ -9,6 +9,7 @@ import {
   errorResponse,
   validationError,
 } from "@/lib/api-helpers";
+import * as Sentry from "@sentry/nextjs";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -34,23 +35,17 @@ export async function GET(request: NextRequest, { params }: Params) {
     const vendors = await prisma.vendor.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        name: true,
-        category: true,
-        phone: true,
-        email: true,
-        website: true,
-        budget: true,
-        status: true,
-        notes: true,
-        createdAt: true,
+      include: {
+        documents: {
+          orderBy: { createdAt: "asc" },
+          select: { id: true, name: true, url: true, size: true, createdAt: true },
+        },
       },
     });
 
     return NextResponse.json(vendors);
   } catch (error) {
-    console.error("GET /api/weddings/[id]/vendors error:", error);
+    Sentry.captureException(error);
     return errorResponse();
   }
 }
@@ -88,7 +83,7 @@ export async function POST(request: Request, { params }: Params) {
 
     return NextResponse.json(vendor, { status: 201 });
   } catch (error) {
-    console.error("POST /api/weddings/[id]/vendors error:", error);
+    Sentry.captureException(error);
     return errorResponse();
   }
 }
