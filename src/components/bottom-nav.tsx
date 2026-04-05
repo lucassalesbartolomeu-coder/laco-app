@@ -71,7 +71,6 @@ export default function BottomNav({ weddingId }: BottomNavProps) {
       icon: <CasamentoIcon />,
       active:
         isActive("/planejar") ||
-        isActive("/execucao") ||
         isActive("/convidados") ||
         isActive("/confirmacoes") ||
         isActive("/importar") ||

@@ -84,13 +84,12 @@ Se encontrar `#1A1F3A` ou `rgba(26,31,58,x)` em qualquer stroke/fill de elemento
 **Fontes carregadas via `next/font` no `layout.tsx`:** Raleway, DM Sans, Cormorant Garamond.
 **Josefin Sans** — referenciada inline como `fontFamily: "'Josefin Sans', sans-serif"` (carregada via CDN ou link global — adicionar ao layout se ainda não estiver).
 
-### Bottom Nav — 5 Tabs
+### Bottom Nav — 4 Tabs
 ```
-Início   → /dashboard
-Planejar → /casamento/[id]/planejar
-Design   → /casamento/[id]/identity-kit (e rotas de design)
-Organizar → /casamento/[id]/mais (execução e extras)
-Mais     → /casamento/[id]/mais
+Início    → /dashboard
+Casamento → /casamento/[id]/planejar (hub unificado — convidados, orçamento, tarefas)
+Design    → /casamento/[id]/meu-site (e rotas de design/identity-kit)
+Mais      → /casamento/[id]/mais
 ```
 
 Labels: Josefin Sans, 8.5px, weight 300, letter-spacing 0.14em, uppercase.
