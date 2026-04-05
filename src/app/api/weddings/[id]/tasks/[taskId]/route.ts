@@ -7,6 +7,7 @@ import {
   forbiddenResponse,
   notFoundResponse,
   errorResponse,
+  validationError,
 } from "@/lib/api-helpers";
 import { sendPushToUser } from "@/lib/webpush";
 
@@ -31,10 +32,10 @@ export async function PUT(request: Request, { params }: Params) {
     const VALID_PRIORITIES = ["HIGH", "MEDIUM", "LOW"];
     const VALID_STATUSES = ["PENDING", "IN_PROGRESS", "DONE"];
     if (body.priority && !VALID_PRIORITIES.includes(body.priority)) {
-      return errorResponse();
+      return validationError(`priority inválido. Valores aceitos: ${VALID_PRIORITIES.join(", ")}`);
     }
     if (body.status && !VALID_STATUSES.includes(body.status)) {
-      return errorResponse();
+      return validationError(`status inválido. Valores aceitos: ${VALID_STATUSES.join(", ")}`);
     }
 
     const updated = await prisma.weddingTask.update({
