@@ -36,7 +36,7 @@ type FilterStatus = "all" | "PENDING" | "DONE";
 export default function TarefasPage() {
   const params = useParams();
   const weddingId = params?.id as string;
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [tasks, setTasks] = useState<WeddingTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterStatus>("all");
