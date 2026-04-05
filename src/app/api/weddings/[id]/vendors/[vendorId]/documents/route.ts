@@ -66,6 +66,9 @@ export async function POST(request: Request, { params }: Params) {
     if (file.size > MAX_SIZE) {
       return validationError("Arquivo muito grande (máx 10 MB)");
     }
+    if (!file.name.toLowerCase().endsWith(".pdf") && file.type !== "application/pdf") {
+      return validationError("Apenas arquivos PDF são aceitos");
+    }
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -84,15 +87,22 @@ export async function POST(request: Request, { params }: Params) {
 
     const { data: { publicUrl } } = supabaseAdmin.storage.from(BUCKET).getPublicUrl(storagePath);
 
-    const doc = await prisma.vendorDocument.create({
-      data: {
-        vendorId,
-        name: file.name,
-        url: publicUrl,
-        storagePath,
-        size: file.size,
-      },
-    });
+    let doc;
+    try {
+      doc = await prisma.vendorDocument.create({
+        data: {
+          vendorId,
+          name: file.name,
+          url: publicUrl,
+          storagePath,
+          size: file.size,
+        },
+      });
+    } catch (dbError) {
+      // Compensate: remove the uploaded file so Storage doesn't accumulate orphans
+      await supabaseAdmin.storage.from(BUCKET).remove([storagePath]).catch(() => {});
+      throw dbError;
+    }
 
     return NextResponse.json(doc, { status: 201 });
   } catch (error) {

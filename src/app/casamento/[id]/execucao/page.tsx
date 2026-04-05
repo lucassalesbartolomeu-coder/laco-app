@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
-export default function ExecucaoPage({ params }: { params: { id: string } }) {
-  redirect(`/casamento/${params.id}/planejar`);
+export default async function ExecucaoPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  redirect(`/casamento/${id}/planejar`);
 }

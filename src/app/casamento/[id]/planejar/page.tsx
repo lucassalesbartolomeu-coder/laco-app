@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import BottomNav from "@/components/bottom-nav";
 
 const GOLD    = "#A98950";
 const BROWN   = "#3D322A";
@@ -116,7 +115,6 @@ export default function CasamentoHubPage() {
         ))}
       </div>
 
-      <BottomNav weddingId={weddingId} />
     </div>
   );
 }

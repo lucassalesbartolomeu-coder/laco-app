@@ -9,7 +9,10 @@ import {
   errorResponse,
   validationError,
 } from "@/lib/api-helpers";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import * as Sentry from "@sentry/nextjs";
+
+const BUCKET = "vendor-documents";
 
 type Params = { params: Promise<{ id: string; vendorId: string }> };
 
@@ -92,8 +95,18 @@ export async function DELETE(_request: Request, { params }: Params) {
 
     const existing = await prisma.vendor.findFirst({
       where: { id: vendorId, weddingId: id },
+      include: { documents: { select: { storagePath: true } } },
     });
     if (!existing) return notFoundResponse("Fornecedor");
+
+    // Delete Storage files before cascading DB delete
+    const storagePaths = existing.documents
+      .map(d => d.storagePath)
+      .filter((p): p is string => p !== null);
+    if (storagePaths.length > 0) {
+      const { error: storageError } = await supabaseAdmin.storage.from(BUCKET).remove(storagePaths);
+      if (storageError) Sentry.captureException(storageError);
+    }
 
     await prisma.vendor.delete({ where: { id: vendorId } });
 
