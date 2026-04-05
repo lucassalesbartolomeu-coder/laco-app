@@ -225,6 +225,12 @@ model Gift {
   @@index([weddingId])
 }
 
+enum VendorContractStatus {
+  NONE
+  PENDING
+  SIGNED
+}
+
 model Vendor {
   id             String               @id @default(cuid())
   weddingId      String
@@ -692,12 +698,6 @@ model PushSubscription {
 }
 
 // ─── Sprint Tasks — Tarefas Compartilhadas ──────────────────
-
-enum VendorContractStatus {
-  NONE
-  PENDING
-  SIGNED
-}
 
 enum TaskPhase {
   TWELVE_MONTHS
