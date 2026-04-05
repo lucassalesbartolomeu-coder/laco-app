@@ -18,9 +18,9 @@ export async function POST(request: Request) {
 
     // Start and end of the target day (UTC)
     const startOfDay = new Date(targetDate);
-    startOfDay.setHours(0, 0, 0, 0);
+    startOfDay.setUTCHours(0, 0, 0, 0);
     const endOfDay = new Date(targetDate);
-    endOfDay.setHours(23, 59, 59, 999);
+    endOfDay.setUTCHours(23, 59, 59, 999);
 
     const tasks = await prisma.weddingTask.findMany({
       where: {
