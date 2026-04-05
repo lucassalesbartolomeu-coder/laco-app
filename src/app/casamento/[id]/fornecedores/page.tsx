@@ -25,7 +25,7 @@ const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }
 const CONTRACT_CONFIG: Record<string, { label: string; color: string; dot: string }> = {
   NONE:    { label: "Sem contrato",       color: "rgba(61,50,42,0.35)", dot: "—" },
   PENDING: { label: "Contrato pendente",  color: GOLD,                  dot: "○" },
-  SIGNED:  { label: "Contrato assinado",  color: "#16a34a",             dot: "●" },
+  SIGNED:  { label: "Contrato assinado",  color: "#22C55E",             dot: "●" },
 };
 
 const CONTRACT_CYCLE: Record<string, string> = { NONE: "PENDING", PENDING: "SIGNED", SIGNED: "NONE" };
@@ -145,6 +145,12 @@ export default function FornecedoresPage() {
     const file = e.target.files?.[0];
     if (!file || !pendingUploadVendorId) return;
     e.target.value = "";
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert("O arquivo deve ter no máximo 10 MB.");
+      setPendingUploadVendorId(null);
+      return;
+    }
 
     setUploadingFor(pendingUploadVendorId);
     const formData = new FormData();
