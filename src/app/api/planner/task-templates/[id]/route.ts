@@ -50,30 +50,31 @@ export async function PUT(request: Request, { params }: Params) {
       }
     }
 
-    // Replace all items: delete old, insert new
-    await prisma.taskTemplateItem.deleteMany({ where: { templateId: id } });
-
-    const updated = await prisma.taskTemplate.update({
-      where: { id },
-      data: {
-        name: body.name,
-        description: body.description ?? null,
-        phase: body.phase ?? template.phase,
-        items: {
-          create: (body.items ?? []).map((item: {
-            title: string;
-            description?: string;
-            priority: string;
-            daysBeforeWedding: number;
-          }) => ({
-            title: item.title,
-            description: item.description ?? null,
-            priority: item.priority,
-            daysBeforeWedding: item.daysBeforeWedding,
-          })),
+    // Replace all items atomically: delete old, insert new
+    const updated = await prisma.$transaction(async (tx) => {
+      await tx.taskTemplateItem.deleteMany({ where: { templateId: id } });
+      return tx.taskTemplate.update({
+        where: { id },
+        data: {
+          name: body.name,
+          description: body.description ?? null,
+          phase: body.phase ?? template.phase,
+          items: {
+            create: (body.items ?? []).map((item: {
+              title: string;
+              description?: string;
+              priority: string;
+              daysBeforeWedding: number;
+            }) => ({
+              title: item.title,
+              description: item.description ?? null,
+              priority: item.priority,
+              daysBeforeWedding: item.daysBeforeWedding,
+            })),
+          },
         },
-      },
-      include: { items: { orderBy: { daysBeforeWedding: "asc" } } },
+        include: { items: { orderBy: { daysBeforeWedding: "asc" } } },
+      });
     });
 
     return NextResponse.json(updated);

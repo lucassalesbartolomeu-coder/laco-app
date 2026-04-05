@@ -46,12 +46,11 @@ export async function POST(request: Request, { params }: Params) {
     });
     if (!assignment) return forbiddenResponse();
 
-    // Create one WeddingTask per template item
-    const tasks = await Promise.all(
+    // Create one WeddingTask per template item (atomic)
+    const tasks = await prisma.$transaction(
       template.items.map((item) => {
         const dueDate = new Date(weddingDate);
         dueDate.setDate(dueDate.getDate() + item.daysBeforeWedding);
-
         return prisma.weddingTask.create({
           data: {
             weddingId: body.weddingId,

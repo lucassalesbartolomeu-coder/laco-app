@@ -38,6 +38,11 @@ export async function PUT(request: Request, { params }: Params) {
       return validationError(`status inválido. Valores aceitos: ${VALID_STATUSES.join(", ")}`);
     }
 
+    if (body.dueDate) {
+      const d = new Date(body.dueDate);
+      if (isNaN(d.getTime())) return validationError("dueDate inválido");
+    }
+
     const updated = await prisma.weddingTask.update({
       where: { id: taskId },
       data: {

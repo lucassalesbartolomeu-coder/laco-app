@@ -28,6 +28,15 @@ export async function GET(request: NextRequest, { params }: Params) {
     const status = searchParams.get("status");
     const priority = searchParams.get("priority");
 
+    const VALID_STATUSES_FILTER = ["PENDING", "IN_PROGRESS", "DONE"];
+    const VALID_PRIORITIES_FILTER = ["HIGH", "MEDIUM", "LOW"];
+    if (status && !VALID_STATUSES_FILTER.includes(status)) {
+      return validationError(`status inválido. Valores aceitos: ${VALID_STATUSES_FILTER.join(", ")}`);
+    }
+    if (priority && !VALID_PRIORITIES_FILTER.includes(priority)) {
+      return validationError(`priority inválido. Valores aceitos: ${VALID_PRIORITIES_FILTER.join(", ")}`);
+    }
+
     const where: Record<string, unknown> = { weddingId: id };
     if (status) where.status = status;
     if (priority) where.priority = priority;
@@ -66,6 +75,11 @@ export async function POST(request: NextRequest, { params }: Params) {
       return validationError(`priority inválido. Valores aceitos: ${VALID_PRIORITIES.join(", ")}`);
     }
 
+    if (body.dueDate) {
+      const d = new Date(body.dueDate);
+      if (isNaN(d.getTime())) return validationError("dueDate inválido");
+    }
+
     const task = await prisma.weddingTask.create({
       data: {
         weddingId: id,
@@ -87,6 +101,7 @@ export async function POST(request: NextRequest, { params }: Params) {
       where: { id },
       select: {
         userId: true,
+        partnerUserId: true,
         plannerAssignments: {
           select: { planner: { select: { user: { select: { id: true } } } } },
         },
@@ -97,6 +112,9 @@ export async function POST(request: NextRequest, { params }: Params) {
       const recipientIds = new Set<string>();
       if (weddingForNotif.userId && weddingForNotif.userId !== user.id) {
         recipientIds.add(weddingForNotif.userId);
+      }
+      if (weddingForNotif.partnerUserId && weddingForNotif.partnerUserId !== user.id) {
+        recipientIds.add(weddingForNotif.partnerUserId);
       }
       weddingForNotif.plannerAssignments?.forEach((a) => {
         const uid = a.planner?.user?.id;
