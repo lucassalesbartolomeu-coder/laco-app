@@ -1,7 +1,13 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import BottomNav from "@/components/bottom-nav";
+
+const GOLD    = "#A98950";
+const BROWN   = "#3D322A";
+const CREME   = "#FAF6EF";
+const BG_DARK = "#F0E8DA";
 
 const CATEGORIES = [
   "Fotografia", "Cinematografia", "Buffet", "Bebidas", "Bolo / Doces",
@@ -10,11 +16,27 @@ const CATEGORIES = [
   "Transporte", "Outros",
 ];
 
-const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  cotado:     { label: "Cotado",     color: "bg-amber-50 text-amber-700 border border-amber-200" },
-  contratado: { label: "Contratado", color: "bg-green-50 text-green-700 border border-green-200" },
-  cancelado:  { label: "Cancelado",  color: "bg-red-50 text-red-500 border border-red-200" },
+const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
+  cotado:     { label: "Cotado",     bg: "rgba(169,137,80,0.08)",  color: GOLD },
+  contratado: { label: "Contratado", bg: "rgba(34,197,94,0.10)",   color: "#16a34a" },
+  cancelado:  { label: "Cancelado",  bg: "rgba(239,68,68,0.08)",   color: "#dc2626" },
 };
+
+const CONTRACT_CONFIG: Record<string, { label: string; color: string; dot: string }> = {
+  NONE:    { label: "Sem contrato",       color: "rgba(61,50,42,0.35)", dot: "—" },
+  PENDING: { label: "Contrato pendente",  color: GOLD,                  dot: "○" },
+  SIGNED:  { label: "Contrato assinado",  color: "#16a34a",             dot: "●" },
+};
+
+const CONTRACT_CYCLE: Record<string, string> = { NONE: "PENDING", PENDING: "SIGNED", SIGNED: "NONE" };
+
+interface VendorDocument {
+  id: string;
+  name: string;
+  url: string;
+  size: number | null;
+  createdAt: string;
+}
 
 interface Vendor {
   id: string;
@@ -26,6 +48,8 @@ interface Vendor {
   budget: number | null;
   status: string;
   notes: string | null;
+  contractStatus: "NONE" | "PENDING" | "SIGNED";
+  documents: VendorDocument[];
 }
 
 interface FormState {
@@ -43,7 +67,7 @@ const fmt = (v: number) =>
 
 export default function FornecedoresPage() {
   const params = useParams();
-  const id = params?.id as string;
+  const weddingId = params?.id as string;
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -53,18 +77,19 @@ export default function FornecedoresPage() {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("todos");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [uploadingFor, setUploadingFor] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [pendingUploadVendorId, setPendingUploadVendorId] = useState<string | null>(null);
 
   async function load() {
-    const res = await fetch(`/api/weddings/${id}/vendors`);
+    const res = await fetch(`/api/weddings/${weddingId}/vendors`);
     if (res.ok) setVendors(await res.json());
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, [id]);
+  useEffect(() => { load(); }, [weddingId]);
 
-  function openNew() {
-    setEditing(null); setForm(EMPTY); setShowForm(true);
-  }
+  function openNew() { setEditing(null); setForm(EMPTY); setShowForm(true); }
 
   function openEdit(v: Vendor) {
     setEditing(v);
@@ -82,8 +107,8 @@ export default function FornecedoresPage() {
     if (!form.name.trim()) return;
     setSaving(true);
     const url = editing
-      ? `/api/weddings/${id}/vendors/${editing.id}`
-      : `/api/weddings/${id}/vendors`;
+      ? `/api/weddings/${weddingId}/vendors/${editing.id}`
+      : `/api/weddings/${weddingId}/vendors`;
     const res = await fetch(url, {
       method: editing ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
@@ -94,9 +119,66 @@ export default function FornecedoresPage() {
   }
 
   async function remove(vendorId: string) {
-    await fetch(`/api/weddings/${id}/vendors/${vendorId}`, { method: "DELETE" });
+    await fetch(`/api/weddings/${weddingId}/vendors/${vendorId}`, { method: "DELETE" });
     setVendors(v => v.filter(x => x.id !== vendorId));
     setConfirmDeleteId(null);
+  }
+
+  async function cycleContractStatus(vendor: Vendor) {
+    const next = CONTRACT_CYCLE[vendor.contractStatus] as Vendor["contractStatus"];
+    const res = await fetch(`/api/weddings/${weddingId}/vendors/${vendor.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contractStatus: next }),
+    });
+    if (res.ok) {
+      setVendors(v => v.map(x => x.id === vendor.id ? { ...x, contractStatus: next } : x));
+    }
+  }
+
+  function triggerUpload(vendorId: string) {
+    setPendingUploadVendorId(vendorId);
+    fileInputRef.current?.click();
+  }
+
+  async function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !pendingUploadVendorId) return;
+    e.target.value = "";
+
+    setUploadingFor(pendingUploadVendorId);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(
+      `/api/weddings/${weddingId}/vendors/${pendingUploadVendorId}/documents`,
+      { method: "POST", body: formData }
+    );
+
+    if (res.ok) {
+      const doc: VendorDocument = await res.json();
+      setVendors(v => v.map(x =>
+        x.id === pendingUploadVendorId
+          ? { ...x, documents: [...x.documents, doc] }
+          : x
+      ));
+    }
+    setUploadingFor(null);
+    setPendingUploadVendorId(null);
+  }
+
+  async function deleteDocument(vendorId: string, docId: string) {
+    const res = await fetch(
+      `/api/weddings/${weddingId}/vendors/${vendorId}/documents/${docId}`,
+      { method: "DELETE" }
+    );
+    if (res.ok) {
+      setVendors(v => v.map(x =>
+        x.id === vendorId
+          ? { ...x, documents: x.documents.filter(d => d.id !== docId) }
+          : x
+      ));
+    }
   }
 
   const filtered = vendors.filter(v => {
@@ -105,7 +187,6 @@ export default function FornecedoresPage() {
     return true;
   });
 
-  // Summary totals
   const totalContratado = vendors
     .filter(v => v.status === "contratado")
     .reduce((s, v) => s + (v.budget ?? 0), 0);
@@ -113,41 +194,48 @@ export default function FornecedoresPage() {
     .filter(v => v.status === "cotado")
     .reduce((s, v) => s + (v.budget ?? 0), 0);
 
-  // Group by category (preserving order)
   const groups: Record<string, Vendor[]> = {};
   for (const v of filtered) {
     if (!groups[v.category]) groups[v.category] = [];
     groups[v.category].push(v);
   }
 
-  const GOLD = "#A98950";
-  const BROWN = "#3D322A";
-  const CREME = "#FAF6EF";
-
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: CREME }}>
-      <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: GOLD, borderTopColor: "transparent" }} />
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: CREME }}>
+        <div className="w-7 h-7 border-[1.5px] border-t-transparent rounded-full animate-spin"
+          style={{ borderColor: `${GOLD} transparent ${GOLD} ${GOLD}` }} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-24" style={{ background: CREME }}>
-      {/* Light header */}
-      <div style={{ background: CREME }} className="px-5 pt-10 pb-6">
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".pdf"
+        className="hidden"
+        onChange={handleFileSelected}
+      />
+
+      {/* Header */}
+      <div className="px-5 pt-10 pb-6">
         <div className="flex items-start justify-between">
           <div>
-            <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "10px", letterSpacing: "0.15em", color: GOLD, textTransform: "uppercase" as const, fontWeight: 500 }}>
-              Fornecedores
+            <p className="text-[9px] tracking-[0.28em] uppercase mb-1"
+              style={{ color: "rgba(61,50,42,0.36)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+              Orçamento & Contratos
             </p>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "28px", color: BROWN, lineHeight: 1.2, marginTop: "4px" }}>
+            <h1 className="text-[30px] font-light leading-tight"
+              style={{ color: BROWN, fontFamily: "'Cormorant Garamond', serif" }}>
               Fornecedores
             </h1>
-            <p style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: "12px", color: "rgba(61,50,42,0.5)", marginTop: "6px", letterSpacing: "0.02em" }}>
-              Gerencie todos os seus fornecedores
-            </p>
           </div>
           <button onClick={openNew}
-            className="flex items-center gap-1.5 px-4 py-2 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition flex-shrink-0 mt-1">
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-white text-sm mt-2 flex-shrink-0"
+            style={{ background: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
@@ -157,35 +245,44 @@ export default function FornecedoresPage() {
       </div>
 
       {/* Ornamental divider */}
-      <div className="flex items-center gap-2.5 px-5 py-2">
-        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
-        <div style={{ width: "5px", height: "5px", background: GOLD, transform: "rotate(45deg)", opacity: 0.7 }} />
-        <div style={{ flex: 1, height: "1px", background: "rgba(169,137,80,0.25)" }} />
+      <div className="flex items-center gap-2.5 mx-5 mb-5">
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+        <div className="w-[5px] h-[5px] rotate-45 opacity-55 flex-shrink-0" style={{ background: GOLD }} />
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 py-4 space-y-5">
+      <div className="px-5 space-y-5 pb-4">
 
         {/* Summary cards */}
         {vendors.length > 0 && (
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-midnight rounded-2xl p-4 text-white">
-              <p className="font-body text-xs opacity-60 mb-1">Contratado</p>
-              <p className="font-body text-xl font-bold">{fmt(totalContratado)}</p>
+            <div className="rounded-2xl p-4 text-white"
+              style={{ background: BROWN }}>
+              <p className="text-xs mb-1" style={{ opacity: 0.6, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>Contratado</p>
+              <p className="text-xl font-light" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{fmt(totalContratado)}</p>
             </div>
-            <div className="bg-white rounded-2xl p-4" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
-              <p className="font-body text-xs text-midnight/50 mb-1">Em cotação</p>
-              <p className="font-body text-xl font-bold text-midnight">{fmt(totalCotado)}</p>
+            <div className="rounded-2xl p-4"
+              style={{ background: "white", border: "1.5px solid rgba(169,137,80,0.20)" }}>
+              <p className="text-xs mb-1" style={{ color: "rgba(61,50,42,0.50)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>Em cotação</p>
+              <p className="text-xl font-light" style={{ color: BROWN, fontFamily: "'Cormorant Garamond', serif" }}>{fmt(totalCotado)}</p>
             </div>
           </div>
         )}
 
         {/* Filters */}
         <div className="flex gap-2">
-          <input value={search} onChange={e => setSearch(e.target.value)}
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             placeholder="Buscar fornecedor..."
-            className="flex-1 px-3 py-2 text-sm font-body bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
-          <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-            className="px-3 py-2 text-sm font-body bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
+            className="flex-1 px-3 py-2 text-sm outline-none rounded-xl"
+            style={{ border: "1.5px solid rgba(169,137,80,0.20)", color: BROWN, background: "white", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}
+          />
+          <select
+            value={filterStatus}
+            onChange={e => setFilterStatus(e.target.value)}
+            className="px-3 py-2 text-sm outline-none rounded-xl"
+            style={{ border: "1.5px solid rgba(169,137,80,0.20)", color: BROWN, background: "white", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
             <option value="todos">Todos</option>
             <option value="cotado">Cotado</option>
             <option value="contratado">Contratado</option>
@@ -195,15 +292,14 @@ export default function FornecedoresPage() {
 
         {/* Empty state */}
         {vendors.length === 0 && (
-          <div className="bg-white rounded-3xl p-12 text-center" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
-            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gold/10 flex items-center justify-center">
-              <svg className="w-7 h-7 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-            </div>
-            <p className="font-body text-midnight/50 mb-5">Nenhum fornecedor ainda</p>
+          <div className="rounded-2xl p-12 text-center"
+            style={{ background: "white", border: "1.5px solid rgba(169,137,80,0.16)" }}>
+            <p className="text-sm mb-5" style={{ color: "rgba(61,50,42,0.42)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+              Nenhum fornecedor ainda
+            </p>
             <button onClick={openNew}
-              className="px-6 py-2.5 bg-gold text-white rounded-xl font-body text-sm hover:bg-gold/90 transition">
+              className="px-6 py-2.5 rounded-xl text-white text-sm"
+              style={{ background: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
               Adicionar fornecedor
             </button>
           </div>
@@ -212,61 +308,77 @@ export default function FornecedoresPage() {
         {/* Grouped list */}
         {Object.entries(groups).map(([cat, items]) => (
           <div key={cat}>
-            <p className="font-body text-xs font-semibold text-midnight/40 uppercase tracking-widest mb-2 px-1">{cat}</p>
-            <div className="space-y-2">
+            <p className="text-[9.5px] tracking-[0.3em] uppercase pb-2.5"
+              style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+              {cat}
+            </p>
+            <div className="space-y-3">
               {items.map(v => {
-                const sc = STATUS_CONFIG[v.status] ?? { label: v.status, color: "bg-gray-100 text-gray-600 border border-gray-200" };
+                const sc = STATUS_CONFIG[v.status] ?? { label: v.status, bg: BG_DARK, color: BROWN };
+                const cc = CONTRACT_CONFIG[v.contractStatus] ?? CONTRACT_CONFIG["NONE"];
                 return (
-                  <div key={v.id} className="bg-white rounded-2xl p-4" style={{ border: "1.5px solid rgba(169,137,80,0.35)" }}>
+                  <div key={v.id} className="rounded-2xl p-4"
+                    style={{ background: "white", border: "1.5px solid rgba(169,137,80,0.16)", boxShadow: "0 1px 6px rgba(61,50,42,0.04)" }}>
+
+                    {/* Vendor header row */}
                     <div className="flex items-start gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                          <span className="font-body font-semibold text-midnight text-sm">{v.name}</span>
-                          <span className={`text-[11px] px-2 py-0.5 rounded-full font-body font-medium ${sc.color}`}>
+                          <span className="text-[13px] font-medium" style={{ color: BROWN }}>{v.name}</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full"
+                            style={{ background: sc.bg, color: sc.color, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
                             {sc.label}
                           </span>
                         </div>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1">
-                          {v.budget != null && (
-                            <span className="font-body text-xs font-semibold text-gold">{fmt(v.budget)}</span>
-                          )}
+                        {v.budget != null && (
+                          <p className="text-[12px] font-medium mb-1" style={{ color: GOLD }}>
+                            {fmt(v.budget)}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap gap-x-3 gap-y-0.5">
                           {v.phone && (
-                            <a href={`tel:${v.phone}`} className="font-body text-xs text-midnight hover:underline">{v.phone}</a>
+                            <a href={`tel:${v.phone}`} className="text-[11px]" style={{ color: "rgba(61,50,42,0.50)" }}>{v.phone}</a>
                           )}
                           {v.email && (
-                            <a href={`mailto:${v.email}`} className="font-body text-xs text-midnight hover:underline truncate max-w-[180px]">{v.email}</a>
+                            <a href={`mailto:${v.email}`} className="text-[11px] truncate max-w-[180px]" style={{ color: "rgba(61,50,42,0.50)" }}>{v.email}</a>
                           )}
                           {v.website && (
                             <a href={v.website} target="_blank" rel="noopener noreferrer"
-                              className="font-body text-xs text-midnight hover:underline">Site ↗</a>
+                              className="text-[11px]" style={{ color: GOLD }}>Site ↗</a>
                           )}
                         </div>
                         {v.notes && (
-                          <p className="font-body text-xs text-midnight/50 mt-1.5 line-clamp-2">{v.notes}</p>
+                          <p className="text-[11px] mt-1.5 line-clamp-2" style={{ color: "rgba(61,50,42,0.42)" }}>{v.notes}</p>
                         )}
                       </div>
+
+                      {/* Action buttons */}
                       <div className="flex gap-1 flex-shrink-0 items-center">
                         {confirmDeleteId === v.id ? (
                           <>
                             <button onClick={() => remove(v.id)}
-                              className="px-2 py-1 rounded-lg text-xs font-body text-white bg-red-400 hover:bg-red-500 transition">
+                              className="px-2 py-1 rounded-lg text-xs text-white"
+                              style={{ background: "#ef4444", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
                               Remover
                             </button>
                             <button onClick={() => setConfirmDeleteId(null)}
-                              className="px-2 py-1 rounded-lg text-xs font-body text-midnight/50 hover:bg-gray-100 transition">
+                              className="px-2 py-1 rounded-lg text-xs"
+                              style={{ color: "rgba(61,50,42,0.42)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
                               Não
                             </button>
                           </>
                         ) : (
                           <>
                             <button onClick={() => openEdit(v)}
-                              className="p-1.5 rounded-lg text-midnight/30 hover:text-midnight hover:bg-midnight/5 transition">
+                              className="p-1.5 rounded-lg transition-colors"
+                              style={{ color: "rgba(61,50,42,0.30)" }}>
                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                               </svg>
                             </button>
                             <button onClick={() => setConfirmDeleteId(v.id)}
-                              className="p-1.5 rounded-lg text-midnight/30 hover:text-red-400 hover:bg-red-50 transition">
+                              className="p-1.5 rounded-lg transition-colors"
+                              style={{ color: "rgba(61,50,42,0.30)" }}>
                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                               </svg>
@@ -275,6 +387,62 @@ export default function FornecedoresPage() {
                         )}
                       </div>
                     </div>
+
+                    {/* Divider */}
+                    <div className="mt-3 mb-3 h-px" style={{ background: "rgba(169,137,80,0.09)" }} />
+
+                    {/* Contract status toggle */}
+                    <button
+                      onClick={() => cycleContractStatus(v)}
+                      className="flex items-center gap-1.5 mb-3 transition-opacity hover:opacity-70"
+                    >
+                      <span className="text-[12px]" style={{ color: cc.color }}>{cc.dot}</span>
+                      <span className="text-[10px]" style={{ color: cc.color, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                        {cc.label}
+                      </span>
+                    </button>
+
+                    {/* Documents */}
+                    {v.documents.length > 0 && (
+                      <div className="space-y-1.5 mb-3">
+                        {v.documents.map(doc => (
+                          <div key={doc.id} className="flex items-center gap-2">
+                            <a href={doc.url} target="_blank" rel="noopener noreferrer"
+                              className="flex-1 flex items-center gap-1.5 min-w-0">
+                              <span className="text-[13px] flex-shrink-0">📄</span>
+                              <span className="text-[11px] truncate" style={{ color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                                {doc.name}
+                              </span>
+                            </a>
+                            <button
+                              onClick={() => deleteDocument(v.id, doc.id)}
+                              className="flex-shrink-0 text-[11px] transition-opacity hover:opacity-70"
+                              style={{ color: "rgba(61,50,42,0.35)" }}>
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <button
+                      onClick={() => triggerUpload(v.id)}
+                      disabled={uploadingFor === v.id}
+                      className="flex items-center gap-1.5 text-[10px] disabled:opacity-50"
+                      style={{ color: "rgba(61,50,42,0.42)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                      {uploadingFor === v.id ? (
+                        <>
+                          <div className="w-3 h-3 border border-t-transparent rounded-full animate-spin flex-shrink-0"
+                            style={{ borderColor: `${GOLD} transparent ${GOLD} ${GOLD}` }} />
+                          Enviando...
+                        </>
+                      ) : (
+                        <>
+                          <span>+</span>
+                          Adicionar documento
+                        </>
+                      )}
+                    </button>
                   </div>
                 );
               })}
@@ -283,18 +451,19 @@ export default function FornecedoresPage() {
         ))}
       </div>
 
-      {/* Modal */}
+      {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
+          style={{ background: "rgba(0,0,0,0.4)" }}
           onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-3xl w-full max-w-md max-h-[92vh] overflow-y-auto pb-safe"
+          <div className="bg-white rounded-3xl w-full max-w-md max-h-[92vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="font-heading text-lg font-semibold text-midnight">
+                <h2 className="text-[22px] font-light" style={{ color: BROWN, fontFamily: "'Cormorant Garamond', serif" }}>
                   {editing ? "Editar fornecedor" : "Novo fornecedor"}
                 </h2>
-                <button onClick={() => setShowForm(false)} className="text-midnight/30 hover:text-midnight transition">
+                <button onClick={() => setShowForm(false)} style={{ color: "rgba(61,50,42,0.30)" }}>
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -303,24 +472,29 @@ export default function FornecedoresPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block font-body text-xs text-midnight/60 mb-1.5">Nome *</label>
+                  <label className="block text-xs mb-1.5" style={{ color: "rgba(61,50,42,0.50)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                    Nome *
+                  </label>
                   <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                     placeholder="Ex: Studio Luz Fotografia"
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                    className="w-full px-3 py-2.5 text-sm outline-none rounded-xl"
+                    style={{ border: "1.5px solid rgba(169,137,80,0.25)", color: BROWN }} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Categoria *</label>
+                    <label className="block text-xs mb-1.5" style={{ color: "rgba(61,50,42,0.50)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>Categoria *</label>
                     <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
+                      className="w-full px-3 py-2.5 text-sm outline-none rounded-xl"
+                      style={{ border: "1.5px solid rgba(169,137,80,0.25)", color: BROWN }}>
                       {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Status</label>
+                    <label className="block text-xs mb-1.5" style={{ color: "rgba(61,50,42,0.50)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>Status</label>
                     <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight">
+                      className="w-full px-3 py-2.5 text-sm outline-none rounded-xl"
+                      style={{ border: "1.5px solid rgba(169,137,80,0.25)", color: BROWN }}>
                       <option value="cotado">Cotado</option>
                       <option value="contratado">Contratado</option>
                       <option value="cancelado">Cancelado</option>
@@ -329,49 +503,56 @@ export default function FornecedoresPage() {
                 </div>
 
                 <div>
-                  <label className="block font-body text-xs text-midnight/60 mb-1.5">Valor orçado (R$)</label>
+                  <label className="block text-xs mb-1.5" style={{ color: "rgba(61,50,42,0.50)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>Valor orçado (R$)</label>
                   <input type="number" value={form.budget} onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}
                     placeholder="0"
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                    className="w-full px-3 py-2.5 text-sm outline-none rounded-xl"
+                    style={{ border: "1.5px solid rgba(169,137,80,0.25)", color: BROWN }} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Telefone</label>
+                    <label className="block text-xs mb-1.5" style={{ color: "rgba(61,50,42,0.50)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>Telefone</label>
                     <input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
                       placeholder="(11) 9..."
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                      className="w-full px-3 py-2.5 text-sm outline-none rounded-xl"
+                      style={{ border: "1.5px solid rgba(169,137,80,0.25)", color: BROWN }} />
                   </div>
                   <div>
-                    <label className="block font-body text-xs text-midnight/60 mb-1.5">Email</label>
+                    <label className="block text-xs mb-1.5" style={{ color: "rgba(61,50,42,0.50)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>Email</label>
                     <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                       placeholder="email@..."
-                      className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                      className="w-full px-3 py-2.5 text-sm outline-none rounded-xl"
+                      style={{ border: "1.5px solid rgba(169,137,80,0.25)", color: BROWN }} />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-body text-xs text-midnight/60 mb-1.5">Site / Instagram</label>
+                  <label className="block text-xs mb-1.5" style={{ color: "rgba(61,50,42,0.50)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>Site / Instagram</label>
                   <input value={form.website} onChange={e => setForm(f => ({ ...f, website: e.target.value }))}
                     placeholder="https://..."
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight" />
+                    className="w-full px-3 py-2.5 text-sm outline-none rounded-xl"
+                    style={{ border: "1.5px solid rgba(169,137,80,0.25)", color: BROWN }} />
                 </div>
 
                 <div>
-                  <label className="block font-body text-xs text-midnight/60 mb-1.5">Observações</label>
+                  <label className="block text-xs mb-1.5" style={{ color: "rgba(61,50,42,0.50)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>Observações</label>
                   <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-                    rows={2} placeholder="Condições, detalhes do contrato..."
-                    className="w-full px-3 py-2.5 text-sm font-body border border-gray-200 rounded-xl focus:outline-none focus:border-midnight resize-none" />
+                    rows={2} placeholder="Condições, detalhes..."
+                    className="w-full px-3 py-2.5 text-sm outline-none rounded-xl resize-none"
+                    style={{ border: "1.5px solid rgba(169,137,80,0.25)", color: BROWN }} />
                 </div>
               </div>
 
               <div className="flex gap-3 mt-6">
                 <button onClick={() => setShowForm(false)}
-                  className="flex-1 px-4 py-2.5 font-body text-sm border border-gray-200 rounded-xl hover:bg-gray-50 transition">
+                  className="flex-1 py-3 rounded-xl text-sm"
+                  style={{ border: "1.5px solid rgba(169,137,80,0.25)", color: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
                   Cancelar
                 </button>
                 <button onClick={save} disabled={saving || !form.name.trim()}
-                  className="flex-1 px-4 py-2.5 font-body text-sm bg-gold text-white rounded-xl hover:bg-gold/90 disabled:opacity-50 transition">
+                  className="flex-1 py-3 rounded-xl text-sm text-white disabled:opacity-50"
+                  style={{ background: GOLD, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
                   {saving ? "Salvando..." : editing ? "Salvar" : "Adicionar"}
                 </button>
               </div>
@@ -379,6 +560,8 @@ export default function FornecedoresPage() {
           </div>
         </div>
       )}
+
+      <BottomNav weddingId={weddingId} />
     </div>
   );
 }
