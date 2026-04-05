@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendPushToUser } from "@/lib/webpush";
+import * as Sentry from "@sentry/nextjs";
 
-// POST /api/cron/task-reminders
+// GET /api/cron/task-reminders
 // Called daily at 9h by Vercel Cron. Sends push D-2 before due date.
-export async function POST(request: Request) {
+export async function GET(request: Request) {
   // Vercel injects Authorization: Bearer <CRON_SECRET> automatically
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -71,7 +72,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true, notified });
   } catch (error) {
-    console.error("POST /api/cron/task-reminders error:", error);
+    Sentry.captureException(error);
+    console.error("GET /api/cron/task-reminders error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

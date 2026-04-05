@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import * as Sentry from "@sentry/nextjs";
 import {
   getAuthenticatedUser,
   unauthorizedResponse,
@@ -68,6 +69,7 @@ export async function POST(request: Request, { params }: Params) {
 
     return NextResponse.json({ created: tasks.length, tasks }, { status: 201 });
   } catch (error) {
+    Sentry.captureException(error);
     console.error("POST /api/planner/task-templates/[id]/apply error:", error);
     return errorResponse();
   }

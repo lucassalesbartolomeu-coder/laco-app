@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import * as Sentry from "@sentry/nextjs";
 import {
   getAuthenticatedUser,
   verifyWeddingOwnership,
@@ -51,6 +52,7 @@ export async function GET(request: NextRequest, { params }: Params) {
 
     return NextResponse.json(tasks);
   } catch (error) {
+    Sentry.captureException(error);
     console.error("GET /api/weddings/[id]/tasks error:", error);
     return errorResponse();
   }
@@ -131,6 +133,7 @@ export async function POST(request: NextRequest, { params }: Params) {
 
     return NextResponse.json(task, { status: 201 });
   } catch (error) {
+    Sentry.captureException(error);
     console.error("POST /api/weddings/[id]/tasks error:", error);
     return errorResponse();
   }

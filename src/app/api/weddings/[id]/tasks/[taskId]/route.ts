@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import * as Sentry from "@sentry/nextjs";
 import {
   getAuthenticatedUser,
   verifyWeddingOwnership,
@@ -67,6 +68,7 @@ export async function PUT(request: Request, { params }: Params) {
 
     return NextResponse.json(updated);
   } catch (error) {
+    Sentry.captureException(error);
     console.error("PUT /api/weddings/[id]/tasks/[taskId] error:", error);
     return errorResponse();
   }
@@ -90,6 +92,7 @@ export async function DELETE(_request: Request, { params }: Params) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
+    Sentry.captureException(error);
     console.error("DELETE /api/weddings/[id]/tasks/[taskId] error:", error);
     return errorResponse();
   }

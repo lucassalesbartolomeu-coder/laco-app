@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Plus, Trash2, ChevronDown, ChevronUp, Check } from "lucide-react";
+import PlannerBottomNav from "@/components/planner-bottom-nav";
 
 const PHASE_LABELS: Record<string, string> = {
   TWELVE_MONTHS: "12 meses antes",
@@ -214,6 +215,8 @@ export default function TemplatesPage() {
           ))
         )}
       </div>
+
+      <PlannerBottomNav />
 
       {/* Modal */}
       {showModal && (
