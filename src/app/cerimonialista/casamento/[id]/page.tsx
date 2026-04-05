@@ -6,6 +6,22 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { CoupleEngagementScore } from "@/components/couple-engagement-score";
 
+interface WeddingTask {
+  id: string;
+  title: string;
+  priority: "HIGH" | "MEDIUM" | "LOW";
+  dueDate: string | null;
+  status: "PENDING" | "IN_PROGRESS" | "DONE";
+  createdBy: { id: string; name: string | null };
+}
+
+interface TaskTemplate {
+  id: string;
+  name: string;
+  phase: string;
+  items: { id: string }[];
+}
+
 interface WeddingDetail {
   id: string;
   partnerName1: string;
@@ -22,7 +38,7 @@ interface WeddingDetail {
   budgetItems: { id: string; category: string; description: string; estimatedCost: number; actualCost: number | null; status: string }[];
 }
 
-type Tab = "convidados" | "fornecedores" | "orcamento";
+type Tab = "convidados" | "fornecedores" | "orcamento" | "tarefas";
 
 function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
@@ -38,10 +54,65 @@ export default function CerimonialistaWeddingDetail() {
   const { status: authStatus } = useSession();
   const [wedding, setWedding] = useState<WeddingDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [openSections, setOpenSections] = useState({ convidados: true, fornecedores: true, orcamento: true });
+  const [openSections, setOpenSections] = useState({ convidados: true, fornecedores: true, orcamento: true, tarefas: true });
+  const [tasks, setTasks] = useState<WeddingTask[]>([]);
+  const [tasksLoading, setTasksLoading] = useState(false);
+  const [templates, setTemplates] = useState<TaskTemplate[]>([]);
+  const [showApplyModal, setShowApplyModal] = useState(false);
+  const [showNewTaskModal, setShowNewTaskModal] = useState(false);
+  const [applyingTemplate, setApplyingTemplate] = useState(false);
+  const [newTask, setNewTask] = useState({ title: "", priority: "MEDIUM", dueDate: "" });
 
   function toggleSection(key: Tab) {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
+
+  async function loadTasks() {
+    if (!id) return;
+    setTasksLoading(true);
+    const res = await fetch(`/api/weddings/${id}/tasks`);
+    if (res.ok) setTasks(await res.json());
+    setTasksLoading(false);
+  }
+
+  async function loadTemplates() {
+    const res = await fetch("/api/planner/task-templates");
+    if (res.ok) setTemplates(await res.json());
+  }
+
+  async function applyTemplate(templateId: string) {
+    if (!wedding?.weddingDate) return;
+    setApplyingTemplate(true);
+    await fetch(`/api/planner/task-templates/${templateId}/apply`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ weddingId: id, weddingDate: wedding.weddingDate }),
+    });
+    await loadTasks();
+    setShowApplyModal(false);
+    setApplyingTemplate(false);
+  }
+
+  async function handleCreateTask() {
+    if (!newTask.title.trim()) return;
+    await fetch(`/api/weddings/${id}/tasks`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newTask),
+    });
+    setNewTask({ title: "", priority: "MEDIUM", dueDate: "" });
+    setShowNewTaskModal(false);
+    loadTasks();
+  }
+
+  async function toggleTaskStatus(task: WeddingTask) {
+    const next = task.status === "DONE" ? "PENDING" : "DONE";
+    await fetch(`/api/weddings/${id}/tasks/${task.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: next }),
+    });
+    loadTasks();
   }
 
   useEffect(() => {
@@ -51,6 +122,8 @@ export default function CerimonialistaWeddingDetail() {
       .then(setWedding)
       .catch(console.error)
       .finally(() => setLoading(false));
+    loadTasks();
+    loadTemplates();
   }, [authStatus, id]);
 
   if (authStatus === "loading" || loading) {
@@ -78,6 +151,7 @@ export default function CerimonialistaWeddingDetail() {
     { key: "convidados", label: "Convidados", count: totalGuests },
     { key: "fornecedores", label: "Fornecedores", count: wedding.vendors?.length || 0 },
     { key: "orcamento", label: "Orçamento" },
+    { key: "tarefas", label: "Tarefas", count: tasks.filter((t) => t.status !== "DONE").length },
   ];
 
   return (
@@ -276,12 +350,162 @@ export default function CerimonialistaWeddingDetail() {
                       )}
                     </div>
                   )}
+
+                  {s.key === "tarefas" && (
+                    <div className="pt-4 space-y-3">
+                      {/* Progress bar */}
+                      {tasks.length > 0 && (
+                        <div className="mb-3">
+                          <div className="flex justify-between text-xs mb-1" style={{ color: "rgba(61,50,42,0.42)" }}>
+                            <span>{tasks.filter((t) => t.status === "DONE").length} de {tasks.length} concluídas</span>
+                            <span>{Math.round((tasks.filter((t) => t.status === "DONE").length / tasks.length) * 100)}%</span>
+                          </div>
+                          <div className="w-full h-1.5 rounded-full bg-gray-100">
+                            <div className="h-1.5 rounded-full transition-all" style={{
+                              width: `${(tasks.filter((t) => t.status === "DONE").length / tasks.length) * 100}%`,
+                              background: "#A98950"
+                            }} />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Action buttons */}
+                      <div className="flex gap-2">
+                        <button onClick={() => setShowApplyModal(true)}
+                          className="flex-1 py-2 text-xs rounded-xl"
+                          style={{ border: "1.5px solid rgba(169,137,80,0.3)", color: "#A98950", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                          Aplicar Template
+                        </button>
+                        <button onClick={() => setShowNewTaskModal(true)}
+                          className="flex-1 py-2 text-xs rounded-xl text-white"
+                          style={{ background: "#A98950", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                          Nova Tarefa
+                        </button>
+                      </div>
+
+                      {/* Task list */}
+                      {tasksLoading ? (
+                        <div className="flex justify-center py-6">
+                          <div className="w-5 h-5 border border-t-transparent rounded-full animate-spin" style={{ borderColor: "#A98950 transparent" }} />
+                        </div>
+                      ) : tasks.length === 0 ? (
+                        <p className="text-center py-6 text-xs" style={{ color: "rgba(61,50,42,0.42)" }}>
+                          Nenhuma tarefa. Aplique um template para começar.
+                        </p>
+                      ) : (
+                        tasks.map((task) => (
+                          <div key={task.id} className="flex items-start gap-3 py-2.5 border-b last:border-0" style={{ borderColor: "rgba(169,137,80,0.08)" }}>
+                            <button onClick={() => toggleTaskStatus(task)}
+                              className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition"
+                              style={{ borderColor: task.status === "DONE" ? "#A98950" : "rgba(169,137,80,0.3)", background: task.status === "DONE" ? "#A98950" : "transparent" }}>
+                              {task.status === "DONE" && (
+                                <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                              )}
+                            </button>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[12px]" style={{
+                                color: task.status === "DONE" ? "rgba(61,50,42,0.35)" : "#3D322A",
+                                textDecoration: task.status === "DONE" ? "line-through" : "none",
+                                fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300
+                              }}>
+                                {task.title}
+                              </p>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <span className="text-[10px]" style={{
+                                  color: task.priority === "HIGH" ? "#EF4444" : task.priority === "MEDIUM" ? "#A98950" : "rgba(61,50,42,0.42)"
+                                }}>
+                                  {task.priority === "HIGH" ? "Alta" : task.priority === "MEDIUM" ? "Média" : "Baixa"}
+                                </span>
+                                {task.dueDate && (
+                                  <span className="text-[10px]" style={{ color: "rgba(61,50,42,0.42)" }}>
+                                    · {new Date(task.dueDate).toLocaleDateString("pt-BR")}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           );
         })}
       </div>
+
+      {/* Apply Template Modal */}
+      {showApplyModal && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: "rgba(0,0,0,0.4)" }}>
+          <div className="bg-white w-full max-w-lg rounded-t-3xl p-6 pb-10">
+            <h2 className="text-[20px] font-light mb-4" style={{ color: "#3D322A", fontFamily: "'Cormorant Garamond', serif" }}>
+              Aplicar Template
+            </h2>
+            {templates.length === 0 ? (
+              <p className="text-sm text-center py-6" style={{ color: "rgba(61,50,42,0.42)" }}>
+                Nenhum template criado. Vá em Templates para criar.
+              </p>
+            ) : (
+              <div className="space-y-2 mb-4">
+                {templates.map((t) => (
+                  <button key={t.id} onClick={() => applyTemplate(t.id)} disabled={applyingTemplate}
+                    className="w-full text-left px-4 py-3 rounded-xl transition hover:bg-amber-50 disabled:opacity-50"
+                    style={{ border: "1.5px solid rgba(169,137,80,0.2)" }}>
+                    <p className="text-sm" style={{ color: "#3D322A", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                      {t.name}
+                    </p>
+                    <p className="text-xs" style={{ color: "rgba(61,50,42,0.42)" }}>{t.items.length} itens</p>
+                  </button>
+                ))}
+              </div>
+            )}
+            <button onClick={() => setShowApplyModal(false)} className="w-full py-3 rounded-xl text-sm"
+              style={{ border: "1.5px solid rgba(169,137,80,0.3)", color: "#A98950" }}>
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* New Task Modal */}
+      {showNewTaskModal && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: "rgba(0,0,0,0.4)" }}>
+          <div className="bg-white w-full max-w-lg rounded-t-3xl p-6 pb-10">
+            <h2 className="text-[20px] font-light mb-4" style={{ color: "#3D322A", fontFamily: "'Cormorant Garamond', serif" }}>
+              Nova Tarefa
+            </h2>
+            <div className="space-y-3">
+              <input value={newTask.title} onChange={(e) => setNewTask((n) => ({ ...n, title: e.target.value }))}
+                placeholder="Título da tarefa"
+                className="w-full px-4 py-3 rounded-xl text-sm outline-none"
+                style={{ border: "1.5px solid rgba(169,137,80,0.3)", color: "#3D322A", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }} />
+              <select value={newTask.priority} onChange={(e) => setNewTask((n) => ({ ...n, priority: e.target.value }))}
+                className="w-full px-4 py-3 rounded-xl text-sm outline-none"
+                style={{ border: "1.5px solid rgba(169,137,80,0.3)", color: "#3D322A", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                <option value="HIGH">Prioridade Alta</option>
+                <option value="MEDIUM">Prioridade Média</option>
+                <option value="LOW">Prioridade Baixa</option>
+              </select>
+              <input type="date" value={newTask.dueDate} onChange={(e) => setNewTask((n) => ({ ...n, dueDate: e.target.value }))}
+                className="w-full px-4 py-3 rounded-xl text-sm outline-none"
+                style={{ border: "1.5px solid rgba(169,137,80,0.3)", color: "#3D322A", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }} />
+            </div>
+            <div className="flex gap-3 mt-4">
+              <button onClick={() => setShowNewTaskModal(false)} className="flex-1 py-3 rounded-xl text-sm"
+                style={{ border: "1.5px solid rgba(169,137,80,0.3)", color: "#A98950" }}>
+                Cancelar
+              </button>
+              <button onClick={handleCreateTask} className="flex-1 py-3 rounded-xl text-white text-sm"
+                style={{ background: "#A98950" }}>
+                Criar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
