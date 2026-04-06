@@ -127,8 +127,9 @@ export default function CasamentosPage() {
 
   if (authStatus === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FAF6EF" }}>
+        <div className="w-7 h-7 border-[1.5px] border-t-transparent rounded-full animate-spin"
+          style={{ borderColor: "#A98950 transparent #A98950 #A98950" }} />
       </div>
     );
   }
@@ -156,14 +157,26 @@ export default function CasamentosPage() {
   /* ── Render ──────────────────────────────────────────────────────────── */
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2]">
+    <div style={{ background: "#FAF6EF" }} className="min-h-screen">
 
       {/* ── Header ────────────────────────────────────────────────────── */}
-      <div className="bg-midnight px-5 pt-8 pb-6">
-        <h1 className="font-heading text-2xl text-white leading-tight">Casamentos</h1>
-        <p className="font-body text-sm text-white/40 mt-1">
-          {activeCount} casamento{activeCount !== 1 ? "s" : ""} ativo{activeCount !== 1 ? "s" : ""}
+      <div className="px-5 pt-10 pb-4">
+        <p className="text-[9px] tracking-[0.28em] uppercase mb-1"
+          style={{ color: "rgba(61,50,42,0.36)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+          Gestão
         </p>
+        <h1 className="text-[30px] font-light leading-tight mb-1"
+          style={{ color: "#3D322A", fontFamily: "'Cormorant Garamond', serif" }}>
+          Casamentos
+        </h1>
+        <p className="text-[12px] leading-relaxed" style={{ color: "rgba(61,50,42,0.58)" }}>
+          Todos os casamentos sob sua gestão
+        </p>
+      </div>
+      <div className="flex items-center gap-2.5 mx-5 mb-6">
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+        <div className="w-[5px] h-[5px] rotate-45 opacity-55 flex-shrink-0" style={{ background: "#A98950" }} />
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
       </div>
 
       {/* ── Filter tabs ───────────────────────────────────────────────── */}

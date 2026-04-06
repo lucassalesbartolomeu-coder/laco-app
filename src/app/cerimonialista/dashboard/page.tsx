@@ -71,10 +71,14 @@ export default function CerimonialDashboard() {
   const [validatingCode, setValidatingCode] = useState(false);
 
   useEffect(() => {
-    if (authStatus !== "authenticated") return;
+    if (authStatus === "loading") return;
+    if (authStatus !== "authenticated") {
+      setLoading(false);
+      return;
+    }
     Promise.all([
-      fetch("/api/planner/dashboard").then((r) => r.json()),
-      fetch("/api/user/referral").then((r) => r.json()),
+      fetch("/api/planner/dashboard").then((r) => (r.ok ? r.json() : null)),
+      fetch("/api/user/referral").then((r) => (r.ok ? r.json() : null)),
     ])
       .then(([dashData, refData]) => {
         setData(dashData);
@@ -133,8 +137,9 @@ export default function CerimonialDashboard() {
 
   if (authStatus === "loading" || loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FAF6EF" }}>
+        <div className="w-7 h-7 border-[1.5px] border-t-transparent rounded-full animate-spin"
+          style={{ borderColor: "#A98950 transparent #A98950 #A98950" }} />
       </div>
     );
   }
@@ -157,13 +162,25 @@ export default function CerimonialDashboard() {
   });
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="pb-6 lg:pb-8 px-5 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="font-heading text-3xl text-midnight">
-          Ola, {session?.user?.name || "Cerimonialista"}
+      <div className="px-5 pt-10 pb-4">
+        <p className="text-[9px] tracking-[0.28em] uppercase mb-1"
+          style={{ color: "rgba(61,50,42,0.36)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+          Painel
+        </p>
+        <h1 className="text-[30px] font-light leading-tight mb-1"
+          style={{ color: "#3D322A", fontFamily: "'Cormorant Garamond', serif" }}>
+          Olá, {session?.user?.name || "Cerimonialista"}
         </h1>
-        <p className="font-body text-midnight/50 mt-1">{data.planner.companyName}</p>
+        <p className="text-[12px] leading-relaxed" style={{ color: "rgba(61,50,42,0.58)" }}>
+          {data.planner.companyName}
+        </p>
+      </div>
+      <div className="flex items-center gap-2.5 mx-5 mb-6">
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+        <div className="w-[5px] h-[5px] rotate-45 opacity-55 flex-shrink-0" style={{ background: "#A98950" }} />
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
       </div>
 
       {/* KPI Cards */}
