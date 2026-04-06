@@ -219,8 +219,9 @@ export default function QuestionariosPage() {
 
   if (authStatus === "loading" || loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FAF6EF" }}>
+        <div className="w-7 h-7 border-[1.5px] border-t-transparent rounded-full animate-spin"
+          style={{ borderColor: "#A98950 transparent #A98950 #A98950" }} />
       </div>
     );
   }
@@ -230,9 +231,16 @@ export default function QuestionariosPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-heading text-3xl text-midnight">Questionários</h1>
-          <p className="font-body text-sm text-midnight/50 mt-1">
-            Envie questionários de preferências para os casais
+          <p className="text-[9px] tracking-[0.28em] uppercase mb-1"
+            style={{ color: "rgba(61,50,42,0.36)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+            Ferramentas
+          </p>
+          <h1 className="text-[30px] font-light leading-tight"
+            style={{ color: "#3D322A", fontFamily: "'Cormorant Garamond', serif" }}>
+            Questionários
+          </h1>
+          <p className="text-[12px] leading-relaxed mt-1" style={{ color: "rgba(61,50,42,0.58)" }}>
+            Crie e envie questionários de preferências para os casais
           </p>
         </div>
         <button
@@ -241,6 +249,13 @@ export default function QuestionariosPage() {
         >
           Novo Questionário
         </button>
+      </div>
+
+      {/* Ornamental divider */}
+      <div className="flex items-center gap-2.5 mb-6">
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+        <div className="w-[5px] h-[5px] rotate-45 opacity-55 flex-shrink-0" style={{ background: "#A98950" }} />
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
       </div>
 
       {/* List */}
