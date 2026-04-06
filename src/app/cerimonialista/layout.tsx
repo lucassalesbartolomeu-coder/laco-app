@@ -124,13 +124,13 @@ export default function CerimonialistaLayout({ children }: { children: React.Rea
     <div className="min-h-screen bg-ivory flex">
 
       {/* ── Desktop Sidebar ─────────────────────────────────────────── */}
-      <aside className="hidden lg:flex flex-col w-60 bg-midnight text-white shrink-0 fixed top-0 left-0 bottom-0 z-30">
+      <aside className="hidden lg:flex flex-col w-60 shrink-0 fixed top-0 left-0 bottom-0 z-30" style={{ background: "#F0E8DA", borderRight: "1px solid rgba(169,137,80,0.18)" }}>
 
         {/* Logo */}
         <div className="px-6 pt-7 pb-5">
           <Link href="/cerimonialista/dashboard" className="block">
-            <span className="font-display text-lg tracking-[0.3em] uppercase text-ivory">Laço</span>
-            <p className="font-body text-[10px] text-ivory/35 mt-1 tracking-[0.2em] uppercase">Cerimonialista</p>
+            <span className="font-display text-lg tracking-[0.3em] uppercase" style={{ color: "#3D322A" }}>Laço</span>
+            <p className="font-body text-[10px] mt-1 tracking-[0.2em] uppercase" style={{ color: "rgba(61,50,42,0.40)" }}>Cerimonialista</p>
           </Link>
         </div>
 
@@ -138,7 +138,7 @@ export default function CerimonialistaLayout({ children }: { children: React.Rea
         <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-5">
           {NAV_GROUPS.map((group) => (
             <div key={group.label}>
-              <p className="px-3 mb-1.5 font-display text-[9px] tracking-[0.25em] uppercase text-ivory/25">
+              <p className="px-3 mb-1.5 font-display text-[9px] tracking-[0.25em] uppercase" style={{ color: "rgba(61,50,42,0.35)" }}>
                 {group.label}
               </p>
               <div className="space-y-0.5">
@@ -148,16 +148,17 @@ export default function CerimonialistaLayout({ children }: { children: React.Rea
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-body text-sm transition-all duration-150 ${
-                        active
-                          ? "bg-ivory/10 text-ivory font-medium"
-                          : "text-ivory/45 hover:text-ivory/80 hover:bg-ivory/5"
-                      }`}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl font-body text-sm transition-all duration-150"
+                      style={{
+                        background: active ? "rgba(169,137,80,0.12)" : "transparent",
+                        color: active ? "#3D322A" : "rgba(61,50,42,0.45)",
+                        fontWeight: active ? 500 : 400,
+                      }}
                     >
                       <NavIcon icon={item.icon} />
                       <span>{item.label}</span>
                       {active && (
-                        <span className="ml-auto w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
+                        <span className="ml-auto w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "#A98950" }} />
                       )}
                     </Link>
                   );
@@ -168,14 +169,14 @@ export default function CerimonialistaLayout({ children }: { children: React.Rea
         </nav>
 
         {/* Notifications + User footer */}
-        <div className="px-4 py-3 border-t border-ivory/8 flex items-center justify-between">
-          <span className="font-body text-xs text-ivory/30">Notificações</span>
+        <div className="px-4 py-3 flex items-center justify-between" style={{ borderTop: "1px solid rgba(169,137,80,0.12)" }}>
+          <span className="font-body text-xs" style={{ color: "rgba(61,50,42,0.35)" }}>Notificações</span>
           <PlannerNotificationBell />
         </div>
 
         {/* User */}
-        <div className="px-4 py-3 border-t border-ivory/8">
-          <p className="font-body text-sm text-ivory/60 truncate">
+        <div className="px-4 py-3" style={{ borderTop: "1px solid rgba(169,137,80,0.12)" }}>
+          <p className="font-body text-sm truncate" style={{ color: "rgba(61,50,42,0.50)" }}>
             {session?.user?.name || session?.user?.email}
           </p>
         </div>
@@ -183,11 +184,14 @@ export default function CerimonialistaLayout({ children }: { children: React.Rea
 
       {/* ── Mobile Header ───────────────────────────────────────────── */}
       <div
-        className={`lg:hidden fixed top-0 left-0 right-0 z-40 bg-midnight text-ivory px-4 py-3 flex items-center justify-between transition-transform duration-200 ${
+        className={`lg:hidden fixed top-0 left-0 right-0 z-40 px-4 py-3 flex items-center justify-between transition-transform duration-200 ${
           headerHidden ? "-translate-y-full" : "translate-y-0"
         }`}
+        style={{ background: "#F0E8DA", borderBottom: "1px solid rgba(169,137,80,0.16)" }}
       >
-        <Link href="/cerimonialista/dashboard" className="font-display text-base tracking-[0.3em] uppercase">
+        <Link href="/cerimonialista/dashboard"
+          className="font-display text-base tracking-[0.3em] uppercase"
+          style={{ color: "#3D322A" }}>
           Laço
         </Link>
         <div className="flex items-center gap-2">
@@ -207,14 +211,16 @@ export default function CerimonialistaLayout({ children }: { children: React.Rea
       {sidebarOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
           <div className="absolute inset-0 bg-midnight/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-72 bg-midnight text-ivory p-4 space-y-1 overflow-y-auto">
-            <div className="mb-6 pb-4 border-b border-ivory/10">
-              <p className="font-display text-lg tracking-[0.3em] uppercase">Laço</p>
-              <p className="font-body text-[10px] text-ivory/35 mt-1 tracking-[0.2em] uppercase">Cerimonialista</p>
+          <aside className="absolute left-0 top-0 bottom-0 w-72 p-4 space-y-1 overflow-y-auto"
+            style={{ background: "#F0E8DA" }}>
+            <div className="mb-6 pb-4" style={{ borderBottom: "1px solid rgba(169,137,80,0.16)" }}>
+              <p className="font-display text-lg tracking-[0.3em] uppercase" style={{ color: "#3D322A" }}>Laço</p>
+              <p className="font-body text-[10px] mt-1 tracking-[0.2em] uppercase" style={{ color: "rgba(61,50,42,0.40)" }}>Cerimonialista</p>
             </div>
             {NAV_GROUPS.map((group) => (
               <div key={group.label} className="mb-4">
-                <p className="px-3 mb-1.5 font-display text-[9px] tracking-[0.25em] uppercase text-ivory/25">
+                <p className="px-3 mb-1.5 font-display text-[9px] tracking-[0.25em] uppercase"
+                  style={{ color: "rgba(61,50,42,0.35)" }}>
                   {group.label}
                 </p>
                 {group.items.map((item) => {
@@ -224,16 +230,17 @@ export default function CerimonialistaLayout({ children }: { children: React.Rea
                       key={item.href}
                       href={item.href}
                       onClick={() => setSidebarOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-body text-sm transition-all ${
-                        active
-                          ? "bg-ivory/10 text-ivory font-medium"
-                          : "text-ivory/45 hover:text-ivory/80 hover:bg-ivory/5"
-                      }`}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl font-body text-sm transition-all"
+                      style={{
+                        background: active ? "rgba(169,137,80,0.12)" : "transparent",
+                        color: active ? "#3D322A" : "rgba(61,50,42,0.45)",
+                        fontWeight: active ? 500 : 400,
+                      }}
                     >
                       <NavIcon icon={item.icon} />
                       {item.label}
                       {active && (
-                        <span className="ml-auto w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
+                        <span className="ml-auto w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "#A98950" }} />
                       )}
                     </Link>
                   );
