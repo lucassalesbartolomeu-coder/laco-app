@@ -266,8 +266,9 @@ export default function PipelinePage() {
 
   if (authStatus === "loading" || loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FAF6EF" }}>
+        <div className="w-7 h-7 border-[1.5px] border-t-transparent rounded-full animate-spin"
+          style={{ borderColor: "#A98950 transparent #A98950 #A98950" }} />
       </div>
     );
   }
@@ -361,7 +362,7 @@ export default function PipelinePage() {
 
         <div className="flex items-center justify-end px-3 pb-2.5 pt-0.5 border-t border-gray-100 mt-1 relative">
           {isMoveLoading ? (
-            <div className="w-3.5 h-3.5 border-2 border-midnight border-t-transparent rounded-full animate-spin mr-1" />
+            <div className="w-3.5 h-3.5 border-2 rounded-full animate-spin mr-1" style={{ borderColor: "#A98950 transparent #A98950 #A98950" }} />
           ) : (
             <div className="relative" ref={isDropdownOpen ? dropdownRef : null}>
               <button
@@ -466,13 +467,28 @@ export default function PipelinePage() {
       {/* Cabeçalho */}
       <div className="px-4 pt-5 pb-3 lg:px-8 lg:pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <h1 className="font-heading text-2xl lg:text-3xl text-midnight">Pipeline CRM</h1>
+          <div>
+            <p className="text-[9px] tracking-[0.28em] uppercase mb-1"
+              style={{ color: "rgba(61,50,42,0.36)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+              Gestão
+            </p>
+            <h1 className="text-[30px] font-light leading-tight"
+              style={{ color: "#3D322A", fontFamily: "'Cormorant Garamond', serif" }}>
+              Pipeline CRM
+            </h1>
+          </div>
           <button
             onClick={() => { resetForm(); setModalOpen(true); }}
             className="shrink-0 px-4 py-2.5 bg-gold text-white rounded-xl font-body text-sm font-medium hover:bg-gold/90 transition"
           >
             + Nova oportunidade
           </button>
+        </div>
+
+        <div className="flex items-center gap-2.5 mb-6">
+          <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+          <div className="w-[5px] h-[5px] rotate-45 opacity-55 flex-shrink-0" style={{ background: "#A98950" }} />
+          <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
         </div>
 
         {/* Filtros */}
@@ -789,7 +805,7 @@ export default function PipelinePage() {
                         </svg>
                       )}
                       {isLoadingStage && (
-                        <div className="w-4 h-4 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 rounded-full animate-spin" style={{ borderColor: "#A98950 transparent #A98950 #A98950" }} />
                       )}
                     </button>
                   );
