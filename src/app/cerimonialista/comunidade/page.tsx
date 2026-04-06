@@ -245,20 +245,35 @@ export default function ComunidadePage() {
 
   if (authStatus === "loading" || loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FAF6EF" }}>
+        <div className="w-7 h-7 border-[1.5px] border-t-transparent rounded-full animate-spin"
+          style={{ borderColor: "#A98950 transparent #A98950 #A98950" }} />
       </div>
     );
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-2xl mx-auto">
-      <div className="mb-6">
-        <h1 className="font-heading text-3xl text-midnight">Comunidade</h1>
-        <p className="font-body text-sm text-midnight/50 mt-1">
-          Troque experiências com outras cerimonialistas 💬
+    <div className="max-w-2xl mx-auto">
+      <div className="px-5 pt-10 pb-4">
+        <p className="text-[9px] tracking-[0.28em] uppercase mb-1"
+          style={{ color: "rgba(61,50,42,0.36)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+          Comunidade
+        </p>
+        <h1 className="text-[30px] font-light leading-tight mb-1"
+          style={{ color: "#3D322A", fontFamily: "'Cormorant Garamond', serif" }}>
+          Comunidade
+        </h1>
+        <p className="text-[12px] leading-relaxed" style={{ color: "rgba(61,50,42,0.58)" }}>
+          Troca de experiências entre cerimonialistas
         </p>
       </div>
+      <div className="flex items-center gap-2.5 mx-5 mb-6">
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+        <div className="w-[5px] h-[5px] rotate-45 opacity-55 flex-shrink-0" style={{ background: "#A98950" }} />
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+      </div>
+
+      <div className="p-6 lg:p-8">
 
       {/* Create post */}
       <div className="bg-white rounded-2xl shadow-sm p-5 mb-6">
@@ -318,6 +333,7 @@ export default function ComunidadePage() {
           )}
         </div>
       )}
+      </div>
     </div>
   );
 }
