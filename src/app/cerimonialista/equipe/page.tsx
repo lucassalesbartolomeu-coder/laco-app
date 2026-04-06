@@ -24,6 +24,7 @@ export default function EquipePage() {
   const [form, setForm] = useState({ name: "", email: "", role: "assistente", phone: "" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   async function load() {
     const res = await fetch("/api/planner/team");
@@ -75,26 +76,34 @@ export default function EquipePage() {
     }
   }
 
-  async function handleDelete(id: string, name: string) {
-    if (!confirm(`Remover ${name} da equipe?`)) return;
+  async function handleDelete(id: string) {
     await fetch(`/api/planner/team/${id}`, { method: "DELETE" });
-    await load();
+    setMembers(m => m.filter(x => x.id !== id));
+    setConfirmDeleteId(null);
   }
 
   if (authStatus === "loading" || loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FAF6EF" }}>
+        <div className="w-7 h-7 border-[1.5px] border-t-transparent rounded-full animate-spin"
+          style={{ borderColor: "#A98950 transparent #A98950 #A98950" }} />
       </div>
     );
   }
 
   return (
     <div className="p-6 lg:p-8 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="font-heading text-3xl text-midnight">Equipe</h1>
-          <p className="font-body text-sm text-midnight/50 mt-1">
+          <p className="text-[9px] tracking-[0.28em] uppercase mb-1"
+            style={{ color: "rgba(61,50,42,0.36)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+            Organização
+          </p>
+          <h1 className="text-[30px] font-light leading-tight"
+            style={{ color: "#3D322A", fontFamily: "'Cormorant Garamond', serif" }}>
+            Equipe
+          </h1>
+          <p className="text-[12px] leading-relaxed mt-1" style={{ color: "rgba(61,50,42,0.58)" }}>
             Gerencie assistentes e atribua casamentos
           </p>
         </div>
@@ -104,6 +113,11 @@ export default function EquipePage() {
         >
           Adicionar membro
         </button>
+      </div>
+      <div className="flex items-center gap-2.5 mb-6">
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
+        <div className="w-[5px] h-[5px] rotate-45 opacity-55 flex-shrink-0" style={{ background: "#A98950" }} />
+        <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
       </div>
 
       {members.length === 0 ? (
@@ -124,25 +138,44 @@ export default function EquipePage() {
                     {m.role}
                   </span>
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => openEdit(m)}
-                    className="p-1.5 text-midnight/40 hover:text-midnight transition"
-                    title="Editar"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => handleDelete(m.id, m.name)}
-                    className="p-1.5 text-red-400/50 hover:text-red-500 transition"
-                    title="Remover"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
+                <div className="flex gap-2 items-center">
+                  {confirmDeleteId === m.id ? (
+                    <>
+                      <button
+                        onClick={() => handleDelete(m.id)}
+                        className="px-2 py-1 rounded-lg text-xs text-white"
+                        style={{ background: "#ef4444", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                        Remover
+                      </button>
+                      <button
+                        onClick={() => setConfirmDeleteId(null)}
+                        className="px-2 py-1 rounded-lg text-xs"
+                        style={{ color: "rgba(61,50,42,0.42)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
+                        Não
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => openEdit(m)}
+                        className="p-1.5 text-midnight/40 hover:text-midnight transition"
+                        title="Editar"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => setConfirmDeleteId(m.id)}
+                        className="p-1.5 text-red-400/50 hover:text-red-500 transition"
+                        title="Remover"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
