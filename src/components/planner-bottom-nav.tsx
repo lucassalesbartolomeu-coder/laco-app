@@ -95,7 +95,8 @@ export default function PlannerBottomNav() {
       <div className="h-[72px]" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }} />
 
       {/* Fixed nav bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-midnight/[0.06] safe-area-pb">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md safe-area-pb"
+        style={{ borderTop: "1px solid rgba(169,137,80,0.12)" }}>
         <div className="max-w-lg mx-auto flex items-stretch">
           {TABS.map((tab) => {
             const active = tab.match(pathname ?? "");
@@ -107,16 +108,19 @@ export default function PlannerBottomNav() {
                   className="w-full flex justify-center active:scale-95 transition-transform duration-100"
                 >
                   <span
-                    className={`flex flex-col items-center gap-0.5 py-2.5 px-1 text-[10px] font-display tracking-wide transition-colors duration-150 ${
-                      active
-                        ? "text-midnight"
-                        : "text-stone hover:text-midnight/70"
-                    }`}
+                    className="flex flex-col items-center gap-0.5 py-2.5 px-1 text-[10px] transition-colors duration-150"
+                    style={{
+                      fontFamily: "'Josefin Sans', sans-serif",
+                      fontWeight: 300,
+                      letterSpacing: "0.14em",
+                      color: active ? "#A98950" : "rgba(61,50,42,0.42)",
+                    }}
                   >
                     <span className="relative">
                       {tab.icon}
                       {active && (
-                        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gold" />
+                        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
+                          style={{ background: "#A98950" }} />
                       )}
                     </span>
                     <span className="mt-1">{tab.label}</span>
