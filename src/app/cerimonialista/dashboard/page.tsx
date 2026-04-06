@@ -164,7 +164,7 @@ export default function CerimonialDashboard() {
   return (
     <div className="pb-6 lg:pb-8 px-5 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="px-5 pt-10 pb-4">
+      <div className="pt-10 pb-4">
         <p className="text-[9px] tracking-[0.28em] uppercase mb-1"
           style={{ color: "rgba(61,50,42,0.36)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}>
           Painel
@@ -177,7 +177,7 @@ export default function CerimonialDashboard() {
           {data.planner.companyName}
         </p>
       </div>
-      <div className="flex items-center gap-2.5 mx-5 mb-6">
+      <div className="flex items-center gap-2.5 mb-6">
         <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
         <div className="w-[5px] h-[5px] rotate-45 opacity-55 flex-shrink-0" style={{ background: "#A98950" }} />
         <div className="flex-1 h-px" style={{ background: "rgba(169,137,80,0.16)" }} />
@@ -470,7 +470,8 @@ export default function CerimonialDashboard() {
                 onKeyDown={(e) => e.key === "Enter" && handleLinkWedding()}
               />
               {validatingCode && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-midnight border-t-transparent rounded-full animate-spin" />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-[1.5px] border-t-transparent rounded-full animate-spin"
+                  style={{ borderColor: "#A98950 transparent #A98950 #A98950" }} />
               )}
             </div>
 
