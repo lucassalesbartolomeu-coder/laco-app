@@ -121,6 +121,7 @@ export default function QuestionariosPage() {
   const [weddings, setWeddings] = useState<WeddingAssignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   // Create modal
   const [modalOpen, setModalOpen] = useState(false);
@@ -157,8 +158,8 @@ export default function QuestionariosPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Excluir este questionário?")) return;
     await fetch(`/api/planner/questionnaires/${id}`, { method: "DELETE" });
+    setConfirmDeleteId(null);
     await load();
   }
 
@@ -314,13 +315,32 @@ export default function QuestionariosPage() {
                   )}
 
                   {!q.answeredAt && (
-                    <button
-                      onClick={() => handleDelete(q.id)}
-                      className="flex items-center gap-1 px-3 py-1.5 border border-red-200 text-red-500 rounded-lg font-body text-xs hover:bg-red-50 transition"
-                    >
-                      <TrashIcon />
-                      Excluir
-                    </button>
+                    confirmDeleteId === q.id ? (
+                      <>
+                        <button
+                          onClick={() => handleDelete(q.id)}
+                          className="px-2 py-1 rounded-lg text-xs text-white"
+                          style={{ background: "#ef4444", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}
+                        >
+                          Excluir
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(null)}
+                          className="px-2 py-1 rounded-lg text-xs"
+                          style={{ color: "rgba(61,50,42,0.42)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}
+                        >
+                          Não
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmDeleteId(q.id)}
+                        className="flex items-center gap-1 px-3 py-1.5 border border-red-200 text-red-500 rounded-lg font-body text-xs hover:bg-red-50 transition"
+                      >
+                        <TrashIcon />
+                        Excluir
+                      </button>
+                    )
                   )}
                 </div>
               </div>

@@ -158,6 +158,9 @@ export default function ContratosPage() {
   const [createError, setCreateError] = useState("");
   const [showPreview, setShowPreview] = useState(false);
 
+  // Inline delete confirm
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
   // Sign modal
   const [signModalContract, setSignModalContract] = useState<Contract | null>(null);
   const [signerName, setSignerName] = useState("");
@@ -233,8 +236,8 @@ export default function ContratosPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Excluir este contrato?")) return;
     await fetch(`/api/planner/contracts/${id}`, { method: "DELETE" });
+    setConfirmDeleteId(null);
     await load();
   }
 
@@ -338,12 +341,31 @@ export default function ContratosPage() {
                     PDF
                   </button>
                   {!c.signedByCouple && (
-                    <button
-                      onClick={() => handleDelete(c.id)}
-                      className="px-3 py-1.5 border border-red-200 text-red-600 rounded-lg font-body text-xs hover:bg-red-50 transition"
-                    >
-                      Excluir
-                    </button>
+                    confirmDeleteId === c.id ? (
+                      <>
+                        <button
+                          onClick={() => handleDelete(c.id)}
+                          className="px-2 py-1 rounded-lg text-xs text-white"
+                          style={{ background: "#ef4444", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}
+                        >
+                          Excluir
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(null)}
+                          className="px-2 py-1 rounded-lg text-xs"
+                          style={{ color: "rgba(61,50,42,0.42)", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 300 }}
+                        >
+                          Não
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmDeleteId(c.id)}
+                        className="px-3 py-1.5 border border-red-200 text-red-600 rounded-lg font-body text-xs hover:bg-red-50 transition"
+                      >
+                        Excluir
+                      </button>
+                    )
                   )}
                 </div>
               </div>

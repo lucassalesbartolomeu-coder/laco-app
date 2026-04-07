@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import PlannerBottomNav from "@/components/planner-bottom-nav";
 
 /* ─── Types ──────────────────────────────────────────────────────────── */
 
@@ -185,11 +184,12 @@ export default function CasamentosPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-1.5 rounded-full font-body text-sm font-medium transition-all duration-150 ${
-              activeTab === tab.key
-                ? "bg-midnight text-white shadow-sm"
-                : "bg-white text-midnight/60 hover:text-midnight"
-            }`}
+            className="px-4 py-1.5 rounded-full font-body text-sm transition-all duration-150"
+            style={{
+              background: activeTab === tab.key ? "rgba(169,137,80,0.12)" : "#FFFFFF",
+              color: activeTab === tab.key ? "#3D322A" : "rgba(61,50,42,0.45)",
+              fontWeight: activeTab === tab.key ? 500 : 400,
+            }}
           >
             {tab.label}
           </button>
@@ -313,7 +313,6 @@ export default function CasamentosPage() {
         )}
       </div>
 
-      <PlannerBottomNav />
     </div>
   );
 }
