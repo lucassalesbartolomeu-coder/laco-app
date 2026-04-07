@@ -143,8 +143,6 @@ export default function CasamentosPage() {
     return true;
   });
 
-  const activeCount = weddings.filter((w) => w.status === "ativo").length;
-
   /* ── Tabs ────────────────────────────────────────────────────────────── */
 
   const TABS: { key: FilterTab; label: string }[] = [
