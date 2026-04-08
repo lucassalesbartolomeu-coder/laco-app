@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Camera, MessageSquare } from "lucide-react";
+import { Camera, MessageSquare, UserCircle, Users } from "lucide-react";
 import { PlannerNotificationBell } from "@/components/planner-notifications";
 
 const GOLD    = "#A98950";
@@ -10,6 +10,18 @@ const CREME   = "#FAF6EF";
 const BG_DARK = "#F0E8DA";
 
 const ITEMS = [
+  {
+    href: "/perfil",
+    label: "Meu Perfil",
+    desc: "Dados da conta e configurações",
+    Icon: UserCircle,
+  },
+  {
+    href: "/cerimonialista/equipe",
+    label: "Pessoas & Acessos",
+    desc: "Funcionários, sócios, financeiro",
+    Icon: Users,
+  },
   {
     href: "/cerimonialista/portfolio",
     label: "Portfólio Público",
