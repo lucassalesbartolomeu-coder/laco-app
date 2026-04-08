@@ -175,7 +175,7 @@ export default function HomePage() {
                   Começar grátis
                 </Link>
                 <Link
-                  href="/cerimonialista/dashboard"
+                  href="/registro/cerimonialista"
                   className="inline-flex items-center justify-center gap-2 border border-midnight/20 text-white font-body text-base h-12 px-8 rounded-xl bg-transparent hover:bg-white/5 transition-all"
                 >
                   Sou cerimonialista
