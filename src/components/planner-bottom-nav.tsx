@@ -46,9 +46,10 @@ const TABS = [
   },
   {
     label: "Gestão",
-    href: "/cerimonialista/pipeline",
+    href: "/cerimonialista/gestao",
     icon: <GestaoIcon />,
     match: (p: string) =>
+      p.startsWith("/cerimonialista/gestao") ||
       p.startsWith("/cerimonialista/pipeline") ||
       p.startsWith("/cerimonialista/agenda") ||
       p.startsWith("/cerimonialista/contratos") ||
@@ -76,9 +77,10 @@ const TABS = [
   },
   {
     label: "Mais",
-    href: "/cerimonialista/portfolio",
+    href: "/cerimonialista/mais",
     icon: <MaisIcon />,
     match: (p: string) =>
+      p.startsWith("/cerimonialista/mais") ||
       p.startsWith("/cerimonialista/portfolio") ||
       p.startsWith("/cerimonialista/comunidade"),
   },
