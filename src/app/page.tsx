@@ -4,6 +4,9 @@ import { authOptions } from "@/lib/auth";
 
 export default async function Root() {
   const session = await getServerSession(authOptions);
-  if (session) redirect("/dashboard");
+  if (session) {
+    const role = (session.user as { role?: string })?.role;
+    redirect(role === "PLANNER" ? "/cerimonialista/dashboard" : "/dashboard");
+  }
   redirect("/home");
 }
